@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Link Loonk</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="card" id="app" role="main">
+    <header class="header">
+      <div class="avatar" id="avatar">L2</div>
+      <div class="titles">
+        <h1 id="title">Link Loonk</h1>
+        <p id="subtitle">Kumpulan link-link — biar tidak ling-lung</p>
+      </div>
+    </header>
+
+    <div class="search-wrap">
+      <input id="search" type="search" placeholder="Cari link..." aria-label="Cari link" />
+    </div>
+
+    <nav class="grid" id="links" aria-label="Link Pintasan">
+      <!-- Link items rendered by app.js -->
+    </nav>
+
+    <footer class="footer">
+      <div class="meta">Tim Layanan Internal</div>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
