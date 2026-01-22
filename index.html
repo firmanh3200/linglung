@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -35,7 +35,7 @@
             font-size: 18px;
             border: none;
             border-radius: 50px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             outline: none;
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
@@ -44,7 +44,7 @@
 
         .search-box:focus {
             transform: translateY(-5px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
         }
 
         .suggestions {
@@ -54,7 +54,7 @@
             right: 0;
             background: rgba(255,255,255,0.98);
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
             max-height: 300px;
             overflow-y: auto;
             backdrop-filter: blur(10px);
@@ -66,19 +66,30 @@
         .suggestion-item {
             padding: 15px 25px;
             cursor: pointer;
-            border-bottom: 1px solid #eee;
-            transition: background 0.2s;
+            border-bottom: 1px solid #f3f4f6;
+            transition: all 0.2s ease;
             display: flex;
-            align-items: center;
+            flex-direction: column;
         }
 
         .suggestion-item:hover {
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            color: white;
+            background: #fef3c7;
+            color: #92400e;
         }
 
         .suggestion-item:last-child {
             border-bottom: none;
+        }
+
+        .suggestion-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .suggestion-desc {
+            font-size: 14px;
+            opacity: 0.8;
         }
 
         .results {
@@ -95,12 +106,13 @@
             cursor: pointer;
             transition: all 0.3s;
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
 
         .result-item:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 50px rgba(249, 115, 22, 0.3);
+            background: rgba(254, 243, 199, 0.8);
         }
 
         .result-title {
@@ -110,19 +122,12 @@
             margin-bottom: 5px;
         }
 
-        .result-item:hover .result-title {
-            color: white;
-        }
-
         .result-url {
-            color: #667eea;
+            color: #ea580c;
             font-size: 14px;
             margin-bottom: 10px;
             word-break: break-all;
-        }
-
-        .result-item:hover .result-url {
-            color: rgba(255,255,255,0.9);
+            font-weight: 500;
         }
 
         .result-desc {
@@ -130,15 +135,15 @@
             line-height: 1.5;
         }
 
-        .result-item:hover .result-desc {
-            color: rgba(255,255,255,0.9);
-        }
-
         .no-results {
             text-align: center;
-            color: white;
+            color: #fef3c7;
             font-size: 18px;
             margin-top: 20px;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
         }
 
         @media (max-width: 768px) {
@@ -159,7 +164,7 @@
         <div class="suggestions" id="suggestions"></div>
     </div>
     <div class="results" id="results">
-        <div class="no-results">Mulai ketik untuk mencari...</div>
+        <div class="no-results">Mulai ketik minimal 3 huruf untuk melihat saran...</div>
     </div>
 
     <script>
@@ -171,10 +176,10 @@
                 if (!response.ok) throw new Error('Gagal memuat data');
                 const csvText = await response.text();
                 data = parseCSV(csvText);
-                console.log('Data loaded:', data.length, 'items'); // Untuk debug
+                console.log('Data loaded:', data.length, 'items');
             } catch (error) {
                 console.error('Error loading CSV:', error);
-                document.querySelector('.no-results').textContent = 'Gagal memuat data dari CSV. Periksa koneksi atau URL.';
+                document.querySelector('.no-results').textContent = 'Gagal memuat data CSV. Periksa koneksi atau URL file.';
             }
         }
 
@@ -192,26 +197,35 @@
                     url: cols[urlIdx] || '',
                     deskripsi: cols[descIdx] || ''
                 };
-            }).filter(item => item.nama); // Filter item kosong
+            }).filter(item => item.nama);
         }
 
         function showSuggestions(query, items) {
             const suggestions = document.getElementById('suggestions');
             suggestions.innerHTML = '';
-            if (!query) {
+            if (query.length < 3) {
                 suggestions.style.display = 'none';
                 return;
             }
-            const filtered = items.slice(0, 5); // Max 5 suggestions
+            const filtered = items.filter(item =>
+                item.nama.toLowerCase().includes(query.toLowerCase()) ||
+                item.deskripsi.toLowerCase().includes(query.toLowerCase())
+            ).slice(0, 5);
+            
             if (filtered.length === 0) {
                 suggestions.style.display = 'none';
                 return;
             }
+            
             filtered.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'suggestion-item';
-                div.innerHTML = `<strong>${escapeHtml(item.nama)}</strong><br><small>${escapeHtml(item.deskripsi)}</small>`;
-                div.onclick = () => {
+                div.innerHTML = `
+                    <div class="suggestion-name">${escapeHtml(item.nama)}</div>
+                    <div class="suggestion-desc">${escapeHtml(item.deskripsi)}</div>
+                `;
+                div.onclick = (e) => {
+                    e.stopPropagation();
                     document.getElementById('searchInput').value = item.nama;
                     showResults(item.nama);
                     suggestions.style.display = 'none';
@@ -256,16 +270,17 @@
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.trim();
             showSuggestions(query, data);
-            if (query) {
+            if (query.length >= 2) { // Hasil muncul mulai 2 huruf untuk kenyamanan
                 showResults(query);
             } else {
-                document.getElementById('results').innerHTML = '<div class="no-results">Mulai ketik untuk mencari...</div>';
+                document.getElementById('results').innerHTML = '<div class="no-results">Mulai ketik minimal 3 huruf untuk melihat saran...</div>';
             }
         });
 
         searchInput.addEventListener('focus', () => {
-            if (searchInput.value.trim() && data.length > 0) {
-                showSuggestions(searchInput.value.trim(), data);
+            const query = searchInput.value.trim();
+            if (query.length >= 3 && data.length > 0) {
+                showSuggestions(query, data);
             }
         });
 
@@ -275,7 +290,6 @@
             }
         });
 
-        // Load data saat halaman dimuat
         loadData();
     </script>
 </body>
