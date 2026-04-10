@@ -232,7 +232,9 @@
 
         async function loadData() {
             try {
-                const response = await fetch('https://raw.githubusercontent.com/firmanh3200/linglung/refs/heads/main/data.csv');
+                // const response = await fetch('https://raw.githubusercontent.com/firmanh3200/linglung/refs/heads/main/data.csv');
+                // Menggunakan jsDelivr CDN untuk menghindari error SSL Certificate
+                const response = await fetch('https://cdn.jsdelivr.net/gh/firmanh3200/linglung@main/data.csv');
                 if (!response.ok) throw new Error('Gagal memuat data');
                 const csvText = await response.text();
                 data = parseCSV(csvText);
