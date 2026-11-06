@@ -6,7 +6,7 @@ KipApp,https://kipapp.web.bps.go.id/,laporan kinerja pegawai
 Regulasi Standar Data Statistik Nasional,https://ppid.bps.go.id/upload/doc/Peraturan_Badan_Pusat_Statistik_Nomor_4_Tahun_2021_tentang_Standar_Data_Statistik_Nasional_1658133163,Peraturan BPS 4 2021 tentang Standar Data Statistik
 Juknis Standar Data Statistik,https://ppid.bps.go.id/upload/doc/Peraturan_Badan_Pusat_Statistik_Nomor_4_Tahun_2020_tentang_Petunjuk_Teknis_Standar_Data_Statistik_1658133335.pdf,Peraturan BPS 4 2020 tentang Petunjuk Teknis Standar Data Statistik
 Juknis Metadata Statistik,https://ppid.bps.go.id/upload/doc/Peraturan_Badan_Pusat_Statistik_No__5_Tahun_2020_Petunjuk_Teknis_Metadata_Statistik_1658133466.pdf,Peraturan BPS 5 2020 tentang Petunjuk Teknis Metadata Statistik
-Simbatik,https://webapps.bps.go.id/simbatik,Web EPSS
+Simbatik,https://epss.web.bps.go.id/login,Web EPSS
 EPSS,https://ppid.bps.go.id/upload/doc/Peraturan_Badan_Pusat_Statistik_Nomor_3_Tahun_2022_1679381490.pdf,Peraturan BPS 3 2022 tentang EPSS
 NSPK,https://ppid.bps.go.id/upload/doc/Peraturan_Badan_Pusat_Statistik_No__4_Tahun_2019_tentang_Norma__Standar__Prosedur__dan_Kriteria_penyelenggaraan_Statistik_Sektoral_oleh_Pemerintah_Daerah_1658133777.pdf,Peraturan BPS 4 2019 tentang NSPK Penyelenggaraan Statistik Sektoral oleh Pemerintah Daerah
 Penjelasan Indikator EPSS,https://public.flourish.studio/visualisation/14210359/,Penjelasan Indikator EPSS
@@ -54,7 +54,7 @@ Simpeg BPS (VPN),https://simpeg.bps.go.id/,Simpeg BPS (VPN)
 SiPeCut BPS (VPN),https://sipecut.bps.go.id,cuti - SiPeCut BPS (VPN)
 Smart,https://anggaran.kemenkeu.go.id/in/post/aplikasi-smart,Smart
 Romantik,https://romantik.web.bps.go.id,rekomendasi
-Backend Website (VPN),https://jabar.bps.go.id/backend,kelola tabel dinamis
+Backend Website (VPN),https://web-be.apps.bps.go.id,kelola konten website
 Pemetaan,https://dataspasial.bps.go.id/,Data spasial
 Email,https://mail.bps.go.id/,zimbra
 Entri metadata,https://indah.bps.go.id/login,entri metadata statistik
@@ -109,3 +109,4 @@ WA PST Jabar,https://wa.me/6285179928832,layanan chat bps jabar via whatsapp
 Daftar hadir BPS,https://daftarhadir.web.bps.go.id/,bikin daftar presensi rapat
 Pilar 2 Tata Laksana,https://firmanh3200.github.io/32pilar2/,Pengetahuan dasar tentang pilar tata laksana pembangunan zona integritas
 Contoh IKI,https://firmanh3200.github.io/contoiki/,contoh indikator kinerja individu
+Sistem PSS,https://spesial.web.bps.go.id,sistem informasi pembinaan statistik sektoral
