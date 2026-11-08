@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PELITA - Portal Edukasi dan Literasi Agen Statistik</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js untuk Interaktifitas Tabel & Modal -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax untuk Rumus Matematika -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-glow {
+            background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(255,255,255,0) 70%);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300" x-data="pelitaApp()">
+
+    <!-- Sticky Navigation Bar dengan Burger Menu -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-white shadow-md shadow-amber-500/30">
+                    <i class="fa-solid fa-fire-flame-curved text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg tracking-tight">PELITA</span>
+                    <span class="text-xs text-brand-600 dark:text-brand-400 block font-medium">Portal Edukasi & Literasi</span>
+                </div>
+            </div>
+            
+            <!-- Desktop Nav Menu -->
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+                <a href="#beranda" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Beranda</a>
+                <a href="#dasar" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Konsep Dasar</a>
+                <a href="#inferensial" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Inferensial</a>
+                <a href="#sampling" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Teknik Sampling</a>
+                <a href="#kamus" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Kamus 36+ Uji</a>
+                <a href="#kalkulator" class="hover:text-brand-600 dark:hover:text-brand-400 transition">Kalkulator</a>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" aria-label="Toggle Theme">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+                <!-- Burger Menu Button for Mobile -->
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    <i class="fa-solid" :class="mobileMenuOpen ? 'fa-xmark' : 'fa-bars'"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div x-show="mobileMenuOpen" class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-2 pb-4 space-y-2 text-sm font-medium">
+            <a @click="mobileMenuOpen = false" href="#beranda" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Beranda</a>
+            <a @click="mobileMenuOpen = false" href="#dasar" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Konsep Dasar</a>
+            <a @click="mobileMenuOpen = false" href="#inferensial" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Inferensial</a>
+            <a @click="mobileMenuOpen = false" href="#sampling" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Teknik Sampling</a>
+            <a @click="mobileMenuOpen = false" href="#kamus" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Kamus 36+ Uji</a>
+            <a @click="mobileMenuOpen = false" href="#kalkulator" class="block py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Kalkulator</a>
+        </div>
+    </header>
+
+    <!-- Halaman Pembuka (Hero Center dengan Logo Obor/Lilin/Lampu) -->
+    <section id="beranda" class="relative overflow-hidden pt-16 pb-24 lg:pt-24 lg:pb-32 text-center">
+        <div class="absolute inset-0 hero-glow pointer-events-none"></div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-tr from-amber-500 to-yellow-400 flex items-center justify-center text-white text-3xl shadow-xl shadow-amber-500/30 animate-bounce">
+                <i class="fa-solid fa-fire-flame-curved"></i>
+            </div>
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 text-xs font-semibold uppercase tracking-wider mb-6 border border-amber-200 dark:border-amber-900/50">
+                <i class="fa-solid fa-lightbulb"></i> Buku Saku Statistik Komprehensif Masyarakat & Mahasiswa
+            </div>
+            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight mb-6">
+                PELITA <span class="block text-2xl sm:text-4xl font-bold text-slate-600 dark:text-slate-400 mt-2">Portal Edukasi dan Literasi Agen Statistik</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Menerangi jalan pemahaman ilmu statistika dari tingkat dasar awam, teknik sampling, inferensial, hingga kamus lengkap 36+ uji analisis skripsi tanpa rumus membingungkan.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#kamus" class="px-8 py-4 text-base font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-lg shadow-brand-500/30 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-book-bookmark"></i> Buka Kamus 36+ Uji
+                </a>
+                <a href="#sampling" class="px-8 py-4 text-base font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-database"></i> Lihat Teknik Sampling
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian 1: Konsep Dasar (Mean, Median, Modus) -->
+    <section id="dasar" class="py-20 bg-white dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-wider bg-brand-50 dark:bg-brand-950 px-3 py-1 rounded-full">Pilar Pertama</span>
+                <h2 class="text-3xl font-bold tracking-tight mt-3 mb-4">3 Sahabat Karib Statistik (Mean, Median, Modus)[cite: 2]</h2>
+                <p class="text-slate-600 dark:text-slate-400 text-base">Ukuran pemusatan data yang paling sering merangkum jutaan informasi di sekitar kita[cite: 2].</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-slate-50 dark:bg-slate-800/60 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl font-bold mb-6">1</div>
+                    <h3 class="text-xl font-bold mb-2">Mean (Rata-rata)[cite: 2]</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Hasil pembagian jumlah keseluruhan nilai dengan banyaknya anggota data[cite: 2]. Sensitif terhadap nilai ekstrem (pencilan)[cite: 2].
+                    </p>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800/60 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div class="w-12 h-12 rounded-2xl bg-violet-100 text-violet-600 flex items-center justify-center text-xl font-bold mb-6">2</div>
+                    <h3 class="text-xl font-bold mb-2">Median (Nilai Tengah)[cite: 2]</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Nilai tepat di tengah setelah data diurutkan dari terkecil ke terbesar[cite: 2]. Sangat adil untuk data bergaji/pendapatan[cite: 2].
+                    </p>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800/60 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div class="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl font-bold mb-6">3</div>
+                    <h3 class="text-xl font-bold mb-2">Modus (Paling Sering)[cite: 2]</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Nilai dengan frekuensi kemunculan terbanyak[cite: 2]. Sangat berguna untuk industri retail menentukan stok ukuran terlaris[cite: 2].
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian 2: Statistik Inferensial & Analogi Sup -->
+    <section id="inferensial" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-wider bg-brand-50 dark:bg-brand-950 px-3 py-1 rounded-full">Pilar Kedua</span>
+                <h2 class="text-3xl font-bold tracking-tight mt-3 mb-4">Statistik Inferensial: Analogi Secangkir Sup</h2>
+                <p class="text-slate-600 dark:text-slate-400 text-base">Bagaimana mencicipi satu sendok kuah sup untuk memastikan rasa seluruh panci[cite: 1].</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h3 class="text-xl font-bold mb-3 text-amber-600 dark:text-amber-400">Statistik Deskriptif</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Hanya merangkum apa yang ada di depan mata[cite: 1]. Menghitung persis seluruh isi panci tanpa menarik tebakan populasi luas[cite: 1].
+                    </p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm border-l-4 border-l-brand-600">
+                    <h3 class="text-xl font-bold mb-3 text-brand-600 dark:text-brand-400">Statistik Inferensial</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Menarik kesimpulan besar dari sampel kecil[cite: 1]. Menggeneralisasi karakteristik populasi luas menggunakan taraf keyakinan (misal 95%)[cite: 1].
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian 3: Teknik Sampling Modern -->
+    <section id="sampling" class="py-20 bg-white dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-wider bg-brand-50 dark:bg-brand-950 px-3 py-1 rounded-full">Ensiklopedia</span>
+                <h2 class="text-3xl font-bold tracking-tight mt-3 mb-4">Teknik Sampling Penelitian[cite: 3]</h2>
+                <p class="text-slate-600 dark:text-slate-400 text-base">Panduan lengkap metode Probability dan Non-Probability Sampling[cite: 3].</p>
+            </div>
+
+            <!-- Tabel Sampling Interaktif Sederhana -->
+            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                <th class="py-4 px-6">Metode</th>
+                                <th class="py-4 px-6">Kategori</th>
+                                <th class="py-4 px-6">Definisi Singkat[cite: 3]</th>
+                                <th class="py-4 px-6">Contoh Nyata (BPS / Akademik)[cite: 3]</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 dark:divide-slate-700 text-slate-700 dark:text-slate-300">
+                            <tr>
+                                <td class="py-4 px-6 font-bold">Simple Random Sampling[cite: 3]</td>
+                                <td class="py-4 px-6"><span class="px-2.5 py-1 rounded-full text-xs bg-blue-100 text-blue-700 font-semibold">Probability</span></td>
+                                <td class="py-4 px-6">Peluang sama bagi setiap anggota populasi[cite: 3].</td>
+                                <td class="py-4 px-6">BPS memilih 500 rumah tangga secara acak dari daftar KK[cite: 3].</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-bold">Stratified Random Sampling[cite: 3]</td>
+                                <td class="py-4 px-6"><span class="px-2.5 py-1 rounded-full text-xs bg-blue-100 text-blue-700 font-semibold">Probability</span></td>
+                                <td class="py-4 px-6">Membagi populasi ke sub-kelompok homogen (strata)[cite: 3].</td>
+                                <td class="py-4 px-6">Survei pendapatan desa dibagi strata pendidikan[cite: 3].</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-bold">Purposive Sampling[cite: 3]</td>
+                                <td class="py-4 px-6"><span class="px-2.5 py-1 rounded-full text-xs bg-amber-100 text-amber-700 font-semibold">Non-Probability</span></td>
+                                <td class="py-4 px-6">Berdasarkan kriteria khusus/pertimbangan peneliti[cite: 3].</td>
+                                <td class="py-4 px-6">Memilih kepala desa dengan predikat WTP berturut-turut[cite: 3].</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-bold">Snowball Sampling[cite: 3]</td>
+                                <td class="py-4 px-6"><span class="px-2.5 py-1 rounded-full text-xs bg-amber-100 text-amber-700 font-semibold">Non-Probability</span></td>
+                                <td class="py-4 px-6">Sampel menunjuk subjek lain secara berantai[cite: 3].</td>
+                                <td class="py-4 px-6">Penelitian komunitas khusus atau jaringan tertutup[cite: 3].</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian 4: Kamus 36+ Uji Statistik Skripsi (Data Lengkap) -->
+    <section id="kamus" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-wider bg-brand-50 dark:bg-brand-950 px-3 py-1 rounded-full">Direktori Utama</span>
+                <h2 class="text-3xl font-bold tracking-tight mt-3 mb-4">Kamus & Panduan 36+ Metode Statistik Skripsi[cite: 5]</h2>
+                <p class="text-slate-600 dark:text-slate-400 text-base">Seluruh data lengkap dari direktori akademik siap membantu sidang skripsi Anda tanpa tertinggal[cite: 5].</p>
+            </div>
+
+            <!-- Kontrol Pencarian & Filter Kamus -->
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 mb-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="relative flex-1">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="text" x-model="search" @input="currentPage = 1" placeholder="Cari nama uji, teori, variabel, atau judul skripsi..." 
+                            class="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-medium text-slate-500">Tampilkan:</label>
+                        <select x-model.number="perPage" @change="currentPage = 1" 
+                            class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Kategori Filter Tabs -->
+                <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <template x-cat="cat in categories">
+                        <button @click="selectedCategory = cat; currentPage = 1" 
+                            :class="selectedCategory === cat ? 'bg-brand-600 text-white shadow' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'"
+                            class="px-4 py-2 rounded-xl text-xs font-semibold transition" x-text="cat"></button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Tabel Utama 36 Metode -->
+            <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-6">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                <th class="py-4 px-6 text-center w-12">No</th>
+                                <th class="py-4 px-6 w-48">Kategori & Nama Uji[cite: 5]</th>
+                                <th class="py-4 px-6">Dasar Penggunaan & Syarat[cite: 5]</th>
+                                <th class="py-4 px-6">Tujuan (Mahasiswa)[cite: 5]</th>
+                                <th class="py-4 px-6">Contoh Judul Skripsi[cite: 5]</th>
+                                <th class="py-4 px-6 text-center w-24">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                            <template x-for="(item, index) in paginatedData" :key="item.id">
+                                <tr class="hover:bg-brand-50/40 dark:hover:bg-brand-950/20 transition">
+                                    <td class="py-4 px-6 text-center font-medium text-slate-400" x-text="startIndex + index + 1"></td>
+                                    <td class="py-4 px-6">
+                                        <span class="inline-block px-2.5 py-1 text-[10px] font-bold rounded-full mb-1 uppercase tracking-wide bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300" x-text="item.kategori"></span>
+                                        <div class="font-bold text-slate-900 dark:text-white" x-text="item.nama"></div>
+                                        <div class="text-xs text-slate-500 italic" x-text="item.sub"></div>
+                                    </td>
+                                    <td class="py-4 px-6 text-xs text-slate-600 dark:text-slate-300 leading-relaxed" x-text="item.dasar"></td>
+                                    <td class="py-4 px-6 text-xs text-slate-700 dark:text-slate-200 leading-relaxed" x-text="item.tujuan"></td>
+                                    <td class="py-4 px-6 text-xs text-slate-600 dark:text-slate-400 italic leading-relaxed" x-text="item.contoh"></td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button @click="openModal(item)" class="px-3.5 py-2 bg-brand-50 hover:bg-brand-600 hover:text-white text-brand-600 font-semibold text-xs rounded-xl transition border border-brand-200 dark:border-brand-800">
+                                            Detail
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Footer -->
+                <div class="bg-slate-50 dark:bg-slate-900 px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
+                    <div>
+                        Menampilkan <span class="font-semibold" x-text="startIndex + 1"></span> sampai <span class="font-semibold" x-text="Math.min(startIndex + perPage, filteredData.length)"></span> dari <span class="font-semibold" x-text="filteredData.length"></span> metode[cite: 5]
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"
+                            class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold disabled:opacity-40">
+                            Sebelumnya
+                        </button>
+                        <template x-for="page in totalPages" :key="page">
+                            <button @click="changePage(page)" 
+                                :class="currentPage === page ? 'bg-brand-600 text-white font-bold border-brand-600' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700'"
+                                class="w-8 h-8 rounded-xl text-xs border flex items-center justify-center transition" x-text="page"></button>
+                        </template>
+                        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages || totalPages === 0"
+                            class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold disabled:opacity-40">
+                            Berikutnya
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kalkulator Interaktif Sederhana (Mean, Median, Modus) -->
+    <section id="kalkulator" class="py-20 bg-white dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <span class="text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-wider bg-brand-50 dark:bg-brand-950 px-3 py-1 rounded-full">Praktik Cepat</span>
+                <h2 class="text-3xl font-bold tracking-tight mt-3 mb-2">Kalkulator Statistik Dasar</h2>
+                <p class="text-slate-600 dark:text-slate-400 text-sm">Masukkan angka dipisahkan koma untuk menghitung Mean, Median, dan Modus secara instan[cite: 2].</p>
+            </div>
+
+            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-8 shadow-sm space-y-6">
+                <div>
+                    <label class="block text-sm font-bold mb-2">Masukkan Data Angka:</label>
+                    <div class="flex gap-3">
+                        <input type="text" id="calc-input" value="85, 90, 75, 80, 95, 90, 60" 
+                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-sm font-mono">
+                        <button onclick="hitungKalkulator()" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold px-6 py-3 rounded-2xl text-sm shadow">
+                            Hitung
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs text-slate-400 uppercase font-bold">Mean</div>
+                        <div id="calc-mean" class="text-2xl font-black text-brand-600 mt-1">-</div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs text-slate-400 uppercase font-bold">Median</div>
+                        <div id="calc-median" class="text-2xl font-black text-violet-600 mt-1">-</div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs text-slate-400 uppercase font-bold">Modus</div>
+                        <div id="calc-mode" class="text-2xl font-black text-pink-600 mt-1">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Detail Metode -->
+    <div x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" x-cloak>
+        <div @click.away="showModal = false" class="bg-white dark:bg-slate-800 rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden">
+            <div class="bg-brand-600 px-6 py-4 text-white flex justify-between items-center">
+                <div>
+                    <span class="text-xs uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full font-semibold" x-text="activeItem.kategori"></span>
+                    <h3 class="text-xl font-bold mt-1" x-text="activeItem.nama"></h3>
+                </div>
+                <button @click="showModal = false" class="text-white/80 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-sm text-slate-600 dark:text-slate-300">
+                <div>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-xs uppercase text-brand-600 mb-1">Sub-Jenis / Varian Metode</h4>
+                    <p class="bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700" x-text="activeItem.sub"></p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-xs uppercase text-brand-600 mb-1">Dasar Penggunaan & Syarat Asumsi</h4>
+                    <p class="bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700 leading-relaxed" x-text="activeItem.dasar"></p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-xs uppercase text-brand-600 mb-1">Tujuan Penggunaan untuk Mahasiswa</h4>
+                    <p class="bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700 leading-relaxed" x-text="activeItem.tujuan"></p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-xs uppercase text-brand-600 mb-1">Contoh Judul Penelitian Skripsi</h4>
+                    <p class="bg-brand-50 dark:bg-brand-950 text-brand-900 dark:text-brand-200 p-3 rounded-xl border border-brand-200 dark:border-brand-900 font-medium italic leading-relaxed" x-text="activeItem.contoh"></p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-xs uppercase text-emerald-600 mb-1">Tips Menghadapi Sidang Dosen Penguji</h4>
+                    <p class="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 p-3 rounded-xl border border-emerald-200 dark:border-emerald-900 leading-relaxed" x-text="activeItem.tips"></p>
+                </div>
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-900 px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex justify-end">
+                <button @click="showModal = false" class="px-5 py-2.5 bg-slate-800 text-white text-xs font-semibold rounded-xl">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 text-center text-xs">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p class="font-bold text-white text-sm">PELITA - Portal Edukasi dan Literasi Agen Statistik</p>
+            <p>Digabungkan dari seluruh referensi buku saku, teknik sampling, dan 36+ kamus uji statistik skripsi &copy; 2026[cite: 5].</p>
+        </div>
+    </footer>
+
+    <!-- Alpine App & Kalkulator Script -->
+    <script>
+        // Theme Toggle
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        }
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            }
+        });
+
+        // AlpineJS Data Engine mencakup 36+ Data Kamus Lengkap
+        function pelitaApp() {
+            return {
+                mobileMenuOpen: false,
+                search: '',
+                selectedCategory: 'Semua',
+                currentPage: 1,
+                perPage: 5,
+                showModal: false,
+                activeItem: {},
+                categories: ['Semua', 'Statistik Deskriptif', 'Uji Instrumen & Asumsi Klasik', 'Statistik Parametrik', 'Statistik Non-Parametrik', 'Analisis Multivariat', 'Analisis Data Lanjutan'],
+                
+                statistics: [
+                    { id: 1, kategori: 'Statistik Deskriptif', nama: 'Mean (Rata-rata)', sub: 'Arithmetic Mean / Weighted Mean', dasar: 'Data berskala Interval atau Rasio (data kuantitatif kontinu/diskrit).', tujuan: 'Mengetahui nilai pusat atau rata-rata dari sebaran data sampel penelitian agar mudah diringkas.', contoh: 'Analisis Pendapatan Rata-rata UMKM Kuliner di Kota Bandung Selama Pandemi.', tips: 'Ingatkan penguji bahwa mean sangat sensitif terhadap nilai ekstrim (outlier).' },
+                    { id: 2, kategori: 'Statistik Deskriptif', nama: 'Median', sub: 'Nilai Tengah Data Terurut', dasar: 'Data berskala Ordinal, Interval, atau Rasio. Cocok untuk data dengan distribusi tidak normal atau ada outlier.', tujuan: 'Menentukan nilai tengah yang membagi data menjadi dua bagian yang sama besar.', contoh: 'Analisis Median Waktu Tunggu Pelayanan Publik di Kantor SAMSAT.', tips: 'Gunakan median jika data memiliki outlier ekstrem (seperti gaji atau pendapatan).' },
+                    { id: 3, kategori: 'Statistik Deskriptif', nama: 'Modus', sub: 'Nilai Paling Sering Muncul', dasar: 'Data berskala Nominal, Ordinal, Interval, maupun Rasio.', tujuan: 'Mengetahui kategori atau karakteristik data yang paling dominan atau sering muncul dalam sampel.', contoh: 'Analisis Jenis Kendaraan Paling Sering Melanggar Lalu Lintas di Perempatan Kota.', tips: 'Modus adalah satu-satunya ukuran pemusatan yang bisa dipakai untuk data berskala nominal.' },
+                    { id: 4, kategori: 'Statistik Deskriptif', nama: 'Standar Deviasi & Varian', sub: 'Simpangan Baku & Ragam', dasar: 'Data kuantitatif berskala Interval atau Rasio.', tujuan: 'Mengukur tingkat variasi atau sebaran data dari nilai rata-ratanya (seberapa homogen/heterogen sampel).', contoh: 'Analisis Tingkat Variasi Nilai Ujian Siswa Sekolah Menengah Atas Berbasis Zonasi.', tips: 'Standar deviasi kecil menunjukkan data mengumpul di sekitar rata-rata (homogen).' },
+                    { id: 5, kategori: 'Statistik Deskriptif', nama: 'Distribusi Frekuensi & Persentase', sub: 'Tabel Frekuensi & Grafik Batang/Pie', dasar: 'Semua skala data (Nominal, Ordinal, Interval, Rasio).', tujuan: 'Menyajikan ringkasan karakteristik responden (demografi) seperti usia, jenis kelamin, pendidikan.', contoh: 'Analisis Karakteristik Demografi Wisatawan Nusantara di Destinasi Wisata Alam.', tips: 'Wajib ada di Bab IV sebagai gambaran umum responden sebelum masuk uji hipotesis.' },
+                    { id: 6, kategori: 'Uji Instrumen & Asumsi Klasik', nama: 'Uji Validitas (Product Moment)', sub: 'Corrected Item-Total Correlation', dasar: 'Data ordinal hasil kuesioner skala Likert yang ditransformasi ke interval (Metode MSI) atau langsung.', tujuan: 'Memastikan setiap item pertanyaan kuesioner benar-benar sah dan akurat mengukur variabel yang diteliti.', contoh: 'Uji Validitas Instrumen Kuesioner Pengaruh Kualitas Pelayanan terhadap Kepuasan Pelanggan.', tips: 'Pastikan r hitung > r tabel (biasanya > 0.30 atau sig < 0.05) untuk menyatakan item valid.' },
+                    { id: 7, kategori: 'Uji Instrumen & Asumsi Klasik', nama: 'Uji Reliabilitas (Cronbach\'s Alpha)', sub: 'Alpha Cronbach & Split-Half', dasar: 'Instrumen penelitian berupa kuesioner ganda dengan skala Likert.', tujuan: 'Menguji konsistensi dan kestabilan jawaban responden jika kuesioner diisi ulang pada waktu berbeda.', contoh: 'Uji Reliabilitas Kuesioner E-Commerce terhadap Minat Beli Konsumen Generasi Z.', tips: 'Nilai Cronbach\'s Alpha minimal harus > 0.60 atau lebih baik > 0.70 agar kuesioner handal.' },
+                    { id: 8, kategori: 'Uji Instrumen & Asumsi Klasik', nama: 'Uji Normalitas Residual', sub: 'Kolmogorov-Smirnov & Shapiro-Wilk', dasar: 'Nilai residual dari model regresi berdistribusi normal.', tujuan: 'Memastikan data residual menyebar secara normal agar model statistik parametrik tidak bias.', contoh: 'Uji Normalitas Model Regresi Pengaruh Modal dan Tenaga Kerja terhadap Output UMKM.', tips: 'Nilai Asymp. Sig. (2-tailed) harus > 0.05 agar asumsi normalitas terpenuhi.' },
+                    { id: 9, kategori: 'Uji Instrumen & Asumsi Klasik', nama: 'Uji Multikolinearitas', sub: 'Tolerance dan VIF (Variance Inflation Factor)', dasar: 'Analisis regresi linear berganda dengan lebih dari satu variabel bebas.', tujuan: 'Mendeteksi ada atau tidaknya korelasi tinggi antar variabel independen dalam satu model.', contoh: 'Uji Multikolinearitas pada Model Pengaruh Harga, Promosi, dan Brand Image terhadap Keputusan Pembelian.', tips: 'Syarat bebas multikolinearitas: VIF < 10.0 dan Tolerance > 0.10.' },
+                    { id: 10, kategori: 'Uji Instrumen & Asumsi Klasik', nama: 'Uji Heteroskedastisitas', sub: 'Uji Glejser & Grafik Scatterplot', dasar: 'Model regresi linear untuk menguji kesamaan varians residual antar pengamatan.', tujuan: 'Memastikan tidak terjadi ketidaksamaan variance dari residual pengamatan satu ke pengamatan lain.', contoh: 'Uji Heteroskedastisitas pada Analisis Faktor yang Memengaruhi Harga Rumah.', tips: 'Jika nilai signifikansi (Sig.) uji Glejser > 0.05, maka tidak terjadi heteroskedastisitas.' },
+                    { id: 11, kategori: 'Uji Instrumen & Asumsi Klasik', nama: 'Uji Autokorelasi', sub: 'Durbin-Watson (DW Test)', dasar: 'Data time series (runtut waktu) dalam analisis regresi.', tujuan: 'Menguji apakah ada korelasi antara kesalahan pengganggu pada periode t dengan periode t-1.', contoh: 'Analisis Pengaruh Inflasi dan Suku Bunga terhadap Indeks Harga Saham Gabungan (IHSG).', tips: 'Nilai DW berada di sekitar du dan 4-du (bebas autokorelasi).' },
+                    { id: 12, kategori: 'Statistik Parametrik', nama: 'Independent Sample t-Test', sub: 'Uji Beda Dua Sampel Independen', dasar: 'Data berskala interval/rasio, berdistribusi normal, dan berasal dari dua kelompok sampel yang tidak saling berpasangan.', tujuan: 'Membandingkan rata-rata dua kelompok sampel yang berbeda (misal: kelompok pria vs wanita).', contoh: 'Perbedaan Kinerja Karyawan antara Kantor Cabang Kota dan Kabupaten.', tips: 'Pastikan uji Levene\'s Test (Equality of Variances) diperiksa sebelum membaca nilai t-test.' },
+                    { id: 13, kategori: 'Statistik Parametrik', nama: 'Paired Sample t-Test', sub: 'Uji Beda Dua Sampel Berpasangan', dasar: 'Data berskala interval/rasio, berdistribusi normal, dan subjek yang sama diuji dua kali (pre-test dan post-test).', tujuan: 'Mengetahui efektivitas suatu perlakuan (treatment) sebelum dan sesudah diberikan intervensi.', contoh: 'Efektivitas Pelatihan Digital Marketing terhadap Omset Penjualan UMKM Sebelum dan Sesudah Pelatihan.', tips: 'Sangat populer untuk penelitian eksperimen atau quasi-eksperimen.' },
+                    { id: 14, kategori: 'Statistik Parametrik', nama: 'One-Way ANOVA', sub: 'Analisis Varian Satu Arah', dasar: 'Data kuantitatif berdistribusi normal dengan satu variabel independen berskala kategori (> 2 kelompok) dan variabel dependen metrik.', tujuan: 'Menguji perbedaan rata-rata antara tiga kelompok sampel atau lebih secara simultan.', contoh: 'Perbedaan Tingkat Kepuasan Pelanggan Berdasarkan Jenis Bank (BCA, Mandiri, BNI, BRI).', tips: 'Jika hasil signifikan, lanjutkan dengan Post-Hoc Test (misal Tukey) untuk tahu kelompok mana yang berbeda.' },
+                    { id: 15, kategori: 'Statistik Parametrik', nama: 'Two-Way ANOVA', sub: 'Analisis Varian Dua Arah', dasar: 'Dua variabel bebas berskala kategori dan satu variabel terikat berskala interval/rasio.', tujuan: 'Mengetahui pengaruh dua faktor secara mandiri maupun interaksi keduanya terhadap variabel terikat.', contoh: 'Pengaruh Metode Pembelajaran dan Motivasi Belajar terhadap Prestasi Akademik Mahasiswa.', tips: 'Perhatikan uji interaksi (Interaction Effect) apakah signifikan atau tidak.' },
+                    { id: 16, kategori: 'Statistik Parametrik', nama: 'Korelasi Pearson', sub: 'Product Moment Correlation', dasar: 'Data berpasangan berskala interval atau rasio, berdistribusi normal, dan hubungan linier.', tujuan: 'Mengukur kekuatan dan arah hubungan linier antara dua variabel kuantitatif.', contoh: 'Hubungan antara Tingkat Pendapatan dengan Jumlah Pengeluaran Konsumsi Rumah Tangga.', tips: 'Nilai r berkisar antara -1 hingga +1. Tanda plus/minus menunjukkan arah hubungan.' },
+                    { id: 17, kategori: 'Statistik Parametrik', nama: 'Regresi Linear Sederhana', sub: 'Simple Linear Regression', dasar: 'Satu variabel independen (X) dan satu variabel dependen (Y) berskala interval/rasio.', tujuan: 'Memprediksi besar perubahan nilai variabel dependen berdasarkan perubahan nilai variabel independen.', contoh: 'Pengaruh Biaya Iklan terhadap Volume Penjualan Produk Kosmetik.', tips: 'Perhatikan nilai koefisien determinasi (R Square) untuk melihat seberapa besar kontribusi X terhadap Y.' },
+                    { id: 18, kategori: 'Statistik Parametrik', nama: 'Regresi Linear Berganda', sub: 'Multiple Linear Regression', dasar: 'Dua atau lebih variabel independen (X1, X2, ...) dan satu variabel dependen (Y).', tujuan: 'Menganalisis pengaruh simultan dan parsial beberapa variabel bebas terhadap satu variabel terikat.', contoh: 'Pengaruh Harga, Kualitas Produk, dan Promosi terhadap Keputusan Pembelian Smartphone.', tips: 'Wajib lolos uji asumsi klasik (normalitas, multikolinearitas, heteroskedastisitas) sebelum uji F dan uji t.' },
+                    { id: 19, kategori: 'Statistik Non-Parametrik', nama: 'Mann-Whitney U Test', sub: 'Alternatif Independent t-Test', dasar: 'Data berskala ordinal atau interval/rasio yang tidak berdistribusi normal untuk dua kelompok independen.', tujuan: 'Menguji perbedaan median dua kelompok independen ketika asumsi normalitas parametrik dilanggar.', contoh: 'Perbedaan Tingkat Loyalitas Pelanggan antara Toko Konvensional dan Toko Online (Data Tidak Normal).', tips: 'Gunakan uji ini jika sampel kecil atau data skewness tinggi.' },
+                    { id: 20, kategori: 'Statistik Non-Parametrik', nama: 'Wilcoxon Signed Ranks Test', sub: 'Alternatif Paired t-Test', dasar: 'Data berskala ordinal/interval berpasangan dan tidak berdistribusi normal.', tujuan: 'Membandingkan dua pengukuran berpasangan pada sampel yang sama ketika data tidak memenuhi asumsi normalitas.', contoh: 'Perbedaan Skor Pengetahuan K3 Pekerja Sebelum dan Sesudah Simulasi Darurat Kebakaran.', tips: 'Berdasarkan peringkat (ranking) selisih nilai pasangan data.' },
+                    { id: 21, kategori: 'Statistik Non-Parametrik', nama: 'Kruskal-Wallis Test', sub: 'Alternatif One-Way ANOVA', dasar: 'Data ordinal atau kuantitatif lebih dari dua kelompok independen dengan distribusi tidak normal.', tujuan: 'Menguji perbedaan median antara tiga kelompok sampel independen atau lebih.', contoh: 'Perbedaan Kepuasan Kerja Berdasarkan Tingkat Pendidikan Karyawan (SD, SMP, SMA, Perguruan Tinggi).', tips: 'Merupakan paduan non-parametrik dari One-Way ANOVA.' },
+                    { id: 22, kategori: 'Statistik Non-Parametrik', nama: 'Friedman Test', sub: 'Alternatif Two-Way ANOVA Non-Parametrik', dasar: 'Data ordinal dari beberapa pengukuran berulang pada subjek yang sama dengan distribusi tidak normal.', tujuan: 'Menguji perbedaan beberapa kelompok data berpasangan (lebih dari 2 kondisi/waktu).', contoh: 'Perbedaan Penilaian Kualitas Layanan E-Banking pada Periode Pagi, Siang, dan Malam.', tips: 'Cocok untuk evaluasi berulang tanpa syarat distribusi normal.' },
+                    { id: 23, kategori: 'Statistik Non-Parametrik', nama: 'Chi-Square Test of Independence', sub: 'Uji Chi-Square Ketergantungan', dasar: 'Data diskrit atau kategori berskala nominal/ordinal.', tujuan: 'Menguji ada atau tidaknya hubungan independensi antara dua variabel kategori (baris x kolom).', contoh: 'Hubungan antara Tingkat Pendapatan (Rendah/Tinggi) dengan Pemilihan Jenis Asuransi.', tips: 'Pastikan syarat nilai Expected Frequency (sel bernilai < 5) memenuhi aturan statistik Chi-Square.' },
+                    { id: 24, kategori: 'Statistik Non-Parametrik', nama: 'Korelasi Spearman Rank', sub: 'Spearman\'s Rho', dasar: 'Data berskala ordinal atau data interval/rasio yang tidak berdistribusi normal.', tujuan: 'Mengukur kekuatan dan arah hubungan antara dua variabel berdasarkan peringkat data.', contoh: 'Hubungan antara Tingkat Stres (Skala Likert) dengan Kinerja Pegawai di Instansi Pemerintah.', tips: 'Tidak memerlukan asumsi normalitas data karena dihitung berdasarkan rank.' },
+                    { id: 25, kategori: 'Statistik Non-Parametrik', nama: 'Kendall\'s Tau-b / Tau-c', sub: 'Korelasi Peringkat Kendall', dasar: 'Data berskala ordinal dengan ukuran sampel kecil atau banyak data yang kembar (ties).', tujuan: 'Mengukur korelasi peringkat antarvariabel ordinal dengan presisi tinggi pada data kembar.', contoh: 'Hubungan Peringkat Kinerja Dosen dengan Penilaian Mahasiswa.', tips: 'Lebih akurat dibanding Spearman jika banyak nilai peringkat yang sama (ties).' },
+                    { id: 26, kategori: 'Analisis Multivariat', nama: 'MANOVA (Multivariate ANOVA)', sub: 'Analisis Varian Multivariat', dasar: 'Lebih dari satu variabel terikat (Y) berskala metrik dan satu atau lebih variabel bebas (X) berskala kategori.', tujuan: 'Menguji perbedaan rata-rata beberapa variabel terikat secara simultan antar kelompok sampel.', contoh: 'Pengaruh Program Pelatihan terhadap Peningkatan Kinerja dan Motivasi Kerja Karyawan Sekaligus.', tips: 'Menghindari bias kesalahan tipe I jika menguji variabel terikat satu per satu.' },
+                    { id: 27, kategori: 'Analisis Multivariat', nama: 'Analisis Faktor Eksploratori (EFA)', sub: 'Exploratory Factor Analysis', dasar: 'Banyak variabel indikator numerik/kuesioner untuk mereduksi dimensi.', tujuan: 'Mengelompokkan indikator-indikator yang saling berkorelasi menjadi beberapa faktor utama yang mendasarinya.', contoh: 'Reduksi Indikator Karakteristik Konsumen E-Commerce Menjadi Dimensi Utilitas Utama.', tips: 'Periksa nilai KMO Measure of Sampling Adequacy (> 0.50) dan Bartlett\'s Test (sig < 0.05).' },
+                    { id: 28, kategori: 'Analisis Multivariat', nama: 'Cluster Analysis', sub: 'K-Means & Hierarchical Clustering', dasar: 'Data multivariat kuantitatif untuk pengelompokan objek atau responden.', tujuan: 'Mengelompokkan sampel atau wilayah ke dalam beberapa cluster yang homogen secara internal dan heterogen antarcluster.', contoh: 'Klasterisasi Tingkat Kesejahteraan Kabupaten/Kota di Provinsi Jawa Barat Berdasarkan Indikator Makro.', tips: 'Sangat populer untuk penelitian geografi, ekonomi regional, dan segmentasi pasar.' },
+                    { id: 29, kategori: 'Analisis Multivariat', nama: 'Discriminant Analysis', sub: 'Analisis Diskriminan', dasar: 'Variabel terikat berupa kategori (2 atau lebih grup) dan variabel bebas berskala interval/rasio.', tujuan: 'Memprediksi keanggotaan kelompok sampel berdasarkan sekumpulan variabel prediktor metrik.', contoh: 'Model Klasifikasi Perusahaan Sehat dan Perusahaan Bangkrut Berdasarkan Rasio Keuangan.', tips: 'Mirip dengan regresi logistik tetapi mensyaratkan asumsi normalitas multivariat.' },
+                    { id: 30, kategori: 'Analisis Multivariat', nama: 'Canonical Correlation', sub: 'Korelasi Kanonik', dasar: 'Dua set variabel banyak (set variabel X dan set variabel Y) berskala interval/rasio.', tujuan: 'Menganalisis hubungan linier simultan antara beberapa variabel bebas dengan beberapa variabel terikat sekaligus.', contoh: 'Hubungan antara Karakteristik Demografi & Psikologis Konsumen dengan Pola Pembelian Berbagai Produk.', tips: 'Merupakan bentuk generalisasi tertinggi dari analisis korelasi berganda.' },
+                    { id: 31, kategori: 'Analisis Data Lanjutan', nama: 'Path Analysis (Analisis Jalur)', sub: 'Model Kausalitas & Mediasi', dasar: 'Model hubungan sebab-akibat langsung dan tidak langsung antarvariabel (X -> M -> Y).', tujuan: 'Menguji peran variabel mediasi (perantara) dalam menjembatani pengaruh variabel independen terhadap dependen.', contoh: 'Pengaruh Kualitas Produk terhadap Kepuasan Pelanggan dan Dampaknya pada Loyalitas Merek.', tips: 'Gunakan Sobel Test atau Bootstrapping untuk menguji signifikansi pengaruh tidak langsung (mediasi).' },
+                    { id: 32, kategori: 'Analisis Data Lanjutan', nama: 'Moderated Regression Analysis (MRA)', sub: 'Analisis Interaksi / Variabel Moderasi', dasar: 'Persamaan regresi yang mengandung unsur perkalian antara variabel independen dengan variabel moderator (X * Z).', tujuan: 'Mengetahui apakah variabel moderator memperkuat atau memperlemah hubungan antara variabel bebas dan terikat.', contoh: 'Peran Budaya Organisasi sebagai Moderasi Pengaruh Kepemimpinan terhadap Kinerja Pegawai.', tips: 'Sentralisasi data (mean centering) sering digunakan untuk menghindari multikolinearitas tinggi pada MRA.' },
+                    { id: 33, kategori: 'Analisis Data Lanjutan', nama: 'Structural Equation Modeling (SEM-PLS)', sub: 'Partial Least Squares SEM (SmartPLS)', dasar: 'Model struktural kompleks dengan indikator reflektif/formatif, sampel kecil, dan distribusi data bebas (non-parametrik).', tujuan: 'Menguji model konseptual kompleks yang melibatkan banyak variabel laten (konstruk) dan indikator sekaligus.', contoh: 'Pengaruh Transformational Leadership dan Work-Life Balance terhadap Employee Engagement dan Turnover Intention.', tips: 'Sangat populer di skripsi manajemen, akuntansi, dan psikologi modern menggunakan software SmartPLS.' },
+                    { id: 34, kategori: 'Analisis Data Lanjutan', nama: 'SEM-CB (Covariance Based SEM)', sub: 'LISREL / AMOS / Lavaan', dasar: 'Sampel besar (> 200 responden), data berdistribusi normal multivariat, bertujuan konfirmasi teori.', tujuan: 'Menguji kesesuaian (Goodness of Fit) model teoritis secara keseluruhan dengan data empiris lapangan.', contoh: 'Konfirmasi Model Teoretis Kepuasan Pemustaka Terhadap Kualitas Layanan Perpustakaan.', tips: 'Perhatikan indikator fit seperti Chi-Square, RMSEA (< 0.08), CFI (> 0.90), dan TLI.' },
+                    { id: 35, kategori: 'Analisis Data Lanjutan', nama: 'Analisis Regresi Logistik', sub: 'Binary & Multinomial Logistic Regression', dasar: 'Variabel terikat (Y) bersifat kualitatif dikotomi (0 dan 1) atau politomi, variabel bebas bebas dari asumsi normalitas.', tujuan: 'Memprediksi probabilitas terjadinya suatu kejadian kategori berdasarkan variabel independen.', contoh: 'Faktor-faktor yang Memengaruhi Keputusan Mahasiswa Memilih Kuliah Sambil Bekerja (Ya/Tidak).', tips: 'Evaluasi model menggunakan Nagelkerke R Square dan uji Hosmer and Lemeshow.' },
+                    { id: 36, kategori: 'Analisis Data Lanjutan', nama: 'Analisis Survival (Survival Analysis)', sub: 'Kaplan-Meier & Cox Proportional Hazards', dasar: 'Data waktu hingga terjadinya suatu peristiwa (time-to-event data).', tujuan: 'Menganalisis durasi waktu sampai suatu peristiwa tertentu terjadi (misal: waktu tunggu kerja, masa retensi pelanggan).', contoh: 'Analisis Durasi Waktu Tunggu Lulusan Perguruan Tinggi Mendapatkan Pekerjaan Pertama.', tips: 'Sangat berguna jika ada data sensor (censored data) di mana responden berhenti sebelum event terjadi.' }
+                ],
+
+                get filteredData() {
+                    return this.statistics.filter(item => {
+                        const matchesCategory = this.selectedCategory === 'Semua' || item.kategori === this.selectedCategory;
+                        const query = this.search.toLowerCase();
+                        const matchesSearch = item.nama.toLowerCase().includes(query) ||
+                                              item.sub.toLowerCase().includes(query) ||
+                                              item.dasar.toLowerCase().includes(query) ||
+                                              item.tujuan.toLowerCase().includes(query) ||
+                                              item.contoh.toLowerCase().includes(query);
+                        return matchesCategory && matchesSearch;
+                    });
+                },
+                get totalPages() { return Math.ceil(this.filteredData.length / this.perPage) || 1; },
+                get startIndex() { return (this.currentPage - 1) * this.perPage; },
+                get paginatedData() { return this.filteredData.slice(this.startIndex, this.startIndex + this.perPage); },
+                changePage(page) { if (page >= 1 && page <= this.totalPages) this.currentPage = page; },
+                openModal(item) { this.activeItem = item; this.showModal = true; }
+            }
+        }
+
+        // Kalkulator Sederhana Script
+        function hitungKalkulator() {
+            const val = document.getElementById('calc-input').value;
+            const arr = val.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+            if (arr.length === 0) return;
+            
+            const sum = arr.reduce((a, b) => a + b, 0);
+            const mean = sum / arr.length;
+            
+            const sorted = [...arr].sort((a,b) => a-b);
+            let median = sorted.length % 2 === 0 ? (sorted[sorted.length/2 - 1] + sorted[sorted.length/2])/2 : sorted[Math.floor(sorted.length/2)];
+            
+            const freq = {};
+            let maxF = 0;
+            arr.forEach(n => { freq[n] = (freq[n]||0) + 1; if(freq[n] > maxF) maxF = freq[n]; });
+            let modes = Object.keys(freq).filter(k => freq[k] === maxF);
+
+            document.getElementById('calc-mean').innerText = Number.isInteger(mean) ? mean : mean.toFixed(2);
+            document.getElementById('calc-median').innerText = Number.isInteger(median) ? median : median.toFixed(2);
+            document.getElementById('calc-mode').innerText = modes.join(', ');
+        }
+        window.onload = hitungKalkulator;
+    </script>
+</body>
+</html>
