@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kertas Kerja Evaluasi Wilayah Bebas dari Korupsi (WBK)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter & Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            50: '#f0f4f8',
+                            100: '#d9e2ec',
+                            600: '#1e3a8a',
+                            700: '#1d3557',
+                            800: '#0f172a',
+                            900: '#0b1329',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#d97706',
+                            600: '#b45309',
+                            DEFAULT: '#c5a059',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-shadow { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+        }
+    </style>
+</head>
+<body class="bg-navy-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Header Instansi & Judul (Sticky) -->
+    <header class="bg-navy-900/95 backdrop-blur-md text-white shadow-xl border-b-4 border-gold-500 sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-gradient-to-br from-gold-500 to-amber-600 p-2.5 rounded-xl shadow-md text-navy-900">
+                        <i class="fa-solid fa-shield-halved text-2xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="bg-gold-500/20 text-gold-400 text-xs font-semibold px-2 py-0.5 rounded border border-gold-500/30">ZONA INTEGRITAS</span>
+                            <span class="text-xs text-slate-400">PermenPANRB No. 90 Tahun 2021</span>
+                        </div>
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white mt-0.5">Kertas Kerja Evaluasi WBK</h1>
+                    </div>
+                </div>
+                <!-- Action Buttons Header -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 border border-slate-700 transition shadow-sm">
+                        <i class="fa-solid fa-print"></i> Cetak Laporan
+                    </button>
+                    <button onclick="exportDataJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 border border-slate-700 transition shadow-sm">
+                        <i class="fa-solid fa-file-arrow-down"></i> Ekspor JSON
+                    </button>
+                    <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 border border-slate-700 transition shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-file-arrow-up"></i> Impor JSON
+                        <input type="file" id="importFile" accept=".json" class="hidden" onchange="importDataJSON(event)">
+                    </label>
+                    <button onclick="confirmResetData()" class="bg-red-900/50 hover:bg-red-800 text-red-200 px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 border border-red-700/50 transition shadow-sm" title="Reset Semua Data">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- Info & Dashboard Ringkasan -->
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <!-- Total Skor Card -->
+            <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200 flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute right-0 top-0 bottom-0 w-2 bg-gold-500"></div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Skor Evaluasi</p>
+                    <div class="flex items-baseline gap-2 mt-1">
+                        <span id="scoreDisplay" class="text-3xl font-extrabold text-navy-900">0.00</span>
+                        <span class="text-sm font-medium text-slate-400">/ 100</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                    <span id="wbkStatusBadge" class="px-2.5 py-1 text-xs font-bold rounded-full bg-slate-100 text-slate-600">Belum Memenuhi</span>
+                    <span class="text-xs text-slate-500 font-medium">Target Min: 75</span>
+                </div>
+            </div>
+
+            <!-- Progress Selesai Card -->
+            <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Indikator Selesai</p>
+                    <div class="flex items-baseline gap-2 mt-1">
+                        <span id="completedCountDisplay" class="text-3xl font-extrabold text-navy-900">0</span>
+                        <span id="totalItemsDisplay" class="text-sm font-medium text-slate-400">/ 0 Item</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                        <div id="progressBar" class="bg-gold-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Rincian Card -->
+            <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200 md:col-span-2 flex flex-col justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Distribusi Status Pengerjaan</p>
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                            <span class="block text-xs text-slate-500 font-medium">Belum</span>
+                            <span id="statBelum" class="text-lg font-bold text-slate-700">0</span>
+                        </div>
+                        <div class="bg-amber-50 p-2 rounded-lg border border-amber-200">
+                            <span class="block text-xs text-amber-600 font-medium">Proses</span>
+                            <span id="statProses" class="text-lg font-bold text-amber-700">0</span>
+                        </div>
+                        <div class="bg-emerald-50 p-2 rounded-lg border border-emerald-200">
+                            <span class="block text-xs text-emerald-600 font-medium">Selesai</span>
+                            <span id="statSelesai" class="text-lg font-bold text-emerald-700">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3 text-xs text-slate-400 flex items-center justify-between">
+                    <span><i class="fa-solid fa-circle-info text-gold-500 mr-1"></i> Data tersimpan otomatis di browser.</span>
+                    <span id="lastSavedTime" class="italic">Belum ada perubahan</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 no-print">
+            <div class="w-full md:w-1/3 relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" id="searchInput" oninput="filterChecklist()" placeholder="Cari indikator atau bukti dukung..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy-600 focus:border-transparent">
+            </div>
+            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                <button onclick="filterArea('all')" id="btn-filter-all" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-navy-900 text-white transition">Semua Area</button>
+                <button onclick="filterStatus('all')" id="btn-status-all" class="status-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 text-slate-700 hover:bg-slate-300 transition"><i class="fa-solid fa-filter mr-1"></i> Semua Status</button>
+            </div>
+        </div>
+
+        <!-- Area Perubahan Container (Dynamic Rendered) -->
+        <div id="areasContainer" class="space-y-6">
+            <!-- Rendered by JS -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-6 mt-12 border-t border-slate-800 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs">
+            <p>Aplikasi Kertas Kerja Evaluasi WBK &copy; 2026. Dikembangkan untuk Mendukung Reformasi Birokrasi Menuju Wilayah Bebas dari Korupsi.</p>
+        </div>
+    </footer>
+
+    <!-- Custom Notification / Modal Note Box -->
+    <div id="customModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-200 transform transition-all">
+            <h3 id="modalTitle" class="text-lg font-bold text-navy-900 mb-2">Notifikasi</h3>
+            <p id="modalMessage" class="text-sm text-slate-600 mb-6">Pesan notifikasi sistem.</p>
+            <div id="modalButtons" class="flex justify-end gap-3">
+                <button onclick="closeModal()" class="bg-navy-900 hover:bg-navy-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // Struktur Data 6 Area Perubahan WBK
+        const wbkData = [
+            {
+                id: 1,
+                area: "Manajemen Perubahan",
+                desc: "Mengubah secara sistematis dan konsisten pola pikir dan budaya kerja birokrasi menjadi birokrasi yang berintegritas dan berkinerja tinggi.",
+                weightTotal: 15,
+                items: [
+                    {
+                        no: 1,
+                        indicator: "Tim Kerja Pembangunan Zona Integritas",
+                        desc: "Dibentuknya tim kerja untuk memimpin dan mengawal pembangunan ZI menuju WBK/WBBM dengan penetapan anggota yang jelas.",
+                        bukti: "SK Tim Pembangunan ZI, Notulen Rapat Pembentukan, Daftar Hadir, dan Foto Kegiatan.",
+                        bobot: 3.75
+                    },
+                    {
+                        no: 2,
+                        indicator: "Rencana Pembangunan Zona Integritas",
+                        desc: "Penyusunan dokumen rencana kerja/aksi pembangunan ZI yang memuat target-target prioritas secara terukur.",
+                        bukti: "Dokumen Rencana Kerja / Action Plan ZI, Kerangka Acuan Kerja (KAK).",
+                        bobot: 3.75
+                    },
+                    {
+                        no: 3,
+                        indicator: "Pemantauan & Evaluasi Pembangunan ZI",
+                        desc: "Pelaksanaan monitoring dan evaluasi secara berkala terhadap pelaksanaan program kerja pembangunan ZI.",
+                        bukti: "Laporan Pemantauan Triwulanan, Catatan Evaluasi, Tindak Lanjut Hasil Evaluasi.",
+                        bobot: 3.75
+                    },
+                    {
+                        no: 4,
+                        indicator: "Perubahan Pola Pikir dan Budaya Kerja",
+                        desc: "Pimpinan menjadi role model (keteladanan), adanya agen perubahan (change agents), dan budaya kerja baru.",
+                        bukti: "Dokumentasi Role Model Pimpinan, Penetapan Agen Perubahan, Program Internalisasi Budaya Kerja.",
+                        bobot: 3.75
+                    }
+                ]
+            },
+            {
+                id: 2,
+                area: "Penataan Tatalaksana",
+                desc: "Meningkatkan efisiensi dan efektivitas sistem, proses kerja, dan manajemen kedinasan secara terbuka melalui penggunaan teknologi informasi.",
+                weightTotal: 15,
+                items: [
+                    {
+                        no: 5,
+                        indicator: "Prosedur Operasional Baku (SOP)",
+                        desc: "SOP telah mengacu pada peta proses bisnis instansi, diterapkan secara optimal dan dievaluasi berkala.",
+                        bukti: "Dokumen SOP Utama, Peta Proses Bisnis, SK Pemberlakuan SOP, Hasil Evaluasi SOP.",
+                        bobot: 5.0
+                    },
+                    {
+                        no: 6,
+                        indicator: "Penerapan E-Government",
+                        desc: "Sistem pemerintahan berbasis elektronik terimplementasi dalam pelayanan, keuangan, kepegawaian, dan kinerja.",
+                        bukti: "Link Aplikasi/Sistem Informasi yang digunakan, Manual Penggunaan, Bukti Pemanfaatan.",
+                        bobot: 5.0
+                    },
+                    {
+                        no: 7,
+                        indicator: "Keterbukaan Informasi Publik",
+                        desc: "Informasi publik dikelola, disediakan, dan diumumkan secara transparan dan mudah diakses masyarakat.",
+                        bukti: "Website Resmi Instansi, Maklumat Layanan PPID, Daftar Informasi Publik (DIP), Layanan Permohonan Informasi.",
+                        bobot: 5.0
+                    }
+                ]
+            },
+            {
+                id: 3,
+                area: "Penataan Sistem Manajemen SDM",
+                desc: "Meningkatkan profesionalisme aparatur sipil negara melalui sistem manajemen SDM yang transparan, objektif, dan akuntabel.",
+                weightTotal: 15,
+                items: [
+                    {
+                        no: 8,
+                        indicator: "Perencanaan Pegawai & Kebutuhan",
+                        desc: "Perencanaan kebutuhan pegawai disusun berdasarkan analisis jabatan (Anjab) dan analisis beban kerja (ABK).",
+                        bukti: "Dokumen Anjab & ABK, Peta Jabatan, Usulan Formasi Pegawai.",
+                        bobot: 2.5
+                    },
+                    {
+                        no: 9,
+                        indicator: "Pola Mutasi Internal",
+                        desc: "Mutasi/rotasi pegawai dilakukan secara transparan, objektif, dan berdasarkan kompetensi serta kinerja.",
+                        bukti: "SK Mutasi Internal, SOP Mutasi, Kriteria Penilaian Objektif Mutasi.",
+                        bobot: 2.5
+                    },
+                    {
+                        no: 10,
+                        indicator: "Pengembangan Kompetensi Pegawai",
+                        desc: "Pelaksanaan pelatihan/bimbingan teknis peningkatan kompetensi pegawai berdasarkan Training Needs Analysis (TNA).",
+                        bukti: "Rencana Pengembangan Kompetensi (TNA), Sertifikat Pelatihan, Laporan Kegiatan Diklat/Bimtek.",
+                        bobot: 2.5
+                    },
+                    {
+                        no: 11,
+                        indicator: "Penilaian Kinerja Individu",
+                        desc: "Penilaian kinerja dilakukan secara objektif, terukur, dan berdampak pada pemberian insentif/penghargaan.",
+                        bukti: "SKP (Sasaran Kinerja Pegawai), Penilaian Kinerja Triwulanan/Tahunan, SK Pemberian Reward.",
+                        bobot: 2.5
+                    },
+                    {
+                        no: 12,
+                        indicator: "Penegakan Disiplin, Kode Etik & Kode Perilaku",
+                        desc: "Internalisasi kode etik, penegakan disiplin, serta pemberian sanksi bagi pelanggar aturan disiplin pegawai.",
+                        bukti: "Dokumen Kode Etik, Berita Acara Sidang Kode Etik, Daftar Catatan Disiplin/Hukuman Disiplin.",
+                        bobot: 2.5
+                    },
+                    {
+                        no: 13,
+                        indicator: "Sistem Informasi Kepegawaian (SIMPEG)",
+                        desc: "Data kepegawaian dikelola secara terintegrasi, mutakhir, dan mudah diakses melalui sistem digital.",
+                        bukti: "Tautan SIMPEG / Aplikasi Kepegawaian, Laporan Rekonsiliasi Data Pegawai.",
+                        bobot: 2.5
+                    }
+                ]
+            },
+            {
+                id: 4,
+                area: "Penguatan Akuntabilitas Kinerja",
+                desc: "Meningkatkan kapasitas dan akuntabilitas kinerja instansi pemerintah dalam mewujudkan tata kelola yang baik.",
+                weightTotal: 15,
+                items: [
+                    {
+                        no: 14,
+                        indicator: "Keterlibatan Pimpinan dalam Akuntabilitas",
+                        desc: "Pimpinan terlibat langsung dalam penyusunan perencanaan strategis, penetapan kinerja, dan evaluasi berkala.",
+                        bukti: "Dokumen Perjanjian Kinerja, Notulen Rapat Evaluasi Kinerja yang dipimpin Pimpinan.",
+                        bobot: 3.75
+                    },
+                    {
+                        no: 15,
+                        indicator: "Perencanaan Kinerja (PK & Cascading)",
+                        desc: "Penyusunan Perencanaan Kinerja (Rencana Strategis, IKU) serta penjabaran (cascading) hingga level terbawah.",
+                        bukti: "Renstra, IKU (Indikator Kinerja Utama), Dokumen Cascading Kinerja.",
+                        bobot: 3.75
+                    },
+                    {
+                        no: 16,
+                        indicator: "Pengukuran Kinerja Berkala",
+                        desc: "Pengukuran capaian kinerja dilakukan secara berkala (bulanan/triwulanan) serta dianalisis penyerapannya.",
+                        bukti: "Laporan Capaian Kinerja Triwulanan, Analisis Evaluasi Kinerja.",
+                        bobot: 3.75
+                    },
+                    {
+                        no: 17,
+                        indicator: "Pelaporan Kinerja (LAKIP / LKjIP)",
+                        desc: "Penyusunan dan penyampaian Laporan Kinerja Instansi Pemerintah (LKjIP) tepat waktu dengan kualitas yang baik.",
+                        bukti: "Dokumen LKjIP Tahunan, Tanda Terima Penyampaian LKjIP, Rekomendasi Hasil Evaluasi LKjIP.",
+                        bobot: 3.75
+                    }
+                ]
+            },
+            {
+                id: 5,
+                area: "Penguatan Pengawasan",
+                desc: "Meningkatkan penyelenggaraan pemerintahan yang bersih dan bebas KKN melalui penguatan sistem pengawasan intern.",
+                weightTotal: 20,
+                items: [
+                    {
+                        no: 18,
+                        indicator: "Pengendalian Gratifikasi",
+                        desc: "Implementasi pengendalian gratifikasi (Unit Pengendali Gratifikasi, sosialisasi, pelaporan gratifikasi).",
+                        bukti: "SK Unit Pengendali Gratifikasi (UPG), Spanduk/Banner Tolak Gratifikasi, Logbook/Laporan UPG.",
+                        bobot: 3.33
+                    },
+                    {
+                        no: 19,
+                        indicator: "Sistem Pengendalian Intern Pemerintah (SPIP)",
+                        desc: "Penyelenggaraan SPIP yang mencakup penilaian risiko (risk assessment) atas program dan kegiatan instansi.",
+                        bukti: "Dokumen Penilaian Risiko, SK Satgas SPIP, Laporan Pemantauan Pengendalian Intern.",
+                        bobot: 3.33
+                    },
+                    {
+                        no: 20,
+                        indicator: "Pengaduan Masyarakat",
+                        desc: "Tersedianya sarana pengaduan masyarakat yang mudah diakses serta prosedur penanganan pengaduan yang jelas.",
+                        bukti: "Media Pengaduan (Lapor!, Call Center, Kotak Saran), SOP Penanganan Pengaduan, Rekapitulasi Pengaduan.",
+                        bobot: 3.33
+                    },
+                    {
+                        no: 21,
+                        indicator: "Whistleblowing System (WBS)",
+                        desc: "Penerapan sistem pelaporan pelanggaran (WBS) yang melindungi pelapor dan prosedur tindak lanjut yang transparan.",
+                        bukti: "SOP WBS, Mekanisme Perlindungan Pelapor, Laporan Tindak Lanjut WBS.",
+                        bobot: 3.33
+                    },
+                    {
+                        no: 22,
+                        indicator: "Penanganan Benturan Kepentingan",
+                        desc: "Identifikasi, sosialisasi, dan penanganan potensi benturan kepentingan dalam pengambilan keputusan/tugas.",
+                        bukti: "Identifikasi Benturan Kepentingan, Pakta Integritas, Register Benturan Kepentingan.",
+                        bobot: 3.33
+                    },
+                    {
+                        no: 23,
+                        indicator: "Kampanye Anti Korupsi",
+                        desc: "Pelaksanaan kampanye anti korupsi secara masif melalui berbagai media bagi internal pegawai dan publik.",
+                        bukti: "Dokumentasi Kampanye Anti Korupsi (Media Sosial, Spanduk, Seminar, Briefing).",
+                        bobot: 3.35
+                    }
+                ]
+            },
+            {
+                id: 6,
+                area: "Penguatan Kualitas Pelayanan Publik",
+                desc: "Meningkatkan kualitas dan inovasi pelayanan publik secara berkala sesuai kebutuhan dan harapan masyarakat.",
+                weightTotal: 20,
+                items: [
+                    {
+                        no: 24,
+                        indicator: "Standar Pelayanan",
+                        desc: "Penyusunan, penetapan, dan maklumat standar pelayanan yang dipublikasikan secara jelas pada unit pelayanan.",
+                        bukti: "SK Standar Pelayanan, SOP Pelayanan, Publikasi Standar Pelayanan (banner/website).",
+                        bobot: 3.33
+                    },
+                    {
+                        no: 25,
+                        indicator: "Maklumat Pelayanan",
+                        desc: "Adanya pernyataan kesanggupan penyelenggara untuk menyelenggarakan pelayanan sesuai standar yang ditetapkan.",
+                        bukti: "Banner/Plakat Maklumat Pelayanan di lokasi strategis dan media digital.",
+                        bobot: 3.33
+                    },
+                    {
+                        no: 26,
+                        indicator: "Survei Kepuasan Masyarakat (SKM)",
+                        desc: "Pelaksanaan SKM secara berkala, publikasi hasil survei, serta tindak lanjut perbaikan layanan.",
+                        bukti: "Laporan SKM Triwulanan/Semesteran, Indeks Kepuasan Masyarakat, Rencana Tindak Lanjut Hasil SKM.",
+                        bobot: 3.33
+                    },
+                    {
+                        no: 27,
+                        indicator: "Pengelolaan Pengaduan Pelayanan",
+                        desc: "Unit khusus/pengelola pengaduan pelayanan publik yang responsif menyelesaikan keluhan pengguna layanan.",
+                        bukti: "SOP Layanan Pengaduan, Register Pengaduan & Penyelesaiannya, Bukti Respon Cepat.",
+                        bobot: 3.33
+                    },
+                    {
+                        no: 28,
+                        indicator: "Inovasi Pelayanan Publik",
+                        desc: "Penciptaan inovasi pelayanan untuk memudahkan akses, mempercepat proses, dan meningkatkan kepuasan publik.",
+                        bukti: "Deskripsi & Profil Inovasi, Link/Aplikasi Inovasi, Dampak/Manfaat Inovasi bagi Masyarakat.",
+                        bobot: 3.33
+                    },
+                    {
+                        no: 29,
+                        indicator: "Fasilitas Sarana Prasarana Layanan",
+                        desc: "Ketersediaan fasilitas sarpras yang ramah kelompok rentan (disabilitas, lansia, ibu hamil) serta kenyamanan ruang.",
+                        bukti: "Foto Sarpras (Ramp, Kursi Roda, Toilet Disabilitas, Ruang Laktasi, Maklumat Khusus).",
+                        bobot: 3.35
+                    }
+                ]
+            }
+        ];
+
+        // Storage Key
+        const STORAGE_KEY = 'wbk_evaluation_data_v1';
+        let evaluationState = {};
+        let currentFilterArea = 'all';
+        let currentFilterStatus = 'all';
+
+        // Initialize Application State
+        function initApp() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                try {
+                    evaluationState = JSON.parse(savedData);
+                } catch (e) {
+                    console.error("Gagal memuat data dari localStorage", e);
+                    evaluationState = {};
+                }
+            }
+
+            // Inisialisasi default jika kosong
+            wbkData.forEach(area => {
+                area.items.forEach(item => {
+                    if (!evaluationState[item.no]) {
+                        evaluationState[item.no] = {
+                            status: 'Belum', // 'Belum', 'Proses', 'Selesai'
+                            notes: '',
+                            link: ''
+                        };
+                    }
+                });
+            });
+
+            renderUI();
+            updateSummaryDashboard();
+        }
+
+        // Simpan Data ke localStorage
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(evaluationState));
+            const now = new Date();
+            document.getElementById('lastSavedTime').innerText = `Terakhir disimpan: ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`;
+            updateSummaryDashboard();
+        }
+
+        // Render UI
+        function renderUI() {
+            const container = document.getElementById('areasContainer');
+            container.innerHTML = '';
+
+            let totalItemsCount = 0;
+            let filteredItemsGlobalCount = 0;
+
+            wbkData.forEach(area => {
+                // Cek filter area
+                if (currentFilterArea !== 'all' && area.id != currentFilterArea) {
+                    return;
+                }
+
+                // Filter items berdasarkan search query & status filter
+                const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+                
+                const filteredItems = area.items.filter(item => {
+                    const state = evaluationState[item.no] || { status: 'Belum', notes: '', link: '' };
+                    const matchSearch = item.indicator.toLowerCase().includes(searchQuery) || 
+                                        item.desc.toLowerCase().includes(searchQuery) || 
+                                        item.bukti.toLowerCase().includes(searchQuery) ||
+                                        item.no.toString().includes(searchQuery);
+                    const matchStatus = currentFilterStatus === 'all' || state.status === currentFilterStatus;
+                    return matchSearch && matchStatus;
+                });
+
+                if (filteredItems.length === 0 && (searchQuery || currentFilterStatus !== 'all')) {
+                    return; // Lewati area jika tidak ada item yang cocok dengan filter
+                }
+
+                // Hitung total item per area untuk header
+                let areaCompleted = area.items.filter(i => (evaluationState[i.no]?.status === 'Selesai')).length;
+                let areaProgressPct = Math.round((areaCompleted / area.items.length) * 100);
+
+                const areaCard = document.createElement('div');
+                areaCard.className = 'bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6 transition print-shadow';
+                
+                areaCard.innerHTML = `
+                    <div class="bg-gradient-to-r from-navy-900 to-navy-800 text-white p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <div class="flex items-center gap-3">
+                                <span class="bg-gold-500 text-navy-900 font-bold text-xs px-2.5 py-1 rounded-md">Area ${area.id}</span>
+                                <h2 class="text-lg font-bold tracking-tight">${area.area}</h2>
+                            </div>
+                            <p class="text-xs text-slate-300 mt-1 max-w-2xl">${area.desc}</p>
+                        </div>
+                        <div class="flex items-center gap-4 bg-navy-950/40 px-4 py-2 rounded-lg border border-slate-700/50 w-full md:w-auto justify-between md:justify-end">
+                            <div class="text-right">
+                                <span class="text-xs text-slate-300 block">Bobot Area: <strong class="text-gold-400">${area.weightTotal}%</strong></span>
+                                <span class="text-xs text-slate-400">Selesai: ${areaCompleted}/${area.items.length} Item</span>
+                            </div>
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center bg-navy-900 border-2 border-gold-500 text-gold-400 font-bold text-xs">
+                                ${areaProgressPct}%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="divide-y divide-slate-100 p-4 sm:p-6" id="area-items-${area.id}">
+                    </div>
+                `;
+
+                const itemsContainer = areaCard.querySelector(`#area-items-${area.id}`);
+
+                area.items.forEach(item => {
+                    totalItemsCount++;
+                    const isMatch = filteredItems.some(fi => fi.no === item.no);
+                    if (!isMatch) return; // Skip jika tidak lolos filter
+                    
+                    filteredItemsGlobalCount++;
+                    const state = evaluationState[item.no] || { status: 'Belum', notes: '', link: '' };
+
+                    // Tentukan warna status badge
+                    let statusBg = 'bg-slate-100 text-slate-700 border-slate-200';
+                    if (state.status === 'Proses') statusBg = 'bg-amber-100 text-amber-800 border-amber-300';
+                    if (state.status === 'Selesai') statusBg = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+
+                    const itemRow = document.createElement('div');
+                    itemRow.className = 'py-5 first:pt-0 last:pb-0 grid grid-cols-1 lg:grid-cols-12 gap-4 items-start';
+                    itemRow.innerHTML = `
+                        <!-- Kolom Indikator & Deskripsi -->
+                        <div class="lg:col-span-5 space-y-2">
+                            <div class="flex items-start gap-2">
+                                <span class="bg-navy-50 text-navy-800 border border-navy-200 font-bold text-xs px-2 py-0.5 rounded shrink-0">#${item.no}</span>
+                                <div>
+                                    <h3 class="font-semibold text-slate-900 text-sm sm:text-base leading-snug">${item.indicator}</h3>
+                                    <p class="text-xs text-slate-600 mt-1">${item.desc}</p>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200/80 text-xs text-slate-700">
+                                <strong class="text-navy-900 block mb-0.5"><i class="fa-solid fa-folder-open text-gold-600 mr-1"></i> Bukti Dukung yang Diperlukan:</strong>
+                                ${item.bukti}
+                            </div>
+                        </div>
+
+                        <!-- Kolom Status & Bobot -->
+                        <div class="lg:col-span-3 flex flex-col gap-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-medium text-slate-500">Bobot Nilai: <span class="font-bold text-slate-800">${item.bobot}%</span></span>
+                                <select onchange="updateItemStatus(${item.no}, this.value)" class="text-xs font-bold px-3 py-1.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-navy-600 cursor-pointer transition ${statusBg}">
+                                    <option value="Belum" ${state.status === 'Belum' ? 'selected' : ''}>Belum</option>
+                                    <option value="Proses" ${state.status === 'Proses' ? 'selected' : ''}>Proses</option>
+                                    <option value="Selesai" ${state.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-500 mb-1"><i class="fa-solid fa-link mr-1"></i> Tautan / URL Dokumen Bukti</label>
+                                <input type="url" value="${escapeHtml(state.link || '')}" onchange="updateItemLink(${item.no}, this.value)" placeholder="https://drive.google.com/..." class="w-full text-xs px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent">
+                            </div>
+                        </div>
+
+                        <!-- Kolom Catatan / Progress -->
+                        <div class="lg:col-span-4 flex flex-col gap-1">
+                            <label class="block text-[11px] font-semibold text-slate-500"><i class="fa-solid fa-note-sticky mr-1"></i> Catatan Progress / Kendala</label>
+                            <textarea rows="3" onchange="updateItemNotes(${item.no}, this.value)" placeholder="Tuliskan catatan kemajuan atau kendala pengumpulan bukti dukung..." class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent resize-y">${escapeHtml(state.notes || '')}</textarea>
+                        </div>
+                    `;
+                    itemsContainer.appendChild(itemRow);
+                });
+
+                container.appendChild(areaCard);
+            });
+        }
+
+        // Update Handler Functions
+        function updateItemStatus(itemNo, status) {
+            if (!evaluationState[itemNo]) evaluationState[itemNo] = {};
+            evaluationState[itemNo].status = status;
+            saveToStorage();
+            renderUI();
+        }
+
+        function updateItemLink(itemNo, link) {
+            if (!evaluationState[itemNo]) evaluationState[itemNo] = {};
+            evaluationState[itemNo].link = link;
+            saveToStorage();
+        }
+
+        function updateItemNotes(itemNo, notes) {
+            if (!evaluationState[itemNo]) evaluationState[itemNo] = {};
+            evaluationState[itemNo].notes = notes;
+            saveToStorage();
+        }
+
+        // Kalkulasi Skor & Ringkasan Real-Time
+        function updateSummaryDashboard() {
+            let totalItems = 0;
+            let completedItems = 0;
+            let countBelum = 0;
+            let countProses = 0;
+            let countSelesai = 0;
+            let totalScoreEarned = 0;
+
+            wbkData.forEach(area => {
+                area.items.forEach(item => {
+                    totalItems++;
+                    const st = evaluationState[item.no]?.status || 'Belum';
+                    if (st === 'Belum') countBelum++;
+                    else if (st === 'Proses') countProses++;
+                    else if (st === 'Selesai') {
+                        countSelesai++;
+                        totalScoreEarned += item.bobot;
+                    }
+                });
+            });
+
+            // Update UI Counters
+            document.getElementById('totalItemsDisplay').innerText = `/ ${totalItems} Item`;
+            document.getElementById('completedCountDisplay').innerText = countSelesai;
+            document.getElementById('statBelum').innerText = countBelum;
+            document.getElementById('statProses').innerText = countProses;
+            document.getElementById('statSelesai').innerText = countSelesai;
+
+            const percentage = Math.round((countSelesai / totalItems) * 100) || 0;
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+
+            // Display Total Score
+            const formattedScore = totalScoreEarned.toFixed(2);
+            document.getElementById('scoreDisplay').innerText = formattedScore;
+
+            // Status Badge Evaluasi WBK (Standar KemenPANRB: Nilai min 75 untuk WBK, 85 untuk WBBM)
+            const badge = document.getElementById('wbkStatusBadge');
+            if (totalScoreEarned >= 85) {
+                badge.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300';
+                badge.innerText = 'Potensi WBBM / WBK';
+            } else if (totalScoreEarned >= 75) {
+                badge.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800 border border-blue-300';
+                badge.innerText = 'Memenuhi Target WBK';
+            } else if (totalScoreEarned >= 50) {
+                badge.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800 border border-amber-300';
+                badge.innerText = 'Dalam Proses Pembangunan';
+            } else {
+                badge.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-slate-100 text-slate-700 border border-slate-200';
+                badge.innerText = 'Belum Memenuhi Target';
+            }
+        }
+
+        // Filtering Area & Status
+        function filterArea(areaId) {
+            currentFilterArea = areaId;
+            // Update active button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-navy-900', 'text-white');
+                btn.classList.add('bg-slate-200', 'text-slate-700');
+            });
+            event.target.classList.remove('bg-slate-200', 'text-slate-700');
+            event.target.classList.add('bg-navy-900', 'text-white');
+            renderUI();
+        }
+
+        function filterStatus(status) {
+            currentFilterStatus = status;
+            renderUI();
+        }
+
+        function filterChecklist() {
+            renderUI();
+        }
+
+        // Ekspor Data ke JSON
+        function exportDataJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(evaluationState, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `kertas_kerja_wbk_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showModal("Berhasil Ekspor", "Data kertas kerja berhasil diunduh dalam format JSON.");
+        }
+
+        // Impor Data dari JSON
+        function importDataJSON(event) {
+            const fileReader = new FileReader();
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0], "UTF-8");
+                fileReader.onload = (e) => {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        evaluationState = importedData;
+                        saveToStorage();
+                        renderUI();
+                        showModal("Berhasil Impor", "Data kertas kerja berhasil dimuat kembali ke sistem.");
+                    } catch (error) {
+                        showModal("Gagal Impor", "Format file JSON tidak valid.");
+                    }
+                };
+            }
+        }
+
+        // Reset Data Confirmation
+        function confirmResetData() {
+            const modal = document.getElementById('customModal');
+            document.getElementById('modalTitle').innerText = "Konfirmasi Reset Data";
+            document.getElementById('modalMessage').innerText = "Apakah Anda yakin ingin mereset seluruh ceklis dan catatan? Tindakan ini tidak dapat dibatalkan.";
+            
+            const btnContainer = document.getElementById('modalButtons');
+            btnContainer.innerHTML = `
+                <button onclick="closeModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-2 rounded-lg text-sm font-medium transition">Batal</button>
+                <button onclick="executeReset()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">Ya, Reset</button>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function executeReset() {
+            localStorage.removeItem(STORAGE_KEY);
+            evaluationState = {};
+            initApp();
+            closeModal();
+            showModal("Reset Berhasil", "Semua data telah dikembalikan ke pengaturan awal.");
+        }
+
+        // Utility Modal UI
+        function showModal(title, message) {
+            const modal = document.getElementById('customModal');
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = message;
+            document.getElementById('modalButtons').innerHTML = `
+                <button onclick="closeModal()" class="bg-navy-900 hover:bg-navy-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition">Tutup</button>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // Tambahkan tombol filter area secara dinamis pada toolbar
+        window.addEventListener('DOMContentLoaded', () => {
+            const toolbarContainer = document.querySelector('.flex.flex-wrap.items-center.gap-2.w-full.md\\:w-auto');
+            wbkData.forEach(area => {
+                const btn = document.createElement('button');
+                btn.innerHTML = `Area ${area.id}`;
+                btn.className = 'filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 text-slate-700 hover:bg-slate-300 transition';
+                btn.onclick = (e) => filterArea(area.id);
+                toolbarContainer.appendChild(btn);
+            });
+
+            initApp();
+        });
+    </script>
+</body>
+</html>

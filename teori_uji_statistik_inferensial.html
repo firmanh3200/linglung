@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Lengkap Uji Statistik Inferensial untuk Skripsi</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Fira Code for math/code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax for rendering equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">StatSkripsi Pro</span>
+                    <span class="hidden sm:inline-block text-xs bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-full ml-2 font-medium">Panduan Mahasiswa</span>
+                </div>
+            </div>
+            
+            <nav class="hidden md:flex items-center space-x-1 text-sm font-medium">
+                <a href="#pengantar" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">Pengantar</a>
+                <a href="#kalkulator" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition text-indigo-600 dark:text-indigo-400 font-semibold"><i class="fa-solid fa-calculator mr-1"></i> Asisten Uji</a>
+                <a href="#uji-beda" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">Uji Beda</a>
+                <a href="#uji-hubungan" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">Uji Hubungan</a>
+                <a href="#uji-asumsi" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">Uji Asumsi</a>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <button id="themeToggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:scale-105 transition" aria-label="Toggle Theme">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:inline"></i>
+                </button>
+                <button id="mobileMenuBtn" class="md:hidden p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" aria-label="Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Nav Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden px-4 pt-2 pb-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-1">
+            <a href="#pengantar" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm">Pengantar</a>
+            <a href="#kalkulator" class="block px-3 py-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-sm"><i class="fa-solid fa-calculator mr-1"></i> Asisten Uji</a>
+            <a href="#uji-beda" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm">Uji Beda</a>
+            <a href="#uji-hubungan" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm">Uji Hubungan & Pengaruh</a>
+            <a href="#uji-asumsi" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm">Uji Asumsi Klasik</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="pengantar" class="relative overflow-hidden pt-16 pb-20 lg:pt-24 lg:pb-28 bg-gradient-to-b from-indigo-50/50 via-slate-50 to-white dark:from-slate-900/50 dark:via-slate-950 dark:to-slate-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto">
+                <span class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 mb-6 shadow-sm">
+                    <i class="fa-solid fa-sparkles"></i>
+                    <span>Panduan Anti-Panik Sidang Skripsi</span>
+                </span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6">
+                    Kuasai <span class="bg-gradient-to-r from-indigo-600 via-violet-600 to-pink-600 bg-clip-text text-transparent">Uji Statistik Inferensial</span> Tanpa Rumit
+                </h1>
+                <p class="text-lg sm:text-xl text-slate-600 dark:text-slate-300 mb-8 leading-relaxed">
+                    Situs referensi komprehensif untuk mahasiswa tingkat akhir. Pahami konsep, rumus baku, syarat pengujian, hingga contoh kasus penelitian nyata di dunia skripsi dengan penjelasan bahasa yang membumi.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <a href="#kalkulator" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg shadow-indigo-600/30 transition transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Cari Uji yang Tepat</span>
+                    </a>
+                    <a href="#uji-beda" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold border border-slate-200 dark:border-slate-700 shadow-sm transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>Jelajahi Materi Uji</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Stat Cards -->
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
+                <div class="glass-card p-5 rounded-2xl shadow-sm text-center">
+                    <div class="text-indigo-600 dark:text-indigo-400 text-2xl font-bold mb-1">Parametrik</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400">Data Normal & Skala Interval/Rasio</div>
+                </div>
+                <div class="glass-card p-5 rounded-2xl shadow-sm text-center">
+                    <div class="text-violet-600 dark:text-violet-400 text-2xl font-bold mb-1">Non-Parametrik</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400">Bebas Sebaran & Data Ordinal/Nominal</div>
+                </div>
+                <div class="glass-card p-5 rounded-2xl shadow-sm text-center">
+                    <div class="text-pink-600 dark:text-pink-400 text-2xl font-bold mb-1">Uji Beda & Hub</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400">Komparasi & Korelasi Regresi Lengkap</div>
+                </div>
+                <div class="glass-card p-5 rounded-2xl shadow-sm text-center">
+                    <div class="text-emerald-600 dark:text-emerald-400 text-2xl font-bold mb-1">Studi Kasus</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400">Contoh Nyata Skripsi Mahasiswa</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Decision Assistant Calculator Section -->
+    <section id="kalkulator" class="py-16 bg-slate-100/70 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <span class="text-indigo-600 dark:text-indigo-400 font-semibold text-sm uppercase tracking-wider">Asisten Pemilihan Uji</span>
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white mt-1">Bingung Pakai Statistik Apa? Pilih di Sini!</h2>
+                <p class="text-slate-600 dark:text-slate-400 mt-2 max-w-2xl mx-auto">Jawab 3 pertanyaan mudah di bawah ini untuk mengetahui jenis uji statistik inferensial yang paling cocok untuk hipotesis penelitian skripsi Anda.</p>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 sm:p-10 shadow-xl">
+                <!-- Wizard Step 1: Tujuan -->
+                <div class="mb-8">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+                        <span class="bg-indigo-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">1</span> Apa tujuan utama penelitian / hipotesis Anda?
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <button type="button" onclick="setWizardGoal('beda')" id="goal-beda" class="wizard-goal-btn p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 text-left transition bg-white dark:bg-slate-800/80">
+                            <div class="font-semibold text-slate-900 dark:text-white mb-1"><i class="fa-solid fa-code-compare text-indigo-500 mr-2"></i>Uji Beda (Komparasi)</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">Membandingkan rata-rata 2 kelompok atau lebih.</div>
+                        </button>
+                        <button type="button" onclick="setWizardGoal('hubungan')" id="goal-hubungan" class="wizard-goal-btn p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 text-left transition bg-white dark:bg-slate-800/80">
+                            <div class="font-semibold text-slate-900 dark:text-white mb-1"><i class="fa-solid fa-chart-line text-indigo-500 mr-2"></i>Uji Hubungan / Pengaruh</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">Melihat korelasi atau pengaruh variabel X terhadap Y.</div>
+                        </button>
+                        <button type="button" onclick="setWizardGoal('frekuensi')" id="goal-frekuensi" class="wizard-goal-btn p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 text-left transition bg-white dark:bg-slate-800/80">
+                            <div class="font-semibold text-slate-900 dark:text-white mb-1"><i class="fa-solid fa-pie-chart text-indigo-500 mr-2"></i>Uji Proporsi / Kategori</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">Analisis frekuensi data kategorikal/nominal.</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Wizard Step 2: Jumlah Sampel / Kelompok (Conditional) -->
+                <div id="step-subgroup" class="mb-8 hidden">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+                        <span class="bg-indigo-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">2</span> Detail Sampel atau Kelompok:
+                    </label>
+                    <div id="subgroup-options" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- Wizard Step 3: Normalitas Data -->
+                <div id="step-normality" class="mb-8 hidden">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+                        <span class="bg-indigo-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">3</span> Bagaimana distribusi data Anda (Uji Normalitas)?
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button type="button" onclick="setWizardNorm('normal')" id="norm-normal" class="wizard-norm-btn p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 text-left transition bg-white dark:bg-slate-800/80">
+                            <div class="font-semibold text-slate-900 dark:text-white mb-1">Data Berdistribusi Normal (Parametrik)</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">Nilai Sig. > 0.05 pada uji Kolmogorov-Smirnov / Shapiro-Wilk.</div>
+                        </button>
+                        <button type="button" onclick="setWizardNorm('tidak')" id="norm-tidak" class="wizard-norm-btn p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 text-left transition bg-white dark:bg-slate-800/80">
+                            <div class="font-semibold text-slate-900 dark:text-white mb-1">Data Tidak Normal / Ordinal / Nominal</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">Nilai Sig. < 0.05 atau skala data ordinal/peringkat.</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Wizard Result Box -->
+                <div id="wizard-result" class="hidden mt-6 p-6 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 transition-all duration-300">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 text-xl shadow-md">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div class="flex-1">
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Rekomendasi Uji Statistik Skripsi:</span>
+                            <h3 id="res-title" class="text-xl font-bold text-slate-900 dark:text-white mt-1 mb-2"></h3>
+                            <p id="res-desc" class="text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed"></p>
+                            <div class="flex flex-wrap gap-2">
+                                <span id="res-tag-type" class="px-3 py-1 bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded-lg text-xs font-semibold shadow-sm"></span>
+                                <span id="res-tag-software" class="px-3 py-1 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold shadow-sm">SPSS / Jamovi / R</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Sections -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
+
+        <!-- Uji Beda Section -->
+        <section id="uji-beda">
+            <div class="flex items-center space-x-3 mb-8">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-scale-balanced text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Uji Beda (Komparasi)</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Membandingkan rata-rata nilai antar kelompok variabel</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- T-Test Card -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">Parametrik</span>
+                            <span class="text-xs text-slate-400 font-mono">2 Sampel atau 1 Sampel</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Independent & Paired Sample T-Test</h3>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm mb-6 leading-relaxed">
+                            Digunakan untuk menguji apakah terdapat perbedaan rata-rata yang signifikan antara dua kelompok sampel. <strong>Independent</strong> untuk sampel bebas (misal: pria vs wanita), sedangkan <strong>Paired</strong> untuk sampel berpasangan (misal: pre-test vs post-test).
+                        </p>
+                        
+                        <!-- Formula Box -->
+                        <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-900/80 mb-6 font-mono text-sm overflow-x-auto text-slate-700 dark:text-slate-200">
+                            <div class="text-xs text-slate-400 mb-1 font-sans font-semibold">Rumus Dasar (Independent T-Test):</div>
+                            $$t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
+                        </div>
+
+                        <!-- Real Research Example -->
+                        <div class="border-l-4 border-indigo-600 pl-4 py-1 mb-6">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-1">Contoh Kasus Skripsi Nyata:</h4>
+                            <p class="text-sm text-slate-700 dark:text-slate-300">
+                                <em>"Perbedaan Hasil Belajar Matematika Siswa antara Model Pembelajaran Problem Based Learning (Kelas A) dan Model Konvensional (Kelas B)."</em> Uji t independen digunakan untuk membuktikan apakah nilai rata-rata kelas A benar-benar lebih tinggi secara signifikan dibanding kelas B.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+                        <span><i class="fa-solid fa-check-circle text-emerald-500 mr-1"></i> Syarat: Normal & Homogen</span>
+                        <span class="font-mono">SPSS: Analyze > Compare Means</span>
+                    </div>
+                </div>
+
+                <!-- ANOVA Card -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300">Parametrik (Multi-Kelompok)</span>
+                            <span class="text-xs text-slate-400 font-mono">> 2 Kelompok</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Analysis of Variance (ANOVA / F-Test)</h3>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm mb-6 leading-relaxed">
+                            Digunakan ketika Anda ingin membandingkan rata-rata dari <strong>tiga kelompok atau lebih</strong> sekaligus (misal: membandingkan kinerja karyawan berdasarkan tingkat pendidikan: SMA, S1, S2). Mencegah kesalahan galat jika menggunakan t-test berulang kali.
+                        </p>
+                        
+                        <!-- Formula Box -->
+                        <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-900/80 mb-6 font-mono text-sm overflow-x-auto text-slate-700 dark:text-slate-200">
+                            <div class="text-xs text-slate-400 mb-1 font-sans font-semibold">Rumus Dasar (One-Way ANOVA):</div>
+                            $$F = \frac{MS_{between}}{MS_{within}} = \frac{SS_{between} / (k - 1)}{SS_{within} / (N - k)}$$
+                        </div>
+
+                        <!-- Real Research Example -->
+                        <div class="border-l-4 border-violet-600 pl-4 py-1 mb-6">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-violet-600 dark:text-violet-400 mb-1">Contoh Kasus Skripsi Nyata:</h4>
+                            <p class="text-sm text-slate-700 dark:text-slate-300">
+                                <em>"Perbedaan Tingkat Kepuasan Pelanggan terhadap Layanan e-Wallet GoPay, OVO, dan DANA di Kalangan Mahasiswa."</em> ANOVA One-Way dipakai karena membandingkan rata-rata skor kepuasan pada 3 merek berbeda secara simultan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+                        <span><i class="fa-solid fa-check-circle text-emerald-500 mr-1"></i> Dilanjut Post-Hoc Test (Tukey)</span>
+                        <span class="font-mono">SPSS: Compare Means > One-Way ANOVA</span>
+                    </div>
+                </div>
+
+                <!-- Mann-Whitney & Kruskal Wallis Card -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-sm lg:col-span-2 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-pink-100 text-pink-700 dark:bg-pink-950 dark:text-pink-300">Non-Parametrik (Alternatif Uji Beda)</span>
+                            <span class="text-xs text-slate-400 font-mono">Data Ordinal / Tidak Normal</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Mann-Whitney U Test & Kruskal-Wallis Test</h3>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm mb-6 leading-relaxed">
+                            Jika data Anda gagal uji normalitas atau menggunakan skala ordinal (peringkat), Anda tidak boleh menggunakan T-Test atau ANOVA. Sebagai gantinya, gunakan <strong>Mann-Whitney U Test</strong> (untuk 2 kelompok independen, setara Independent T-Test) atau <strong>Kruskal-Wallis Test</strong> (untuk >2 kelompok, setara One-Way ANOVA). Uji ini bekerja berdasarkan peringkat (ranking) data.
+                        </p>
+
+                        <!-- Real Research Example -->
+                        <div class="border-l-4 border-pink-600 pl-4 py-1 mb-6">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-pink-600 dark:text-pink-400 mb-1">Contoh Kasus Skripsi Nyata:</h4>
+                            <p class="text-sm text-slate-700 dark:text-slate-300">
+                                <em>"Perbedaan Persepsi Kualitas Pelayanan Bank Syariah Ditinjau dari Tingkat Pendapatan Nasabah (Skala Ordinal Likert)."</em> Karena data berbentuk kuesioner skala likert ordinal dan tidak berdistribusi normal, uji Kruskal-Wallis adalah pilihan yang paling tepat.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+                        <span><i class="fa-solid fa-check-circle text-emerald-500 mr-1"></i> Tidak Butuh Asumsi Normalitas</span>
+                        <span class="font-mono">SPSS: Nonparametric Tests > Legacy Dialogs</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Uji Hubungan & Pengaruh Section -->
+        <section id="uji-hubungan">
+            <div class="flex items-center space-x-3 mb-8">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                    <i class="fa-solid fa-chart-line text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Uji Hubungan & Pengaruh</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Mengetahui keeratan asosiasi dan prediksi antar variabel</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Korelasi Pearson & Spearman -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Asosiasi / Korelasi</span>
+                            <span class="text-xs text-slate-400 font-mono">Variabel X & Y Sejajar</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Analisis Korelasi (Pearson & Spearman)</h3>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm mb-6 leading-relaxed">
+                            Mengukur seberapa kuat hubungan linier antara dua variabel tanpa menyatakan hubungan sebab-akibat. Gunakan <strong>Pearson</strong> untuk data kuantitatif normal, atau <strong>Spearman's Rho</strong> untuk data ordinal/tidak normal. Nilai koefisien berkisar dari -1 hingga +1.
+                        </p>
+                        
+                        <!-- Formula Box -->
+                        <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-900/80 mb-6 font-mono text-sm overflow-x-auto text-slate-700 dark:text-slate-200">
+                            <div class="text-xs text-slate-400 mb-1 font-sans font-semibold">Rumus Korelasi Pearson ($r$):</div>
+                            $$r = \frac{n(\sum XY) - (\sum X)(\sum Y)}{\sqrt{[n\sum X^2 - (\sum X)^2][n\sum Y^2 - (\sum Y)^2]}}$$
+                        </div>
+
+                        <!-- Real Research Example -->
+                        <div class="border-l-4 border-emerald-600 pl-4 py-1 mb-6">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">Contoh Kasus Skripsi Nyata:</h4>
+                            <p class="text-sm text-slate-700 dark:text-slate-300">
+                                <em>"Hubungan antara Intensitas Penggunaan Media Sosial Instagram dengan Tingkat Kecemasan Mahasiswa."</em> Peneliti ingin melihat apakah semakin tinggi durasi main IG, semakin tinggi pula skor kecemasan (korelasi positif).
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+                        <span><i class="fa-solid fa-check-circle text-emerald-500 mr-1"></i> Nilai r = 0 berarti tidak ada hubungan</span>
+                        <span class="font-mono">SPSS: Correlate > Bivariate</span>
+                    </div>
+                </div>
+
+                <!-- Regresi Linear Berganda -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">Pengaruh / Prediksi</span>
+                            <span class="text-xs text-slate-400 font-mono">Multi Variabel Bebas ($X_1, X_2 \rightarrow Y$)</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Analisis Regresi Linear Berganda</h3>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm mb-6 leading-relaxed">
+                            Jenis uji yang paling favorit di skripsi anak Ekonomi, Bisnis, dan Ilmu Sosial. Digunakan untuk meramalkan seberapa besar perubahan variabel terikat ($Y$) apabila dua atau lebih variabel bebas ($X_1, X_2, \dots$) dinaikkan atau diturunkan nilainya.
+                        </p>
+                        
+                        <!-- Formula Box -->
+                        <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-900/80 mb-6 font-mono text-sm overflow-x-auto text-slate-700 dark:text-slate-200">
+                            <div class="text-xs text-slate-400 mb-1 font-sans font-semibold">Persamaan Regresi Berganda:</div>
+                            $$Y = \alpha + \beta_1X_1 + \beta_2X_2 + \dots + \beta_nX_n + e$$
+                        </div>
+
+                        <!-- Real Research Example -->
+                        <div class="border-l-4 border-amber-600 pl-4 py-1 mb-6">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1">Contoh Kasus Skripsi Nyata:</h4>
+                            <p class="text-sm text-slate-700 dark:text-slate-300">
+                                <em>"Pengaruh Kualitas Produk ($X_1$) dan Harga ($X_2$) terhadap Keputusan Pembelian Smartphone ($Y$) di E-Commerce."</em> Regresi berganda digunakan untuk menguji koefisien parsial dan simultan (uji F & uji t).
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+                        <span><i class="fa-solid fa-check-circle text-emerald-500 mr-1"></i> Wajib Lulus Uji Asumsi Klasik</span>
+                        <span class="font-mono">SPSS: Regression > Linear</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Uji Asumsi Klasik Section -->
+        <section id="uji-asumsi">
+            <div class="flex items-center space-x-3 mb-8">
+                <div class="w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center shadow-lg shadow-rose-500/30">
+                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Syarat Wajib: Uji Asumsi Klasik</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Gerbang utama sebelum Anda melakukan pengujian Regresi Linear</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Normalitas -->
+                <div class="glass-card rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-4 font-bold">1</div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Uji Normalitas</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+                            Memastikan nilai residual berdistribusi normal. Dilihat dari nilai Asymp. Sig (2-tailed) pada uji <strong>Kolmogorov-Smirnov</strong> atau grafik <em>Normal P-P Plot</em> (> 0.05).
+                        </p>
+                    </div>
+                    <span class="text-xs text-slate-400 font-mono pt-3 border-t border-slate-200 dark:border-slate-800">Non-Parametric Test / Chart</span>
+                </div>
+
+                <!-- Multikolinearitas -->
+                <div class="glass-card rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-4 font-bold">2</div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Multikolinearitas</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+                            Memastikan antar variabel bebas ($X$) tidak saling berkorelasi tinggi. Dilihat dari nilai <strong>Tolerance > 0.10</strong> dan <strong>VIF < 10.0</strong>.
+                        </p>
+                    </div>
+                    <span class="text-xs text-slate-400 font-mono pt-3 border-t border-slate-200 dark:border-slate-800">Collinearity Statistics</span>
+                </div>
+
+                <!-- Heteroskedastisitas -->
+                <div class="glass-card rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-4 font-bold">3</div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Heteroskedastisitas</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+                            Memastikan varian residual dari satu pengamatan ke pengamatan lain tetap (homogen). Dicek via uji <strong>Glejser</strong> atau melihat sebaran titik pada grafik Scatterplot.
+                        </p>
+                    </div>
+                    <span class="text-xs text-slate-400 font-mono pt-3 border-t border-slate-200 dark:border-slate-800">Glejser / Scatterplot</span>
+                </div>
+
+                <!-- Autokorelasi -->
+                <div class="glass-card rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-4 font-bold">4</div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Autokorelasi</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+                            Khusus data time-series (runtut waktu). Memastikan tidak ada korelasi antara kesalahan pengganggu saat ini dengan periode sebelumnya. Diuji dengan <strong>Durbin-Watson (DW)</strong>.
+                        </p>
+                    </div>
+                    <span class="text-xs text-slate-400 font-mono pt-3 border-t border-slate-200 dark:border-slate-800">Durbin-Watson Test</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section / Tips Skripsi -->
+        <section class="bg-gradient-to-r from-indigo-900 to-slate-900 rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="max-w-3xl relative z-10">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-700/60 text-indigo-200 mb-4 inline-block">Tips Bebas Revisi Dosen Penguji</span>
+                <h2 class="text-3xl font-bold mb-4">Bagaimana Menjelaskan Uji Statistik Saat Sidang Skripsi?</h2>
+                <ul class="space-y-3 text-sm text-indigo-100 mb-8">
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-circle-check text-indigo-400 mt-1 mr-3 flex-shrink-0"></i>
+                        <span><strong>Pahami dasar pemilihan uji:</strong> Jangan hanya asal klik SPSS tanpa tahu kenapa Anda memilih uji tersebut (misal jelaskan alasan mengapa pakai non-parametrik jika data tidak normal).</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-circle-check text-indigo-400 mt-1 mr-3 flex-shrink-0"></i>
+                        <span><strong>Fokus pada nilai p-value (Sig.):</strong> Bandingkan nilai signifikansi dengan taraf nyata $\alpha = 0.05$ (Jika Sig. < 0.05, maka $H_0$ ditolak dan $H_a$ diterima).</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-circle-check text-indigo-400 mt-1 mr-3 flex-shrink-0"></i>
+                        <span><strong>Cek Koefisien Determinasi ($R^2$):</strong> Pada regresi, jelaskan seberapa besar variabel independen mampu menjelaskan variabel dependen dalam persentase.</span>
+                    </li>
+                </ul>
+                <div class="inline-flex items-center space-x-2 text-xs font-semibold bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md">
+                    <i class="fa-solid fa-heart text-pink-400"></i>
+                    <span>Semoga Sukses Sidang Skripsinya! Tetap Semangat!</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-500 dark:text-slate-400">
+            <div class="flex items-center space-x-3 mb-4 sm:mb-0">
+                <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
+                    <i class="fa-solid fa-graduation-cap text-sm"></i>
+                </div>
+                <span class="font-bold text-slate-900 dark:text-white">StatSkripsi Pro</span>
+            </div>
+            <p class="text-center sm:text-right">Dibuat khusus untuk membantu mahasiswa tingkat akhir menyusun skripsi dengan percaya diri.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive JavaScript & Wizard Logic -->
+    <script>
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Wizard State Variables
+        let wizardState = {
+            goal: null,
+            subgroup: null,
+            norm: null
+        };
+
+        const subgroupOptionsContainer = document.getElementById('subgroup-options');
+        const stepSubgroup = document.getElementById('step-subgroup');
+        const stepNormality = document.getElementById('step-normality');
+        const wizardResult = document.getElementById('wizard-result');
+
+        function setWizardGoal(goal) {
+            wizardState.goal = goal;
+            wizardState.subgroup = null;
+            wizardState.norm = null;
+            
+            // Highlight active goal button
+            document.querySelectorAll('.wizard-goal-btn').forEach(btn => {
+                btn.classList.remove('border-indigo-600', 'bg-indigo-50/50', 'dark:bg-indigo-950/30');
+            });
+            document.getElementById(`goal-${goal}`).classList.add('border-indigo-600', 'bg-indigo-50/50', 'dark:bg-indigo-950/30');
+
+            // Render Subgroup options based on goal
+            subgroupOptionsContainer.innerHTML = '';
+            if (goal === 'beda') {
+                subgroupOptionsContainer.innerHTML = `
+                    <button type="button" onclick="setWizardSubgroup('2')" id="sub-2" class="wizard-sub-btn p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 text-left transition bg-white dark:bg-slate-800">
+                        <div class="font-semibold text-sm text-slate-900 dark:text-white">2 Kelompok Sampel</div>
+                        <div class="text-xs text-slate-500">Contoh: Pria vs Wanita / Pre vs Post</div>
+                    </button>
+                    <button type="button" onclick="setWizardSubgroup('multi')" id="sub-multi" class="wizard-sub-btn p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 text-left transition bg-white dark:bg-slate-800">
+                        <div class="font-semibold text-sm text-slate-900 dark:text-white">> 2 Kelompok Sampel</div>
+                        <div class="text-xs text-slate-500">Contoh: Kategori Pendidikan (SMA/S1/S2)</div>
+                    </button>
+                `;
+            } else if (goal === 'hubungan') {
+                subgroupOptionsContainer.innerHTML = `
+                    <button type="button" onclick="setWizardSubgroup('korelasi')" id="sub-korelasi" class="wizard-sub-btn p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 text-left transition bg-white dark:bg-slate-800">
+                        <div class="font-semibold text-sm text-slate-900 dark:text-white">Hanya Hubungan (Korelasi)</div>
+                        <div class="text-xs text-slate-500">Melihat sejauh mana keeratan dua variabel.</div>
+                    </button>
+                    <button type="button" onclick="setWizardSubgroup('pengaruh')" id="sub-pengaruh" class="wizard-sub-btn p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 text-left transition bg-white dark:bg-slate-800">
+                        <div class="font-semibold text-sm text-slate-900 dark:text-white">Pengaruh / Sebab-Akibat (Regresi)</div>
+                        <div class="text-xs text-slate-500">Variabel X mempengaruhi Variabel Y.</div>
+                    </button>
+                `;
+            } else {
+                subgroupOptionsContainer.innerHTML = `
+                    <button type="button" onclick="setWizardSubgroup('kategori')" id="sub-kategori" class="wizard-sub-btn p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 text-left transition bg-white dark:bg-slate-800">
+                        <div class="font-semibold text-sm text-slate-900 dark:text-white">Hubungan Antar Variabel Kategori</div>
+                        <div class="text-xs text-slate-500">Data Nominal / Frekuensi Tabulasi Silang.</div>
+                    </button>
+                `;
+            }
+
+            stepSubgroup.classList.remove('hidden');
+            stepNormality.classList.add('hidden');
+            wizardResult.classList.add('hidden');
+        }
+
+        function setWizardSubgroup(subgroup) {
+            wizardState.subgroup = subgroup;
+            wizardState.norm = null;
+
+            document.querySelectorAll('.wizard-sub-btn').forEach(btn => {
+                btn.classList.remove('border-indigo-600', 'bg-indigo-50/50', 'dark:bg-indigo-950/30');
+            });
+            event.currentTarget.classList.add('border-indigo-600', 'bg-indigo-50/50', 'dark:bg-indigo-950/30');
+
+            if (wizardState.goal === 'frekuensi' || subgroup === 'pengaruh') {
+                // Langsung tampilkan hasil tanpa butuh cek normalitas data (Chi-Square atau Regresi)
+                calculateWizardResult();
+                stepNormality.classList.add('hidden');
+            } else {
+                stepNormality.classList.remove('hidden');
+                wizardResult.classList.add('hidden');
+            }
+        }
+
+        function setWizardNorm(norm) {
+            wizardState.norm = norm;
+            document.querySelectorAll('.wizard-norm-btn').forEach(btn => {
+                btn.classList.remove('border-indigo-600', 'bg-indigo-50/50', 'dark:bg-indigo-950/30');
+            });
+            document.getElementById(`norm-${norm}`).classList.add('border-indigo-600', 'bg-indigo-50/50', 'dark:bg-indigo-950/30');
+            calculateWizardResult();
+        }
+
+        function calculateWizardResult() {
+            wizardResult.classList.remove('hidden');
+            const titleEl = document.getElementById('res-title');
+            const descEl = document.getElementById('res-desc');
+            const tagType = document.getElementById('res-tag-type');
+
+            let title = '';
+            let desc = '';
+            let type = '';
+
+            if (wizardState.goal === 'beda') {
+                if (wizardState.subgroup === '2') {
+                    if (wizardState.norm === 'normal') {
+                        title = 'Independent Sample T-Test (atau Paired jika berpasangan)';
+                        desc = 'Data Anda berdistribusi normal dan membandingkan 2 kelompok. Gunakan Independent T-Test untuk sampel bebas atau Paired T-Test untuk sampel berpasangan.';
+                        type = 'Uji Parametrik';
+                    } else {
+                        title = 'Mann-Whitney U Test (atau Wilcoxon untuk berpasangan)';
+                        desc = 'Karena data tidak berdistribusi normal atau berbentuk ordinal, uji non-parametrik Mann-Whitney adalah pengganti t-test yang paling valid.';
+                        type = 'Uji Non-Parametrik';
+                    }
+                } else {
+                    if (wizardState.norm === 'normal') {
+                        title = 'One-Way ANOVA (Analysis of Variance)';
+                        desc = 'Digunakan untuk membandingkan rata-rata 3 kelompok atau lebih dengan asumsi data berdistribusi normal dan homogen.';
+                        type = 'Uji Parametrik';
+                    } else {
+                        title = 'Kruskal-Wallis Test';
+                        desc = 'Alternatif non-parametrik untuk ANOVA ketika asumsi normalitas terpenuhi tidak terpenuhi pada data lebih dari 2 kelompok.';
+                        type = 'Uji Non-Parametrik';
+                    }
+                }
+            } else if (wizardState.goal === 'hubungan') {
+                if (wizardState.subgroup === 'korelasi') {
+                    if (wizardState.norm === 'normal') {
+                        title = 'Analisis Korelasi Pearson';
+                        desc = 'Mengukur keeratan hubungan linier antara dua variabel kuantitatif yang berdistribusi normal.';
+                        type = 'Uji Parametrik';
+                    } else {
+                        title = 'Analisis Korelasi Spearman\'s Rho';
+                        desc = 'Mengukur korelasi berbasis peringkat (ranking) untuk data ordinal atau variabel yang tidak berdistribusi normal.';
+                        type = 'Uji Non-Parametrik';
+                    }
+                } else {
+                    title = 'Analisis Regresi Linear (Sederhana / Berganda)';
+                    desc = 'Digunakan untuk menguji seberapa besar pengaruh variabel bebas (X) terhadap variabel terikat (Y). Jangan lupa lakukan Uji Asumsi Klasik terlebih dahulu!';
+                    type = 'Uji Parametrik / Asosiatif';
+                }
+            } else {
+                title = 'Uji Chi-Square (Chi-Square Test of Independence)';
+                desc = 'Digunakan untuk menguji hubungan atau perbedaan proporsi antara dua atau lebih variabel kategorikal (skala nominal).';
+                type = 'Uji Non-Parametrik / Kategorikal';
+            }
+
+            titleEl.textContent = title;
+            descEl.textContent = desc;
+            tagType.textContent = type;
+
+            // Scroll smoothly to result
+            wizardResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>

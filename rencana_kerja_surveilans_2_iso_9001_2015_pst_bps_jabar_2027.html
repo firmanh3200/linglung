@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rencana Kerja Surveilans 2 SMM ISO 9001:2015 PST BPS Jabar 2027</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        bps: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .print-shadow { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-bps-500 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="bg-gradient-to-r from-bps-900 via-bps-800 to-indigo-900 text-white shadow-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 p-3 rounded-xl backdrop-blur-md border border-white/20 shadow-inner">
+                    <i class="fa-solid fa-shield-halved text-3xl text-blue-300"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="bg-blue-500/30 text-blue-200 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-blue-400/30">Tahun 2027</span>
+                        <span class="bg-emerald-500/30 text-emerald-200 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-emerald-400/30">ISO 9001:2015</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Rencana Kerja Surveilans 2 PST BPS Jabar</h1>
+                    <p class="text-xs sm:text-sm text-blue-200">Pelayanan Statistik Terpadu (PST) Badan Pusat Statistik Provinsi Jawa Barat</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 no-print">
+                <button onclick="resetProgress()" class="bg-white/10 hover:bg-white/20 text-white px-3.5 py-2 rounded-xl text-sm font-medium transition border border-white/20 flex items-center gap-2 shadow-sm" title="Reset Progress Checklist">
+                    <i class="fa-solid fa-rotate-right"></i> Reset Progress
+                </button>
+                <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-blue-900/40">
+                    <i class="fa-solid fa-print"></i> Cetak / Ekspor PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Welcome Banner / Info Card -->
+        <section class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80 relative overflow-hidden">
+            <div class="absolute right-0 top-0 translate-x-8 -translate-y-8 w-64 h-64 bg-blue-50 rounded-full pointer-events-none -z-0"></div>
+            <div class="relative z-10 max-w-3xl">
+                <h2 class="text-xl font-bold text-slate-900 mb-2">Roadmap Menuju Surveilans 2 SMM ISO 9001:2015</h2>
+                <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
+                    Dokumen rencana kerja ini dirancang untuk memandu seluruh tahapan persiapan, audit internal, tindakan korektif, hingga pelaksanaan audit eksternal Surveilans 2 PST BPS Provinsi Jawa Barat pada tahun 2027. Silakan gunakan checklist interaktif di bawah untuk memantau progres pelaksanaan tugas setiap tim.
+                </p>
+                <div class="flex flex-wrap gap-4 text-xs font-medium text-slate-500">
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-500"></i> Terintegrasi SMM ISO 9001:2015</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-user-shield text-blue-500"></i> Penanggung Jawab: Tim Mutu & PST BPS Jabar</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-calendar-days text-indigo-500"></i> Periode: Januari - Oktober 2027</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-time Statistics Cards -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Aktivitas</p>
+                    <h3 id="stat-total" class="text-2xl font-bold text-slate-900 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 text-xl">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Selesai</p>
+                    <h3 id="stat-completed" class="text-2xl font-bold text-emerald-600 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 text-xl">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Dalam Proses</p>
+                    <h3 id="stat-progress" class="text-2xl font-bold text-amber-600 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600 text-xl">
+                    <i class="fa-solid fa-spinner"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Persentase Selesai</p>
+                    <h3 id="stat-percent" class="text-2xl font-bold text-indigo-600 mt-1">0%</h3>
+                </div>
+                <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 text-xl">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Bar Visual -->
+        <section class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-600">Progres Keseluruhan Rencana Kerja</span>
+                <span id="progress-text-pct" class="text-xs font-bold text-indigo-600">0%</span>
+            </div>
+            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                <div id="progress-bar-fill" class="bg-gradient-to-r from-blue-600 to-indigo-600 h-full transition-all duration-500 rounded-full" style="width: 0%"></div>
+            </div>
+        </section>
+
+        <!-- Filter & Search Toolbar -->
+        <section class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 no-print bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 mr-2"><i class="fa-solid fa-filter"></i> Filter PIC:</span>
+                <button onclick="filterByPic('all')" data-pic="all" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-bps-600 text-white transition shadow-sm">Semua PIC</button>
+                <button onclick="filterByPic('Tim Mutu')" data-pic="Tim Mutu" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">Tim Mutu</button>
+                <button onclick="filterByPic('Auditor Internal')" data-pic="Auditor Internal" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">Auditor Internal</button>
+                <button onclick="filterByPic('Manajemen Puncak')" data-pic="Manajemen Puncak" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">Manajemen Puncak</button>
+                <button onclick="filterByPic('Tim PST')" data-pic="Tim PST" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">Tim PST</button>
+            </div>
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-search"></i>
+                </span>
+                <input type="text" id="search-input" oninput="searchWorkPlan()" placeholder="Cari aktivitas / output..." class="w-full sm:w-64 pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500 focus:bg-white transition">
+            </div>
+        </section>
+
+        <!-- Work Plan Accordions / Stages -->
+        <div id="work-plan-container" class="space-y-6">
+
+            <!-- Tahap 1 -->
+            <div class="stage-card bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden transition" data-stage="1">
+                <div class="bg-gradient-to-r from-slate-50 to-blue-50/50 p-5 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-bps-600 text-white flex items-center justify-center font-bold text-base shadow-sm">1</div>
+                        <div>
+                            <span class="text-xs font-semibold text-bps-600 uppercase tracking-wider">Januari - Februari 2027</span>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900">Tahap 1: Persiapan & Peninjauan Dokumen</h3>
+                        </div>
+                    </div>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full border border-blue-200">Fokus: Sosialisasi & Pemutakhiran SOP</span>
+                </div>
+                <div class="p-5 overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-400 uppercase tracking-wider text-[11px]">
+                                <th class="pb-3 font-semibold w-12 text-center">Status</th>
+                                <th class="pb-3 font-semibold">Sub-Kegiatan & Aktivitas</th>
+                                <th class="pb-3 font-semibold">Waktu Pelaksanaan</th>
+                                <th class="pb-3 font-semibold">Penanggung Jawab (PIC)</th>
+                                <th class="pb-3 font-semibold">Output / Deliverable</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t1-1" data-pic="Tim Mutu">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t1-1')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Sosialisasi Rencana Surveilans 2 SMM ISO 9001:2015 kepada seluruh pegawai PST BPS Jabar</td>
+                                <td class="py-3.5 text-slate-600">Minggu ke-1 Januari 2027</td>
+                                <td class="py-3.5"><span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg font-medium text-xs">Tim Mutu</span></td>
+                                <td class="py-3.5 text-slate-600">Notula & Daftar Hadir Sosialisasi</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t1-2" data-pic="Manajemen Puncak">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t1-2')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Kaji Ulang Manajemen Awal (Initial Management Review) & Penetapan Kebijakan Mutu 2027</td>
+                                <td class="py-3.5 text-slate-600">Minggu ke-2 Januari 2027</td>
+                                <td class="py-3.5"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg font-medium text-xs">Manajemen Puncak</span></td>
+                                <td class="py-3.5 text-slate-600">Dokumen Kebijakan Mutu & Sasaran Mutu</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t1-3" data-pic="Tim PST">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t1-3')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Pemutakhiran Prosedur Operasional Standar (SOP) Pelayanan Statistik Terpadu</td>
+                                <td class="py-3.5 text-slate-600">Januari - Februari 2027</td>
+                                <td class="py-3.5"><span class="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg font-medium text-xs">Tim PST</span></td>
+                                <td class="py-3.5 text-slate-600">SOP Pelayanan & Maklumat Pelayanan Terupdate</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t1-4" data-pic="Tim Mutu">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t1-4')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Penyusunan dan Review Sasaran Mutu PST Triwulan I & II Tahun 2027</td>
+                                <td class="py-3.5 text-slate-600">Februari 2027</td>
+                                <td class="py-3.5"><span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg font-medium text-xs">Tim Mutu</span></td>
+                                <td class="py-3.5 text-slate-600">Matriks Sasaran Mutu PST</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tahap 2 -->
+            <div class="stage-card bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden transition" data-stage="2">
+                <div class="bg-gradient-to-r from-slate-50 to-indigo-50/50 p-5 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-sm">2</div>
+                        <div>
+                            <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Maret - April 2027</span>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900">Tahap 2: Audit Internal & Evaluasi Diri (LKE)</h3>
+                        </div>
+                    </div>
+                    <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full border border-indigo-200">Fokus: Evaluasi & Temuan Internal</span>
+                </div>
+                <div class="p-5 overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-400 uppercase tracking-wider text-[11px]">
+                                <th class="pb-3 font-semibold w-12 text-center">Status</th>
+                                <th class="pb-3 font-semibold">Sub-Kegiatan & Aktivitas</th>
+                                <th class="pb-3 font-semibold">Waktu Pelaksanaan</th>
+                                <th class="pb-3 font-semibold">Penanggung Jawab (PIC)</th>
+                                <th class="pb-3 font-semibold">Output / Deliverable</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t2-1" data-pic="Auditor Internal">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t2-1')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Pelatihan dan Penyegaran Auditor Internal SMM ISO 9001:2015</td>
+                                <td class="py-3.5 text-slate-600">Minggu ke-1 Maret 2027</td>
+                                <td class="py-3.5"><span class="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-lg font-medium text-xs">Auditor Internal</span></td>
+                                <td class="py-3.5 text-slate-600">Jadwal Audit & Penugasan Tim Auditor</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t2-2" data-pic="Auditor Internal">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t2-2')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Pelaksanaan Audit Mutu Internal (AMI) pada Layanan Statistik Terpadu (PST)</td>
+                                <td class="py-3.5 text-slate-600">Minggu ke-3 Maret 2027</td>
+                                <td class="py-3.5"><span class="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-lg font-medium text-xs">Auditor Internal</span></td>
+                                <td class="py-3.5 text-slate-600">Laporan Hasil Audit Internal (LHA) & Daftar Temuan (NCR)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t2-3" data-pic="Tim PST">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t2-3')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Penyusunan Lembar Kerja Evaluasi (LKE) dan Analisis Akar Masalah (Root Cause Analysis)</td>
+                                <td class="py-3.5 text-slate-600">April 2027</td>
+                                <td class="py-3.5"><span class="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg font-medium text-xs">Tim PST</span></td>
+                                <td class="py-3.5 text-slate-600">Dokumen LKE & Rencana Tindakan Korektif</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tahap 3 -->
+            <div class="stage-card bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden transition" data-stage="3">
+                <div class="bg-gradient-to-r from-slate-50 to-emerald-50/50 p-5 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-base shadow-sm">3</div>
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Mei - Juni 2027</span>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900">Tahap 3: Tindak Lanjut & Perbaikan Layanan</h3>
+                        </div>
+                    </div>
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-200">Fokus: Verifikasi & Simulasi</span>
+                </div>
+                <div class="p-5 overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-400 uppercase tracking-wider text-[11px]">
+                                <th class="pb-3 font-semibold w-12 text-center">Status</th>
+                                <th class="pb-3 font-semibold">Sub-Kegiatan & Aktivitas</th>
+                                <th class="pb-3 font-semibold">Waktu Pelaksanaan</th>
+                                <th class="pb-3 font-semibold">Penanggung Jawab (PIC)</th>
+                                <th class="pb-3 font-semibold">Output / Deliverable</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t3-1" data-pic="Auditor Internal">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t3-1')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Verifikasi penutupan temuan audit internal oleh Auditor Internal</td>
+                                <td class="py-3.5 text-slate-600">Mei 2027</td>
+                                <td class="py-3.5"><span class="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-lg font-medium text-xs">Auditor Internal</span></td>
+                                <td class="py-3.5 text-slate-600">Formulir Penutupan Temuan / Corrective Action</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t3-2" data-pic="Tim PST">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t3-2')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Simulasi pelayanan dan pengujian kenyamanan sarana prasarana PST (front office, perpustakaan, konsultasi statistik)</td>
+                                <td class="py-3.5 text-slate-600">Juni 2027</td>
+                                <td class="py-3.5"><span class="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg font-medium text-xs">Tim PST</span></td>
+                                <td class="py-3.5 text-slate-600">Checklist Kesiapan Sarpras PST</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t3-3" data-pic="Tim Mutu">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t3-3')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Pengumpulan data Indeks Kepuasan Konsumen (IKK) semester pertama tahun 2027</td>
+                                <td class="py-3.5 text-slate-600">Akhir Juni 2027</td>
+                                <td class="py-3.5"><span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg font-medium text-xs">Tim Mutu</span></td>
+                                <td class="py-3.5 text-slate-600">Laporan Analisis IKK Semester I</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tahap 4 -->
+            <div class="stage-card bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden transition" data-stage="4">
+                <div class="bg-gradient-to-r from-slate-50 to-purple-50/50 p-5 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-base shadow-sm">4</div>
+                        <div>
+                            <span class="text-xs font-semibold text-purple-600 uppercase tracking-wider">Juli - Agustus 2027</span>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900">Tahap 4: Pelaksanaan Audit Eksternal / Surveilans 2</h3>
+                        </div>
+                    </div>
+                    <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-3 py-1 rounded-full border border-purple-200">Fokus: Audit Lembaga Sertifikasi</span>
+                </div>
+                <div class="p-5 overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-400 uppercase tracking-wider text-[11px]">
+                                <th class="pb-3 font-semibold w-12 text-center">Status</th>
+                                <th class="pb-3 font-semibold">Sub-Kegiatan & Aktivitas</th>
+                                <th class="pb-3 font-semibold">Waktu Pelaksanaan</th>
+                                <th class="pb-3 font-semibold">Penanggung Jawab (PIC)</th>
+                                <th class="pb-3 font-semibold">Output / Deliverable</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t4-1" data-pic="Tim Mutu">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t4-1')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Koordinasi dengan Lembaga Sertifikasi (LSPro/LSSM) terkait jadwal dan agenda Surveilans 2</td>
+                                <td class="py-3.5 text-slate-600">Minggu ke-2 Juli 2027</td>
+                                <td class="py-3.5"><span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg font-medium text-xs">Tim Mutu</span></td>
+                                <td class="py-3.5 text-slate-600">Surat Konfirmasi & Rundown Audit Eksternal</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t4-2" data-pic="Manajemen Puncak">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t4-2')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Pelaksanaan Opening Meeting Surveilans 2 SMM ISO 9001:2015 BPS Provinsi Jawa Barat</td>
+                                <td class="py-3.5 text-slate-600">Agustus 2027</td>
+                                <td class="py-3.5"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg font-medium text-xs">Manajemen Puncak</span></td>
+                                <td class="py-3.5 text-slate-600">Berita Acara Opening Meeting</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t4-3" data-pic="Tim PST">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t4-3')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Audit Lapangan PST: Wawancara petugas front office, peninjauan loket, digitalisasi arsip, dan konfirmasi pelayanan tamu</td>
+                                <td class="py-3.5 text-slate-600">Agustus 2027</td>
+                                <td class="py-3.5"><span class="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg font-medium text-xs">Tim PST</span></td>
+                                <td class="py-3.5 text-slate-600">Bukti Wawancara & Kelengkapan Dokumen Layanan</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t4-4" data-pic="Tim Mutu">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t4-4')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Pelaksanaan Closing Meeting dan Penyerahan Laporan Hasil Audit Eksternal (Surveilans 2)</td>
+                                <td class="py-3.5 text-slate-600">Akhir Agustus 2027</td>
+                                <td class="py-3.5"><span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg font-medium text-xs">Tim Mutu</span></td>
+                                <td class="py-3.5 text-slate-600">Draft Laporan Audit Eksternal & Daftar Temuan (jika ada)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tahap 5 -->
+            <div class="stage-card bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden transition" data-stage="5">
+                <div class="bg-gradient-to-r from-slate-50 to-teal-50/50 p-5 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold text-base shadow-sm">5</div>
+                        <div>
+                            <span class="text-xs font-semibold text-teal-600 uppercase tracking-wider">September - Oktober 2027</span>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900">Tahap 5: Tindak Lanjut & Tinjauan Manajemen</h3>
+                        </div>
+                    </div>
+                    <span class="bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full border border-teal-200">Fokus: RTM & Perpanjangan Sertifikat</span>
+                </div>
+                <div class="p-5 overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-400 uppercase tracking-wider text-[11px]">
+                                <th class="pb-3 font-semibold w-12 text-center">Status</th>
+                                <th class="pb-3 font-semibold">Sub-Kegiatan & Aktivitas</th>
+                                <th class="pb-3 font-semibold">Waktu Pelaksanaan</th>
+                                <th class="pb-3 font-semibold">Penanggung Jawab (PIC)</th>
+                                <th class="pb-3 font-semibold">Output / Deliverable</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t5-1" data-pic="Tim Mutu">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t5-1')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Penyusunan dan pengiriman Root Cause Analysis serta bukti perbaikan temuan eksternal ke Auditor</td>
+                                <td class="py-3.5 text-slate-600">September 2027</td>
+                                <td class="py-3.5"><span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg font-medium text-xs">Tim Mutu</span></td>
+                                <td class="py-3.5 text-slate-600">Dokumen Koreksi & Tindakan Korektif Eksternal</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t5-2" data-pic="Manajemen Puncak">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t5-2')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Pelaksanaan Rapat Tinjauan Manajemen (RTM) SMM ISO 9001:2015 Tahun 2027</td>
+                                <td class="py-3.5 text-slate-600">Minggu ke-3 Oktober 2027</td>
+                                <td class="py-3.5"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg font-medium text-xs">Manajemen Puncak</span></td>
+                                <td class="py-3.5 text-slate-600">Notula RTM, Daftar Hadir, & Keputusan Manajemen</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 transition" data-id="t5-3" data-pic="Tim Mutu">
+                                <td class="py-3.5 text-center">
+                                    <input type="checkbox" onchange="toggleCheck('t5-3')" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                </td>
+                                <td class="py-3.5 font-medium text-slate-800">Evaluasi Akhir Tahunan SMM ISO 9001:2015 dan Arsip Dokumen Mutu PST BPS Provinsi Jawa Barat</td>
+                                <td class="py-3.5 text-slate-600">Oktober 2027</td>
+                                <td class="py-3.5"><span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg font-medium text-xs">Tim Mutu</span></td>
+                                <td class="py-3.5 text-slate-600">Laporan Tahunan Mutu PST 2027</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Catatan & Informasi Tambahan -->
+        <section class="bg-blue-900 text-white rounded-2xl p-6 sm:p-8 shadow-md relative overflow-hidden">
+            <div class="absolute right-0 bottom-0 translate-x-6 translate-y-6 w-48 h-48 bg-blue-800/50 rounded-full pointer-events-none"></div>
+            <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div>
+                    <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-blue-300"></i> Catatan Pelaksanaan & Komitmen Mutu
+                    </h3>
+                    <p class="text-blue-100 text-xs sm:text-sm leading-relaxed max-w-3xl">
+                        Keberhasilan Surveilans 2 SMM ISO 9001:2015 Pelayanan Statistik Terpadu (PST) BPS Provinsi Jawa Barat sangat bergantung pada kedisiplinan dan sinergi aktif seluruh pegawai. Mari wujudkan pelayanan prima yang berintegritas, cepat, dan transparan untuk kepuasan pengguna data.
+                    </p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-xl border border-white/20 text-center shrink-0">
+                    <span class="block text-xs text-blue-200">Kontak Sekretariat Mutu</span>
+                    <span class="text-sm font-semibold text-white">PST BPS Provinsi Jawa Barat</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 mt-12 text-center text-xs">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>&copy; 2027 Pelayanan Statistik Terpadu (PST) - Badan Pusat Statistik Provinsi Jawa Barat. All rights reserved.</p>
+            <p class="mt-1 text-slate-500">Sistem Manajemen Mutu ISO 9001:2015</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic & Interactivity -->
+    <script>
+        // List of all checkbox IDs
+        const taskIds = ['t1-1', 't1-2', 't1-3', 't1-4', 't2-1', 't2-2', 't2-3', 't3-1', 't3-2', 't3-3', 't4-1', 't4-2', 't4-3', 't4-4', 't5-1', 't5-2', 't5-3'];
+
+        // Load saved state from localStorage on startup
+        document.addEventListener('DOMContentLoaded', () => {
+            taskIds.forEach(id => {
+                const isChecked = localStorage.getItem('surveilans2027_' + id) === 'true';
+                const checkbox = document.querySelector(`tr[data-id="${id}"] input[type="checkbox"]`);
+                if (checkbox) {
+                    checkbox.checked = isChecked;
+                    updateRowStyle(checkbox, isChecked);
+                }
+            });
+            updateStats();
+        });
+
+        // Toggle checkbox state & save
+        function toggleCheck(id) {
+            const checkbox = document.querySelector(`tr[data-id="${id}"] input[type="checkbox"]`);
+            const isChecked = checkbox.checked;
+            localStorage.setItem('surveilans2027_' + id, isChecked);
+            updateRowStyle(checkbox, isChecked);
+            updateStats();
+        }
+
+        // Update row visual styling when checked/unchecked
+        function updateRowStyle(checkbox, isChecked) {
+            const row = checkbox.closest('tr');
+            if (isChecked) {
+                row.classList.add('bg-emerald-50/40', 'text-slate-400');
+                row.querySelector('.font-medium').classList.add('line-through', 'text-slate-400');
+            } else {
+                row.classList.remove('bg-emerald-50/40', 'text-slate-400');
+                const titleEl = row.querySelector('.font-medium');
+                titleEl.classList.remove('line-through', 'text-slate-400');
+                titleEl.classList.add('text-slate-800');
+            }
+        }
+
+        // Calculate and update real-time statistics
+        function updateStats() {
+            const total = taskIds.length;
+            let completed = 0;
+            taskIds.forEach(id => {
+                if (localStorage.getItem('surveilans2027_' + id) === 'true') {
+                    completed++;
+                }
+            });
+            const inProgress = total - completed;
+            const percent = Math.round((completed / total) * 100);
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-completed').innerText = completed;
+            document.getElementById('stat-progress').innerText = inProgress;
+            document.getElementById('stat-percent').innerText = percent + '%';
+            document.getElementById('progress-text-pct').innerText = percent + '%';
+            document.getElementById('progress-bar-fill').style.width = percent + '%';
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Apakah Anda yakin ingin mereset seluruh progres checklist?')) {
+                taskIds.forEach(id => {
+                    localStorage.removeItem('surveilans2027_' + id);
+                    const checkbox = document.querySelector(`tr[data-id="${id}"] input[type="checkbox"]`);
+                    if (checkbox) {
+                        checkbox.checked = false;
+                        updateRowStyle(checkbox, false);
+                    }
+                });
+                updateStats();
+            }
+        }
+
+        // Filter by PIC
+        function filterByPic(picName) {
+            // Update active filter button styling
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.getAttribute('data-pic') === picName) {
+                    btn.className = 'filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-bps-600 text-white transition shadow-sm';
+                } else {
+                    btn.className = 'filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition';
+                }
+            });
+
+            // Filter table rows
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const rowPic = row.getAttribute('data-pic');
+                if (picName === 'all' || rowPic === picName) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Hide stage cards if all their children are hidden
+            document.querySelectorAll('.stage-card').forEach(stage => {
+                const visibleRows = stage.querySelectorAll('tbody tr:not([style*="display: none"])');
+                if (visibleRows.length === 0) {
+                    stage.style.display = 'none';
+                } else {
+                    stage.style.display = '';
+                }
+            });
+        }
+
+        // Search work plan items
+        function searchWorkPlan() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            document.querySelectorAll('.stage-card').forEach(stage => {
+                const visibleRows = stage.querySelectorAll('tbody tr:not([style*="display: none"])');
+                if (visibleRows.length === 0) {
+                    stage.style.display = 'none';
+                } else {
+                    stage.style.display = '';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

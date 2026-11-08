@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survei Internal Implementasi Nilai BerAKHLAK</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Font Inter & Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        },
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                        gold: {
+                            500: '#d97706',
+                            600: '#b45309',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+        /* Custom smooth transition styling */
+        .fade-slide-enter-active, .fade-slide-leave-active {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-50 font-sans text-slate-800 antialiased flex flex-col min-h-screen" x-data="surveiApp()">
+
+    <!-- Header / Navbar -->
+    <header class="bg-gradient-to-r from-navy-900 via-blue-900 to-navy-900 text-white shadow-xl border-b-4 border-gold-500">
+        <div class="max-w-5xl mx-auto px-4 py-6 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3 text-center sm:text-left">
+                <div class="bg-gold-500 text-navy-900 p-3 rounded-xl shadow-md font-bold text-xl flex items-center justify-center">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Survei Budaya Kerja BerAKHLAK</h1>
+                    <p class="text-xs sm:text-sm text-blue-200">Evaluasi & Pengukuran Implementasi Core Values ASN</p>
+                </div>
+            </div>
+            <!-- Database Connection Badge & Settings Trigger -->
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium shadow-sm" :class="dbConnected ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-amber-100 text-amber-800 border border-amber-300'">
+                    <span class="w-2 h-2 mr-1.5 rounded-full" :class="dbConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'"></span>
+                    <span x-text="dbConnected ? 'Supabase Connected' : 'Mode Offline / Fallback'"></span>
+                </span>
+                <button @click="showConfigModal = true" class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg text-xs font-medium transition flex items-center gap-1 border border-white/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span>Config DB</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8 sm:px-6">
+        
+        <!-- Intro Banner & 7 Values Preview -->
+        <div x-show="step === 1" class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-6 transition-all">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 sm:p-8 text-white">
+                <span class="bg-white/20 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Survei Internal 2026</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold mt-3">Membangun Budaya Kerja Unggul BerAKHLAK</h2>
+                <p class="text-blue-100 mt-2 text-sm sm:text-base leading-relaxed">
+                    Survei ini bertujuan untuk mengukur tingkat pemahaman dan penerapan nilai-nilai dasar ASN BerAKHLAK di lingkungan unit kerja kita. Pendapat Anda sangat berharga untuk perbaikan organisasi yang berkelanjutan.
+                </p>
+            </div>
+            
+            <div class="p-6 sm:p-8">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">7 Core Values BerAKHLAK yang Dinilai:</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-semibold">
+                    <div class="bg-blue-50 text-blue-800 p-3 rounded-xl border border-blue-100 flex items-center space-x-2">
+                        <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs">B</span>
+                        <span>Berorientasi Pelayanan</span>
+                    </div>
+                    <div class="bg-indigo-50 text-indigo-800 p-3 rounded-xl border border-indigo-100 flex items-center space-x-2">
+                        <span class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs">A</span>
+                        <span>Akuntabel</span>
+                    </div>
+                    <div class="bg-violet-50 text-violet-800 p-3 rounded-xl border border-violet-100 flex items-center space-x-2">
+                        <span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs">K</span>
+                        <span>Kompeten</span>
+                    </div>
+                    <div class="bg-emerald-50 text-emerald-800 p-3 rounded-xl border border-emerald-100 flex items-center space-x-2">
+                        <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs">H</span>
+                        <span>Harmonis</span>
+                    </div>
+                    <div class="bg-amber-50 text-amber-800 p-3 rounded-xl border border-amber-100 flex items-center space-x-2">
+                        <span class="w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center text-xs">L</span>
+                        <span>Loyal</span>
+                    </div>
+                    <div class="bg-rose-50 text-rose-800 p-3 rounded-xl border border-rose-100 flex items-center space-x-2">
+                        <span class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs">A</span>
+                        <span>Adaptif</span>
+                    </div>
+                    <div class="bg-cyan-50 text-cyan-800 p-3 rounded-xl border border-cyan-100 flex items-center space-x-2 col-span-2 sm:col-span-2">
+                        <span class="w-6 h-6 rounded-full bg-cyan-600 text-white flex items-center justify-center text-xs">K</span>
+                        <span>Kolaboratif</span>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-slate-100 flex justify-end">
+                    <button @click="step = 2" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-indigo-500/30 transition flex items-center space-x-2">
+                        <span>Mulai Mengisi Survei</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wizard Card (Steps 2 to 4) -->
+        <div x-show="step > 1 && !isSubmitted" class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden transition-all">
+            
+            <!-- Progress Bar Header -->
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600">Langkah <span x-text="step"></span> dari 4</span>
+                    <h3 class="text-lg font-bold text-slate-800" x-text="stepTitles[step]"></h3>
+                </div>
+                <!-- Step Dots -->
+                <div class="flex items-center space-x-1.5">
+                    <template x-for="s in [2, 3, 4]">
+                        <div class="w-8 h-2 rounded-full transition-colors duration-300" :class="step >= s ? 'bg-blue-600' : 'bg-slate-200'"></div>
+                    </template>
+                </div>
+            </div>
+
+            <form @submit.prevent="submitSurvei" class="p-6 sm:p-8 space-y-6">
+
+                <!-- STEP 2: Identitas Responden -->
+                <div x-show="step === 2" class="space-y-4">
+                    <p class="text-sm text-slate-500 mb-4">Mohon isi data diri Anda dengan benar. Data identitas dijamin kerahasiaannya dan hanya digunakan untuk keperluan rekapitulasi kepegawaian.</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Nama Lengkap & Gelar <span class="text-red-500">*</span></label>
+                            <input type="text" x-model="formData.nama" required placeholder="Contoh: Budi Santoso, S.Kom." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">NIP / Nomor Pegawai <span class="text-red-500">*</span></label>
+                            <input type="text" x-model="formData.nip" required placeholder="Contoh: 198501012010011001" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Unit Kerja / Departemen <span class="text-red-500">*</span></label>
+                            <select x-model="formData.unit_kerja" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white">
+                                <option value="">Pilih Unit Kerja...</option>
+                                <option value="Sekretariat Utama">Sekretariat Utama</option>
+                                <option value="Biro Kepegawaian & Organisasi">Biro Kepegawaian & Organisasi</option>
+                                <option value="Direktorat Layanan Digital">Direktorat Layanan Digital</option>
+                                <option value="Direktorat Pengawasan & Kepatuhan">Direktorat Pengawasan & Kepatuhan</option>
+                                <option value="Pusat Data & Informasi">Pusat Data & Informasi</option>
+                                <option value="Inspektorat">Inspektorat</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Jabatan / Pangkat <span class="text-red-500">*</span></label>
+                            <input type="text" x-model="formData.jabatan" required placeholder="Contoh: Analis Kebijakan Ahli Muda" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between pt-6 border-t border-slate-100">
+                        <button type="button" @click="step = 1" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-xl font-medium text-sm transition">Kembali</button>
+                        <button type="button" @click="validateStep2()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-medium text-sm shadow-md transition flex items-center space-x-2">
+                            <span>Lanjut Penilaian</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Penilaian Core Values (Ber, Ak, Kom, Har, Loy, Ada, Kol) -->
+                <div x-show="step === 3" class="space-y-6">
+                    <div class="bg-amber-50 border-l-4 border-gold-500 p-4 rounded-r-xl">
+                        <p class="text-xs text-amber-800 leading-relaxed font-medium">
+                            Petunjuk: Berikan penilaian skala 1 s.d. 5 untuk setiap indikator perilaku di bawah ini.<br>
+                            <span class="font-bold">1 = Sangat Tidak Setuju | 3 = Netral | 5 = Sangat Setuju</span>
+                        </p>
+                    </div>
+
+                    <!-- Iteration of 7 Values Questions -->
+                    <div class="space-y-6">
+                        
+                        <!-- 1. Berorientasi Pelayanan -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-blue-900 text-sm mb-1 flex items-center gap-2">
+                                <span class="bg-blue-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">1</span>
+                                Berorientasi Pelayanan
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-3">Memahami dan memenuhi kebutuhan masyarakat, ramah, cekatan, solutif, dan dapat diandalkan.</p>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-3 rounded-lg border border-slate-100">
+                                    <p class="text-xs font-semibold text-slate-700 mb-2">a. Pegawai sigap dan responsif dalam menanggapi kendala atau permintaan layanan dari stakeholder/masyarakat.</p>
+                                    <div class="flex items-center justify-between gap-1 sm:gap-2">
+                                        <template x-for="score in [1, 2, 3, 4, 5]">
+                                            <label class="flex-1 flex flex-col items-center justify-center p-2 rounded-lg border cursor-pointer transition hover:bg-blue-50" :class="formData.scores.bp1 === score ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-700'">
+                                                <input type="radio" name="bp1" :value="score" x-model.number="formData.scores.bp1" class="sr-only">
+                                                <span class="text-xs font-bold" x-text="score"></span>
+                                                <span class="text-[10px] opacity-75 hidden sm:inline" x-text="scoreLabels[score]"></span>
+                                            </label>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded-lg border border-slate-100">
+                                    <p class="text-xs font-semibold text-slate-700 mb-2">b. Senantiasa melakukan perbaikan tiada henti dalam prosedur pelayanan internal/eksternal.</p>
+                                    <div class="flex items-center justify-between gap-1 sm:gap-2">
+                                        <template x-for="score in [1, 2, 3, 4, 5]">
+                                            <label class="flex-1 flex flex-col items-center justify-center p-2 rounded-lg border cursor-pointer transition hover:bg-blue-50" :class="formData.scores.bp2 === score ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-700'">
+                                                <input type="radio" name="bp2" :value="score" x-model.number="formData.scores.bp2" class="sr-only">
+                                                <span class="text-xs font-bold" x-text="score"></span>
+                                                <span class="text-[10px] opacity-75 hidden sm:inline" x-text="scoreLabels[score]"></span>
+                                            </label>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Akuntabel -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-indigo-900 text-sm mb-1 flex items-center gap-2">
+                                <span class="bg-indigo-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">2</span>
+                                Akuntabel
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-3">Melaksanakan tugas dengan jujur, bertanggung jawab, cermat, disiplin, serta tidak menyalahgunakan kewenangan.</p>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-3 rounded-lg border border-slate-100">
+                                    <p class="text-xs font-semibold text-slate-700 mb-2">a. Pegawai transparan dan bertanggung jawab penuh atas hasil kerja serta penggunaan fasilitas kantor.</p>
+                                    <div class="flex items-center justify-between gap-1 sm:gap-2">
+                                        <template x-for="score in [1, 2, 3, 4, 5]">
+                                            <label class="flex-1 flex flex-col items-center justify-center p-2 rounded-lg border cursor-pointer transition hover:bg-indigo-50" :class="formData.scores.akt1 === score ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-700'">
+                                                <input type="radio" name="akt1" :value="score" x-model.number="formData.scores.akt1" class="sr-only">
+                                                <span class="text-xs font-bold" x-text="score"></span>
+                                                <span class="text-[10px] opacity-75 hidden sm:inline" x-text="scoreLabels[score]"></span>
+                                            </label>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Kompeten -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-violet-900 text-sm mb-1 flex items-center gap-2">
+                                <span class="bg-violet-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                                Kompeten
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-3">Meningkatkan kompetensi diri untuk menjawab tantangan yang selalu berubah, membantu orang lain belajar, dan menyelesaikan tugas berkualitas.</p>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-3 rounded-lg border border-slate-100">
+                                    <p class="text-xs font-semibold text-slate-700 mb-2">a. Pegawai aktif mengikuti pengembangan diri (workshop, bimbingan teknis, sharing knowledge) dan membagikan ilmunya.</p>
+                                    <div class="flex items-center justify-between gap-1 sm:gap-2">
+                                        <template x-for="score in [1, 2, 3, 4, 5]">
+                                            <label class="flex-1 flex flex-col items-center justify-center p-2 rounded-lg border cursor-pointer transition hover:bg-violet-50" :class="formData.scores.kom1 === score ? 'bg-violet-600 text-white border-violet-600 shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-700'">
+                                                <input type="radio" name="kom1" :value="score" x-model.number="formData.scores.kom1" class="sr-only">
+                                                <span class="text-xs font-bold" x-text="score"></span>
+                                                <span class="text-[10px] opacity-75 hidden sm:inline" x-text="scoreLabels[score]"></span>
+                                            </label>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Harmonis -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-emerald-900 text-sm mb-1 flex items-center gap-2">
+                                <span class="bg-emerald-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">4</span>
+                                Harmonis
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-3">Menghargai setiap orang apapun latar belakangnya, suka menolong orang lain, dan membangun lingkungan kerja yang kondusif.</p>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-3 rounded-lg border border-slate-100">
+                                    <p class="text-xs font-semibold text-slate-700 mb-2">a. Suasana kerja di unit kerja terasa inklusif, saling menghormati antar rekan kerja lintas bagian.</p>
+                                    <div class="flex items-center justify-between gap-1 sm:gap-2">
+                                        <template x-for="score in [1, 2, 3, 4, 5]">
+                                            <label class="flex-1 flex flex-col items-center justify-center p-2 rounded-lg border cursor-pointer transition hover:bg-emerald-50" :class="formData.scores.har1 === score ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-700'">
+                                                <input type="radio" name="har1" :value="score" x-model.number="formData.scores.har1" class="sr-only">
+                                                <span class="text-xs font-bold" x-text="score"></span>
+                                                <span class="text-[10px] opacity-75 hidden sm:inline" x-text="scoreLabels[score]"></span>
+                                            </label>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. Loyal -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-amber-900 text-sm mb-1 flex items-center gap-2">
+                                <span class="bg-amber-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">5</span>
+                                Loyal
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-3">Memegang teguh ideologi Pancasila, UUD 1945, setia kepada NKRI, serta menjaga nama baik sesama ASN, pimpinan, dan instansi.</p>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-3 rounded-lg border border-slate-100">
+                                    <p class="text-xs font-semibold text-slate-700 mb-2">a. Pegawai menjaga kerahasiaan instansi dan menunjukkan dedikasi tinggi terhadap pencapaian visi misi organisasi.</p>
+                                    <div class="flex items-center justify-between gap-1 sm:gap-2">
+                                        <template x-for="score in [1, 2, 3, 4, 5]">
+                                            <label class="flex-1 flex flex-col items-center justify-center p-2 rounded-lg border cursor-pointer transition hover:bg-amber-50" :class="formData.scores.loy1 === score ? 'bg-amber-600 text-white border-amber-600 shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-700'">
+                                                <input type="radio" name="loy1" :value="score" x-model.number="formData.scores.loy1" class="sr-only">
+                                                <span class="text-xs font-bold" x-text="score"></span>
+                                                <span class="text-[10px] opacity-75 hidden sm:inline" x-text="scoreLabels[score]"></span>
+                                            </label>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6. Adaptif -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-rose-900 text-sm mb-1 flex items-center gap-2">
+                                <span class="bg-rose-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">6</span>
+                                Adaptif
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-3">Cepat menyesuaikan diri menghadapi perubahan, terus berinovasi, dan mengembangkan kreativitas.</p>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-3 rounded-lg border border-slate-100">
+                                    <p class="text-xs font-semibold text-slate-700 mb-2">a. Unit kerja cepat tanggap mengadopsi teknologi digital baru dan metode kerja modern yang efisien.</p>
+                                    <div class="flex items-center justify-between gap-1 sm:gap-2">
+                                        <template x-for="score in [1, 2, 3, 4, 5]">
+                                            <label class="flex-1 flex flex-col items-center justify-center p-2 rounded-lg border cursor-pointer transition hover:bg-rose-50" :class="formData.scores.ada1 === score ? 'bg-rose-600 text-white border-rose-600 shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-700'">
+                                                <input type="radio" name="ada1" :value="score" x-model.number="formData.scores.ada1" class="sr-only">
+                                                <span class="text-xs font-bold" x-text="score"></span>
+                                                <span class="text-[10px] opacity-75 hidden sm:inline" x-text="scoreLabels[score]"></span>
+                                            </label>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7. Kolaboratif -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-cyan-900 text-sm mb-1 flex items-center gap-2">
+                                <span class="bg-cyan-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">7</span>
+                                Kolaboratif
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-3">Memberi kesempatan kepada berbagai pihak untuk berkontribusi, terbuka dalam bekerja sama, dan menggerakkan pemanfaatan sumber daya.</p>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-3 rounded-lg border border-slate-100">
+                                    <p class="text-xs font-semibold text-slate-700 mb-2">a. Terjalin sinergi dan koordinasi yang baik lintas divisi/tim dalam merampungkan program kerja strategis.</p>
+                                    <div class="flex items-center justify-between gap-1 sm:gap-2">
+                                        <template x-for="score in [1, 2, 3, 4, 5]">
+                                            <label class="flex-1 flex flex-col items-center justify-center p-2 rounded-lg border cursor-pointer transition hover:bg-cyan-50" :class="formData.scores.kol1 === score ? 'bg-cyan-600 text-white border-cyan-600 shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-700'">
+                                                <input type="radio" name="kol1" :value="score" x-model.number="formData.scores.kol1" class="sr-only">
+                                                <span class="text-xs font-bold" x-text="score"></span>
+                                                <span class="text-[10px] opacity-75 hidden sm:inline" x-text="scoreLabels[score]"></span>
+                                            </label>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="flex justify-between pt-6 border-t border-slate-100">
+                        <button type="button" @click="step = 2" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-xl font-medium text-sm transition">Kembali</button>
+                        <button type="button" @click="validateStep3()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-medium text-sm shadow-md transition flex items-center space-x-2">
+                            <span>Lanjut ke Esai</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 4: Pertanyaan Esai / Terbuka & Submit -->
+                <div x-show="step === 4" class="space-y-4">
+                    <p class="text-sm text-slate-500 mb-4">Bagian penutup untuk menyampaikan masukan konstruktif demi penguatan internal budaya organisasi.</p>
+                    
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">1. Kendala Utama Implementasi BerAKHLAK di Unit Kerja Anda</label>
+                        <textarea x-model="formData.essay_kendala" rows="3" placeholder="Tuliskan tantangan atau hambatan yang sering ditemui di lapangan..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">2. Saran & Harapan untuk Penguatan Budaya Kerja ke Depan</label>
+                        <textarea x-model="formData.essay_harapan" rows="3" placeholder="Berikan rekomendasi atau ide program konkrit..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"></textarea>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-xs text-blue-900">
+                        <span class="font-bold">Konfirmasi Akhir:</span> Dengan menekan tombol "Kirim Survei", data penilaian Anda akan direkam secara aman ke dalam sistem database instansi.
+                    </div>
+
+                    <div class="flex justify-between pt-6 border-t border-slate-100">
+                        <button type="button" @click="step = 3" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-xl font-medium text-sm transition">Kembali</button>
+                        <button type="submit" :disabled="isSubmitting" class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg hover:shadow-emerald-500/30 transition flex items-center space-x-2 disabled:opacity-50">
+                            <svg x-show="isSubmitting" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <span x-text="isSubmitting ? 'Mengirim Data...' : 'Kirim Survei Sekarang'"></span>
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Success Modal / Certificate Card -->
+        <div x-show="isSubmitted" x-cloak class="bg-white rounded-2xl shadow-2xl border border-emerald-100 overflow-hidden text-center p-8 sm:p-12 animate-fade-in">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            
+            <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">Terima Kasih, <span class="text-blue-600" x-text="formData.nama"></span>!</h3>
+            <p class="text-slate-600 text-sm max-w-md mx-auto mb-6">
+                Partisipasi Anda dalam Survei Implementasi Nilai BerAKHLAK telah berhasil direkam ke <span class="font-semibold text-slate-800" x-text="dbConnected ? 'Supabase Database' : 'Local Storage Fallback'"></span>.
+            </p>
+
+            <!-- Mini Digital Badge / Certificate Card -->
+            <div class="bg-gradient-to-br from-slate-900 to-navy-900 text-white p-6 rounded-2xl max-w-lg mx-auto mb-8 text-left relative overflow-hidden shadow-xl border border-gold-500/40">
+                <div class="absolute -right-10 -bottom-10 opacity-10">
+                    <svg class="w-48 h-48" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold tracking-widest text-gold-500">Sertifikat Partisipasi Digital</span>
+                        <h4 class="text-base font-bold text-white mt-0.5">Insan ASN BerAKHLAK 2026</h4>
+                    </div>
+                    <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full border border-emerald-500/30">Verified</span>
+                </div>
+                <div class="space-y-1 text-xs text-slate-300 border-t border-slate-800 pt-3">
+                    <p><span class="text-slate-500">NIP:</span> <span x-text="formData.nip"></span></p>
+                    <p><span class="text-slate-500">Unit Kerja:</span> <span x-text="formData.unit_kerja"></span></p>
+                    <p><span class="text-slate-500">Waktu Kirim:</span> <span x-text="submissionTime"></span></p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-3">
+                <button @click="resetForm()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-xl font-semibold text-sm transition">
+                    Isi Survei Baru
+                </button>
+                <button @click="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-md transition flex items-center justify-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    <span>Cetak Bukti Partisipasi</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Supabase Configuration Modal -->
+    <div x-show="showConfigModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 space-y-4 border border-slate-100">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-slate-900 text-lg">Konfigurasi Supabase</h3>
+                <button @click="showConfigModal = false" class="text-slate-400 hover:text-slate-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <p class="text-xs text-slate-500 leading-relaxed">
+                Masukkan URL dan Anon Key dari project Supabase Anda agar data survei langsung tersimpan ke database cloud. Jika dikosongkan, form akan otomatis berjalan dengan mode fallback (localStorage).
+            </p>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Supabase URL</label>
+                    <input type="text" x-model="supabaseUrlInput" placeholder="https://xyzproject.supabase.co" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Supabase Anon Key</label>
+                    <input type="password" x-model="supabaseKeyInput" placeholder="eyJhbGciOi..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
+                <button @click="showConfigModal = false" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-xs font-medium">Batal</button>
+                <button @click="saveSupabaseConfig()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-xs font-medium shadow">Simpan & Uji</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div x-show="toast.show" x-cloak x-transition class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-xs border border-slate-700">
+        <span class="w-2.5 h-2.5 rounded-full" :class="toast.type === 'success' ? 'bg-emerald-400' : 'bg-red-400'"></span>
+        <span x-text="toast.message"></span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto py-6 text-center text-xs text-slate-400 border-t border-slate-200">
+        <p>&copy; 2026 Biro Sumber Daya Manusia & Organisasi. Seluruh hak cipta dilindungi.</p>
+    </footer>
+
+    <!-- Script Application Logic -->
+    <script>
+        function surveiApp() {
+            return {
+                step: 1,
+                isSubmitted: false,
+                isSubmitting: false,
+                showConfigModal: false,
+                dbConnected: false,
+                submissionTime: '',
+                
+                supabaseUrlInput: localStorage.getItem('sb_url') || '',
+                supabaseKeyInput: localStorage.getItem('sb_key') || '',
+                
+                supabaseClient: null,
+
+                stepTitles: {
+                    2: 'Identitas Pegawai & Unit Kerja',
+                    3: 'Penilaian Indikator Core Values BerAKHLAK',
+                    4: 'Masukan, Kendala & Harapan Organisasi'
+                },
+
+                scoreLabels: {
+                    1: 'STS',
+                    2: 'TS',
+                    3: 'N',
+                    4: 'S',
+                    5: 'SS'
+                },
+
+                formData: {
+                    nama: '',
+                    nip: '',
+                    unit_kerja: '',
+                    jabatan: '',
+                    scores: {
+                        bp1: 5,
+                        bp2: 5,
+                        akt1: 5,
+                        kom1: 5,
+                        har1: 5,
+                        loy1: 5,
+                        ada1: 5,
+                        kol1: 5
+                    },
+                    essay_kendala: '',
+                    essay_harapan: ''
+                },
+
+                toast: {
+                    show: false,
+                    message: '',
+                    type: 'success'
+                },
+
+                init() {
+                    this.initSupabase();
+                },
+
+                initSupabase() {
+                    if (this.supabaseUrlInput && this.supabaseKeyInput) {
+                        try {
+                            this.supabaseClient = window.supabase.createClient(this.supabaseUrlInput, this.supabaseKeyInput);
+                            this.dbConnected = true;
+                        } catch (e) {
+                            this.dbConnected = false;
+                        }
+                    } else {
+                        this.dbConnected = false;
+                    }
+                },
+
+                saveSupabaseConfig() {
+                    localStorage.setItem('sb_url', this.supabaseUrlInput);
+                    localStorage.setItem('sb_key', this.supabaseKeyInput);
+                    this.initSupabase();
+                    this.showConfigModal = false;
+                    this.showToast(this.dbConnected ? 'Koneksi Supabase berhasil diaktifkan!' : 'Kredensial disimpan, mode fallback aktif.', this.dbConnected ? 'success' : 'error');
+                },
+
+                showToast(msg, type = 'success') {
+                    this.toast.message = msg;
+                    this.toast.type = type;
+                    this.toast.show = true;
+                    setTimeout(() => {
+                        this.toast.show = false;
+                    }, 4000);
+                },
+
+                validateStep2() {
+                    if (!this.formData.nama || !this.formData.nip || !this.formData.unit_kerja || !this.formData.jabatan) {
+                        this.showToast('Harap lengkapi semua kolom identitas wajib (*)', 'error');
+                        return;
+                    }
+                    this.step = 3;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+
+                validateStep3() {
+                    this.step = 4;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+
+                async submitSurvei() {
+                    this.isSubmitting = true;
+                    this.submissionTime = new Date().toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' });
+
+                    const payload = {
+                        nama: this.formData.nama,
+                        nip: this.formData.nip,
+                        unit_kerja: this.formData.unit_kerja,
+                        jabatan: this.formData.jabatan,
+                        scores: this.formData.scores,
+                        essay_kendala: this.formData.essay_kendala,
+                        essay_harapan: this.formData.essay_harapan,
+                        created_at: new Date().toISOString()
+                    };
+
+                    try {
+                        if (this.dbConnected && this.supabaseClient) {
+                            const { error } = await this.supabaseClient
+                                .from('survei_berakhlak')
+                                .insert([payload]);
+
+                            if (error) throw error;
+                        } else {
+                            // Fallback mode: Save into localStorage list
+                            let existing = JSON.parse(localStorage.getItem('local_survei_berakhlak') || '[]');
+                            existing.push(payload);
+                            localStorage.setItem('local_survei_berakhlak', JSON.stringify(existing));
+                        }
+
+                        setTimeout(() => {
+                            this.isSubmitting = false;
+                            this.isSubmitted = true;
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            this.showToast('Survei berhasil dikirim dan direkam!', 'success');
+                        }, 800);
+
+                    } catch (err) {
+                        this.isSubmitting = false;
+                        this.showToast('Gagal simpan ke Supabase: ' + err.message + '. Disimpan ke mode offline.', 'error');
+                        // Fallback backup
+                        let existing = JSON.parse(localStorage.getItem('local_survei_berakhlak') || '[]');
+                        existing.push(payload);
+                        localStorage.setItem('local_survei_berakhlak', JSON.stringify(existing));
+                        
+                        setTimeout(() => {
+                            this.isSubmitted = true;
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }, 800);
+                    }
+                },
+
+                resetForm() {
+                    this.isSubmitted = false;
+                    this.step = 1;
+                    this.formData = {
+                        nama: '',
+                        nip: '',
+                        unit_kerja: '',
+                        jabatan: '',
+                        scores: { bp1: 5, bp2: 5, akt1: 5, kom1: 5, har1: 5, loy1: 5, ada1: 5, kol1: 5 },
+                        essay_kendala: '',
+                        essay_harapan: ''
+                    };
+                }
+            }
+        }
+    </script>
+</body>
+</html>

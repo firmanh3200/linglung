@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Administrasi Dokumen Rapat SQLite - BPS Provinsi Jawa Barat</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- SQL.js (SQLite compiled to WebAssembly) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bps: {
+                            50: '#eef6ff',
+                            100: '#d9eaff',
+                            500: '#0047ab',
+                            600: '#003785',
+                            700: '#002960',
+                            800: '#001b40',
+                            900: '#001026'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="h-full bg-slate-50 text-slate-800 antialiased flex flex-col justify-between" x-data="rapatApp()">
+
+    <!-- Header Instansi -->
+    <header class="bg-gradient-to-r from-bps-800 via-bps-700 to-bps-600 text-white shadow-lg sticky top-0 z-40 border-b border-bps-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20 shadow-inner">
+                        <i class="fa-solid fa-building-columns text-2xl text-white"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-amber-400 text-bps-900 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">BPS Jabar</span>
+                            <span class="text-xs text-sky-200 font-medium">Badan Pusat Statistik Provinsi Jawa Barat</span>
+                        </div>
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white mt-0.5">Administrasi Dokumen Rapat (SQLite)</h1>
+                    </div>
+                </div>
+                <!-- Status & Stats Quick View -->
+                <div class="flex items-center space-x-3 bg-black/20 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 text-xs">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2.5 h-2.5 rounded-full" :class="dbLoaded ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'"></div>
+                        <span class="text-slate-200">DB SQLite: <strong class="text-white text-sm" x-text="dbLoaded ? 'Aktif (WASM)' : 'Memuat...'"></strong></span>
+                    </div>
+                    <div class="h-4 w-px bg-white/20"></div>
+                    <div class="text-slate-200">Total Entri: <strong class="text-white text-sm" x-text="records.length">0</strong></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Notifikasi / Alert Box -->
+        <div x-show="alert.show" x-transition.opacity class="p-4 rounded-xl shadow-sm border flex items-center justify-between"
+             :class="alert.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'">
+            <div class="flex items-center space-x-3">
+                <i :class="alert.type === 'success' ? 'fa-solid fa-circle-check text-emerald-600 text-xl' : 'fa-solid fa-circle-exclamation text-rose-600 text-xl'"></i>
+                <span class="text-sm font-semibold" x-text="alert.message"></span>
+            </div>
+            <button @click="alert.show = false" class="text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Dashboard Statistics Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center justify-between transition hover:shadow-md">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Rapat</p>
+                    <h3 class="text-2xl font-bold text-slate-900 mt-1" x-text="records.length">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-bps-500 text-xl font-bold">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center justify-between transition hover:shadow-md">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Dokumen Lengkap</p>
+                    <h3 class="text-2xl font-bold text-slate-900 mt-1" x-text="completeDocsCount">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 text-xl font-bold">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center justify-between transition hover:shadow-md">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Bidang Teraktif</p>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1 truncate max-w-[150px]" x-text="topBidang">N/A</h3>
+                </div>
+                <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600 text-xl font-bold">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center justify-between transition hover:shadow-md">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Engine Database</p>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">SQLite 3 (WASM)</h3>
+                </div>
+                <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600 text-xl font-bold">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout Utama (Form & Tabel Riwayat) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Form Entri / Edit (5 Kolom) -->
+            <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sm:p-8 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-pen-to-square text-bps-500"></i>
+                            <span x-text="isEditMode ? 'Edit Dokumen Rapat' : 'Form Entri Dokumen Rapat'"></span>
+                        </h2>
+                        <button type="button" @click="resetForm()" x-show="isEditMode" class="text-xs text-rose-600 hover:underline font-semibold">
+                            Batal Edit
+                        </button>
+                    </div>
+
+                    <form @submit.prevent="saveRecord()" class="space-y-4">
+                        <!-- Nama Kegiatan -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nama Kegiatan Rapat <span class="text-rose-500">*</span></label>
+                            <input type="text" x-model="form.nama_kegiatan" required placeholder="Contoh: Evaluasi Kinerja Bulanan Sensus Ekonomi"
+                                   class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-bps-500 focus:bg-white focus:outline-none transition">
+                        </div>
+
+                        <!-- Tanggal & Waktu -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tanggal <span class="text-rose-500">*</span></label>
+                                <input type="date" x-model="form.tanggal" required
+                                       class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-bps-500 focus:bg-white focus:outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Waktu <span class="text-rose-500">*</span></label>
+                                <input type="time" x-model="form.waktu" required
+                                       class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-bps-500 focus:bg-white focus:outline-none transition">
+                            </div>
+                        </div>
+
+                        <!-- Tempat / Ruangan -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tempat / Ruangan <span class="text-rose-500">*</span></label>
+                            <input type="text" x-model="form.tempat" required placeholder="Contoh: Aula Lt. 3 BPS Provinsi Jabar / Zoom"
+                                   class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-bps-500 focus:bg-white focus:outline-none transition">
+                        </div>
+
+                        <!-- Pimpinan Rapat -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Pimpinan Rapat <span class="text-rose-500">*</span></label>
+                            <input type="text" x-model="form.pimpinan_rapat" required placeholder="Contoh: Kepala BPS Provinsi Jawa Barat"
+                                   class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-bps-500 focus:bg-white focus:outline-none transition">
+                        </div>
+
+                        <!-- Bidang / Bagian BPS -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Kategori Bidang / Bagian BPS <span class="text-rose-500">*</span></label>
+                            <select x-model="form.bidang" required
+                                    class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-bps-500 focus:bg-white focus:outline-none transition">
+                                <option value="">-- Pilih Bidang / Bagian --</option>
+                                <option value="Bagian Umum">Bagian Umum</option>
+                                <option value="Bidang Statistik Produksi">Bidang Statistik Produksi</option>
+                                <option value="Bidang Statistik Distribusi">Bidang Statistik Distribusi</option>
+                                <option value="Bidang Statistik Neraca Wilayah & Analisis">Bidang Statistik Neraca Wilayah & Analisis</option>
+                                <option value="Bidang Statistik Sosial">Bidang Statistik Sosial</option>
+                                <option value="Bidang Integrasi Pengolahan dan Diseminasi Statistik">Bidang Integrasi Pengolahan dan Diseminasi Statistik</option>
+                            </select>
+                        </div>
+
+                        <!-- Divider Arsip GDrive -->
+                        <div class="pt-2 border-t border-slate-100">
+                            <p class="text-xs font-bold text-bps-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                <i class="fa-brands fa-google-drive"></i> Tautan Dokumen Google Drive Wajib
+                            </p>
+
+                            <!-- URL Undangan -->
+                            <div class="mb-3">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="text-xs font-semibold text-slate-700">1. PDF Undangan Rapat <span class="text-rose-500">*</span></label>
+                                    <a :href="form.url_undangan" target="_blank" x-show="isValidDriveUrl(form.url_undangan)" class="text-[11px] text-blue-600 hover:underline flex items-center gap-1">Test Link <i class="fa-solid fa-external-link text-[9px]"></i></a>
+                                </div>
+                                <input type="url" x-model="form.url_undangan" @input="validateUrl('undangan')" required placeholder="https://drive.google.com/file/d/..."
+                                       class="w-full px-3.5 py-2 text-sm bg-slate-50 border rounded-xl focus:ring-2 focus:ring-bps-500 focus:outline-none transition"
+                                       :class="errors.undangan ? 'border-rose-400 bg-rose-50/20' : 'border-slate-300'">
+                            </div>
+
+                            <!-- URL Daftar Hadir -->
+                            <div class="mb-3">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="text-xs font-semibold text-slate-700">2. Daftar Hadir (PDF/Scan) <span class="text-rose-500">*</span></label>
+                                    <a :href="form.url_daftar_hadir" target="_blank" x-show="isValidDriveUrl(form.url_daftar_hadir)" class="text-[11px] text-blue-600 hover:underline flex items-center gap-1">Test Link <i class="fa-solid fa-external-link text-[9px]"></i></a>
+                                </div>
+                                <input type="url" x-model="form.url_daftar_hadir" @input="validateUrl('daftarHadir')" required placeholder="https://drive.google.com/file/d/..."
+                                       class="w-full px-3.5 py-2 text-sm bg-slate-50 border rounded-xl focus:ring-2 focus:ring-bps-500 focus:outline-none transition"
+                                       :class="errors.daftarHadir ? 'border-rose-400 bg-rose-50/20' : 'border-slate-300'">
+                            </div>
+
+                            <!-- URL Foto Dokumentasi -->
+                            <div class="mb-3">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="text-xs font-semibold text-slate-700">3. Foto Dokumentasi <span class="text-rose-500">*</span></label>
+                                    <a :href="form.url_dokumentasi" target="_blank" x-show="isValidDriveUrl(form.url_dokumentasi)" class="text-[11px] text-blue-600 hover:underline flex items-center gap-1">Test Link <i class="fa-solid fa-external-link text-[9px]"></i></a>
+                                </div>
+                                <input type="url" x-model="form.url_dokumentasi" @input="validateUrl('dokumentasi')" required placeholder="https://drive.google.com/file/d/... atau Folder"
+                                       class="w-full px-3.5 py-2 text-sm bg-slate-50 border rounded-xl focus:ring-2 focus:ring-bps-500 focus:outline-none transition"
+                                       :class="errors.dokumentasi ? 'border-rose-400 bg-rose-50/20' : 'border-slate-300'">
+                            </div>
+
+                            <!-- URL Notula -->
+                            <div class="mb-4">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="text-xs font-semibold text-slate-700">4. Notula Rapat <span class="text-rose-500">*</span></label>
+                                    <a :href="form.url_notula" target="_blank" x-show="isValidDriveUrl(form.url_notula)" class="text-[11px] text-blue-600 hover:underline flex items-center gap-1">Test Link <i class="fa-solid fa-external-link text-[9px]"></i></a>
+                                </div>
+                                <input type="url" x-model="form.url_notula" @input="validateUrl('notula')" required placeholder="https://drive.google.com/file/d/..."
+                                       class="w-full px-3.5 py-2 text-sm bg-slate-50 border rounded-xl focus:ring-2 focus:ring-bps-500 focus:outline-none transition"
+                                       :class="errors.notula ? 'border-rose-400 bg-rose-50/20' : 'border-slate-300'">
+                            </div>
+                        </div>
+
+                        <!-- Tombol Submit -->
+                        <div class="pt-2 flex items-center gap-3">
+                            <button type="submit" class="w-full py-3 px-4 bg-bps-500 hover:bg-bps-600 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                <span x-text="isEditMode ? 'Simpan Perubahan' : 'Entri Data ke SQLite'"></span>
+                            </button>
+                            <button type="button" @click="resetForm()" x-show="isEditMode" class="py-3 px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-xl transition text-sm">
+                                Batal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabel Riwayat & Manajemen Database SQLite (7 Kolom) -->
+            <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sm:p-8 flex flex-col justify-between">
+                <div>
+                    <!-- Header Riwayat & Toolbar DB -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3 mb-6">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-table-cells text-bps-500"></i> Riwayat Arsip SQLite
+                            </h2>
+                            <p class="text-xs text-slate-500">Tabel data tersimpan dalam file database SQLite lokal.</p>
+                        </div>
+                        
+                        <!-- Tombol Database SQLite & Ekspor/Impor -->
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <button @click="downloadSQLiteDb()" class="px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-semibold rounded-lg shadow-sm transition flex items-center gap-1" title="Unduh File .sqlite">
+                                <i class="fa-solid fa-download"></i> Unduh DB
+                            </button>
+                            <label class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer" title="Unggah/Restore Database .sqlite">
+                                <i class="fa-solid fa-upload"></i> Restore <input type="file" @change="importSQLiteDb($event)" accept=".sqlite,.db" class="hidden">
+                            </label>
+                            <button @click="exportCSV()" class="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-800 text-white text-[11px] font-semibold rounded-lg shadow-sm transition flex items-center gap-1" title="Ekspor ke CSV">
+                                <i class="fa-solid fa-file-csv"></i> CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Kotak Pencarian & Filter Bidang -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            </span>
+                            <input type="text" x-model="searchQuery" placeholder="Cari kegiatan, pimpinan, tempat..."
+                                   class="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-bps-500 focus:bg-white focus:outline-none transition">
+                        </div>
+                        <div>
+                            <select x-model="filterBidang" class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-bps-500 focus:bg-white focus:outline-none transition">
+                                <option value="">Semua Bidang / Bagian</option>
+                                <option value="Bagian Umum">Bagian Umum</option>
+                                <option value="Bidang Statistik Produksi">Bidang Statistik Produksi</option>
+                                <option value="Bidang Statistik Distribusi">Bidang Statistik Distribusi</option>
+                                <option value="Bidang Statistik Neraca Wilayah & Analisis">Bidang Statistik Neraca Wilayah & Analisis</option>
+                                <option value="Bidang Statistik Sosial">Bidang Statistik Sosial</option>
+                                <option value="Bidang Integrasi Pengolahan dan Diseminasi Statistik">Bidang Integrasi Pengolahan dan Diseminasi Statistik</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tabel Riwayat Data -->
+                    <div class="overflow-x-auto min-h-[320px] max-h-[460px] overflow-y-auto border border-slate-100 rounded-xl">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-slate-50 text-[11px] font-bold text-slate-600 uppercase sticky top-0 border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-3">Kegiatan & Bidang</th>
+                                    <th class="py-3 px-3">Waktu & Tempat</th>
+                                    <th class="py-3 px-3 text-center">Tautan GDrive</th>
+                                    <th class="py-3 px-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs">
+                                <template x-for="item in filteredRecords" :key="item.id">
+                                    <tr class="hover:bg-blue-50/30 transition">
+                                        <td class="py-3 px-3">
+                                            <p class="font-bold text-slate-900" x-text="item.nama_kegiatan"></p>
+                                            <div class="flex items-center gap-2 mt-0.5">
+                                                <span class="px-2 py-0.5 bg-blue-100 text-bps-700 rounded text-[10px] font-semibold" x-text="item.bidang"></span>
+                                                <span class="text-slate-500 text-[11px]">Pimp: <span class="font-medium text-slate-700" x-text="item.pimpinan_rapat"></span></span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-3 text-slate-600">
+                                            <p class="font-medium"><i class="fa-regular fa-calendar text-bps-500 mr-1"></i> <span x-text="formatDate(item.tanggal)"></span> (<span x-text="item.waktu"></span>)</p>
+                                            <p class="text-slate-500 mt-0.5 truncate max-w-[180px]"><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> <span x-text="item.tempat"></span></p>
+                                        </td>
+                                        <td class="py-3 px-3 text-center">
+                                            <div class="flex items-center justify-center gap-1">
+                                                <a :href="item.url_undangan" target="_blank" title="Undangan PDF" class="w-6 h-6 rounded-full bg-blue-50 text-bps-500 flex items-center justify-center hover:bg-bps-500 hover:text-white transition"><i class="fa-solid fa-file-pdf text-[10px]"></i></a>
+                                                <a :href="item.url_daftar_hadir" target="_blank" title="Daftar Hadir" class="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition"><i class="fa-solid fa-users text-[10px]"></i></a>
+                                                <a :href="item.url_dokumentasi" target="_blank" title="Foto Dokumentasi" class="w-6 h-6 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center hover:bg-purple-600 hover:text-white transition"><i class="fa-solid fa-image text-[10px]"></i></a>
+                                                <a :href="item.url_notula" target="_blank" title="Notula Rapat" class="w-6 h-6 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center hover:bg-amber-600 hover:text-white transition"><i class="fa-solid fa-note-sticky text-[10px]"></i></a>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-3 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button @click="editRecord(item)" class="p-1.5 bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-bps-600 rounded-lg transition" title="Edit">
+                                                    <i class="fa-solid fa-pen text-xs"></i>
+                                                </button>
+                                                <button @click="deleteRecord(item.id)" class="p-1.5 bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-rose-600 rounded-lg transition" title="Hapus">
+                                                    <i class="fa-solid fa-trash text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template x-if="filteredRecords.length === 0">
+                                    <tr>
+                                        <td colspan="4" class="py-12 text-center text-slate-400">
+                                            <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-300"></i>
+                                            <p class="text-xs">Belum ada data arsip rapat di database SQLite.</p>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Footer Informasi & Reset DB -->
+                <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
+                    <p>Menampilkan <span class="font-semibold text-slate-700" x-text="filteredRecords.length"></span> dari <span class="font-semibold text-slate-700" x-text="records.length"></span> total arsip.</p>
+                    <button @click="resetDatabase()" class="mt-2 sm:mt-0 text-rose-600 hover:underline font-semibold flex items-center gap-1">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Reset & Kosongkan Tabel SQLite
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>&copy; 2026 <strong>BPS Provinsi Jawa Barat</strong>. Sistem Administrasi Rapat Terintegrasi Berbasis SQLite WebAssembly.</p>
+        </div>
+    </footer>
+
+    <!-- Script SQLite.js & Alpine State Management -->
+    <script>
+        function rapatApp() {
+            return {
+                db: null,
+                dbLoaded: false,
+                records: [],
+                form: {
+                    id: null,
+                    nama_kegiatan: '',
+                    tanggal: '',
+                    waktu: '',
+                    tempat: '',
+                    pimpinan_rapat: '',
+                    bidang: '',
+                    url_undangan: '',
+                    url_daftar_hadir: '',
+                    url_dokumentasi: '',
+                    url_notula: ''
+                },
+                errors: {
+                    undangan: false,
+                    daftarHadir: false,
+                    dokumentasi: false,
+                    notula: false
+                },
+                isEditMode: false,
+                searchQuery: '',
+                filterBidang: '',
+                alert: {
+                    show: false,
+                    message: '',
+                    type: 'success'
+                },
+
+                async init() {
+                    try {
+                        const SQL = await initSqlJs({
+                            locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                        });
+
+                        // Cek apakah ada penyimpanan database lokal sebelumnya di localStorage
+                        const savedDb = localStorage.getItem('bps_rapat_sqlite_bin');
+                        if (savedDb) {
+                            const uInt8Array = new Uint8Array(JSON.parse(savedDb));
+                            this.db = new SQL.Database(uInt8Array);
+                        } else {
+                            this.db = new SQL.Database();
+                            this.createTable();
+                            this.insertDummyData();
+                        }
+
+                        this.dbLoaded = true;
+                        this.loadRecords();
+                    } catch (err) {
+                        console.error('Gagal menginisialisasi SQL.js:', err);
+                        this.showAlert('Gagal memuat engine SQLite WebAssembly.', 'error');
+                    }
+                },
+
+                createTable() {
+                    const query = `
+                        CREATE TABLE IF NOT EXISTS rapat_dokumen (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            nama_kegiatan TEXT NOT NULL,
+                            tanggal TEXT NOT NULL,
+                            waktu TEXT NOT NULL,
+                            tempat TEXT NOT NULL,
+                            pimpinan_rapat TEXT NOT NULL,
+                            bidang TEXT NOT NULL,
+                            url_undangan TEXT NOT NULL,
+                            url_daftar_hadir TEXT NOT NULL,
+                            url_dokumentasi TEXT NOT NULL,
+                            url_notula TEXT NOT NULL
+                        );
+                    `;
+                    this.db.run(query);
+                    this.persistDb();
+                },
+
+                insertDummyData() {
+                    const stmt = this.db.prepare(`
+                        INSERT INTO rapat_dokumen (nama_kegiatan, tanggal, waktu, tempat, pimpinan_rapat, bidang, url_undangan, url_daftar_hadir, url_dokumentasi, url_notula)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    `);
+                    stmt.run([
+                        'Rapat Koordinasi Bulanan Sensus & Survei',
+                        '2026-03-10',
+                        '09:00',
+                        'Aula Lt. 2 BPS Prov Jabar',
+                        'Kepala BPS Provinsi Jawa Barat',
+                        'Bagian Umum',
+                        'https://drive.google.com/file/d/1sampleundangan/view',
+                        'https://drive.google.com/file/d/1sampledaftarhadir/view',
+                        'https://drive.google.com/drive/folders/1samplefolderfoto',
+                        'https://drive.google.com/file/d/1samplenotula/view'
+                    ]);
+                    stmt.free();
+                    this.persistDb();
+                },
+
+                persistDb() {
+                    if (!this.db) return;
+                    const data = this.db.export();
+                    const arr = Array.from(data);
+                    localStorage.setItem('bps_rapat_sqlite_bin', JSON.stringify(arr));
+                },
+
+                loadRecords() {
+                    if (!this.db) return;
+                    const res = this.db.exec("SELECT * FROM rapat_dokumen ORDER BY id DESC");
+                    if (res.length > 0) {
+                        const columns = res[0].columns;
+                        const values = res[0].values;
+                        this.records = values.map(row => {
+                            let obj = {};
+                            columns.forEach((col, idx) => {
+                                obj[col] = row[idx];
+                            });
+                            return obj;
+                        });
+                    } else {
+                        this.records = [];
+                    }
+                },
+
+                showAlert(msg, type = 'success') {
+                    this.alert.message = msg;
+                    this.alert.type = type;
+                    this.alert.show = true;
+                    setTimeout(() => {
+                        this.alert.show = false;
+                    }, 4000);
+                },
+
+                isValidDriveUrl(url) {
+                    if (!url) return false;
+                    return url.includes('drive.google.com') || url.includes('docs.google.com');
+                },
+
+                validateUrl(fieldKey) {
+                    const map = {
+                        'undangan': 'url_undangan',
+                        'daftarHadir': 'url_daftar_hadir',
+                        'dokumentasi': 'url_dokumentasi',
+                        'notula': 'url_notula'
+                    };
+                    const val = this.form[map[fieldKey]];
+                    this.errors[fieldKey] = val && !this.isValidDriveUrl(val);
+                },
+
+                saveRecord() {
+                    const keys = ['url_undangan', 'url_daftar_hadir', 'url_dokumentasi', 'url_notula'];
+                    for (let k of keys) {
+                        if (!this.isValidDriveUrl(this.form[k])) {
+                            this.showAlert('Semua tautan wajib berasal dari Google Drive (mengandung drive.google.com).', 'error');
+                            return;
+                        }
+                    }
+
+                    if (this.isEditMode) {
+                        const stmt = this.db.prepare(`
+                            UPDATE rapat_dokumen 
+                            SET nama_kegiatan = ?, tanggal = ?, waktu = ?, tempat = ?, pimpinan_rapat = ?, bidang = ?, url_undangan = ?, url_daftar_hadir = ?, url_dokumentasi = ?, url_notula = ?
+                            WHERE id = ?
+                        `);
+                        stmt.run([
+                            this.form.nama_kegiatan,
+                            this.form.tanggal,
+                            this.form.waktu,
+                            this.form.tempat,
+                            this.form.pimpinan_rapat,
+                            this.form.bidang,
+                            this.form.url_undangan,
+                            this.form.url_daftar_hadir,
+                            this.form.url_dokumentasi,
+                            this.form.url_notula,
+                            this.form.id
+                        ]);
+                        stmt.free();
+                        this.showAlert('Data dokumen rapat berhasil diperbarui di database SQLite!');
+                    } else {
+                        const stmt = this.db.prepare(`
+                            INSERT INTO rapat_dokumen (nama_kegiatan, tanggal, waktu, tempat, pimpinan_rapat, bidang, url_undangan, url_daftar_hadir, url_dokumentasi, url_notula)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        `);
+                        stmt.run([
+                            this.form.nama_kegiatan,
+                            this.form.tanggal,
+                            this.form.waktu,
+                            this.form.tempat,
+                            this.form.pimpinan_rapat,
+                            this.form.bidang,
+                            this.form.url_undangan,
+                            this.form.url_daftar_hadir,
+                            this.form.url_dokumentasi,
+                            this.form.url_notula
+                        ]);
+                        stmt.free();
+                        this.showAlert('Data dokumen rapat berhasil di-entri ke database SQLite!');
+                    }
+
+                    this.persistDb();
+                    this.loadRecords();
+                    this.resetForm();
+                },
+
+                editRecord(item) {
+                    this.form = { ...item };
+                    this.isEditMode = true;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+
+                deleteRecord(id) {
+                    if (confirm('Apakah Anda yakin ingin menghapus data arsip ini dari database SQLite?')) {
+                        const stmt = this.db.prepare("DELETE FROM rapat_dokumen WHERE id = ?");
+                        stmt.run([id]);
+                        stmt.free();
+                        this.persistDb();
+                        this.loadRecords();
+                        this.showAlert('Data berhasil dihapus dari database SQLite.', 'success');
+                    }
+                },
+
+                resetForm() {
+                    this.form = {
+                        id: null,
+                        nama_kegiatan: '',
+                        tanggal: '',
+                        waktu: '',
+                        tempat: '',
+                        pimpinan_rapat: '',
+                        bidang: '',
+                        url_undangan: '',
+                        url_daftar_hadir: '',
+                        url_dokumentasi: '',
+                        url_notula: ''
+                    };
+                    this.errors = { undangan: false, daftarHadir: false, dokumentasi: false, notula: false };
+                    this.isEditMode = false;
+                },
+
+                resetDatabase() {
+                    if (confirm('PERINGATAN: Semua riwayat di tabel SQLite akan dihapus permanen! Lanjutkan?')) {
+                        this.db.run("DELETE FROM rapat_dokumen;");
+                        this.persistDb();
+                        this.loadRecords();
+                        this.showAlert('Tabel SQLite berhasil dikosongkan.', 'success');
+                    }
+                },
+
+                downloadSQLiteDb() {
+                    const binaryArray = this.db.export();
+                    const blob = new Blob([binaryArray], { type: 'application/x-sqlite3' });
+                    const link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'bps_rapat_database.sqlite';
+                    link.click();
+                    this.showAlert('File database .sqlite berhasil diunduh!');
+                },
+
+                importSQLiteDb(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        try {
+                            const uInt8Array = new Uint8Array(e.target.result);
+                            const SQL = await initSqlJs({
+                                locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                            });
+                            this.db = new SQL.Database(uInt8Array);
+                            this.persistDb();
+                            this.loadRecords();
+                            this.showAlert('Database SQLite berhasil direstore dari file!');
+                        } catch (err) {
+                            this.showAlert('File database .sqlite tidak valid.', 'error');
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
+                },
+
+                exportCSV() {
+                    if (this.records.length === 0) {
+                        this.showAlert('Tidak ada data untuk diekspor.', 'error');
+                        return;
+                    }
+                    let csv = "ID,Nama Kegiatan,Tanggal,Waktu,Tempat,Pimpinan,Bidang,URL Undangan,URL Daftar Hadir,URL Dokumentasi,URL Notula\r\n";
+                    this.records.forEach(r => {
+                        csv += `"${r.id}","${r.nama_kegiatan}","${r.tanggal}","${r.waktu}","${r.tempat}","${r.pimpinan_rapat}","${r.bidang}","${r.url_undangan}","${r.url_daftar_hadir}","${r.url_dokumentasi}","${r.url_notula}"\r\n`;
+                    });
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'rekap_rapat_bps_jabar.csv';
+                    link.click();
+                    this.showAlert('File CSV berhasil diunduh!');
+                },
+
+                formatDate(dateStr) {
+                    if (!dateStr) return '';
+                    return new Date(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                },
+
+                get filteredRecords() {
+                    return this.records.filter(item => {
+                        const matchesQuery = item.nama_kegiatan.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                                             item.pimpinan_rapat.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                                             item.tempat.toLowerCase().includes(this.searchQuery.toLowerCase());
+                        const matchesBidang = this.filterBidang === '' || item.bidang === this.filterBidang;
+                        return matchesQuery && matchesBidang;
+                    });
+                },
+
+                get completeDocsCount() {
+                    return this.records.filter(i => i.url_undangan && i.url_daftar_hadir && i.url_dokumentasi && i.url_notula).length;
+                },
+
+                get topBidang() {
+                    if (this.records.length === 0) return 'N/A';
+                    let counts = {};
+                    this.records.forEach(r => {
+                        if(r.bidang) counts[r.bidang] = (counts[r.bidang] || 0) + 1;
+                    });
+                    let maxB = 'N/A', maxC = 0;
+                    for(let b in counts) {
+                        if(counts[b] > maxC) {
+                            maxC = counts[b];
+                            maxB = b;
+                        }
+                    }
+                    return maxB;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

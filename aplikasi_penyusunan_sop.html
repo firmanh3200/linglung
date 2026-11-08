@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aplikasi Penyusunan SOP Profesional</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Print Styles for Professional SOP Document */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 11pt;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-container {
+                display: block !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 1.5cm;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-2.5 overflow-hidden">
+                <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md shrink-0">
+                    <i data-lucide="file-text" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                </div>
+                <div class="truncate">
+                    <h1 class="text-sm sm:text-base font-bold text-slate-900 truncate">SOP Generator</h1>
+                    <p class="text-[10px] sm:text-xs text-slate-500 truncate">Penyusunan Standard Operating Procedure</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
+                <button onclick="saveDraft()" class="inline-flex items-center px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition shadow-sm" title="Simpan Draft">
+                    <i data-lucide="save" class="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1.5 text-slate-500"></i> 
+                    <span class="hidden md:inline">Simpan Draft</span>
+                </button>
+                <button onclick="openPreviewModal()" class="inline-flex items-center px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition shadow-sm" title="Pratinjau">
+                    <i data-lucide="eye" class="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1.5 text-indigo-600"></i> 
+                    <span class="hidden md:inline">Pratinjau</span>
+                </button>
+                <button onclick="triggerPrint()" class="inline-flex items-center px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition shadow-md" title="Cetak / PDF">
+                    <i data-lucide="printer" class="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1.5"></i> 
+                    <span class="hidden md:inline">Cetak / PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 flex-grow w-full no-print">
+        
+        <!-- Notifikasi Toast -->
+        <div id="toast" class="fixed bottom-4 right-4 left-4 sm:left-auto z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none max-w-sm sm:max-w-md">
+            <div id="toast-content" class="flex items-center px-4 py-3 rounded-xl shadow-xl bg-slate-900 text-white text-xs sm:text-sm font-medium border border-slate-700">
+                <i id="toast-icon" data-lucide="check-circle" class="w-5 h-5 mr-2.5 text-emerald-400 shrink-0"></i>
+                <span id="toast-msg" class="truncate">Draft berhasil disimpan!</span>
+            </div>
+        </div>
+
+        <!-- Progress Bar & Step Navigation -->
+        <div class="mb-6 bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+                <div>
+                    <h2 class="text-sm sm:text-base font-semibold text-slate-900" id="step-title">Bagian 1: Informasi Umum</h2>
+                    <p class="text-xs text-slate-500" id="step-desc">Masukkan informasi dasar dokumen, nomor, dan penanggung jawab.</p>
+                </div>
+                <div class="flex items-center self-start sm:self-auto">
+                    <span class="text-xs font-semibold px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full" id="step-indicator">Langkah 1 dari 5</span>
+                </div>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-5">
+                <div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-300 w-1/5"></div>
+            </div>
+
+            <!-- Step Pills / Tab Headers (Horizontal Scrollable on Mobile) -->
+            <div class="flex sm:grid sm:grid-cols-5 gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+                <button onclick="goToStep(1)" id="tab-1" class="step-tab flex items-center shrink-0 sm:shrink px-3 py-2 sm:p-2.5 rounded-xl text-xs font-semibold border transition bg-indigo-50 border-indigo-200 text-indigo-700">
+                    <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] mr-2 shrink-0">1</span> 
+                    <span class="whitespace-nowrap sm:truncate">Info Umum</span>
+                </button>
+                <button onclick="goToStep(2)" id="tab-2" class="step-tab flex items-center shrink-0 sm:shrink px-3 py-2 sm:p-2.5 rounded-xl text-xs font-semibold border transition bg-white border-slate-200 text-slate-600 hover:bg-slate-50">
+                    <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px] mr-2 shrink-0">2</span> 
+                    <span class="whitespace-nowrap sm:truncate">Tujuan & Lingkup</span>
+                </button>
+                <button onclick="goToStep(3)" id="tab-3" class="step-tab flex items-center shrink-0 sm:shrink px-3 py-2 sm:p-2.5 rounded-xl text-xs font-semibold border transition bg-white border-slate-200 text-slate-600 hover:bg-slate-50">
+                    <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px] mr-2 shrink-0">3</span> 
+                    <span class="whitespace-nowrap sm:truncate">Definisi & Hukum</span>
+                </button>
+                <button onclick="goToStep(4)" id="tab-4" class="step-tab flex items-center shrink-0 sm:shrink px-3 py-2 sm:p-2.5 rounded-xl text-xs font-semibold border transition bg-white border-slate-200 text-slate-600 hover:bg-slate-50">
+                    <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px] mr-2 shrink-0">4</span> 
+                    <span class="whitespace-nowrap sm:truncate">Langkah Prosedur</span>
+                </button>
+                <button onclick="goToStep(5)" id="tab-5" class="step-tab flex items-center shrink-0 sm:shrink px-3 py-2 sm:p-2.5 rounded-xl text-xs font-semibold border transition bg-white border-slate-200 text-slate-600 hover:bg-slate-50">
+                    <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px] mr-2 shrink-0">5</span> 
+                    <span class="whitespace-nowrap sm:truncate">Lampiran</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Form Utama -->
+        <form id="sopForm" onsubmit="event.preventDefault();" class="space-y-6">
+            
+            <!-- BAGIAN 1: INFORMASI UMUM -->
+            <div id="section-1" class="form-section bg-white p-4 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+                <div class="border-b border-slate-100 pb-3">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center">
+                        <i data-lucide="info" class="w-5 h-5 mr-2 text-indigo-600 shrink-0"></i> Informasi Umum Dokumen
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-500">Tentukan identitas dokumen SOP secara jelas dan resmi.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Judul SOP <span class="text-rose-500">*</span></label>
+                        <input type="text" id="sop_title" placeholder="Contoh: Prosedur Pengadaan Barang dan Jasa" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Nomor Dokumen <span class="text-rose-500">*</span></label>
+                        <input type="text" id="sop_number" placeholder="Contoh: SOP/LOG/01" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Departemen / Unit Kerja <span class="text-rose-500">*</span></label>
+                        <input type="text" id="sop_dept" placeholder="Contoh: Departemen Logistik & Umum" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Tanggal Efektif <span class="text-rose-500">*</span></label>
+                        <input type="date" id="sop_date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Revisi Ke- <span class="text-rose-500">*</span></label>
+                        <input type="number" id="sop_rev" value="00" min="0" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Pembuat (Dibuat oleh)</label>
+                        <input type="text" id="sop_maker" placeholder="Nama / Jabatan Pembuat" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Pemeriksa (Diperiksa oleh)</label>
+                        <input type="text" id="sop_checker" placeholder="Nama / Jabatan Pemeriksa" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition">
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Disahkan Oleh (Disetujui oleh)</label>
+                        <input type="text" id="sop_approver" placeholder="Nama / Jabatan Pimpinan/Direksi" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition">
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAGIAN 2: TUJUAN & RUANG LINGKUP -->
+            <div id="section-2" class="form-section hidden bg-white p-4 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+                <div class="border-b border-slate-100 pb-3">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center">
+                        <i data-lucide="target" class="w-5 h-5 mr-2 text-indigo-600 shrink-0"></i> Tujuan & Ruang Lingkup
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-500">Jelaskan maksud dibuatnya SOP ini serta batasan operasionalnya.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Tujuan SOP <span class="text-rose-500">*</span></label>
+                        <textarea id="sop_purpose" rows="4" placeholder="Jelaskan apa yang ingin dicapai melalui prosedur ini..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition" required></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Ruang Lingkup <span class="text-rose-500">*</span></label>
+                        <textarea id="sop_scope" rows="4" placeholder="Siapa saja atau departemen mana saja yang terikat dengan prosedur ini..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition" required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAGIAN 3: DEFINISI & KEBIJAKAN -->
+            <div id="section-3" class="form-section hidden bg-white p-4 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+                <div class="border-b border-slate-100 pb-3">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center">
+                        <i data-lucide="book-open" class="w-5 h-5 mr-2 text-indigo-600 shrink-0"></i> Definisi & Dasar Hukum
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-500">Istilah penting dan peraturan perundang-undangan / kebijakan perusahaan yang mendasari.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Definisi / Istilah Terkait</label>
+                        <textarea id="sop_definitions" rows="4" placeholder="Contoh: 1. Vendor adalah rekanan penyedia barang/jasa. 2. PO adalah Purchase Order..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Kebijakan / Dasar Hukum <span class="text-rose-500">*</span></label>
+                        <textarea id="sop_legal" rows="4" placeholder="Contoh: UU No. 40 Tahun 2007 tentang Perseroan Terbatas, SK Direksi No. 123..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition" required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAGIAN 4: LANGKAH-LANGKAH PROSEDUR -->
+            <div id="section-4" class="form-section hidden bg-white p-4 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+                <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center">
+                            <i data-lucide="list-ordered" class="w-5 h-5 mr-2 text-indigo-600 shrink-0"></i> Prosedur / Langkah-Langkah Kerja
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-500">Rincikan tahapan aktivitas beserta penanggung jawab pelaksananya.</p>
+                    </div>
+                    <button type="button" onclick="addStepRow()" class="inline-flex items-center justify-center px-3.5 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-xs font-semibold rounded-lg transition shrink-0">
+                        <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Tambah Langkah
+                    </button>
+                </div>
+
+                <!-- Card layout for mobile screens, Table layout for desktop -->
+                <div id="steps-container" class="space-y-4">
+                    <!-- Diisi via JS (Render responsive cards / table) -->
+                </div>
+            </div>
+
+            <!-- BAGIAN 5: DOKUMEN TERKAIT & LAMPIRAN -->
+            <div id="section-5" class="form-section hidden bg-white p-4 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+                <div class="border-b border-slate-100 pb-3">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center">
+                        <i data-lucide="file-stack" class="w-5 h-5 mr-2 text-indigo-600 shrink-0"></i> Dokumen Terkait & Lampiran
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-500">Formulir, checklist, atau dokumen pendukung lain yang digunakan.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Formulir / Dokumen Terkait</label>
+                        <textarea id="sop_documents" rows="4" placeholder="Contoh: Form Pengajuan Pembelian (FPP), Berita Acara Serah Terima (BAST)..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Catatan Mutu / Lampiran Lainnya</label>
+                        <textarea id="sop_attachments" rows="4" placeholder="Diagram alir (flowchart), instruksi kerja tambahan, dll..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none transition"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tombol Navigasi Wizard & Reset -->
+            <div class="flex flex-col sm:flex-row items-center justify-between pt-2 gap-3 no-print">
+                <button type="button" id="btn-prev" onclick="changeStep(-1)" class="hidden w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition shadow-sm">
+                    <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Sebelumnya
+                </button>
+                <div class="flex items-center space-x-3 w-full sm:w-auto sm:ml-auto">
+                    <button type="button" onclick="resetForm()" class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-xl hover:bg-rose-100 transition">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4 mr-2"></i> Reset
+                    </button>
+                    <button type="button" id="btn-next" onclick="changeStep(1)" class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition shadow-md">
+                        Selanjutnya <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-6 px-4 text-center text-xs text-slate-500 no-print mt-12">
+        <p>Aplikasi Penyusunan SOP Perusahaan &copy; 2026. Data tersimpan otomatis di LocalStorage browser.</p>
+    </footer>
+
+    <!-- MODAL PRATINJAU SOP -->
+    <div id="previewModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm hidden no-print p-2 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+            <!-- Modal Header -->
+            <div class="px-4 sm:px-6 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
+                <h3 class="font-bold text-xs sm:text-sm text-slate-900 flex items-center truncate">
+                    <i data-lucide="file-check" class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-indigo-600 shrink-0"></i> Pratinjau Dokumen Resmi SOP
+                </h3>
+                <div class="flex items-center space-x-2 shrink-0">
+                    <button onclick="triggerPrint()" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition">
+                        <i data-lucide="printer" class="w-3.5 h-3.5 mr-1.5"></i> Cetak PDF
+                    </button>
+                    <button onclick="closePreviewModal()" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg transition">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body (Format Dokumen Resmi) -->
+            <div id="printArea" class="p-4 sm:p-10 overflow-y-auto bg-white text-slate-800 space-y-6 sm:space-y-8 text-xs sm:text-sm">
+                
+                <!-- Kop Tabel Dokumen Resmi -->
+                <div class="border-2 border-slate-900 overflow-x-auto">
+                    <table class="w-full border-collapse min-w-[500px]">
+                        <tr>
+                            <!-- Kolom Logo / Instansi -->
+                            <td class="border-r border-b border-slate-900 p-3 text-center w-1/4 font-bold uppercase tracking-wider text-[11px]">
+                                <div class="text-indigo-600 mb-1 flex justify-center"><i data-lucide="shield-check" class="w-7 h-7"></i></div>
+                                <span id="preview-company">PT. NAMA PERUSAHAAN</span>
+                            </td>
+                            <!-- Kolom Judul SOP -->
+                            <td class="border-r border-b border-slate-900 p-3 text-center w-2/4">
+                                <h2 class="text-sm sm:text-base font-bold uppercase tracking-wide" id="p-title-head">STANDARD OPERATING PROCEDURE</h2>
+                                <h1 class="text-xs sm:text-sm font-semibold text-slate-700 mt-1" id="p-title-sub">Judul SOP Belum Diisi</h1>
+                            </td>
+                            <!-- Kolom Metadata -->
+                            <td class="border-b border-slate-900 p-2 text-[11px] w-1/4 space-y-1">
+                                <div class="flex justify-between border-b border-slate-200 pb-0.5">
+                                    <span class="font-semibold">No. Dokumen:</span>
+                                    <span id="p-number">-</span>
+                                </div>
+                                <div class="flex justify-between border-b border-slate-200 pb-0.5">
+                                    <span class="font-semibold">Revisi ke:</span>
+                                    <span id="p-rev">-</span>
+                                </div>
+                                <div class="flex justify-between border-b border-slate-200 pb-0.5">
+                                    <span class="font-semibold">Tanggal:</span>
+                                    <span id="p-date">-</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-semibold">Halaman:</span>
+                                    <span>1 dari 1</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="p-2 text-[11px] bg-slate-50 border-slate-900 flex justify-between px-3">
+                                <span><strong>Departemen:</strong> <span id="p-dept">-</span></span>
+                                <span>Status: <strong class="text-emerald-600">BERLAKU EFEKTIF</strong></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Bagian 1: Tujuan & Ruang Lingkup -->
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-bold uppercase text-[11px] tracking-wider text-slate-500 border-b border-slate-200 pb-1 mb-1.5">1. Tujuan</h4>
+                        <p class="whitespace-pre-line text-slate-700 leading-relaxed text-xs sm:text-sm" id="p-purpose">-</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold uppercase text-[11px] tracking-wider text-slate-500 border-b border-slate-200 pb-1 mb-1.5">2. Ruang Lingkup</h4>
+                        <p class="whitespace-pre-line text-slate-700 leading-relaxed text-xs sm:text-sm" id="p-scope">-</p>
+                    </div>
+                </div>
+
+                <!-- Bagian 2: Definisi & Dasar Hukum -->
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-bold uppercase text-[11px] tracking-wider text-slate-500 border-b border-slate-200 pb-1 mb-1.5">3. Definisi</h4>
+                        <p class="whitespace-pre-line text-slate-700 leading-relaxed text-xs sm:text-sm" id="p-definitions">-</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold uppercase text-[11px] tracking-wider text-slate-500 border-b border-slate-200 pb-1 mb-1.5">4. Kebijakan / Dasar Hukum</h4>
+                        <p class="whitespace-pre-line text-slate-700 leading-relaxed text-xs sm:text-sm" id="p-legal">-</p>
+                    </div>
+                </div>
+
+                <!-- Bagian 3: Prosedur / Langkah Kerja -->
+                <div>
+                    <h4 class="font-bold uppercase text-[11px] tracking-wider text-slate-500 border-b border-slate-200 pb-1 mb-2.5">5. Prosedur / Langkah-Langkah Kerja</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse border border-slate-900 text-xs min-w-[450px]">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-900 font-bold border-b border-slate-900">
+                                    <th class="border-r border-slate-900 p-2 text-center w-10">No</th>
+                                    <th class="border-r border-slate-900 p-2 w-1/3">Pelaksana / Jabatan</th>
+                                    <th class="p-2">Uraian Aktivitas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="p-steps-tbody">
+                                <!-- Diisi via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Bagian 4: Dokumen Terkait & Lampiran -->
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-bold uppercase text-[11px] tracking-wider text-slate-500 border-b border-slate-200 pb-1 mb-1.5">6. Dokumen Terkait</h4>
+                        <p class="whitespace-pre-line text-slate-700 leading-relaxed text-xs sm:text-sm" id="p-documents">-</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold uppercase text-[11px] tracking-wider text-slate-500 border-b border-slate-200 pb-1 mb-1.5">7. Lampiran / Catatan Mutu</h4>
+                        <p class="whitespace-pre-line text-slate-700 leading-relaxed text-xs sm:text-sm" id="p-attachments">-</p>
+                    </div>
+                </div>
+
+                <!-- Tanda Tangan / Pengesahan -->
+                <div class="pt-6 overflow-x-auto">
+                    <table class="w-full border-collapse border border-slate-900 text-center text-xs min-w-[450px]">
+                        <thead>
+                            <tr class="bg-slate-100 font-bold border-b border-slate-900">
+                                <th class="border-r border-slate-900 p-2 w-1/3">Dibuat Oleh:</th>
+                                <th class="border-r border-slate-900 p-2 w-1/3">Diperiksa Oleh:</th>
+                                <th class="p-2 w-1/3">Disahkan Oleh:</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border-r border-slate-900 p-3.5 h-16 sm:h-20 align-bottom">
+                                    <div class="font-semibold underline text-xs" id="p-maker">-</div>
+                                    <div class="text-[9px] text-slate-500">Pembuat SOP</div>
+                                </td>
+                                <td class="border-r border-slate-900 p-3.5 h-16 sm:h-20 align-bottom">
+                                    <div class="font-semibold underline text-xs" id="p-checker">-</div>
+                                    <div class="text-[9px] text-slate-500">Pemeriksa / Manajer</div>
+                                </td>
+                                <td class="p-3.5 h-16 sm:h-20 align-bottom">
+                                    <div class="font-semibold underline text-xs" id="p-approver">-</div>
+                                    <div class="text-[9px] text-slate-500">Direksi / Pimpinan</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Inisialisasi ikon Lucide
+        lucide.createIcons();
+
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        // Data langkah default awal
+        let stepsData = [
+            { role: "Pemohon / Staff", desc: "Mengisi formulir pengajuan dan melengkapi dokumen pendukung awal." },
+            { role: "Atasan / Supervisor", desc: "Melakukan verifikasi kelengkapan berkas dan memberikan persetujuan awal." },
+            { role: "Bagian Terkait", desc: "Memproses pelaksanaan kegiatan sesuai dengan ketentuan yang berlaku." },
+            { role: "Pimpinan / Direksi", desc: "Memberikan pengesahan akhir dokumen atau hasil kegiatan." }
+        ];
+
+        // Konfigurasi informasi teks langkah
+        const stepDetails = {
+            1: { title: "Bagian 1: Informasi Umum", desc: "Masukkan informasi dasar dokumen, nomor, dan penanggung jawab." },
+            2: { title: "Bagian 2: Tujuan & Ruang Lingkup", desc: "Jelaskan maksud dibuatnya SOP ini serta batasan operasionalnya." },
+            3: { title: "Bagian 3: Definisi & Dasar Hukum", desc: "Istilah penting dan peraturan perundang-undangan / kebijakan perusahaan." },
+            4: { title: "Bagian 4: Prosedur / Langkah-Langkah", desc: "Rincikan tahapan aktivitas beserta penanggung jawab pelaksananya." },
+            5: { title: "Bagian 5: Dokumen Terkait & Lampiran", desc: "Formulir, checklist, atau dokumen pendukung lain yang digunakan." }
+        };
+
+        function updateWizardUI() {
+            goToStep(currentStep);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadDraftFromStorage();
+            renderStepsTable();
+            updateWizardUI();
+        });
+
+        // Navigasi Langkah Wizard
+        function changeStep(direction) {
+            const newStep = currentStep + direction;
+            if (newStep >= 1 && newStep <= totalSteps) {
+                goToStep(newStep);
+            }
+        }
+
+        function goToStep(step) {
+            currentStep = step;
+            
+            // Sembunyikan semua section
+            for (let i = 1; i <= totalSteps; i++) {
+                document.getElementById(`section-${i}`).classList.add('hidden');
+                const tab = document.getElementById(`tab-${i}`);
+                tab.className = "step-tab flex items-center shrink-0 sm:shrink px-3 py-2 sm:p-2.5 rounded-xl text-xs font-semibold border transition bg-white border-slate-200 text-slate-600 hover:bg-slate-50";
+                const numSpan = tab.querySelector('span');
+                numSpan.className = "w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px] mr-2 shrink-0";
+            }
+
+            // Tampilkan section aktif
+            document.getElementById(`section-${currentStep}`).classList.remove('hidden');
+            const activeTab = document.getElementById(`tab-${currentStep}`);
+            activeTab.className = "step-tab flex items-center shrink-0 sm:shrink px-3 py-2 sm:p-2.5 rounded-xl text-xs font-semibold border transition bg-indigo-50 border-indigo-200 text-indigo-700";
+            activeTab.querySelector('span').className = "w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] mr-2 shrink-0";
+
+            // Scroll tab aktif agar terlihat di mobile
+            activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
+            // Update Header info & Progress bar
+            document.getElementById('step-title').innerText = stepDetails[currentStep].title;
+            document.getElementById('step-desc').innerText = stepDetails[currentStep].desc;
+            document.getElementById('step-indicator').innerText = `Langkah ${currentStep} dari ${totalSteps}`;
+            
+            const progressPercent = (currentStep / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+            // Tombol Previous & Next visibility
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            
+            if (currentStep === 1) {
+                btnPrev.classList.add('hidden');
+            } else {
+                btnPrev.classList.remove('hidden');
+            }
+
+            if (currentStep === totalSteps) {
+                btnNext.innerText = "Pratinjau SOP";
+                btnNext.setAttribute('onclick', 'openPreviewModal()');
+            } else {
+                btnNext.innerHTML = 'Selanjutnya <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>';
+                btnNext.setAttribute('onclick', 'changeStep(1)');
+                lucide.createIcons();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render Langkah Prosedur secara Responsif (Card layout di Mobile, Table di Desktop)
+        function renderStepsTable() {
+            const container = document.getElementById('steps-container');
+            container.innerHTML = '';
+
+            stepsData.forEach((step, index) => {
+                const itemCard = document.createElement('div');
+                itemCard.className = "p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3 relative group";
+                itemCard.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800">
+                            Langkah #${index + 1}
+                        </span>
+                        <button type="button" onclick="removeStepRow(${index})" class="text-rose-500 hover:text-rose-700 p-1 rounded-lg hover:bg-rose-50 transition" title="Hapus Langkah">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Pelaksana / Jabatan <span class="text-rose-500">*</span></label>
+                        <input type="text" value="${escapeHtml(step.role)}" oninput="updateStepData(${index}, 'role', this.value)" placeholder="Contoh: Staff Keuangan" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm focus:ring-1 focus:ring-indigo-500 outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Uraian Aktivitas / Langkah Kerja <span class="text-rose-500">*</span></label>
+                        <textarea rows="2" oninput="updateStepData(${index}, 'desc', this.value)" placeholder="Uraian aktivitas kerja..." class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm focus:ring-1 focus:ring-indigo-500 outline-none bg-white">${escapeHtml(step.desc)}</textarea>
+                    </div>
+                `;
+                container.appendChild(itemCard);
+            });
+            lucide.createIcons();
+        }
+
+        function addStepRow() {
+            stepsData.push({ role: "", desc: "" });
+            renderStepsTable();
+        }
+
+        function removeStepRow(index) {
+            if (stepsData.length <= 1) {
+                showToast("SOP minimal harus memiliki 1 langkah prosedur.", "error");
+                return;
+            }
+            stepsData.splice(index, 1);
+            renderStepsTable();
+        }
+
+        function updateStepData(index, field, value) {
+            stepsData[index][field] = value;
+        }
+
+        // Simpan Draft ke LocalStorage
+        function saveDraft() {
+            const formData = getFormDataObject();
+            localStorage.setItem('sop_builder_draft', JSON.stringify(formData));
+            showToast("Draft SOP berhasil disimpan ke memori browser!", "success");
+        }
+
+        // Muat Draft dari LocalStorage
+        function loadDraftFromStorage() {
+            const saved = localStorage.getItem('sop_builder_draft');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    setFormDataObject(data);
+                } catch (e) {
+                    console.error("Gagal memuat draft:", e);
+                }
+            } else {
+                document.getElementById('sop_date').valueAsDate = new Date();
+            }
+        }
+
+        // Reset Form
+        function resetForm() {
+            if (confirm("Apakah Anda yakin ingin mereset seluruh form SOP?")) {
+                localStorage.removeItem('sop_builder_draft');
+                document.getElementById('sopForm').reset();
+                stepsData = [
+                    { role: "Pemohon / Staff", desc: "Mengisi formulir pengajuan dan melengkapi dokumen pendukung awal." },
+                    { role: "Atasan / Supervisor", desc: "Melakukan verifikasi kelengkapan berkas dan memberikan persetujuan." }
+                ];
+                document.getElementById('sop_date').valueAsDate = new Date();
+                renderStepsTable();
+                goToStep(1);
+                showToast("Form berhasil direset.", "success");
+            }
+        }
+
+        function getFormDataObject() {
+            return {
+                title: document.getElementById('sop_title').value,
+                number: document.getElementById('sop_number').value,
+                dept: document.getElementById('sop_dept').value,
+                date: document.getElementById('sop_date').value,
+                rev: document.getElementById('sop_rev').value,
+                maker: document.getElementById('sop_maker').value,
+                checker: document.getElementById('sop_checker').value,
+                approver: document.getElementById('sop_approver').value,
+                purpose: document.getElementById('sop_purpose').value,
+                scope: document.getElementById('sop_scope').value,
+                definitions: document.getElementById('sop_definitions').value,
+                legal: document.getElementById('sop_legal').value,
+                documents: document.getElementById('sop_documents').value,
+                attachments: document.getElementById('sop_attachments').value,
+                steps: stepsData
+            };
+        }
+
+        function setFormDataObject(data) {
+            document.getElementById('sop_title').value = data.title || '';
+            document.getElementById('sop_number').value = data.number || '';
+            document.getElementById('sop_dept').value = data.dept || '';
+            document.getElementById('sop_date').value = data.date || '';
+            document.getElementById('sop_rev').value = data.rev || '00';
+            document.getElementById('sop_maker').value = data.maker || '';
+            document.getElementById('sop_checker').value = data.checker || '';
+            document.getElementById('sop_approver').value = data.approver || '';
+            document.getElementById('sop_purpose').value = data.purpose || '';
+            document.getElementById('sop_scope').value = data.scope || '';
+            document.getElementById('sop_definitions').value = data.definitions || '';
+            document.getElementById('sop_legal').value = data.legal || '';
+            document.getElementById('sop_documents').value = data.documents || '';
+            document.getElementById('sop_attachments').value = data.attachments || '';
+            if (data.steps && Array.isArray(data.steps)) {
+                stepsData = data.steps;
+            }
+            renderStepsTable();
+        }
+
+        // Buka Modal Pratinjau
+        function openPreviewModal() {
+            const data = getFormDataObject();
+            
+            document.getElementById('p-title-head').innerText = data.dept ? `SOP - ${data.dept.toUpperCase()}` : "STANDARD OPERATING PROCEDURE";
+            document.getElementById('p-title-sub').innerText = data.title || "(Judul SOP Belum Diisi)";
+            document.getElementById('p-number').innerText = data.number || "-";
+            document.getElementById('p-rev').innerText = data.rev || "00";
+            document.getElementById('p-date').innerText = data.date || "-";
+            document.getElementById('p-dept').innerText = data.dept || "-";
+            
+            document.getElementById('p-purpose').innerText = data.purpose || "(Belum diisi)";
+            document.getElementById('p-scope').innerText = data.scope || "(Belum diisi)";
+            document.getElementById('p-definitions').innerText = data.definitions || "(Tidak ada definisi khusus)";
+            document.getElementById('p-legal').innerText = data.legal || "(Belum diisi)";
+            document.getElementById('p-documents').innerText = data.documents || "(Tidak ada dokumen terkait)";
+            document.getElementById('p-attachments').innerText = data.attachments || "(Tidak ada lampiran)";
+
+            document.getElementById('p-maker').innerText = data.maker || "(........................)";
+            document.getElementById('p-checker').innerText = data.checker || "(........................)";
+            document.getElementById('p-approver').innerText = data.approver || "(........................)";
+
+            const pTbody = document.getElementById('p-steps-tbody');
+            pTbody.innerHTML = '';
+            stepsData.forEach((s, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="border-r border-b border-slate-900 p-2 text-center font-medium">${idx + 1}</td>
+                    <td class="border-r border-b border-slate-900 p-2 font-medium">${escapeHtml(s.role || '-')}</td>
+                    <td class="border-b border-slate-900 p-2 whitespace-pre-line">${escapeHtml(s.desc || '-')}</td>
+                `;
+                pTbody.appendChild(tr);
+            });
+
+            document.getElementById('previewModal').classList.remove('hidden');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').classList.add('hidden');
+        }
+
+        // Print / Ekspor PDF
+        function triggerPrint() {
+            const modal = document.getElementById('previewModal');
+            const wasHidden = modal.classList.contains('hidden');
+            if (wasHidden) {
+                openPreviewModal();
+            }
+            setTimeout(() => {
+                window.print();
+            }, 300);
+        }
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-msg');
+            const iconEl = document.getElementById('toast-icon');
+            
+            msgEl.innerText = message;
+            if (type === 'success') {
+                iconEl.setAttribute('data-lucide', 'check-circle');
+                iconEl.className = "w-5 h-5 mr-2.5 text-emerald-400 shrink-0";
+            } else {
+                iconEl.setAttribute('data-lucide', 'alert-circle');
+                iconEl.className = "w-5 h-5 mr-2.5 text-rose-400 shrink-0";
+            }
+            lucide.createIcons();
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>

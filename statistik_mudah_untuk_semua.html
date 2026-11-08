@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistik Mudah untuk Semua - Pahami Angka di Sekitar Kita</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind Custom Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar and smooth transitions */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c7d2fe;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #818cf8;
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+                    <i class="fa-solid fa-chart-pie text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg text-slate-900 tracking-tight">Statistik<span class="text-indigo-600">Mudah</span></span>
+                    <p class="text-xs text-slate-500 font-medium">Belajar Angka Tanpa Pusing</p>
+                </div>
+            </div>
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
+                <a href="#pengantar" class="hover:text-indigo-600 transition">Pengantar</a>
+                <a href="#konsep" class="hover:text-indigo-600 transition">Konsep Dasar</a>
+                <a href="#kalkulator" class="hover:text-indigo-600 transition">Kalkulator Interaktif</a>
+                <a href="#kehidupan" class="hover:text-indigo-600 transition">Contoh Sehari-hari</a>
+                <a href="#quiz" class="hover:text-indigo-600 transition">Kuis Mini</a>
+            </nav>
+            <div>
+                <a href="#kalkulator" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-xl text-sm shadow-sm shadow-indigo-200 transition transform active:scale-95 inline-flex items-center gap-2">
+                    <i class="fa-solid fa-calculator"></i> Coba Alat Hitung
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="pengantar" class="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 bg-gradient-to-b from-indigo-50/50 via-white to-slate-50">
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold uppercase tracking-wider">
+                        <i class="fa-solid fa-sparkles text-indigo-500"></i> Panduan Awam & Ramah Pemula
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                        Mengapa <span class="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Statistik</span> Itu Penting & Asyik?
+                    </h1>
+                    <p class="text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
+                        Statistik bukan cuma rumus rumit milik para ilmuwan. Statistik ada di sekitar kita: mulai dari ramalan cuaca, memilih menu makanan favorit, hingga menentukan pengeluaran bulanan. Mari kita bedah dengan cara yang paling santai!
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                        <a href="#konsep" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3.5 rounded-xl shadow-lg shadow-indigo-200 transition transform active:scale-95 flex items-center justify-center gap-2">
+                            Mulai Belajar <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                        <a href="#kalkulator" class="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold px-6 py-3.5 rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-play text-indigo-600"></i> Buka Kalkulator Data
+                        </a>
+                    </div>
+                </div>
+                <!-- Hero Illustration Card -->
+                <div class="lg:col-span-5">
+                    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-2xl shadow-indigo-100 relative">
+                        <div class="absolute -top-4 -right-4 bg-violet-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md">
+                            Mudah & Interaktif
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-brain"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-slate-900">Peta Konsep Kilat</h3>
+                                        <p class="text-xs text-slate-500">3 Pilar Utama Statistik</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full font-medium">Dasar</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="p-3 bg-slate-50 rounded-xl hover:bg-indigo-50/50 transition flex items-start gap-3 border border-slate-100">
+                                    <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-sm font-bold shrink-0">1</div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-slate-800">Mean (Rata-rata)</h4>
+                                        <p class="text-xs text-slate-500">Titik keseimbangan dari seluruh data angka.</p>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-slate-50 rounded-xl hover:bg-indigo-50/50 transition flex items-start gap-3 border border-slate-100">
+                                    <div class="w-8 h-8 rounded-lg bg-violet-600 text-white flex items-center justify-center text-sm font-bold shrink-0">2</div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-slate-800">Median (Nilai Tengah)</h4>
+                                        <p class="text-xs text-slate-500">Nilai yang berada tepat di tengah setelah diurutkan.</p>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-slate-50 rounded-xl hover:bg-indigo-50/50 transition flex items-start gap-3 border border-slate-100">
+                                    <div class="w-8 h-8 rounded-lg bg-pink-600 text-white flex items-center justify-center text-sm font-bold shrink-0">3</div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-slate-800">Mode / Modus (Paling Sering)</h4>
+                                        <p class="text-xs text-slate-500">Data yang frekuensi kemunculannya paling tinggi.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Concepts Section -->
+    <section id="konsep" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-indigo-600 text-xs font-bold uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full">Pusat Pembelajaran</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">Kenali 3 Sahabat Karib Statistik</h2>
+                <p class="text-slate-600 text-base">Saat membaca laporan atau survei, tiga ukuran pemusatan data inilah yang paling sering digunakan untuk merangkum jutaan informasi.</p>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="flex justify-center mb-10">
+                <div class="inline-flex p-1.5 bg-slate-100 rounded-2xl shadow-inner gap-2 max-w-full overflow-x-auto">
+                    <button onclick="switchTab('mean')" id="btn-mean" class="tab-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition bg-white text-indigo-600 shadow-sm">
+                        <i class="fa-solid fa-calculator mr-2"></i> 1. Mean (Rata-rata)
+                    </button>
+                    <button onclick="switchTab('median')" id="btn-median" class="tab-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition text-slate-600 hover:text-slate-900">
+                        <i class="fa-solid fa-align-center mr-2"></i> 2. Median (Tengah)
+                    </button>
+                    <button onclick="switchTab('mode')" id="btn-mode" class="tab-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition text-slate-600 hover:text-slate-900">
+                        <i class="fa-solid fa-fire mr-2"></i> 3. Mode (Modus)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Content Container -->
+            <div class="max-w-4xl mx-auto bg-slate-50 border border-slate-200/80 rounded-3xl p-6 sm:p-10 shadow-sm">
+                
+                <!-- TAB 1: MEAN -->
+                <div id="content-mean" class="tab-content space-y-6 fade-in">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-3 py-1 rounded-full uppercase">Konsep Dasar</span>
+                            <h3 class="text-2xl font-bold text-slate-900 mt-2">Mean (Nilai Rata-rata Aritmatika)</h3>
+                        </div>
+                        <div class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-mono font-bold shadow">
+                            Rumus: Jumlah Seluruh Data ÷ Banyak Data
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4 text-slate-700 text-sm leading-relaxed">
+                            <p>
+                                <strong>Apa itu Mean?</strong> Mean adalah hasil pembagian jumlah keseluruhan nilai dalam suatu kelompok data dengan banyaknya anggota data tersebut.
+                            </p>
+                            <p>
+                                Bayangkan kamu dan 3 temanmu mengumpulkan uang jajan untuk membeli kue ulang tahun bersama. Jika ditotal jumlah uang kalian Rp40.000, maka rata-rata sumbangan tiap orang adalah Rp40.000 ÷ 4 = Rp10.000.
+                            </p>
+                            <div class="bg-amber-50 border border-amber-200 p-4 rounded-2xl text-amber-900 text-xs">
+                                <i class="fa-solid fa-triangle-exclamation mr-1.5 text-amber-600 font-bold"></i> <strong>Catatan Penting:</strong> Mean sangat sensitif terhadap nilai ekstrem (pencilan / outlier). Jika ada satu orang yang menyumbang Rp1.000.000, rata-ratanya akan melonjak drastis dan jadi tidak mewakili kebanyakan orang.
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-sm">
+                            <div class="space-y-3">
+                                <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                                    <i class="fa-solid fa-lightbulb text-amber-500"></i> Contoh Kasus Sehari-hari
+                                </h4>
+                                <p class="text-xs text-slate-600">
+                                    Nilai ulangan matematika 5 siswa: <strong>70, 80, 85, 90, 75</strong>
+                                </p>
+                                <div class="bg-slate-50 p-3 rounded-xl text-xs font-mono text-slate-700 border border-slate-100 space-y-1">
+                                    <p>• Total nilai = 70 + 80 + 85 + 90 + 75 = 400</p>
+                                    <p>• Banyak siswa = 5 orang</p>
+                                    <p class="font-bold text-indigo-600">• Rata-rata (Mean) = 400 ÷ 5 = 80</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                                <span>Tingkat Kesulitan: Mudah</span>
+                                <span class="font-semibold text-indigo-600">Sering Dipakai</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: MEDIAN -->
+                <div id="content-median" class="tab-content space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+                        <div>
+                            <span class="text-xs font-bold text-violet-600 bg-violet-100 px-3 py-1 rounded-full uppercase">Konsep Dasar</span>
+                            <h3 class="text-2xl font-bold text-slate-900 mt-2">Median (Nilai Tengah)</h3>
+                        </div>
+                        <div class="bg-violet-600 text-white px-4 py-2 rounded-xl text-xs font-mono font-bold shadow">
+                            Syarat Wajib: Data Harus Diurutkan Dulu!
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4 text-slate-700 text-sm leading-relaxed">
+                            <p>
+                                <strong>Apa itu Median?</strong> Median adalah angka yang berada tepat di tengah-tengah ketika seluruh data diurutkan dari yang terkecil hingga terbesar.
+                            </p>
+                            <p>
+                                Median sangat berguna ketika kamu tidak ingin angka ekstrem merusak gambaran umum. Contoh terbaik adalah survei gaji karyawan: jika bos perusahaan bergaji miliaran, rata-rata gaji bisa terlihat sangat tinggi padahal mayoritas karyawan bergaji standar. Di sinilah Median memberikan gambaran yang lebih adil.
+                            </p>
+                            <div class="bg-violet-50 border border-violet-200 p-4 rounded-2xl text-violet-900 text-xs">
+                                <i class="fa-solid fa-circle-info mr-1.5 text-violet-600 font-bold"></i> <strong>Tips Ganjil vs Genap:</strong> Jika jumlah data ganjil, ambil tepat di tengah. Jika jumlah data genap, ambil dua angka di tengah lalu cari rata-ratanya.
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-sm">
+                            <div class="space-y-3">
+                                <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                                    <i class="fa-solid fa-lightbulb text-amber-500"></i> Contoh Kasus Sehari-hari
+                                </h4>
+                                <p class="text-xs text-slate-600">
+                                    Waktu tempuh 5 kurir ke alamat tujuan (menit): <strong>15, 30, 10, 45, 20</strong>
+                                </p>
+                                <div class="bg-slate-50 p-3 rounded-xl text-xs font-mono text-slate-700 border border-slate-100 space-y-1">
+                                    <p>1. Urutkan: 10, 15, <strong class="text-violet-600">20</strong>, 30, 45</p>
+                                    <p>2. Posisi tengah (data ke-3)</p>
+                                    <p class="font-bold text-violet-600">• Median = 20 menit</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                                <span>Tingkat Kesulitan: Sedang</span>
+                                <span class="font-semibold text-violet-600">Kebal Pencilan</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: MODE -->
+                <div id="content-mode" class="tab-content space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+                        <div>
+                            <span class="text-xs font-bold text-pink-600 bg-pink-100 px-3 py-1 rounded-full uppercase">Konsep Dasar</span>
+                            <h3 class="text-2xl font-bold text-slate-900 mt-2">Mode / Modus (Frekuensi Terbanyak)</h3>
+                        </div>
+                        <div class="bg-pink-600 text-white px-4 py-2 rounded-xl text-xs font-mono font-bold shadow">
+                            Fokus: Nilai yang Paling Sering Muncul
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4 text-slate-700 text-sm leading-relaxed">
+                            <p>
+                                <strong>Apa itu Modus?</strong> Modus adalah nilai yang memiliki jumlah kemunculan (frekuensi) paling banyak dalam suatu kelompok data.
+                            </p>
+                            <p>
+                                Mode sangat sering digunakan oleh industri retail dan fashion. Toko sepatu tidak akan memesan stok terbanyak berdasarkan rata-rata ukuran kaki (bisa jadi angka pecahan yang tidak ada fisiknya), melainkan berdasarkan <em>modus</em> ukuran sepatu yang paling laku dibeli pelanggan (misal: ukuran 40).
+                            </p>
+                            <div class="bg-pink-50 border border-pink-200 p-4 rounded-2xl text-pink-900 text-xs">
+                                <i class="fa-solid fa-circle-check mr-1.5 text-pink-600 font-bold"></i> <strong>Catatan Unik:</strong> Suatu data bisa tidak memiliki modus (semua angka muncul sekali) atau memiliki lebih dari satu modus (bimodal / multimodal).
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-sm">
+                            <div class="space-y-3">
+                                <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                                    <i class="fa-solid fa-lightbulb text-amber-500"></i> Contoh Kasus Sehari-hari
+                                </h4>
+                                <p class="text-xs text-slate-600">
+                                    Pilihan menu kopi favorit di kantor: <strong>Latte, Espresso, Latte, Cappuccino, Latte, Espresso</strong>
+                                </p>
+                                <div class="bg-slate-50 p-3 rounded-xl text-xs font-mono text-slate-700 border border-slate-100 space-y-1">
+                                    <p>• Latte muncul 3 kali</p>
+                                    <p>• Espresso muncul 2 kali</p>
+                                    <p>• Cappuccino muncul 1 kali</p>
+                                    <p class="font-bold text-pink-600">• Modus = Latte (paling laris)</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                                <span>Tingkat Kesulitan: Sangat Mudah</span>
+                                <span class="font-semibold text-pink-600">Cocok untuk Data Kategori</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Calculator Section -->
+    <section id="kalkulator" class="py-20 bg-slate-900 text-white relative overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-indigo-400 text-xs font-bold uppercase tracking-wider bg-indigo-950/80 border border-indigo-800 px-3 py-1 rounded-full">Praktik Langsung</span>
+                <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">Kalkulator & Visualisator Statistik</h2>
+                <p class="text-slate-400 text-base">Masukkan angka sesukamu (pisahkan dengan koma), lalu saksikan bagaimana Mean, Median, dan Modus dihitung secara otomatis!</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto bg-slate-800/80 border border-slate-700/80 backdrop-blur-xl rounded-3xl p-6 sm:p-10 shadow-2xl">
+                <!-- Preset Buttons -->
+                <div class="mb-6">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Coba Contoh Cepat:</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="loadPreset('85, 90, 75, 80, 95')" class="bg-slate-700 hover:bg-indigo-600 text-slate-200 hover:text-white px-3 py-1.5 rounded-xl text-xs transition border border-slate-600 font-medium">Nilai Ujian (5 Siswa)</button>
+                        <button onclick="loadPreset('15, 20, 20, 25, 30, 35, 40')" class="bg-slate-700 hover:bg-indigo-600 text-slate-200 hover:text-white px-3 py-1.5 rounded-xl text-xs transition border border-slate-600 font-medium">Waktu Perjalanan (7 Hari)</button>
+                        <button onclick="loadPreset('50, 50, 60, 70, 80, 50, 90')" class="bg-slate-700 hover:bg-indigo-600 text-slate-200 hover:text-white px-3 py-1.5 rounded-xl text-xs transition border border-slate-600 font-medium">Pengeluaran Harian (Ribu Rp)</button>
+                        <button onclick="loadPreset('10, 15, 20, 25')" class="bg-slate-700 hover:bg-indigo-600 text-slate-200 hover:text-white px-3 py-1.5 rounded-xl text-xs transition border border-slate-600 font-medium">Data Genap</button>
+                    </div>
+                </div>
+
+                <!-- Input Field -->
+                <div class="space-y-2 mb-8">
+                    <label for="data-input" class="block text-sm font-bold text-slate-200">Masukkan Angka (Pisahkan dengan koma):</label>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="data-input" value="85, 90, 75, 80, 95, 90, 60" 
+                            class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono text-sm shadow-inner"
+                            placeholder="Contoh: 10, 20, 30, 40, 50">
+                        <button onclick="hitungStatistik()" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold px-6 py-3 rounded-2xl shadow-lg shadow-indigo-900/40 transition transform active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-calculator"></i> Hitung Sekarang
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-400" id="error-msg"></p>
+                </div>
+
+                <!-- Results Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-slate-900/60 border border-slate-700 p-5 rounded-2xl text-center space-y-1">
+                        <span class="text-xs font-medium text-indigo-400 uppercase tracking-wider">Mean (Rata-rata)</span>
+                        <div id="res-mean" class="text-2xl sm:text-3xl font-extrabold text-white font-mono">-</div>
+                        <p class="text-[11px] text-slate-400">Total ÷ Jumlah Data</p>
+                    </div>
+                    <div class="bg-slate-900/60 border border-slate-700 p-5 rounded-2xl text-center space-y-1">
+                        <span class="text-xs font-medium text-violet-400 uppercase tracking-wider">Median (Tengah)</span>
+                        <div id="res-median" class="text-2xl sm:text-3xl font-extrabold text-white font-mono">-</div>
+                        <p class="text-[11px] text-slate-400">Nilai tengah terurut</p>
+                    </div>
+                    <div class="bg-slate-900/60 border border-slate-700 p-5 rounded-2xl text-center space-y-1">
+                        <span class="text-xs font-medium text-pink-400 uppercase tracking-wider">Mode (Modus)</span>
+                        <div id="res-mode" class="text-2xl sm:text-3xl font-extrabold text-white font-mono">-</div>
+                        <p class="text-[11px] text-slate-400">Paling sering muncul</p>
+                    </div>
+                </div>
+
+                <!-- Detailed Summary Breakdown -->
+                <div class="bg-slate-900/80 border border-slate-700 rounded-2xl p-5 space-y-3 text-xs">
+                    <div class="flex items-center justify-between font-semibold text-slate-300 border-b border-slate-800 pb-2">
+                        <span><i class="fa-solid fa-list-ol mr-2 text-indigo-400"></i> Rincian Analisis Data</span>
+                        <span id="res-count" class="text-indigo-400">Jumlah Data (n): 0</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-slate-400 font-mono">
+                        <div>
+                            <p class="text-slate-500 mb-1">Data Terurut:</p>
+                            <p id="res-sorted" class="text-white bg-slate-950 p-2 rounded-lg border border-slate-800 break-words">-</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 mb-1">Total Keseluruhan (Sum):</p>
+                            <p id="res-sum" class="text-white bg-slate-950 p-2 rounded-lg border border-slate-800">-</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Everyday Life Examples Section -->
+    <section id="kehidupan" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-indigo-600 text-xs font-bold uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full">Aplikasi Nyata</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">Statistik dalam Kehidupan Sehari-hari</h2>
+                <p class="text-slate-600 text-base">Tanpa disadari, kita menggunakan prinsip statistik dalam berbagai keputusan penting setiap hari.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-slate-50 border border-slate-200/80 p-8 rounded-3xl hover:shadow-xl hover:border-indigo-200 transition group flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl font-bold group-hover:scale-110 transition">
+                            <i class="fa-solid fa-cloud-sun-rain"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900">Ramalan Cuaca & Hujan</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Pernah dengar BMKG berkata "Peluang hujan 80% di sore hari"? Angka tersebut bukan tebakan asal, melainkan hasil perhitungan probabilitas dari pola cuaca historis bertahun-tahun sebelumnya pada kondisi tekanan udara dan kelembapan yang mirip.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                        <span>Peluang & Probabilitas</span>
+                        <span class="font-semibold text-indigo-600">Sangat Relevan</span>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-slate-50 border border-slate-200/80 p-8 rounded-3xl hover:shadow-xl hover:border-violet-200 transition group flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 rounded-2xl bg-violet-100 text-violet-600 flex items-center justify-center text-xl font-bold group-hover:scale-110 transition">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900">Belanja & Diskon E-commerce</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Algoritma toko online menggunakan statistik untuk melihat kebiasaan belanjamu. Saat mereka merekomendasikan produk "Paling Sering Dibeli Bersama", itu adalah hasil analisis data frekuensi belanja jutaan pengguna lain (Modus).
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                        <span>Analisis Perilaku</span>
+                        <span class="font-semibold text-violet-600">Bisnis & Retail</span>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-slate-50 border border-slate-200/80 p-8 rounded-3xl hover:shadow-xl hover:border-pink-200 transition group flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl font-bold group-hover:scale-110 transition">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900">Kesehatan & Vaksin</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Sebelum obat atau vaksin disetujui untuk umum, tenaga medis melakukan uji klinis statistik komparatif. Mereka membandingkan kelompok pasien yang diberi obat asli vs plasebo untuk memastikan efektivitasnya secara valid secara ilmiah.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                        <span>Uji Hipotesis Medis</span>
+                        <span class="font-semibold text-pink-600">Keselamatan Publik</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mini Quiz Section -->
+    <section id="quiz" class="py-20 bg-gradient-to-b from-slate-50 to-indigo-50/50 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-lg">
+                <div class="text-center space-y-2 mb-8">
+                    <span class="text-indigo-600 text-xs font-bold uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full">Uji Pemahaman</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">Kuis Kilat Statistik</h2>
+                    <p class="text-sm text-slate-600">Uji seberapa jauh kamu memahami materi dasar ini dengan pertanyaan santai berikut.</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-6">
+                    <div class="space-y-4">
+                        <h3 class="font-bold text-slate-800 text-base">
+                            1. Diberikan data nilai ulangan: <span class="font-mono text-indigo-600 bg-indigo-50 px-2 py-1 rounded">5, 8, 5, 10, 7</span>. Berapakah Modus (Mode) dari data tersebut?
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button onclick="jawabKuis(false, this)" class="text-left p-4 rounded-2xl border border-slate-200 hover:border-indigo-600 hover:bg-indigo-50/30 transition text-sm font-medium text-slate-700">
+                                A. 7 (Nilai tengah)
+                            </button>
+                            <button onclick="jawabKuis(true, this)" class="text-left p-4 rounded-2xl border border-slate-200 hover:border-indigo-600 hover:bg-indigo-50/30 transition text-sm font-medium text-slate-700">
+                                B. 5 (Muncul sebanyak 2 kali)
+                            </button>
+                            <button onclick="jawabKuis(false, this)" class="text-left p-4 rounded-2xl border border-slate-200 hover:border-indigo-600 hover:bg-indigo-50/30 transition text-sm font-medium text-slate-700">
+                                C. 7.0 (Nilai rata-rata)
+                            </button>
+                            <button onclick="jawabKuis(false, this)" class="text-left p-4 rounded-2xl border border-slate-200 hover:border-indigo-600 hover:bg-indigo-50/30 transition text-sm font-medium text-slate-700">
+                                D. 10 (Nilai terbesar)
+                            </button>
+                        </div>
+                    </div>
+                    <div id="quiz-feedback" class="hidden p-4 rounded-2xl text-sm font-medium text-center"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">
+                    <i class="fa-solid fa-chart-pie text-sm"></i>
+                </div>
+                <span class="font-bold text-white text-base">Statistik<span class="text-indigo-400">Mudah</span></span>
+            </div>
+            <p class="text-xs text-slate-500">
+                &copy; 2026 StatistikMudah. Dibuat interaktif untuk edukasi masyarakat awam agar mencintai ilmu data.
+            </p>
+            <div class="flex space-x-4 text-sm">
+                <a href="#pengantar" class="hover:text-white transition">Beranda</a>
+                <a href="#konsep" class="hover:text-white transition">Konsep</a>
+                <a href="#kalkulator" class="hover:text-white transition">Kalkulator</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Interactive Logic -->
+    <script>
+        // Tab Switcher Function
+        function switchTab(tabName) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            // Remove active styles from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm');
+                btn.classList.add('text-slate-600', 'hover:text-slate-900');
+            });
+
+            // Show selected content
+            document.getElementById('content-' + tabName).classList.remove('hidden');
+            
+            // Highlight active button
+            const activeBtn = document.getElementById('btn-' + tabName);
+            activeBtn.classList.add('bg-white', 'text-indigo-600', 'shadow-sm');
+            activeBtn.classList.remove('text-slate-600', 'hover:text-slate-900');
+        }
+
+        // Preset Loader
+        function loadPreset(valString) {
+            document.getElementById('data-input').value = valString;
+            hitungStatistik();
+        }
+
+        // Calculator Core Logic
+        function hitungStatistik() {
+            const inputVal = document.getElementById('data-input').value;
+            const errorMsg = document.getElementById('error-msg');
+            errorMsg.innerText = '';
+
+            // Split and convert to numbers
+            const rawArr = inputVal.split(',').map(item => parseFloat(item.trim()));
+            const arr = rawArr.filter(num => !isNaN(num));
+
+            if (arr.length === 0) {
+                errorMsg.innerText = '⚠️ Masukkan minimal satu angka yang valid!';
+                errorMsg.classList.add('text-rose-400');
+                return;
+            }
+
+            const n = arr.length;
+
+            // 1. SUM & MEAN
+            const sum = arr.reduce((acc, val) => acc + val, 0);
+            const mean = sum / n;
+
+            // 2. SORTED ARRAY & MEDIAN
+            const sorted = [...arr].sort((a, b) => a - b);
+            let median = 0;
+            const mid = Math.floor(n / 2);
+            if (n % 2 === 0) {
+                median = (sorted[mid - 1] + sorted[mid]) / 2;
+            } else {
+                median = sorted[mid];
+            }
+
+            // 3. MODE
+            const freqMap = {};
+            let maxFreq = 0;
+            arr.forEach(num => {
+                freqMap[num] = (freqMap[num] || 0) + 1;
+                if (freqMap[num] > maxFreq) {
+                    maxFreq = freqMap[num];
+                }
+            });
+
+            let modes = [];
+            for (let num in freqMap) {
+                if (freqMap[num] === maxFreq) {
+                    modes.push(parseFloat(num));
+                }
+            }
+
+            let modeText = '';
+            if (maxFreq === 1 && arr.length > 1) {
+                modeText = 'Tidak ada (semua unik)';
+            } else {
+                modeText = modes.join(', ');
+            }
+
+            // Render Results
+            document.getElementById('res-mean').innerText = Number.isInteger(mean) ? mean : mean.toFixed(2);
+            document.getElementById('res-median').innerText = Number.isInteger(median) ? median : median.toFixed(2);
+            document.getElementById('res-mode').innerText = modeText;
+            document.getElementById('res-count').innerText = `Jumlah Data (n): ${n}`;
+            document.getElementById('res-sorted').innerText = sorted.join(', ');
+            document.getElementById('res-sum').innerText = sum;
+        }
+
+        // Quiz Handler
+        function jawabKuis(isCorrect, btnElement) {
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden');
+            
+            // Reset button borders
+            const buttons = btnElement.parentElement.querySelectorAll('button');
+            buttons.forEach(b => b.classList.remove('border-emerald-500', 'bg-emerald-50', 'border-rose-500', 'bg-rose-50'));
+
+            if (isCorrect) {
+                btnElement.classList.add('border-emerald-500', 'bg-emerald-50');
+                feedback.className = 'p-4 rounded-2xl text-sm font-medium text-center bg-emerald-50 text-emerald-800 border border-emerald-200';
+                feedback.innerHTML = '🎉 <strong>Benar Sekali!</strong> Angka 5 muncul sebanyak 2 kali, menjadikannya angka dengan kemunculan terbanyak (Modus).';
+            } else {
+                btnElement.classList.add('border-rose-500', 'bg-rose-50');
+                feedback.className = 'p-4 rounded-2xl text-sm font-medium text-center bg-rose-50 text-rose-800 border border-rose-200';
+                feedback.innerHTML = '❌ <strong>Kurang tepat.</strong> Coba ingat kembali: Modus adalah angka yang frekuensi kemunculannya paling sering!';
+            }
+        }
+
+        // Auto calculate on page load
+        window.onload = function() {
+            hitungStatistik();
+        };
+    </script>
+</body>
+</html>

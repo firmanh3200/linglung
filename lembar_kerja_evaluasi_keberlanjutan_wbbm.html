@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKE Keberlanjutan & Pemeliharaan WBBM - Permen PANRB 90/2021 & 5/2024</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            50: '#f0f4f8',
+                            100: '#d9e2ec',
+                            600: '#102a43',
+                            750: '#0b1d2e',
+                            800: '#0b1329',
+                            900: '#040d1a',
+                        },
+                        orange: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        },
+                        emerald: {
+                            600: '#059669',
+                            700: '#047857'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-shadow { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+        }
+    </style>
+</head>
+<body class="bg-navy-50 text-navy-900 min-h-screen flex flex-col antialiased">
+
+    <!-- Top Notification Banner -->
+    <div class="bg-gradient-to-r from-navy-800 via-navy-900 to-navy-800 text-white text-xs md:text-sm py-2 px-4 shadow-md no-print flex justify-between items-center z-50">
+        <div class="flex items-center space-x-2 truncate">
+            <span class="bg-orange-500 text-white font-bold px-2 py-0.5 rounded uppercase text-[10px] tracking-wider">Evaluasi Pemeliharaan</span>
+            <span class="truncate">Monev Keberlanjutan Predikat <strong>WBBM</strong> (Permen PANRB No. 90/2021 jo. No. 5/2024)</span>
+        </div>
+        <div class="hidden md:flex items-center space-x-4 text-xs text-orange-400 font-medium">
+            <span><i class="fa-solid fa-award mr-1"></i> Fokus: Institutionalization & Continuous Improvement</span>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="bg-white border-b border-navy-100 sticky top-0 z-40 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-navy-900 to-navy-750 flex items-center justify-center text-orange-500 shadow-md">
+                    <i class="fa-solid fa-medal text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-navy-900 tracking-tight">LKE Evaluasi Keberlanjutan WBBM</h1>
+                    <p class="text-xs text-gray-500">Monitoring & Evaluasi Pemeliharaan Zona Integritas Instansi Berpredikat WBBM</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="saveProgress()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow transition flex items-center space-x-2">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>Simpan Progress</span>
+                </button>
+                <button onclick="resetProgress()" class="px-3.5 py-2 bg-gray-200 hover:bg-gray-300 text-navy-800 rounded-lg text-xs font-semibold shadow transition flex items-center space-x-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Reset</span>
+                </button>
+                <button onclick="window.print()" class="px-3.5 py-2 bg-navy-800 hover:bg-navy-900 text-white rounded-lg text-xs font-semibold shadow transition flex items-center space-x-2">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Cetak Laporan</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
+
+        <!-- Dashboard Ringkasan & Status Instansi -->
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <!-- Card 1: Instansi & Status WBBM -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-navy-100 flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 text-navy-50 opacity-50 z-0">
+                    <i class="fa-solid fa-building-shield text-9xl"></i>
+                </div>
+                <div class="z-10">
+                    <span class="text-[11px] uppercase font-bold tracking-wider text-orange-600 bg-orange-500/10 px-2.5 py-1 rounded-full">Status Eksisting</span>
+                    <h3 class="text-lg font-bold text-navy-900 mt-2">Instansi Berpredikat WBBM</h3>
+                    <p class="text-xs text-gray-500 mt-1">Instansi: <span id="instansi-name-display" class="font-semibold text-navy-750">Kementerian / Lembaga / Pemda</span></p>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-100 z-10">
+                    <label class="block text-[11px] font-medium text-gray-500 mb-1">Nama Instansi:</label>
+                    <input type="text" id="instansi-input" oninput="updateInstansiName(this.value)" placeholder="Ketik nama instansi..." class="w-full text-xs px-3 py-1.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-600">
+                </div>
+            </div>
+
+            <!-- Card 2: Total Nilai Evaluasi Keberlanjutan -->
+            <div class="bg-gradient-to-br from-navy-900 to-navy-750 text-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs uppercase tracking-wider text-orange-400 font-bold">Skor Pemeliharaan</span>
+                        <span id="badge-status-kategori" class="text-[10px] px-2 py-0.5 rounded font-semibold bg-orange-500 text-white">Menghitung...</span>
+                    </div>
+                    <div class="mt-3 flex items-baseline space-x-2">
+                        <span id="total-score-display" class="text-4xl font-extrabold tracking-tight">0.00</span>
+                        <span class="text-gray-300 text-sm">/ 100</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="w-full bg-navy-800 rounded-full h-2.5 overflow-hidden">
+                        <div id="progress-bar-total" class="bg-orange-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <p class="text-[11px] text-gray-300 mt-1.5 flex justify-between">
+                        <span>Standar Pertahankan: <strong class="text-orange-400">≥ 85.00</strong></span>
+                        <span id="completion-percentage">0% Selesai</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 3: Pengungkit Keberlanjutan (Bobot 60%) -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-navy-100 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] uppercase tracking-wider font-bold text-gray-500">Pengungkit (60%)</span>
+                        <i class="fa-solid fa-cogs text-navy-600"></i>
+                    </div>
+                    <div class="mt-3">
+                        <span id="pengungkit-score-display" class="text-2xl font-bold text-navy-900">0.00</span>
+                        <span class="text-xs text-gray-500"> / 60.00</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 text-xs text-gray-600 space-y-1">
+                    <div class="flex justify-between">
+                        <span>Konsistensi 6 Area</span>
+                        <span class="font-semibold text-navy-800">Aktif</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Eviden Keberlanjutan</span>
+                        <span id="eviden-count" class="font-semibold text-emerald-600">0 Dokumen</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Hasil Berkelanjutan (Bobot 40%) -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-navy-100 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] uppercase tracking-wider font-bold text-gray-500">Hasil Outcome (40%)</span>
+                        <i class="fa-solid fa-chart-line text-emerald-600"></i>
+                    </div>
+                    <div class="mt-3">
+                        <span id="hasil-score-display" class="text-2xl font-bold text-navy-900">0.00</span>
+                        <span class="text-xs text-gray-500"> / 40.00</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 text-xs text-gray-600 space-y-1">
+                    <div class="flex justify-between">
+                        <span>Persepsi Anti Korupsi (SPK)</span>
+                        <span id="spk-val" class="font-semibold text-navy-800">0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Kualitas Pelayanan (SKPP)</span>
+                        <span id="skp-val" class="font-semibold text-navy-800">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panduan & Filter Area Perubahan -->
+        <div class="bg-navy-900 text-white rounded-xl p-5 shadow-sm space-y-4">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <h4 class="text-sm font-bold text-orange-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-shield-cat"></i>
+                        <span>Fokus Evaluasi Keberlanjutan WBBM (Maintenance & Continuous Improvement)</span>
+                    </h4>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        Evaluasi ini menilai konsistensi, pelembagaan (institutionalization) budaya kerja anti-korupsi, replikasi inovasi berkelanjutan, serta dampak kualitas pelayanan publik jangka panjang pada instansi yang telah berpredikat WBBM.
+                    </p>
+                </div>
+                <div class="flex-shrink-0 flex gap-2">
+                    <button onclick="expandAllSections(true)" class="text-xs bg-navy-800 hover:bg-navy-750 text-orange-400 border border-orange-400/30 px-3 py-1.5 rounded-lg transition font-medium">
+                        Buka Semua
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Area -->
+            <div class="pt-2 border-t border-navy-800 flex flex-wrap gap-2 text-xs">
+                <span class="text-gray-400 self-center mr-2 font-medium">Filter Area:</span>
+                <button onclick="filterArea('all')" class="filter-btn bg-orange-500 text-white px-3 py-1.5 rounded-lg font-semibold transition">Semua Area</button>
+                <button onclick="filterArea('area1')" class="filter-btn bg-navy-800 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg transition">I. Manajemen Perubahan</button>
+                <button onclick="filterArea('area2')" class="filter-btn bg-navy-800 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg transition">II. Tatalaksana</button>
+                <button onclick="filterArea('area3')" class="filter-btn bg-navy-800 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg transition">III. SDM</button>
+                <button onclick="filterArea('area4')" class="filter-btn bg-navy-800 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg transition">IV. Akuntabilitas</button>
+                <button onclick="filterArea('area5')" class="filter-btn bg-navy-800 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg transition">V. Pengawasan</button>
+                <button onclick="filterArea('area6')" class="filter-btn bg-navy-800 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg transition">VI. Pelayanan Publik</button>
+                <button onclick="filterArea('hasil')" class="filter-btn bg-navy-800 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg transition">Outcome (Hasil)</button>
+            </div>
+        </div>
+
+        <!-- LKE Accordions / Area Perubahan & Hasil Container -->
+        <div id="lke-container" class="space-y-6">
+            <!-- Dynamic Sections will be injected via Javascript -->
+        </div>
+
+        <!-- Summary & Final Report Section -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-navy-100 no-print">
+            <h3 class="text-base font-bold text-navy-900 mb-4 flex items-center space-x-2">
+                <i class="fa-solid fa-clipboard-check text-orange-500"></i>
+                <span>Kesimpulan & Rekomendasi Pemeliharaan Predikat WBBM</span>
+            </h3>
+            <div id="rekomendasi-box" class="p-4 rounded-xl bg-navy-50 border border-navy-100 text-xs md:text-sm text-navy-800 leading-relaxed">
+                Silakan isi lembar kerja evaluasi keberlanjutan di atas untuk melihat status pemeliharaan predikat WBBM instansi Anda.
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-navy-100 mt-auto py-6 no-print text-center text-xs text-gray-500">
+        <p>Aplikasi Evaluasi Keberlanjutan WBBM &copy; 2026 | Berdasarkan Permen PANRB No. 90/2021 & Permen PANRB No. 5/2024</p>
+    </footer>
+
+    <!-- Toast Notification Message Box -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-navy-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 text-xs md:text-sm border border-orange-500/30">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-orange-400"></i>
+        <span id="toast-message">Berhasil menyimpan progress!</span>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // Data LKE Khusus Keberlanjutan/Pemeliharaan WBBM (Permen PANRB 90/2021 jo 5/2024)
+        const lkeData = [
+            {
+                id: "area1",
+                type: "pengungkit",
+                title: "Area 1: Manajemen Perubahan (Keberlanjutan & Pelembagaan Budaya)",
+                bobotArea: 5.00,
+                desc: "Memastikan komitmen pimpinan berkelanjutan, pelembagaan budaya kerja anti-korupsi (culture set), serta agen perubahan yang aktif melakukan transformasi.",
+                indicators: [
+                    {
+                        id: "ind_1_1",
+                        name: "1.1 Konsistensi & Keteladanan Pimpinan",
+                        desc: "Komitmen pimpinan puncak dalam menjaga sustainabilitas integritas dan pengawasan melekat yang membudaya.",
+                        bobot: 1.50,
+                        criteria: [
+                            { text: "Pimpinan secara konsisten memimpin apel integritas, keteladanan nyata, dan evaluasi rutin budaya kerja.", scorePct: 100 },
+                            { text: "Pimpinan berkomitmen namun pengawasan dan keteladanan belum terinternalisasi secara optimal di seluruh unit.", scorePct: 50 },
+                            { text: "Komitmen pimpinan menurun atau bersifat seremonial belaka.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_1_2",
+                        name: "1.2 Peran Aktif Agen Perubahan (Change Agents) Berkelanjutan",
+                        desc: "Aksi nyata agen perubahan dalam menginternalisasi nilai-nilai integritas dan mengatasi resistensi birokrasi.",
+                        bobot: 1.50,
+                        criteria: [
+                            { text: "Agen perubahan memiliki program kerja inovatif berkelanjutan yang terbukti mengubah budaya kerja unit.", scorePct: 100 },
+                            { text: "Agen perubahan dibentuk namun program kerjanya pasif dan kurang berdampak nyata.", scorePct: 50 },
+                            { text: "Agen perubahan tidak aktif atau vakum.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_1_3",
+                        name: "1.3 Pemantauan Penurunan Risiko Hambatan Perubahan",
+                        desc: "Evaluasi berkala terhadap hambatan mindset dan culture set serta perbaikan sistemik berkelanjutan.",
+                        bobot: 2.00,
+                        criteria: [
+                            { text: "Dilakukan survei/evaluasi internal rutin terhadap perubahan pola pikir dan tindak lanjut perbaikan yang konsisten.", scorePct: 100 },
+                            { text: "Evaluasi hambatan dilakukan insidental tanpa tindak lanjut terukur.", scorePct: 50 },
+                            { text: "Tidak pernah dilakukan pemantauan budaya kerja pasca WBBM.", scorePct: 0 }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "area2",
+                type: "pengungkit",
+                title: "Area 2: Penataan Tata Laksana (Optimasi SPBE & Kepatuhan SOP Mutakhir)",
+                bobotArea: 5.00,
+                desc: "Menjaga keterbaruan SOP, otomatisasi layanan end-to-end, dan pemanfaatan Sistem Pemerintahan Berbasis Elektronik (SPBE) terintegrasi.",
+                indicators: [
+                    {
+                        id: "ind_2_1",
+                        name: "2.1 Keterbaruan & Kepatuhan SOP terhadap Proses Bisnis Utama",
+                        desc: "Evaluasi berkala SOP agar selalu adaptif terhadap regulasi terbaru dan simplifikasi birokrasi.",
+                        bobot: 2.50,
+                        criteria: [
+                            { text: "SOP dievaluasi minimal 1 tahun sekali, disesuaikan dengan dinamika regulasi dan peta proses bisnis digital.", scorePct: 100 },
+                            { text: "SOP tersedia namun jarang dimutakhirkan sesuai perkembangan regulasi terbaru.", scorePct: 50 },
+                            { text: "SOP kedaluwarsa dan tidak relevan dengan pelayanan saat ini.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_2_2",
+                        name: "2.2 Maturitas & Integrasi SPBE untuk Layanan Publik & Internal",
+                        desc: "Pemanfaatan aplikasi digital yang handal, interoperabilitas data, serta pengamanan informasi (Cyber Security).",
+                        bobot: 2.50,
+                        criteria: [
+                            { text: "SPBE terintegrasi penuh, ada audit keamanan informasi rutin, dan mempermudah akses publik secara transparan.", scorePct: 100 },
+                            { text: "Aplikasi digital ada namun berjalan secara parsial/silo antar unit kerja.", scorePct: 50 },
+                            { text: "Penerapan SPBE mangkrak atau kembali ke cara manual.", scorePct: 0 }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "area3",
+                type: "pengungkit",
+                title: "Area 3: Penataan Sistem Manajemen SDM (Meritokrasi & Disiplin Berkelanjutan)",
+                bobotArea: 15.00,
+                desc: "Penerapan sistem merit secara konsisten dalam promosi, mutasi objektif, pengembangan kompetensi berbasis TNA, serta penegakan kode etik.",
+                indicators: [
+                    {
+                        id: "ind_3_1",
+                        name: "3.1 Konsistensi Penerapan Sistem Merit dalam Mutasi & Promosi",
+                        desc: "Transparansi dan objektivitas penempatan pegawai berbasis talenta, asesmen kompetensi, dan kinerja.",
+                        bobot: 3.00,
+                        criteria: [
+                            { text: "Mutasi dan promosi 100% konsisten berdasar sistem merit, asesmen transparan, dan bebas intervensi negatif.", scorePct: 100 },
+                            { text: "Sistem merit diterapkan namun masih ditemukan pengecualian atau subjektivitas dalam penempatan.", scorePct: 50 },
+                            { text: "Mutasi/promosi tidak transparan dan mengabaikan meritokrasi.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_3_2",
+                        name: "3.2 Pengembangan Kompetensi Pegawai Berkelanjutan (TNA)",
+                        desc: "Pemenuhan target jam pelatihan dan pemetaan kebutuhan diklat pegawai yang tepat sasaran.",
+                        bobot: 3.00,
+                        criteria: [
+                            { text: "Target jam pelatihan (>20 JP/pegawai per tahun) terpenuhi melalui perencanaan TNA yang komprehensif.", scorePct: 100 },
+                            { text: "Pelatihan pegawai berjalan tetapi target jam pelajaran belum sepenuhnya tercapai.", scorePct: 50 },
+                            { text: "Tidak ada program pengembangan kompetensi yang terstruktur.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_3_3",
+                        name: "3.3 Penilaian Kinerja Individu yang Selaras dengan IKU Organisasi",
+                        desc: "Keterukuran Sasaran Kinerja Pegawai (SKP) dan keterkaitannya dengan pencapaian kinerja organisasi.",
+                        bobot: 3.00,
+                        criteria: [
+                            { text: "SKP dinilai secara objektif, berkala, dan berkorelasi langsung terhadap pencapaian target kinerja organisasi.", scorePct: 100 },
+                            { text: "Penilaian SKP bersifat administratif tanpa evaluasi capaian kinerja riil yang ketat.", scorePct: 50 },
+                            { text: "Penilaian kinerja pegawai diabaikan.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_3_4",
+                        name: "3.4 Penegakan Disiplin, Kode Etik & Budaya Integritas SDM",
+                        desc: "Internalisasi nilai dasar ASN BerAkhlak serta penegakan sanksi tegas tanpa kompromi atas pelanggaran disiplin.",
+                        bobot: 3.00,
+                        criteria: [
+                            { text: "Penegakan disiplin dan kode etik konsisten, zero pelanggaran berat, serta pemberian reward/punishment adil.", scorePct: 100 },
+                            { text: "Pelanggaran ditindak namun masih ada toleransi atau penanganan lambat.", scorePct: 50 },
+                            { text: "Pembiaran terhadap pelanggaran disiplin dan kode etik pegawai.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_3_5",
+                        name: "3.5 Pengelolaan Kesejahteraan & Lingkungan Kerja Sehat",
+                        desc: "Pemberian hak pegawai secara transparan serta terciptanya lingkungan kerja yang inklusif dan kondusif.",
+                        bobot: 3.00,
+                        criteria: [
+                            { text: "Kesejahteraan, fasilitas pendukung, dan kenyamanan lingkungan kerja dikelola optimal dan transparan.", scorePct: 100 },
+                            { text: "Fasilitas dan hak dasar terpenuhi namun perhatian terhadap kenyamanan kerja masih kurang.", scorePct: 50 },
+                            { text: "Lingkungan kerja tidak kondusif dan banyak keluhan pegawai.", scorePct: 0 }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "area4",
+                type: "pengungkit",
+                title: "Area 4: Penguatan Akuntabilitas Kinerja (Outcome-Oriented SAKIP)",
+                bobotArea: 10.00,
+                desc: "Memastikan perencanaan kinerja berorientasi hasil (outcome), cascading IKU efektif, efisiensi anggaran, dan predikat SAKIP minimal A.",
+                indicators: [
+                    {
+                        id: "ind_4_1",
+                        name: "4.1 Perencanaan Kinerja Berorientasi Outcome & Cascading IKU",
+                        desc: "Penyelarasan sasaran strategis dari level pimpinan tertinggi hingga pelaksana terbawah secara selaras.",
+                        bobot: 5.00,
+                        criteria: [
+                            { text: "Cascading IKU jelas hingga level terendah, berorientasi hasil nyata (outcome), dan dipantau berkala.", scorePct: 100 },
+                            { text: "Perencanaan kinerja ada namun cascading belum optimal sampai ke level pelaksana.", scorePct: 50 },
+                            { text: "Perencanaan kinerja bersifat copy-paste atau tidak terukur.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_4_2",
+                        name: "4.2 Evaluasi Akuntabilitas Kinerja Internal & Tindak Lanjut SAKIP",
+                        desc: "Peningkatan kualitas SAKIP instansi dan realisasi efisiensi penggunaan anggaran (value for money).",
+                        bobot: 5.00,
+                        criteria: [
+                            { text: "Predikat SAKIP instansi minimal A/AA, rekomendasi evaluator ditindaklanjuti tuntas, efisiensi anggaran tercapai.", scorePct: 100 },
+                            { text: "SAKIP berpredikat BB atau rekomendasi perbaikan belum sepenuhnya tuntas ditindaklanjuti.", scorePct: 50 },
+                            { text: "Akuntabilitas kinerja buruk atau SAKIP di bawah B.", scorePct: 0 }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "area5",
+                type: "pengungkit",
+                title: "Area 5: Penguatan Pengawasan (Anti-Fraud & Mitigasi Risiko Lanjutan)",
+                bobotArea: 15.00,
+                desc: "Penerapan Fraud Control Plan (FCP), pengelolaan WBS yang handal, efektivitas SPIP, serta pengendalian gratifikasi yang proaktif.",
+                indicators: [
+                    {
+                        id: "ind_5_1",
+                        name: "5.1 Pengendalian Gratifikasi & Benturan Kepentingan Proaktif",
+                        desc: "Sistem pelaporan gratifikasi yang terintegrasi KPK serta deklarasi nihil benturan kepentingan.",
+                        bobot: 3.75,
+                        criteria: [
+                            { text: "Unit pengendali gratifikasi sangat aktif, sosialisasi masif kepada stakeholder, dan mitigasi benturan kepentingan ketat.", scorePct: 100 },
+                            { text: "Pengendalian gratifikasi berjalan bersifat administratif tanpa sosialisasi eksternal luas.", scorePct: 50 },
+                            { text: "Tidak ada pelaporan atau pengawasan gratifikasi yang aktif.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_5_2",
+                        name: "5.2 Efektivitas SPIP & Penerapan Fraud Control Plan (FCP)",
+                        desc: "Manajemen risiko terpadu, identifikasi kerentanan korupsi, dan mitigasi dini potensi fraud.",
+                        bobot: 3.75,
+                        criteria: [
+                            { text: "Peta risiko dimutakhirkan berkala, FCP diterapkan efektif, dan mitigasi risiko fraud berjalan sukses.", scorePct: 100 },
+                            { text: "Manajemen risiko ada namun sebatas pemenuhan dokumen formal tanpa mitigasi riil.", scorePct: 50 },
+                            { text: "SPIP tidak berfungsi dengan baik.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_5_3",
+                        name: "5.3 Whistleblowing System (WBS) & Penanganan Pengaduan Handal",
+                        desc: "Ketersediaan saluran pengaduan aman, kerahasiaan pelapor terjamin, dan investigasi transparan.",
+                        bobot: 3.75,
+                        criteria: [
+                            { text: "WBS berjalan optimal, terintegrasi, laporan ditindaklanjuti cepat secara independen, dan pelapor terlindungi.", scorePct: 100 },
+                            { text: "Saluran pengaduan ada namun tindak lanjut lambat atau kurang transparan.", scorePct: 50 },
+                            { text: "WBS tidak berfungsi atau pengaduan diabaikan.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_5_4",
+                        name: "5.4 Audit Internal, Tindak Lanjut Temuan & Kepatuhan",
+                        desc: "Kecepatan dan ketuntasan penyelesaian rekomendasi hasil pengawasan internal (Itjen/BPKP/BPK).",
+                        bobot: 3.75,
+                        criteria: [
+                            { text: "Temuan audit internal/eksternal ditindaklanjuti 100% tepat waktu dan tidak ada temuan berulang.", scorePct: 100 },
+                            { text: "Tindak lanjut temuan audit ada yang terlambat atau belum tuntas.", scorePct: 50 },
+                            { text: "Banyak temuan berulang yang tidak diselesaikan.", scorePct: 0 }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "area6",
+                type: "pengungkit",
+                title: "Area 6: Peningkatan Kualitas Pelayanan Publik (Inovasi & Service Excellence Berkelanjutan)",
+                bobotArea: 10.00,
+                desc: "Konsistensi standar pelayanan prima, replikasi inovasi pelayanan berkelanjutan, fasilitas ramah disabilitas, dan zero maladministrasi.",
+                indicators: [
+                    {
+                        id: "ind_6_1",
+                        name: "6.1 Konsistensi Standar Pelayanan & Maklumat Pelayanan",
+                        desc: "Keterbaruan standar pelayanan yang responsif terhadap kebutuhan pengguna serta kepatuhan janji layanan.",
+                        bobot: 3.33,
+                        criteria: [
+                            { text: "Standar pelayanan dievaluasi berkala bersama masyarakat, transparan, dan kepatuhan janji layanan tinggi.", scorePct: 100 },
+                            { text: "Standar pelayanan ada namun jarang diperbarui sesuai ekspektasi publik.", scorePct: 50 },
+                            { text: "Standar pelayanan diabaikan.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_6_2",
+                        name: "6.2 Replikasi Inovasi Pelayanan Publik Berkelanjutan & Berdampak",
+                        desc: "Pengembangan inovasi pelayanan yang memberikan kemudahan nyata, direplikasi instansi lain, dan berdampak luas.",
+                        bobot: 3.33,
+                        criteria: [
+                            { text: "Memiliki inovasi unggulan berkelanjutan yang berdampak masif, direplikasi pihak lain, dan terintegrasi digital.", scorePct: 100 },
+                            { text: "Inovasi ada namun dampaknya terbatas atau kurang dikembangkan secara berkelanjutan.", scorePct: 50 },
+                            { text: "Tidak ada inovasi pelayanan baru/inovasi mangkrak.", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_6_3",
+                        name: "6.3 Pengelolaan Kepuasan Masyarakat (SKM) & Zero Compliant Handling",
+                        desc: "Survei Kepuasan Masyarakat berkala oleh lembaga kredibel serta penyelesaian pengaduan layanan secara tuntas.",
+                        bobot: 3.34,
+                        criteria: [
+                            { text: "SKM dilakukan berkala secara digital/independen, indeks sangat tinggi, dan penanganan pengaduan responsif (zero unresolved complaints).", scorePct: 100 },
+                            { text: "SKM dilakukan namun tindak lanjut perbaikan layanan lambat.", scorePct: 50 },
+                            { text: "Tidak melakukan SKM atau banyak pengaduan layanan yang dibiarkan.", scorePct: 0 }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "hasil",
+                type: "hasil",
+                title: "Komponen Hasil (Outcome Keberlanjutan WBBM)",
+                bobotArea: 40.00,
+                desc: "Pengukuran dampak nyata eksternal: Indeks Persepsi Korupsi (bersih dari KKN) dan Indeks Kepuasan Kualitas Pelayanan Publik.",
+                indicators: [
+                    {
+                        id: "ind_h_1",
+                        name: "H.1 Indeks Persepsi Korupsi (IPK / SPK) Instansi",
+                        desc: "Nilai survei persepsi anti korupsi dari pengguna layanan / eksternal yang menunjukkan instansi bersih dari praktik korupsi.",
+                        bobot: 20.00,
+                        criteria: [
+                            { text: "Nilai Indeks IPK/SPK sangat tinggi dan stabil (≥ 90.00 / Kategori Bersih dari Korupsi).", scorePct: 100 },
+                            { text: "Nilai Indeks IPK/SPK baik (80.00 - 89.99).", scorePct: 75 },
+                            { text: "Nilai Indeks IPK/SPK sedang (70.00 - 79.99).", scorePct: 50 },
+                            { text: "Nilai Indeks IPK/SPK rendah (< 70.00).", scorePct: 0 }
+                        ]
+                    },
+                    {
+                        id: "ind_h_2",
+                        name: "H.2 Indeks Kepuasan Kualitas Pelayanan Publik (IKM / SKPP)",
+                        desc: "Nilai kepuasan masyarakat terhadap kualitas layanan publik instansi berpredikat WBBM.",
+                        bobot: 20.00,
+                        criteria: [
+                            { text: "Nilai Indeks IKM/SKPP sangat tinggi dan konsisten (≥ 90.00 / Kategori Pelayanan Prima).", scorePct: 100 },
+                            { text: "Nilai Indeks IKM/SKPP baik (80.00 - 89.99).", scorePct: 75 },
+                            { text: "Nilai Indeks IKM/SKPP sedang (70.00 - 79.99).", scorePct: 50 },
+                            { text: "Nilai Indeks IKM/SKPP rendah (< 70.00).", scorePct: 0 }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // State Store
+        let userState = {
+            instansiName: "Kementerian / Lembaga / Pemda Contoh",
+            selections: {}, // indicatorId -> criteriaIndex
+            evidens: {},   // indicatorId -> text link/catatan
+            checks: {}     // indicatorId -> boolean (checklist evidence)
+        };
+
+        // Initialize Application on Load
+        window.onload = function() {
+            loadProgress();
+            renderLKE();
+            calculateScores();
+        };
+
+        // Render LKE Accordions and Indicators
+        function renderLKE() {
+            const container = document.getElementById('lke-container');
+            container.innerHTML = '';
+
+            lkeData.forEach((section, sIndex) => {
+                const sectionId = section.id;
+                const isPengungkit = section.type === 'pengungkit';
+                
+                let sectionDiv = document.createElement('div');
+                sectionDiv.id = `section-card-${sectionId}`;
+                sectionDiv.className = "bg-white rounded-2xl shadow-sm border border-navy-100 overflow-hidden transition-all duration-300";
+                
+                // Section Header
+                let headerHTML = `
+                    <div class="bg-gradient-to-r ${isPengungkit ? 'from-navy-900 to-navy-750 text-white' : 'from-emerald-700 to-emerald-600 text-white'} px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 cursor-pointer select-none" onclick="toggleSection('${sectionId}')">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center font-bold text-orange-400">
+                                ${sIndex + 1}
+                            </div>
+                            <div>
+                                <h3 class="text-base font-bold">${section.title}</h3>
+                                <p class="text-xs text-gray-200">${section.desc}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-end">
+                            <div class="text-right">
+                                <span class="text-[10px] uppercase tracking-wider text-orange-400 font-semibold">Bobot Maksimal</span>
+                                <p class="text-sm font-extrabold">${section.bobotArea.toFixed(2)}</p>
+                            </div>
+                            <div id="icon-${sectionId}" class="transform transition-transform duration-300 text-orange-400">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Section Content Body (Indicators)
+                let bodyHTML = `<div id="body-${sectionId}" class="p-6 space-y-6 divide-y divide-gray-100">`;
+                
+                section.indicators.forEach((ind, iIndex) => {
+                    const currentSel = userState.selections[ind.id] !== undefined ? userState.selections[ind.id] : "";
+                    const currentEviden = userState.evidens[ind.id] || "";
+                    const currentCheck = userState.checks[ind.id] || false;
+
+                    bodyHTML += `
+                        <div class="${iIndex > 0 ? 'pt-6' : ''} space-y-4">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                                <div>
+                                    <h4 class="text-sm font-bold text-navy-900">${ind.name}</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">${ind.desc}</p>
+                                </div>
+                                <div class="flex items-center space-x-2 bg-navy-50 px-3 py-1.5 rounded-lg border border-navy-100 shrink-0">
+                                    <span class="text-xs font-medium text-gray-600">Bobot Indikator:</span>
+                                    <span class="text-xs font-bold text-navy-900">${ind.bobot.toFixed(2)}</span>
+                                </div>
+                            </div>
+
+                            <!-- Criteria Radio Options -->
+                            <div class="space-y-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                                <label class="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-2">Pilih Kriteria Pemeliharaan Keberlanjutan:</label>
+                                <div class="space-y-2">
+                    `;
+
+                    ind.criteria.forEach((crit, cIndex) => {
+                        const isChecked = currentSel === cIndex;
+                        bodyHTML += `
+                            <label class="flex items-start space-x-3 p-2.5 rounded-lg border ${isChecked ? 'border-orange-500 bg-orange-500/5 shadow-sm' : 'border-gray-200 bg-white hover:border-navy-200'} cursor-pointer transition">
+                                <input type="radio" name="${ind.id}" value="${cIndex}" ${isChecked ? 'checked' : ''} onchange="updateSelection('${ind.id}', ${cIndex})" class="mt-0.5 text-navy-900 focus:ring-navy-600">
+                                <div class="text-xs flex-grow flex justify-between items-center gap-4">
+                                    <span class="text-navy-800 leading-relaxed">${crit.text}</span>
+                                    <span class="font-semibold text-navy-600 shrink-0 bg-navy-100 px-2 py-0.5 rounded text-[10px]">${crit.scorePct}% Skor</span>
+                                </div>
+                            </label>
+                        `;
+                    });
+
+                    bodyHTML += `
+                                </div>
+                            </div>
+
+                            <!-- Eviden Link & Verification Checkbox -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+                                <div class="md:col-span-2">
+                                    <label class="block text-[11px] font-medium text-gray-500 mb-1"><i class="fa-solid fa-link mr-1 text-navy-600"></i> Link Dokumen Eviden Keberlanjutan / Catatan:</label>
+                                    <input type="text" value="${currentEviden}" oninput="updateEviden('${ind.id}', this.value)" placeholder="https://bit.ly/eviden-keberlanjutan-..." class="w-full text-xs px-3.5 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-600 bg-white">
+                                </div>
+                                <div class="flex items-center md:justify-end pt-5">
+                                    <label class="flex items-center space-x-2 cursor-pointer bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-200 w-full md:w-auto justify-center">
+                                        <input type="checkbox" ${currentCheck ? 'checked' : ''} onchange="updateCheck('${ind.id}', this.checked)" class="rounded text-emerald-600 focus:ring-emerald-500">
+                                        <span class="text-xs font-semibold text-emerald-700">Eviden Valid & Lengkap</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                bodyHTML += `</div>`;
+                sectionDiv.innerHTML = headerHTML + bodyHTML;
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        // Toggle Section Collapse
+        function toggleSection(sectionId) {
+            const body = document.getElementById(`body-${sectionId}`);
+            const icon = document.getElementById(`icon-${sectionId}`);
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                body.style.display = 'none';
+                icon.style.transform = 'rotate(-180deg)';
+            }
+        }
+
+        function expandAllSections(show) {
+            lkeData.forEach(section => {
+                const body = document.getElementById(`body-${section.id}`);
+                const icon = document.getElementById(`icon-${section.id}`);
+                if (show) {
+                    body.style.display = 'block';
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    body.style.display = 'none';
+                    icon.style.transform = 'rotate(-180deg)';
+                }
+            });
+        }
+
+        // Filter Area
+        function filterArea(areaId) {
+            // Update button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = "filter-btn bg-navy-800 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg transition";
+            });
+            event.target.className = "filter-btn bg-orange-500 text-white px-3 py-1.5 rounded-lg font-semibold transition";
+
+            lkeData.forEach(section => {
+                const card = document.getElementById(`section-card-${section.id}`);
+                if (areaId === 'all' || section.id === areaId) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Update Selection Handler
+        function updateSelection(indId, criteriaIndex) {
+            userState.selections[indId] = criteriaIndex;
+            calculateScores();
+        }
+
+        // Update Eviden Handler
+        function updateEviden(indId, value) {
+            userState.evidens[indId] = value;
+        }
+
+        // Update Checkbox Handler
+        function updateCheck(indId, checked) {
+            userState.checks[indId] = checked;
+            calculateScores();
+        }
+
+        // Update Instansi Name
+        function updateInstansiName(name) {
+            userState.instansiName = name || "Kementerian / Lembaga / Pemda";
+            document.getElementById('instansi-name-display').innerText = userState.instansiName;
+        }
+
+        // Real-time Score Calculation
+        function calculateScores() {
+            let totalPengungkitScore = 0;
+            let totalHasilScore = 0;
+            let totalIndicatorsCount = 0;
+            let completedIndicatorsCount = 0;
+            let totalEvidenUploaded = 0;
+
+            lkeData.forEach(section => {
+                let sectionScore = 0;
+                let sectionMaxBobot = section.bobotArea;
+
+                let sectionIndicatorScores = 0;
+                let sectionTotalIndicatorBobot = 0;
+
+                section.indicators.forEach(ind => {
+                    totalIndicatorsCount++;
+                    if (userState.evidens[ind.id] && userState.evidens[ind.id].trim() !== '') {
+                        totalEvidenUploaded++;
+                    }
+                    if (userState.checks[ind.id]) {
+                        completedIndicatorsCount++;
+                    }
+
+                    const sel = userState.selections[ind.id];
+                    let pct = 0;
+                    if (sel !== undefined) {
+                        pct = ind.criteria[sel].scorePct / 100;
+                    }
+
+                    sectionIndicatorScores += (pct * ind.bobot);
+                    sectionTotalIndicatorBobot += ind.bobot;
+                });
+
+                // Normalisasi nilai per area
+                if (sectionTotalIndicatorBobot > 0) {
+                    let normalizedAreaScore = (sectionIndicatorScores / sectionTotalIndicatorBobot) * sectionMaxBobot;
+                    if (section.type === 'pengungkit') {
+                        totalPengungkitScore += normalizedAreaScore;
+                    } else if (section.type === 'hasil') {
+                        totalHasilScore += normalizedAreaScore;
+                    }
+                }
+            });
+
+            // Total Keseluruhan (Pengungkit max 60 + Hasil max 40 = 100)
+            const finalScore = totalPengungkitScore + totalHasilScore;
+            const completionPct = Math.round((completedIndicatorsCount / totalIndicatorsCount) * 100);
+
+            // Update UI Displays
+            document.getElementById('total-score-display').innerText = finalScore.toFixed(2);
+            document.getElementById('pengungkit-score-display').innerText = totalPengungkitScore.toFixed(2);
+            document.getElementById('hasil-score-display').innerText = totalHasilScore.toFixed(2);
+            
+            // Sub-metrics hasil display
+            const h1Sel = userState.selections["ind_h_1"];
+            const h2Sel = userState.selections["ind_h_2"];
+            let h1Val = h1Sel !== undefined ? (lkeData.find(s=>s.id==='hasil').indicators[0].criteria[h1Sel].scorePct / 100) * 20 : 0;
+            let h2Val = h2Sel !== undefined ? (lkeData.find(s=>s.id==='hasil').indicators[1].criteria[h2Sel].scorePct / 100) * 20 : 0;
+            document.getElementById('spk-val').innerText = h1Val.toFixed(2) + " / 20";
+            document.getElementById('skp-val').innerText = h2Val.toFixed(2) + " / 20";
+
+            document.getElementById('eviden-count').innerText = totalEvidenUploaded + " Dokumen";
+            document.getElementById('completion-percentage').innerText = completionPct + "% Selesai";
+            document.getElementById('progress-bar-total').style.width = finalScore + "%";
+
+            // Status Badge & Recommendation
+            const badge = document.getElementById('badge-status-kategori');
+            const rekomendasiBox = document.getElementById('rekomendasi-box');
+
+            if (finalScore >= 85) {
+                badge.innerText = "PREDIKAT WBBM BERHASIL DIPELIHARA";
+                badge.className = "text-[10px] px-2.5 py-0.5 rounded font-semibold bg-emerald-600 text-white";
+                rekomendasiBox.innerHTML = `
+                    <strong class="text-emerald-700 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Luar Biasa! Keberlanjutan Predikat WBBM Instansi Anda Terpelihara dengan Baik.</strong><br>
+                    Skor total simulasi (${finalScore.toFixed(2)}) memenuhi standar minimum pemeliharaan WBBM (≥ 85.00). Kultur integritas, pelembagaan anti-korupsi, dan inovasi pelayanan publik telah berjalan konsisten sesuai Permen PANRB No. 90/2021 jo. No. 5/2024.
+                `;
+            } else if (finalScore >= 75) {
+                badge.innerText = "PERLU PENINGKATAN (AMBANG BATAS)";
+                badge.className = "text-[10px] px-2.5 py-0.5 rounded font-semibold bg-orange-500 text-white";
+                rekomendasiBox.innerHTML = `
+                    <strong class="text-orange-600 font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Perhatian: Ada Penurunan Kinerja Area Pemeliharaan.</strong><br>
+                    Skor total Anda (${finalScore.toFixed(2)}) berada di ambang batas. Lakukan penguatan pada area yang masih bernilai rendah (terutama konsistensi manajemen SDM dan pengawasan lanjutan) agar predikat WBBM tetap dipertahankan pada evaluasi TPN.
+                `;
+            } else {
+                badge.innerText = "RISIKO PENURUNAN PREDIKAT";
+                badge.className = "text-[10px] px-2.5 py-0.5 rounded font-semibold bg-red-600 text-white";
+                rekomendasiBox.innerHTML = `
+                    <strong class="text-red-700 font-bold"><i class="fa-solid fa-circle-xmark mr-1"></i> Peringatan Kritis: Keberlanjutan WBBM Terancam.</strong><br>
+                    Skor simulasi (${finalScore.toFixed(2)}) berada di bawah standar pemeliharaan WBBM. Segera lakukan audit internal dan perbaikan komprehensif pada seluruh area perubahan untuk memastikan konsistensi reformasi birokrasi di instansi Anda.
+                `;
+            }
+        }
+
+        // LocalStorage Save & Load
+        function saveProgress() {
+            const dataToSave = {
+                instansiName: userState.instansiName,
+                selections: userState.selections,
+                evidens: userState.evidens,
+                checks: userState.checks
+            };
+            localStorage.setItem('lke_wbbm_maintenance_data', JSON.stringify(dataToSave));
+            showToast("Progress keberlanjutan WBBM berhasil disimpan!");
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('lke_wbbm_maintenance_data');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    userState.instansiName = parsed.instansiName || "Kementerian / Lembaga / Pemda";
+                    userState.selections = parsed.selections || {};
+                    userState.evidens = parsed.evidens || {};
+                    userState.checks = parsed.checks || {};
+                    
+                    document.getElementById('instansi-input').value = userState.instansiName;
+                    document.getElementById('instansi-name-display').innerText = userState.instansiName;
+                } catch (e) {
+                    console.error("Gagal memuat data tersimpan:", e);
+                }
+            }
+        }
+
+        function resetProgress() {
+            if (confirm("Apakah Anda yakin ingin mereset seluruh pengisian LKE Keberlanjutan WBBM?")) {
+                localStorage.removeItem('lke_wbbm_maintenance_data');
+                userState.selections = {};
+                userState.evidens = {};
+                userState.checks = {};
+                document.getElementById('instansi-input').value = "";
+                userState.instansiName = "Kementerian / Lembaga / Pemda";
+                document.getElementById('instansi-name-display').innerText = userState.instansiName;
+                renderLKE();
+                calculateScores();
+                showToast("LKE berhasil direset.");
+            }
+        }
+
+        // Toast Notification Trigger
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

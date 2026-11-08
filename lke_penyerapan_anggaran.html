@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lembar Kerja Evaluasi Penyerapan Anggaran</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        gov: {
+                            navy: '#0f172a',
+                            blue: '#1e3a8a',
+                            gold: '#d97706',
+                            green: '#059669'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-shadow { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans h-full antialiased flex flex-col min-h-screen">
+
+    <!-- Top Header / Banner -->
+    <header class="bg-gov-navy text-white shadow-md no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center space-x-3 mb-3 md:mb-0">
+                <div class="bg-blue-600 p-2.5 rounded-xl shadow-inner">
+                    <i class="fa-solid fa-file-invoice-dollar text-xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-tight">Sistem Evaluasi Penyerapan Anggaran (SEPA)</h1>
+                    <p class="text-xs text-slate-400">Berdasarkan UU APBN & Peraturan Dirjen Perbendaharaan Terbaru</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="resetData()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 rounded-lg border border-slate-700 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Reset Data</span>
+                </button>
+                <button onclick="window.print()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-xs font-medium text-white rounded-lg shadow transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Cetak / PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Info Unit Kerja Card -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 print-shadow">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-4 border-b border-slate-100 mb-4 gap-4">
+                <div>
+                    <h2 class="text-base font-bold text-gov-navy flex items-center gap-2">
+                        <i class="fa-solid fa-building-columns text-blue-600"></i> Lembar Kerja Evaluasi Kinerja Anggaran Triwulanan / Tahunan
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Isi identitas satuan kerja dan lakukan penilaian mandiri (self-assessment) pada aspek-aspek di bawah ini.</p>
+                </div>
+                <div class="bg-blue-50 text-blue-700 text-xs px-3 py-1.5 rounded-lg font-semibold border border-blue-100 flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-check"></i> Auto-Save Aktif
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Kementerian / Lembaga</label>
+                    <input type="text" id="meta_kl" placeholder="Cth: Kementerian / Lembaga" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Unit Kerja / Satker</label>
+                    <input type="text" id="meta_satker" placeholder="Cth: Direktorat / Biro / Balai" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Periode Evaluasi</label>
+                    <select id="meta_periode" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+                        <option value="Triwulan I">Triwulan I</option>
+                        <option value="Triwulan II">Triwulan II</option>
+                        <option value="Triwulan III">Triwulan III</option>
+                        <option value="Triwulan IV / Tahunan" selected>Triwulan IV / Tahunan</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Pagu Anggaran Total (Rp)</label>
+                    <input type="text" id="meta_pagu" placeholder="Cth: 15.400.000.000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+            </div>
+        </div>
+
+        <!-- Metric Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Card 1 -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Aspek Dinilai</p>
+                    <p id="stat_total_aspek" class="text-2xl font-bold text-slate-900 mt-1">12 Indikator</p>
+                    <span class="text-xs text-blue-600 font-medium mt-1 inline-block">4 Pilar Utama</span>
+                </div>
+                <div class="bg-blue-50 text-blue-600 p-3.5 rounded-2xl">
+                    <i class="fa-solid fa-list-check text-xl"></i>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Rata-rata Nilai Akhir</p>
+                    <p id="stat_rata_nilai" class="text-2xl font-bold text-slate-900 mt-1">0.00</p>
+                    <span id="stat_skala_ket" class="text-xs text-slate-400 font-medium mt-1 inline-block">Skala 0 - 100</span>
+                </div>
+                <div class="bg-amber-50 text-amber-600 p-3.5 rounded-2xl">
+                    <i class="fa-solid fa-chart-pie text-xl"></i>
+                </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Status Kinerja</p>
+                    <p id="stat_status_kinerja" class="text-lg font-bold text-slate-900 mt-1 truncate max-w-[140px]" title="Belum Dinilai">Belum Dinilai</p>
+                    <span id="stat_status_sub" class="text-xs text-slate-400 font-medium mt-1 inline-block">Berdasarkan bobot</span>
+                </div>
+                <div id="stat_status_icon_bg" class="bg-slate-100 text-slate-500 p-3.5 rounded-2xl transition-colors">
+                    <i id="stat_status_icon" class="fa-solid fa-shield text-xl"></i>
+                </div>
+            </div>
+            <!-- Card 4 -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Target Capaian</p>
+                    <p class="text-2xl font-bold text-slate-900 mt-1">&ge; 95.0%</p>
+                    <span class="text-xs text-emerald-600 font-medium mt-1 inline-block">Standar Kemenkeu</span>
+                </div>
+                <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-2xl">
+                    <i class="fa-solid fa-bullseye text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter & Search Bar -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-3 no-print">
+            <div class="w-full sm:w-72 relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-search text-xs"></i>
+                </span>
+                <input type="text" id="searchInput" onkeyup="filterCriteria()" placeholder="Cari kriteria atau indikator..." class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+                <button onclick="filterAspect('all')" id="btn-filter-all" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg shadow-sm transition whitespace-nowrap">Semua Aspek</button>
+                <button onclick="filterAspect('1')" id="btn-filter-1" class="px-3 py-1.5 bg-white border border-slate-300 text-slate-700 text-xs font-medium rounded-lg hover:bg-slate-50 transition whitespace-nowrap">1. Perencanaan</button>
+                <button onclick="filterAspect('2')" id="btn-filter-2" class="px-3 py-1.5 bg-white border border-slate-300 text-slate-700 text-xs font-medium rounded-lg hover:bg-slate-50 transition whitespace-nowrap">2. Kontraktual</button>
+                <button onclick="filterAspect('3')" id="btn-filter-3" class="px-3 py-1.5 bg-white border border-slate-300 text-slate-700 text-xs font-medium rounded-lg hover:bg-slate-50 transition whitespace-nowrap">3. Output & Fisik</button>
+                <button onclick="filterAspect('4')" id="btn-filter-4" class="px-3 py-1.5 bg-white border border-slate-300 text-slate-700 text-xs font-medium rounded-lg hover:bg-slate-50 transition whitespace-nowrap">4. Pengendalian</button>
+            </div>
+        </div>
+
+        <!-- Evaluation Form Containers -->
+        <div id="evaluation-container" class="space-y-6">
+            <!-- Injected via JavaScript -->
+        </div>
+
+        <!-- Summary & Recommendations Box -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4 print-shadow">
+            <h3 class="text-base font-bold text-gov-navy flex items-center gap-2">
+                <i class="fa-solid fa-clipboard-user text-blue-600"></i> Kesimpulan, Catatan & Tindak Lanjut Strategis
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Kendala Utama Penyerapan Anggaran</label>
+                    <textarea id="catatan_kendala" rows="3" placeholder="Tuliskan kendala utama (misal: keterlambatan revisi DIPA, kendala tender pengadaan, dll)..." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Rekomendasi & Rencana Tindak Lanjut (Action Plan)</label>
+                    <textarea id="catatan_rekomendasi" rows="3" placeholder="Tuliskan langkah akselerasi penyerapan (misal: percepatan proses pengadaan triwulan awal, optimalisasi swakelola)..." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-between items-center pt-3 border-t border-slate-100 gap-3 no-print">
+                <div class="text-xs text-slate-500 flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-info text-blue-600"></i> Evaluasi ini mengacu pada PMK Pengelolaan Anggaran & Peraturan Dirjen Perbendaharaan terbaru.
+                </div>
+                <button onclick="copySummaryText()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-copy"></i> Salin Ringkasan Evaluasi
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500 no-print">
+        <p>Lembar Kerja Evaluasi Penyerapan Anggaran &copy; 2026 &bull; Standar Tata Kelola Keuangan Negara</p>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-2 text-xs font-medium">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-message">Data berhasil disalin ke clipboard!</span>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // Structured Evaluation Criteria based on Indonesian Budget Execution Regulations
+        const evaluationData = [
+            {
+                aspectId: 1,
+                aspectTitle: "Aspek I: Perencanaan Anggaran & Kesiapan DIPA",
+                aspectWeight: "25%",
+                description: "Menilai kesiapan dokumen pelaksanaan anggaran (DIPA), kesesuaian Rencana Penarikan Dana (RPD) harian/bulanan, serta perencanaan revisi.",
+                items: [
+                    {
+                        id: "p1",
+                        code: "1.1",
+                        indicator: "Ketepatan Waktu & Kualitas Penyusunan Hal III DIPA",
+                        description: "Kesesuaian Rencana Penarikan Dana (RPD) dalam Hal III DIPA dengan realisasi penyerapan bulanan (deviasi terjaga < 5%).",
+                        options: [
+                            { score: 100, label: "Sangat Memadai (Deviasi < 5%)" },
+                            { score: 75, label: "Memadai (Deviasi 5% - 10%)" },
+                            { score: 50, label: "Kurang Memadai (Deviasi 10% - 20%)" },
+                            { score: 25, label: "Tidak Memadai (Deviasi > 20%)" }
+                        ]
+                    },
+                    {
+                        id: "p2",
+                        code: "1.2",
+                        indicator: "Kesiapan Dokumen Pendukung & TOR/KAK",
+                        description: "Kelengkapan Kerangka Acuan Kerja (KAK)/Term of Reference (TOR) dan Rencana Anggaran Biaya (RAB) sebelum tahun anggaran berjalan.",
+                        options: [
+                            { score: 100, label: "100% lengkap & diverifikasi unit perencanaan" },
+                            { score: 75, label: "Sebagian besar lengkap (>80%)" },
+                            { score: 50, label: "Cukup lengkap (50% - 80%)" },
+                            { score: 25, label: "Kurang lengkap / banyak revisi awal (<50%)" }
+                        ]
+                    },
+                    {
+                        id: "p3",
+                        code: "1.3",
+                        indicator: "Manajemen Pengajuan Revisi DIPA",
+                        description: "Efisiensi pengajuan revisi anggaran agar tidak menumpuk di akhir tahun anggaran (mengikuti batas akhir revisi Kemenkeu).",
+                        options: [
+                            { score: 100, label: "Tepat waktu sesuai batasan Ditjen Perbendaharaan" },
+                            { score: 75, label: "Ada keterlambatan minor namun tidak mengganggu penyerapan" },
+                            { score: 50, label: "Sering mengajukan revisi mendadak di triwulan akhir" },
+                            { score: 25, label: "Pengajuan revisi melewati batas ketentuan normatif" }
+                        ]
+                    }
+                ]
+            },
+            {
+                aspectId: 2,
+                aspectTitle: "Aspek II: Pelaksanaan Pengadaan & Kontraktual",
+                aspectWeight: "30%",
+                description: "Menilai kecepatan proses pengadaan barang/jasa (PBJ), percepatan tender dini, dan manajemen penyelesaian kontrak.",
+                items: [
+                    {
+                        id: "p4",
+                        code: "2.1",
+                        indicator: "Percepatan Proses Pengadaan (Tender Dini)",
+                        description: "Pelaksanaan pemilihan penyedia/tender lebih awal sebelum tahun anggaran dimulai atau pada awal Januari.",
+                        options: [
+                            { score: 100, label: "Semua paket strategis ditenderkan dini (Q4 tahun sebelumnya)" },
+                            { score: 75, label: "Sebagian besar paket ditenderkan dini" },
+                            { score: 50, label: "Proses pengadaan dimulai pada Triwulan I" },
+                            { score: 25, label: "Pengadaan menumpuk di Triwulan II / III" }
+                        ]
+                    },
+                    {
+                        id: "p5",
+                        code: "2.2",
+                        indicator: "Ketepatan Waktu Penandatanganan Kontrak",
+                        description: "Kecepatan penandatanganan kontrak setelah penetapan pemenang tender selesai.",
+                        options: [
+                            { score: 100, label: "Segera ditandatangani (< 7 hari setelah SPPBJ)" },
+                            { score: 75, label: "Sesuai SLA normal (7 - 14 hari)" },
+                            { score: 50, label: "Terlambat karena sanggahan atau administrasi (14 - 30 hari)" },
+                            { score: 25, label: "Sangat terlambat / batal kontrak (> 30 hari)" }
+                        ]
+                    },
+                    {
+                        id: "p6",
+                        code: "2.3",
+                        indicator: "Pengelolaan Kontrak Swakelola & Pihak Ketiga",
+                        description: "Efisiensi pelaksanaan termin pembayaran, kemajuan fisik pekerjaan, dan ketaatan terhadap ketentuan perpajakan & denda keterlambatan.",
+                        options: [
+                            { score: 100, label: "Tertib administrasi, termin lancar tanpa retensi bermasalah" },
+                            { score: 75, label: "Cukup tertib dengan catatan minor" },
+                            { score: 50, label: "Ada keterlambatan kemajuan pekerjaan dan adendum berulang" },
+                            { score: 25, label: "Bermasalah berat / putus kontrak / sanksi denda" }
+                        ]
+                    }
+                ]
+            },
+            {
+                aspectId: 3,
+                aspectTitle: "Aspek III: Capaian Output & Fisik vs Keuangan",
+                aspectWeight: "30%",
+                description: "Menilai keseimbangan antara tingkat penyerapan anggaran finansial dengan realisasi capaian volume output fisik di lapangan.",
+                items: [
+                    {
+                        id: "p7",
+                        code: "3.1",
+                        indicator: "Kesesuaian Realisasi Keuangan dan Fisik",
+                        description: "Rasio antara persentase penyerapan dana (financial absorption) berbanding dengan progress fisik output.",
+                        options: [
+                            { score: 100, label: "Sangat seimbang (Deviasi keuangan & fisik < 5%)" },
+                            { score: 75, label: "Keuangan sedikit mendahului fisik (Deviasi 5% - 15%)" },
+                            { score: 50, label: "Penyerapan rendah, fisik tertinggal jauh" },
+                            { score: 25, label: "Penyerapan tinggi tapi fisik mangkrak / tidak sesuai target" }
+                        ]
+                    },
+                    {
+                        id: "p8",
+                        code: "3.2",
+                        indicator: "Capaian Indikator Kinerja Pelaksanaan Anggaran (IKPA)",
+                        description: "Nilai rata-rata IKPA satuan kerja berdasarkan dashboard OM-SPAN Kemenkeu.",
+                        options: [
+                            { score: 100, label: "Sangat Baik (Nilai IKPA &ge; 95.0)" },
+                            { score: 75, label: "Baik (Nilai IKPA 89.0 - 94.9)" },
+                            { score: 50, label: "Cukup (Nilai IKPA 80.0 - 88.9)" },
+                            { score: 25, label: "Kurang (Nilai IKPA < 80.0)" }
+                        ]
+                    },
+                    {
+                        id: "p9",
+                        code: "3.3",
+                        indicator: "Ketepatan Waktu Penyampaian SPM / Tagihan",
+                        description: "Kecepatan satker dalam mengajukan Surat Perintah Membayar (SPM) ke KPPN setelah pekerjaan selesai.",
+                        options: [
+                            { score: 100, label: "Tepat waktu sesuai batasan waktu tagihan kontrak (< 5 hari)" },
+                            { score: 75, label: "Diajukan menjelang akhir bulan berjalan" },
+                            { score: 50, label: "Sering menumpuk di akhir triwulan" },
+                            { score: 25, label: "Menumpuk di akhir tahun anggaran (Desember)" }
+                        ]
+                    }
+                ]
+            },
+            {
+                aspectId: 4,
+                aspectTitle: "Aspek IV: Pengendalian, Mitigasi Risiko & Penyelesaian",
+                aspectWeight: "15%",
+                description: "Menilai efektivitas fungsi pengawasan internal (SPI), mitigasi risiko keterlambatan, dan tindak lanjut rekomendasi audit.",
+                items: [
+                    {
+                        id: "p10",
+                        code: "4.1",
+                        indicator: "Efektivitas Rapat Monitoring & Evaluasi (Monev Internal)",
+                        description: "Frekuensi dan tindak lanjut dari rapat monev berkala penyerapan anggaran oleh pimpinan satker.",
+                        options: [
+                            { score: 100, label: "Rutin bulanan dengan action plan dan monitoring ketat" },
+                            { score: 75, label: "Dilakukan per triwulan secara berkala" },
+                            { score: 50, label: "Hanya dilakukan saat ada teguran dari eselon I / Kemenkeu" },
+                            { score: 25, label: "Tidak ada monev berkala" }
+                        ]
+                    },
+                    {
+                        id: "p11",
+                        code: "4.2",
+                        indicator: "Mitigasi Risiko Retur SP2D & Sisa Anggaran (UP/TUP)",
+                        description: "Pengelolaan kas operasional, pertanggungjawaban Uang Persediaan (UP)/Tambahan Uang Persediaan (TUP), dan nihilisasi di akhir tahun.",
+                        options: [
+                            { score: 100, label: "Nihil retur SP2D, pertanggungjawaban UP/TUP tepat waktu" },
+                            { score: 75, label: "Ada retur minor namun segera diselesaikan" },
+                            { score: 50, label: "Keterlambatan pertanggungjawaban UP/TUP" },
+                            { score: 25, label: "Terjadi retur berulang dan sisa dana tidak terserap optimal" }
+                        ]
+                    },
+                    {
+                        id: "p12",
+                        code: "4.3",
+                        indicator: "Tindak Lanjut Temuan Pengawasan (Itjen/BPK/DJPb)",
+                        description: "Kecepatan dan ketuntasan penyelesaian rekomendasi temuan audit terkait pengelolaan keuangan dan penyerapan anggaran.",
+                        options: [
+                            { score: 100, label: "100% tuntas dan sesuai batas waktu rekomendasi" },
+                            { score: 75, label: "Sebagian besar tuntas (>75%)" },
+                            { score: 50, label: "Dalam proses penyelesaian (50% - 75%)" },
+                            { score: 25, label: "Belum ditindaklanjuti / menumpuk" }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // State Management object
+        let evaluationState = {
+            meta: {
+                kl: "",
+                satker: "",
+                periode: "Triwulan IV / Tahunan",
+                pagu: ""
+            },
+            scores: {},
+            notes: {},
+            generalNotes: {
+                kendala: "",
+                rekomendasi: ""
+            }
+        };
+
+        // Initialize Application
+        document.addEventListener("DOMContentLoaded", () => {
+            loadSavedData();
+            renderEvaluationForm();
+            calculateResults();
+
+            // Bind input listeners for metadata
+            document.getElementById("meta_kl").addEventListener("input", saveToLocalStorage);
+            document.getElementById("meta_satker").addEventListener("input", saveToLocalStorage);
+            document.getElementById("meta_periode").addEventListener("change", saveToLocalStorage);
+            document.getElementById("meta_pagu").addEventListener("input", saveToLocalStorage);
+            document.getElementById("catatan_kendala").addEventListener("input", saveToLocalStorage);
+            document.getElementById("catatan_rekomendasi").addEventListener("input", saveToLocalStorage);
+        });
+
+        // Render Evaluation Form
+        function renderEvaluationForm() {
+            const container = document.getElementById("evaluation-container");
+            let html = "";
+
+            evaluationData.forEach(aspect => {
+                html += `
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden aspect-section" data-aspect="${aspect.aspectId}">
+                    <!-- Aspect Header -->
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg">Bobot ${aspect.aspectWeight}</span>
+                                <h3 class="text-sm font-bold text-gov-navy">${aspect.aspectTitle}</h3>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">${aspect.description}</p>
+                        </div>
+                        <button onclick="toggleAspect(${aspect.aspectId})" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                            <span id="toggle-text-${aspect.aspectId}">Tutup / Buka</span>
+                            <i id="toggle-icon-${aspect.aspectId}" class="fa-solid fa-chevron-up transition-transform duration-200"></i>
+                        </button>
+                    </div>
+
+                    <!-- Aspect Items -->
+                    <div id="aspect-body-${aspect.aspectId}" class="divide-y divide-slate-100">
+                `;
+
+                aspect.items.forEach(item => {
+                    const currentScore = evaluationState.scores[item.id] !== undefined ? evaluationState.scores[item.id] : "";
+                    const currentNote = evaluationState.notes[item.id] !== undefined ? evaluationState.notes[item.id] : "";
+
+                    html += `
+                        <div class="p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start hover:bg-slate-50/50 transition">
+                            <div class="lg:col-span-5 space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded">${item.code}</span>
+                                    <h4 class="text-xs sm:text-sm font-semibold text-slate-900">${item.indicator}</h4>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">${item.description}</p>
+                            </div>
+                            <div class="lg:col-span-4 space-y-2">
+                                <label class="block text-xs font-semibold text-slate-600">Pilih Status Penilaian:</label>
+                                <select onchange="updateScore('${item.id}', this.value)" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white font-medium">
+                                    <option value="" disabled ${currentScore === "" ? "selected" : ""}>-- Pilih Tingkat Kepatuhan/Kinerja --</option>
+                    `;
+
+                    item.options.forEach(opt => {
+                        const isSelected = Number(currentScore) === opt.score ? "selected" : "";
+                        html += `<option value="${opt.score}" ${isSelected}>[${opt.score} Pts] ${opt.label}</option>`;
+                    });
+
+                    html += `
+                                </select>
+                            </div>
+                            <div class="lg:col-span-3 space-y-2">
+                                <label class="block text-xs font-semibold text-slate-600">Catatan / Bukti Dukung:</label>
+                                <input type="text" value="${currentNote}" oninput="updateNote('${item.id}', this.value)" placeholder="Cth: Dokumen DIPA No..." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                    </div>
+                </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Toggle Aspect Collapse/Expand
+        function toggleAspect(aspectId) {
+            const body = document.getElementById(`aspect-body-${aspectId}`);
+            const icon = document.getElementById(`toggle-icon-${aspectId}`);
+            if (body.style.display === "none") {
+                body.style.display = "block";
+                icon.style.transform = "rotate(0deg)";
+            } else {
+                body.style.display = "none";
+                icon.style.transform = "rotate(180deg)";
+            }
+        }
+
+        // Update Score for an item
+        function updateScore(itemId, val) {
+            evaluationState.scores[itemId] = Number(val);
+            saveToLocalStorage();
+            calculateResults();
+        }
+
+        // Update Note for an item
+        function updateNote(itemId, val) {
+            evaluationState.notes[itemId] = val;
+            saveToLocalStorage();
+        }
+
+        // Calculate Real-time Scores & Performance Tier
+        function calculateResults() {
+            let totalWeightedScore = 0;
+            let answeredCount = 0;
+            const totalItems = 12;
+
+            // Weights per aspect: Aspect 1 (25%), Aspect 2 (30%), Aspect 3 (30%), Aspect 4 (15%)
+            const aspectWeights = { 1: 0.25, 2: 0.30, 3: 0.30, 4: 0.15 };
+            const aspectItemCounts = { 1: 3, 2: 3, 3: 3, 4: 3 };
+
+            let aspectAverages = {};
+
+            evaluationData.forEach(aspect => {
+                let aspectSum = 0;
+                let aspectAnswered = 0;
+                aspect.items.forEach(item => {
+                    if (evaluationState.scores[item.id] !== undefined && evaluationState.scores[item.id] !== "") {
+                        aspectSum += evaluationState.scores[item.id];
+                        aspectAnswered++;
+                        answeredCount++;
+                    }
+                });
+                if (aspectAnswered > 0) {
+                    aspectAverages[aspect.aspectId] = aspectSum / aspectAnswered;
+                } else {
+                    aspectAverages[aspect.aspectId] = 0;
+                }
+            });
+
+            // Calculate final composite score
+            let finalScore = 0;
+            let activeWeightSum = 0;
+            for (let aspectId in aspectWeights) {
+                if (aspectAverages[aspectId] > 0) {
+                    finalScore += aspectAverages[aspectId] * aspectWeights[aspectId];
+                    activeWeightSum += aspectWeights[aspectId];
+                }
+            }
+
+            // Normalize if some aspects aren't fully answered yet
+            if (activeWeightSum > 0) {
+                finalScore = finalScore / activeWeightSum;
+            }
+
+            // Update UI Summary Cards
+            document.getElementById("stat_total_aspek").innerText = `${answeredCount} / ${totalItems} Terisi`;
+            document.getElementById("stat_rata_nilai").innerText = finalScore.toFixed(2);
+
+            let statusText = "Belum Dinilai";
+            let statusSub = "Lengkapi Penilaian";
+            let iconClass = "fa-shield";
+            let badgeColorBg = "bg-slate-100 text-slate-500";
+
+            if (answeredCount > 0) {
+                if (finalScore >= 90) {
+                    statusText = "Sangat Baik";
+                    statusSub = "Kinerja Sangat Optimal";
+                    iconClass = "fa-circle-check";
+                    badgeColorBg = "bg-emerald-50 text-emerald-600";
+                } else if (finalScore >= 75) {
+                    statusText = "Baik";
+                    statusSub = "Sesuai Standar Kemenkeu";
+                    iconClass = "fa-award";
+                    badgeColorBg = "bg-blue-50 text-blue-600";
+                } else if (finalScore >= 60) {
+                    statusText = "Cukup";
+                    statusSub = "Perlu Akselerasi & Monev";
+                    iconClass = "fa-triangle-exclamation";
+                    badgeColorBg = "bg-amber-50 text-amber-600";
+                } else {
+                    statusText = "Kurang";
+                    statusSub = "Perlu Perhatian Pimpinan";
+                    iconClass = "fa-circle-exclamation";
+                    badgeColorBg = "bg-rose-50 text-rose-600";
+                }
+            }
+
+            document.getElementById("stat_status_kinerja").innerText = statusText;
+            document.getElementById("stat_status_sub").innerText = statusSub;
+            const iconBgEl = document.getElementById("stat_status_icon_bg");
+            iconBgEl.className = `${badgeColorBg} p-3.5 rounded-2xl transition-colors`;
+            document.getElementById("stat_status_icon").className = `fa-solid ${iconClass} text-xl`;
+        }
+
+        // Filter Aspects by Aspect ID
+        function filterAspect(aspectId) {
+            const sections = document.querySelectorAll(".aspect-section");
+            const buttons = ['all', '1', '2', '3', '4'].map(id => document.getElementById(`btn-filter-${id}`));
+
+            // Reset button styles
+            buttons.forEach(btn => {
+                if(btn) {
+                    btn.className = "px-3 py-1.5 bg-white border border-slate-300 text-slate-700 text-xs font-medium rounded-lg hover:bg-slate-50 transition whitespace-nowrap";
+                }
+            });
+
+            if (aspectId === 'all') {
+                document.getElementById('btn-filter-all').className = "px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg shadow-sm transition whitespace-nowrap";
+                sections.forEach(sec => sec.style.display = "block");
+            } else {
+                document.getElementById(`btn-filter-${aspectId}`).className = "px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg shadow-sm transition whitespace-nowrap";
+                sections.forEach(sec => {
+                    if (sec.getAttribute("data-aspect") === aspectId) {
+                        sec.style.display = "block";
+                    } else {
+                        sec.style.display = "none";
+                    }
+                });
+            }
+        }
+
+        // Live Search Filter
+        function filterCriteria() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            const criteriaCards = document.querySelectorAll("#evaluation-container > div");
+
+            criteriaCards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        // LocalStorage Save & Load
+        function saveToLocalStorage() {
+            evaluationState.meta.kl = document.getElementById("meta_kl").value;
+            evaluationState.meta.satker = document.getElementById("meta_satker").value;
+            evaluationState.meta.periode = document.getElementById("meta_periode").value;
+            evaluationState.meta.pagu = document.getElementById("meta_pagu").value;
+            evaluationState.generalNotes.kendala = document.getElementById("catatan_kendala").value;
+            evaluationState.generalNotes.rekomendasi = document.getElementById("catatan_rekomendasi").value;
+
+            localStorage.setItem("evaluasi_anggaran_state", JSON.stringify(evaluationState));
+        }
+
+        function loadSavedData() {
+            const saved = localStorage.getItem("evaluasi_anggaran_state");
+            if (saved) {
+                try {
+                    evaluationState = JSON.parse(saved);
+                    if (evaluationState.meta) {
+                        document.getElementById("meta_kl").value = evaluationState.meta.kl || "";
+                        document.getElementById("meta_satker").value = evaluationState.meta.satker || "";
+                        document.getElementById("meta_periode").value = evaluationState.meta.periode || "Triwulan IV / Tahunan";
+                        document.getElementById("meta_pagu").value = evaluationState.meta.pagu || "";
+                    }
+                    if (evaluationState.generalNotes) {
+                        document.getElementById("catatan_kendala").value = evaluationState.generalNotes.kendala || "";
+                        document.getElementById("catatan_rekomendasi").value = evaluationState.generalNotes.rekomendasi || "";
+                    }
+                } catch (e) {
+                    console.error("Gagal memuat local storage", e);
+                }
+            }
+        }
+
+        // Reset Data Function
+        function resetData() {
+            if (confirm("Apakah Anda yakin ingin mereset seluruh penilaian dan catatan lembar kerja ini?")) {
+                localStorage.removeItem("evaluasi_anggaran_state");
+                evaluationState = {
+                    meta: { kl: "", satker: "", periode: "Triwulan IV / Tahunan", pagu: "" },
+                    scores: {},
+                    notes: {},
+                    generalNotes: { kendala: "", rekomendasi: "" }
+                };
+                document.getElementById("meta_kl").value = "";
+                document.getElementById("meta_satker").value = "";
+                document.getElementById("meta_pagu").value = "";
+                document.getElementById("catatan_kendala").value = "";
+                document.getElementById("catatan_rekomendasi").value = "";
+                renderEvaluationForm();
+                calculateResults();
+                showToast("Lembar kerja berhasil direset.");
+            }
+        }
+
+        // Copy Summary Text Feature
+        function copySummaryText() {
+            const kl = document.getElementById("meta_kl").value || "[K/L Belum Diisi]";
+            const satker = document.getElementById("meta_satker").value || "[Satker Belum Diisi]";
+            const periode = document.getElementById("meta_periode").value;
+            const score = document.getElementById("stat_rata_nilai").innerText;
+            const status = document.getElementById("stat_status_kinerja").innerText;
+            const kendala = document.getElementById("catatan_kendala").value || "-";
+            const rekomendasi = document.getElementById("catatan_rekomendasi").value || "-";
+
+            const textSummary = `=== RINGKASAN EVALUASI PENYERAPAN ANGGARAN ===\n` +
+                `K/L / Satker: ${kl} / ${satker}\n` +
+                `Periode: ${periode}\n` +
+                `Nilai Akhir Kinerja: ${score} (${status})\n\n` +
+                `Kendala Utama:\n${kendala}\n\n` +
+                `Rekomendasi / Tindak Lanjut:\n${rekomendasi}`;
+
+            const textArea = document.createElement("textarea");
+            textArea.value = textSummary;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Ringkasan evaluasi berhasil disalin!");
+            } catch (err) {
+                showToast("Gagal menyalin ringkasan.");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Toast Notification Helper
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            document.getElementById("toast-message").innerText = message;
+            toast.classList.remove("translate-y-20", "opacity-0");
+            setTimeout(() => {
+                toast.classList.add("translate-y-20", "opacity-0");
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

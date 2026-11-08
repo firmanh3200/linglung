@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis SWOT & PESTLE Pro</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-shadow { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-full flex flex-col antialiased">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-x-full transition-all duration-300 max-w-sm">
+        <div id="toast-content" class="flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border text-sm font-medium"></div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+                    <i class="fa-solid fa-chart-pie text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-slate-900 text-base sm:text-lg leading-tight">Analisis Strategis Pro</h1>
+                    <p class="text-xs text-slate-500">Alat Penyusunan SWOT & PESTLE Interaktif</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <button onclick="loadTemplateData()" class="no-print hidden sm:inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Data Contoh
+                </button>
+                <button onclick="openConfigModal()" class="no-print inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                    <i class="fa-solid fa-database text-indigo-600"></i> Supabase <span id="db-status-dot" class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
+                </button>
+                <button onclick="window.print()" class="no-print inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors">
+                    <i class="fa-solid fa-print"></i> Cetak / PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        
+        <!-- Framework Switcher & Project Meta Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-8 print-shadow">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-slate-100">
+                <!-- Framework Selector Tabs -->
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <span class="text-sm font-semibold text-slate-700">Pilih Kerangka:</span>
+                    <div class="inline-flex p-1 bg-slate-100 rounded-xl">
+                        <button id="btn-swot" onclick="switchFramework('swot')" class="flex-1 sm:flex-none px-6 py-2.5 text-sm font-semibold rounded-lg transition-all shadow-xs bg-white text-indigo-600">
+                            <i class="fa-solid fa-chess-board mr-2"></i> Analisis SWOT
+                        </button>
+                        <button id="btn-pestle" onclick="switchFramework('pestle')" class="flex-1 sm:flex-none px-6 py-2.5 text-sm font-semibold text-slate-600 rounded-lg transition-all hover:text-slate-900">
+                            <i class="fa-solid fa-globe mr-2"></i> Analisis PESTLE
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress Bar & Completion -->
+                <div class="flex items-center gap-4 bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-200/60">
+                    <div class="text-right">
+                        <div class="text-xs font-semibold text-slate-500">Kelengkapan Data</div>
+                        <div id="progress-text" class="text-sm font-bold text-indigo-600">0%</div>
+                    </div>
+                    <div class="w-32 bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                        <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Details Form -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-6">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Nama Proyek / Perusahaan</label>
+                    <input type="text" id="meta-project" oninput="updateProgress()" placeholder="cth. PT Inovasi Digital Nusantara" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Deskripsi / Konteks Strategis</label>
+                    <input type="text" id="meta-desc" oninput="updateProgress()" placeholder="cth. Peluncuran produk SaaS AI baru di Asia Tenggara" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Tanggal Analisis</label>
+                    <input type="date" id="meta-date" oninput="updateProgress()" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Form Container -->
+        <div id="framework-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Dynamically injected categories rendered here -->
+        </div>
+
+        <!-- Action Control Buttons -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-wrap items-center justify-between gap-4 no-print">
+            <div class="flex items-center gap-3">
+                <button onclick="exportJSON()" class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+                    <i class="fa-solid fa-file-arrow-down text-indigo-600"></i> Unduh JSON
+                </button>
+                <button onclick="copyAsText()" class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+                    <i class="fa-solid fa-copy text-indigo-600"></i> Salin Ringkasan Teks
+                </button>
+                <button onclick="resetForm()" class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-xl transition-colors">
+                    <i class="fa-solid fa-rotate-right"></i> Reset Form
+                </button>
+            </div>
+            
+            <button onclick="saveToSupabase()" class="inline-flex items-center gap-2.5 px-6 py-3 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-200 transition-all transform hover:-translate-y-0.5">
+                <i class="fa-solid fa-cloud-arrow-up text-base"></i> Simpan ke Supabase
+            </button>
+        </div>
+    </main>
+
+    <!-- Supabase Configuration Modal -->
+    <div id="config-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 transform transition-all">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2 text-slate-900 font-bold text-base">
+                    <i class="fa-solid fa-database text-indigo-600"></i> Pengaturan Supabase
+                </div>
+                <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <p class="text-xs text-slate-500 mb-5 leading-relaxed">
+                Masukkan URL dan Anon Key project Supabase Anda. Data analisis akan disimpan ke tabel <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono">swot_pestle_analyses</code>.
+            </p>
+
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Supabase URL</label>
+                    <input type="text" id="supabase-url" placeholder="https://xxxxxx.supabase.co" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Supabase Anon Key</label>
+                    <input type="password" id="supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsIn..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button onclick="closeConfigModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">Batal</button>
+                <button onclick="saveSupabaseConfig()" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm transition-colors">Simpan Pengaturan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto py-6 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
+            &copy; 2026 Analisis Strategis Pro. Dibangun dengan desain responsif, interaktif, & terintegrasi Supabase.
+        </div>
+    </footer>
+
+    <!-- Application Script Logic -->
+    <script>
+        // State Management
+        let currentFramework = 'swot';
+        let supabaseClient = null;
+        let analysisData = {
+            swot: {
+                strengths: [{ text: '', impact: 'Medium' }],
+                weaknesses: [{ text: '', impact: 'Medium' }],
+                opportunities: [{ text: '', impact: 'Medium' }],
+                threats: [{ text: '', impact: 'Medium' }]
+            },
+            pestle: {
+                political: [{ text: '' }],
+                economic: [{ text: '' }],
+                social: [{ text: '' }],
+                technological: [{ text: '' }],
+                legal: [{ text: '' }],
+                environmental: [{ text: '' }]
+            }
+        };
+
+        // Configuration Metadata for Categories
+        const frameworkConfigs = {
+            swot: {
+                gridClass: 'grid grid-cols-1 md:grid-cols-2 gap-6',
+                sections: [
+                    {
+                        key: 'strengths',
+                        title: 'Strengths (Kekuatan)',
+                        subtitle: 'Faktor internal positif yang memberi keunggulan kompetitif.',
+                        color: 'border-emerald-200 bg-emerald-50/30',
+                        badgeColor: 'bg-emerald-100 text-emerald-800',
+                        icon: 'fa-solid fa-shield-halved text-emerald-600',
+                        tooltip: 'Apa keunggulan organisasi, aset unik, atau sumber daya terbaik Anda?',
+                        hasImpact: true
+                    },
+                    {
+                        key: 'weaknesses',
+                        title: 'Weaknesses (Kelemahan)',
+                        subtitle: 'Faktor internal negatif yang membatasi performa atau pertumbuhan.',
+                        color: 'border-amber-200 bg-amber-50/30',
+                        badgeColor: 'bg-amber-100 text-amber-800',
+                        icon: 'fa-solid fa-triangle-exclamation text-amber-600',
+                        tooltip: 'Di bidang apa kompetitor lebih unggul atau di mana keterbatasan sumber daya Anda?',
+                        hasImpact: true
+                    },
+                    {
+                        key: 'opportunities',
+                        title: 'Opportunities (Peluang)',
+                        subtitle: 'Faktor eksternal positif yang dapat dimanfaatkan untuk berkembang.',
+                        color: 'border-blue-200 bg-blue-50/30',
+                        badgeColor: 'bg-blue-100 text-blue-800',
+                        icon: 'fa-solid fa-chart-line text-blue-600',
+                        tooltip: 'Tren pasar apa yang sedang naik atau celah apa yang belum terlayani?',
+                        hasImpact: true
+                    },
+                    {
+                        key: 'threats',
+                        title: 'Threats (Ancaman)',
+                        subtitle: 'Faktor eksternal negatif yang berpotensi merugikan bisnis.',
+                        color: 'border-rose-200 bg-rose-50/30',
+                        badgeColor: 'bg-rose-100 text-rose-800',
+                        icon: 'fa-solid fa-bolt text-rose-600',
+                        tooltip: 'Regulasi baru, hambatan pasar, atau langkah kompetitor apa yang mengancam?',
+                        hasImpact: true
+                    }
+                ]
+            },
+            pestle: {
+                gridClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6',
+                sections: [
+                    {
+                        key: 'political',
+                        title: 'Political (Politik)',
+                        subtitle: 'Kebijakan pemerintah, stabilitas politik, dan regulasi perpajakan.',
+                        color: 'border-indigo-200 bg-indigo-50/30',
+                        badgeColor: 'bg-indigo-100 text-indigo-800',
+                        icon: 'fa-solid fa-landmark text-indigo-600',
+                        guiding: 'Bagaimana kebijakan perpajakan, subsidi, stabilitas politik, atau perdagangan internasional mempengaruhi industri?'
+                    },
+                    {
+                        key: 'economic',
+                        title: 'Economic (Ekonomi)',
+                        subtitle: 'Inflasi, suku bunga, pertumbuhan PDB, dan nilai tukar.',
+                        color: 'border-emerald-200 bg-emerald-50/30',
+                        badgeColor: 'bg-emerald-100 text-emerald-800',
+                        icon: 'fa-solid fa-sack-dollar text-emerald-600',
+                        guiding: 'Bagaimana tren suku bunga, inflasi, tingkat pengangguran, dan daya beli konsumen saat ini?'
+                    },
+                    {
+                        key: 'social',
+                        title: 'Social (Sosial)',
+                        subtitle: 'Demografi, budaya, tren gaya hidup, dan perilaku konsumen.',
+                        color: 'border-purple-200 bg-purple-50/30',
+                        badgeColor: 'bg-purple-100 text-purple-800',
+                        icon: 'fa-solid fa-users text-purple-600',
+                        guiding: 'Apa perubahan demografi, preferensi gaya hidup, tingkat pendidikan, atau kesadaran kesehatan masyarakat?'
+                    },
+                    {
+                        key: 'technological',
+                        title: 'Technological (Teknologi)',
+                        subtitle: 'Inovasi digital, otomatisasi, R&D, dan adopsi teknologi.',
+                        color: 'border-cyan-200 bg-cyan-50/30',
+                        badgeColor: 'bg-cyan-100 text-cyan-800',
+                        icon: 'fa-solid fa-microchip text-cyan-600',
+                        guiding: 'Bagaimana perkembangan teknologi baru, otomatisasi, kecerdasan buatan, atau infrastruktur digital berdampak?'
+                    },
+                    {
+                        key: 'legal',
+                        title: 'Legal (Hukum)',
+                        subtitle: 'Undang-undang ketenagakerjaan, perlindungan konsumen, dan Hak Cipta.',
+                        color: 'border-amber-200 bg-amber-50/30',
+                        badgeColor: 'bg-amber-100 text-amber-800',
+                        icon: 'fa-solid fa-scale-balanced text-amber-600',
+                        guiding: 'Regulasi apa saja (UU Pelindungan Data, Hak Kekayaan Intelektual, Keselamatan Kerja) yang harus dipatuhi?'
+                    },
+                    {
+                        key: 'environmental',
+                        title: 'Environmental (Lingkungan)',
+                        subtitle: 'Isu iklim, keberlanjutan, energi terbarukan, dan limbah.',
+                        color: 'border-teal-200 bg-teal-50/30',
+                        badgeColor: 'bg-teal-100 text-teal-800',
+                        icon: 'fa-solid fa-leaf text-teal-600',
+                        guiding: 'Bagaimana tekanan terhadap isu perubahan iklim, keberlanjutan lingkungan, dan regulasi emisi karbon?'
+                    }
+                ]
+            }
+        };
+
+        // Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            // Set default date to today
+            document.getElementById('meta-date').valueAsDate = new Date();
+            initSupabaseFromStorage();
+            renderForm();
+            updateProgress();
+        });
+
+        // Switch Framework Handler
+        function switchFramework(framework) {
+            currentFramework = framework;
+            const btnSwot = document.getElementById('btn-swot');
+            const btnPestle = document.getElementById('btn-pestle');
+
+            if (framework === 'swot') {
+                btnSwot.className = "flex-1 sm:flex-none px-6 py-2.5 text-sm font-semibold rounded-lg transition-all shadow-xs bg-white text-indigo-600";
+                btnPestle.className = "flex-1 sm:flex-none px-6 py-2.5 text-sm font-semibold text-slate-600 rounded-lg transition-all hover:text-slate-900";
+            } else {
+                btnPestle.className = "flex-1 sm:flex-none px-6 py-2.5 text-sm font-semibold rounded-lg transition-all shadow-xs bg-white text-indigo-600";
+                btnSwot.className = "flex-1 sm:flex-none px-6 py-2.5 text-sm font-semibold text-slate-600 rounded-lg transition-all hover:text-slate-900";
+            }
+            renderForm();
+            updateProgress();
+        }
+
+        // Render Dynamic Form Cards
+        function renderForm() {
+            const container = document.getElementById('framework-container');
+            const config = frameworkConfigs[currentFramework];
+            container.className = config.gridClass;
+            container.innerHTML = '';
+
+            config.sections.forEach(sec => {
+                const items = analysisData[currentFramework][sec.key] || [];
+                
+                let cardHTML = `
+                    <div class="bg-white rounded-2xl border ${sec.color} p-5 shadow-xs flex flex-col justify-between print-shadow">
+                        <div>
+                            <div class="flex items-start justify-between gap-3 mb-2">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-xl bg-white shadow-xs flex items-center justify-center border border-slate-100">
+                                        <i class="${sec.icon} text-base"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-slate-900 text-sm sm:text-base">${sec.title}</h3>
+                                        <span class="inline-block px-2 py-0.5 rounded-md text-[11px] font-semibold ${sec.badgeColor}">${items.length} Poin</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 mb-3">${sec.subtitle}</p>
+                `;
+
+                if (sec.tooltip) {
+                    cardHTML += `
+                        <div class="bg-white/80 border border-slate-200/60 rounded-xl p-2.5 mb-4 text-xs text-slate-600 flex items-start gap-2">
+                            <i class="fa-solid fa-circle-info text-indigo-500 mt-0.5 shrink-0"></i>
+                            <span>${sec.tooltip}</span>
+                        </div>
+                    `;
+                }
+
+                if (sec.guiding) {
+                    cardHTML += `
+                        <div class="bg-white/80 border border-slate-200/60 rounded-xl p-2.5 mb-4 text-xs text-slate-600 flex items-start gap-2">
+                            <i class="fa-solid fa-lightbulb text-amber-500 mt-0.5 shrink-0"></i>
+                            <span><strong>Panduan:</strong> ${sec.guiding}</span>
+                        </div>
+                    `;
+                }
+
+                cardHTML += `<div class="space-y-2.5 mb-4" id="list-${sec.key}">`;
+
+                items.forEach((item, index) => {
+                    cardHTML += `
+                        <div class="flex items-center gap-2 bg-white p-2 rounded-xl border border-slate-200 shadow-xs group">
+                            <input type="text" value="${escapeHtml(item.text)}" 
+                                oninput="updateItemValue('${sec.key}', ${index}, this.value)"
+                                placeholder="Masukkan poin analisis..." 
+                                class="w-full text-xs sm:text-sm bg-transparent border-0 focus:outline-none focus:ring-0 text-slate-700">
+                    `;
+
+                    if (sec.hasImpact) {
+                        const impactColor = item.impact === 'High' ? 'text-rose-600 bg-rose-50 border-rose-200' : (item.impact === 'Medium' ? 'text-amber-600 bg-amber-50 border-amber-200' : 'text-slate-600 bg-slate-50 border-slate-200');
+                        cardHTML += `
+                            <select onchange="updateImpactValue('${sec.key}', ${index}, this.value)" 
+                                class="text-[11px] font-semibold px-2 py-1.5 rounded-lg border ${impactColor} focus:outline-none cursor-pointer">
+                                <option value="Low" ${item.impact === 'Low' ? 'selected' : ''}>Low</option>
+                                <option value="Medium" ${item.impact === 'Medium' ? 'selected' : ''}>Med</option>
+                                <option value="High" ${item.impact === 'High' ? 'selected' : ''}>High</option>
+                            </select>
+                        `;
+                    }
+
+                    cardHTML += `
+                            <button onclick="removeItem('${sec.key}', ${index})" class="text-slate-400 hover:text-rose-600 px-1.5 py-1 rounded-lg hover:bg-rose-50 transition-colors">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+
+                cardHTML += `
+                            </div>
+                        </div>
+                        <button onclick="addItem('${sec.key}')" class="w-full py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-indigo-600 font-semibold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors">
+                            <i class="fa-solid fa-plus"></i> Tambah Poin
+                        </button>
+                    </div>
+                `;
+
+                container.innerHTML += cardHTML;
+            });
+        }
+
+        // Data Manipulation Functions
+        function addItem(key) {
+            if (!analysisData[currentFramework][key]) {
+                analysisData[currentFramework][key] = [];
+            }
+            const newItem = currentFramework === 'swot' ? { text: '', impact: 'Medium' } : { text: '' };
+            analysisData[currentFramework][key].push(newItem);
+            renderForm();
+            updateProgress();
+        }
+
+        function removeItem(key, index) {
+            analysisData[currentFramework][key].splice(index, 1);
+            renderForm();
+            updateProgress();
+        }
+
+        function updateItemValue(key, index, value) {
+            analysisData[currentFramework][key][index].text = value;
+            updateProgress();
+        }
+
+        function updateImpactValue(key, index, value) {
+            analysisData[currentFramework][key][index].impact = value;
+        }
+
+        // Calculate Completion Progress
+        function updateProgress() {
+            const projectName = document.getElementById('meta-project').value.trim();
+            const projectDesc = document.getElementById('meta-desc').value.trim();
+            
+            let totalFields = 2; // meta-project and meta-desc
+            let filledFields = (projectName ? 1 : 0) + (projectDesc ? 1 : 0);
+
+            const currentData = analysisData[currentFramework];
+            Object.keys(currentData).forEach(key => {
+                currentData[key].forEach(item => {
+                    totalFields++;
+                    if (item.text && item.text.trim().length > 0) {
+                        filledFields++;
+                    }
+                });
+            });
+
+            const percentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+            document.getElementById('progress-bar').style.width = percentage + '%';
+            document.getElementById('progress-text').innerText = percentage + '%';
+        }
+
+        // Template Pre-fill (Data Dummy Contoh)
+        function loadTemplateData() {
+            document.getElementById('meta-project').value = "PT Solusi Logistik Nusantara";
+            document.getElementById('meta-desc').value = "Transformasi rantai pasok berbasis AI & IoT untuk ekspansi logistik nasional.";
+            
+            if (currentFramework === 'swot') {
+                analysisData.swot = {
+                    strengths: [
+                        { text: 'Jaringan gudang luas di 34 provinsi', impact: 'High' },
+                        { text: 'Sistem tracking armada real-time berbasis IoT', impact: 'High' }
+                    ],
+                    weaknesses: [
+                        { text: 'Ketergantungan tinggi pada driver mitra pihak ketiga', impact: 'Medium' },
+                        { text: 'Biaya perawatan armada truk tua yang cukup tinggi', impact: 'High' }
+                    ],
+                    opportunities: [
+                        { text: 'Pertumbuhan pesat e-commerce di kota tier-2 dan tier-3', impact: 'High' },
+                        { text: 'Dukungan pemerintah untuk digitalisasi logistik UMKM', impact: 'Medium' }
+                    ],
+                    threats: [
+                        { text: 'Fluktuasi harga bahan bakar minyak (BBM)', impact: 'High' },
+                        { text: 'Kompetitor regional baru dengan modal agresif', impact: 'Medium' }
+                    ]
+                };
+            } else {
+                analysisData.pestle = {
+                    political: [{ text: 'Kebijakan insentif pajak untuk perusahaan teknologi hijau & logistik.' }],
+                    economic: [{ text: 'Inflasi terkendali dengan pertumbuhan ekonomi nasional di kisaran 5%.' }],
+                    social: [{ text: 'Perilaku konsumen yang menuntut pengiriman same-day instan.' }],
+                    technological: [{ text: 'Adopsi AI untuk optimalisasi rute pengiriman otomatis.' }],
+                    legal: [{ text: 'Pemberlakuan UU Pelindungan Data Pribadi (UU PDP) untuk data pelanggan.' }],
+                    environmental: [{ text: 'Dorongan transisi menuju armada kendaraan listrik (EV) ramah lingkungan.' }]
+                };
+            }
+            renderForm();
+            updateProgress();
+            showToast('Berhasil memuat template data contoh!', 'success');
+        }
+
+        // Reset Form
+        function resetForm() {
+            if (confirm('Apakah Anda yakin ingin mereset seluruh formulir?')) {
+                document.getElementById('meta-project').value = '';
+                document.getElementById('meta-desc').value = '';
+                analysisData = {
+                    swot: {
+                        strengths: [{ text: '', impact: 'Medium' }],
+                        weaknesses: [{ text: '', impact: 'Medium' }],
+                        opportunities: [{ text: '', impact: 'Medium' }],
+                        threats: [{ text: '', impact: 'Medium' }]
+                    },
+                    pestle: {
+                        political: [{ text: '' }],
+                        economic: [{ text: '' }],
+                        social: [{ text: '' }],
+                        technological: [{ text: '' }],
+                        legal: [{ text: '' }],
+                        environmental: [{ text: '' }]
+                    }
+                };
+                renderForm();
+                updateProgress();
+                showToast('Formulir berhasil direset.', 'info');
+            }
+        }
+
+        // Export JSON
+        function exportJSON() {
+            const dataToExport = {
+                framework: currentFramework.toUpperCase(),
+                projectName: document.getElementById('meta-project').value,
+                description: document.getElementById('meta-desc').value,
+                date: document.getElementById('meta-date').value,
+                data: analysisData[currentFramework]
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `analisis_${currentFramework}_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast('File JSON berhasil diunduh.', 'success');
+        }
+
+        // Copy as Plain Text
+        function copyAsText() {
+            const projectName = document.getElementById('meta-project').value || 'Tanpa Nama Proyek';
+            const projectDesc = document.getElementById('meta-desc').value || '-';
+            const date = document.getElementById('meta-date').value;
+            
+            let text = `=== LAPORAN ANALISIS ${currentFramework.toUpperCase()} ===\n`;
+            text += `Proyek: ${projectName}\n`;
+            text += `Deskripsi: ${projectDesc}\n`;
+            text += `Tanggal: ${date}\n\n`;
+
+            const currentData = analysisData[currentFramework];
+            Object.keys(currentData).forEach(key => {
+                text += `[ ${key.toUpperCase()} ]\n`;
+                currentData[key].forEach((item, idx) => {
+                    const impactStr = item.impact ? ` (Dampak: ${item.impact})` : '';
+                    text += `  - ${item.text || '(Kosong)'}${impactStr}\n`;
+                });
+                text += `\n`;
+            });
+
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast('Ringkasan berhasil disalin ke clipboard!', 'success');
+            } catch (err) {
+                showToast('Gagal menyalin teks.', 'error');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Supabase Settings Modal Management
+        function openConfigModal() {
+            document.getElementById('config-modal').classList.remove('hidden');
+            document.getElementById('supabase-url').value = localStorage.getItem('sb_url') || '';
+            document.getElementById('supabase-key').value = localStorage.getItem('sb_key') || '';
+        }
+
+        function closeConfigModal() {
+            document.getElementById('config-modal').classList.add('hidden');
+        }
+
+        function saveSupabaseConfig() {
+            const url = document.getElementById('supabase-url').value.trim();
+            const key = document.getElementById('supabase-key').value.trim();
+            
+            if (!url || !key) {
+                showToast('URL dan Anon Key wajib diisi!', 'error');
+                return;
+            }
+
+            localStorage.setItem('sb_url', url);
+            localStorage.setItem('sb_key', key);
+            initSupabaseClient(url, key);
+            closeConfigModal();
+            showToast('Kredensial Supabase berhasil disimpan!', 'success');
+        }
+
+        function initSupabaseFromStorage() {
+            const url = localStorage.getItem('sb_url');
+            const key = localStorage.getItem('sb_key');
+            if (url && key) {
+                initSupabaseClient(url, key);
+            }
+        }
+
+        function initSupabaseClient(url, key) {
+            try {
+                supabaseClient = window.supabase.createClient(url, key);
+                document.getElementById('db-status-dot').className = "w-2 h-2 rounded-full bg-emerald-500 inline-block";
+            } catch (e) {
+                console.error("Supabase init error:", e);
+                document.getElementById('db-status-dot').className = "w-2 h-2 rounded-full bg-rose-500 inline-block";
+            }
+        }
+
+        // Save to Supabase DB
+        async function saveToSupabase() {
+            if (!supabaseClient) {
+                showToast('Harap atur koneksi Supabase terlebih dahulu melalui tombol Pengaturan!', 'error');
+                openConfigModal();
+                return;
+            }
+
+            const projectName = document.getElementById('meta-project').value.trim();
+            if (!projectName) {
+                showToast('Nama Proyek / Perusahaan wajib diisi sebelum menyimpan!', 'error');
+                document.getElementById('meta-project').focus();
+                return;
+            }
+
+            const payload = {
+                framework_type: currentFramework.toUpperCase(),
+                project_name: projectName,
+                description: document.getElementById('meta-desc').value.trim(),
+                analysis_date: document.getElementById('meta-date').value,
+                content_data: analysisData[currentFramework],
+                updated_at: new Date().toISOString()
+            };
+
+            showToast('Menyimpan data ke Supabase...', 'info');
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('swot_pestle_analyses')
+                    .insert([payload]);
+
+                if (error) {
+                    throw error;
+                }
+
+                showToast('Data berhasil disimpan ke database Supabase!', 'success');
+            } catch (err) {
+                console.error('Supabase save error:', err);
+                showToast('Gagal menyimpan: ' + (err.message || 'Periksa struktur tabel swot_pestle_analyses'), 'error');
+            }
+        }
+
+        // Toast Notification Helper
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const content = document.getElementById('toast-content');
+            
+            let bgClass = 'bg-white border-slate-200 text-slate-800';
+            let icon = '<i class="fa-solid fa-circle-check text-emerald-500 text-base"></i>';
+
+            if (type === 'success') {
+                bgClass = 'bg-emerald-50 border-emerald-200 text-emerald-900';
+                icon = '<i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>';
+            } else if (type === 'error') {
+                bgClass = 'bg-rose-50 border-rose-200 text-rose-900';
+                icon = '<i class="fa-solid fa-circle-exclamation text-rose-600 text-base"></i>';
+            } else if (type === 'info') {
+                bgClass = 'bg-indigo-50 border-indigo-200 text-indigo-900';
+                icon = '<i class="fa-solid fa-circle-info text-indigo-600 text-base"></i>';
+            }
+
+            content.className = `flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border text-sm font-medium ${bgClass}`;
+            content.innerHTML = `${icon} <span>${message}</span>`;
+            
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 4000);
+        }
+
+        // Utility HTML Escaper
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lembar Kerja Evaluasi Tata Kelola Teknologi Informasi (IT Governance)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Inter & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-shadow { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans h-full flex flex-col antialiased">
+
+    <!-- Header / Navbar -->
+    <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-700 p-2.5 rounded-xl shadow-inner text-indigo-200">
+                    <i class="fa-solid fa-shield-halved text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Evaluasi Tata Kelola IT (ITG)</h1>
+                    <p class="text-xs text-indigo-200">Berdasarkan SPBE, UU PDP, UU ITE, & COBIT / ISO 38500</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="resetData()" class="px-3 py-2 text-xs font-medium bg-indigo-800 hover:bg-indigo-700 text-indigo-100 rounded-lg transition border border-indigo-700 flex items-center gap-1.5">
+                    <i class="fa-solid fa-rotate-right"></i> Reset Data
+                </button>
+                <button onclick="window.print()" class="px-3 py-2 text-xs font-medium bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-print"></i> Cetak / PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
+
+        <!-- Stepper / Navigation Tabs -->
+        <nav class="bg-white rounded-2xl shadow-sm border border-slate-200 p-2 no-print">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-2" id="stepper-nav">
+                <button onclick="switchTab(0)" class="tab-btn flex items-center justify-center sm:justify-start space-x-3 p-3 rounded-xl font-medium text-sm transition bg-indigo-50 text-indigo-700 border border-indigo-100" data-index="0">
+                    <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-indigo-600 text-white shrink-0">1</span>
+                    <span class="truncate">Profil Instansi</span>
+                </button>
+                <button onclick="switchTab(1)" class="tab-btn flex items-center justify-center sm:justify-start space-x-3 p-3 rounded-xl font-medium text-sm transition text-slate-600 hover:bg-slate-50" data-index="1">
+                    <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-slate-200 text-slate-700 shrink-0">2</span>
+                    <span class="truncate">Checklist Penilaian</span>
+                </button>
+                <button onclick="switchTab(2)" class="tab-btn flex items-center justify-center sm:justify-start space-x-3 p-3 rounded-xl font-medium text-sm transition text-slate-600 hover:bg-slate-50" data-index="2">
+                    <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-slate-200 text-slate-700 shrink-0">3</span>
+                    <span class="truncate">Skor & Grafik</span>
+                </button>
+                <button onclick="switchTab(3)" class="tab-btn flex items-center justify-center sm:justify-start space-x-3 p-3 rounded-xl font-medium text-sm transition text-slate-600 hover:bg-slate-50" data-index="3">
+                    <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-slate-200 text-slate-700 shrink-0">4</span>
+                    <span class="truncate">Rekomendasi</span>
+                </button>
+                <button onclick="switchTab(4)" class="tab-btn col-span-2 md:col-span-1 flex items-center justify-center sm:justify-start space-x-3 p-3 rounded-xl font-medium text-sm transition text-slate-600 hover:bg-slate-50" data-index="4">
+                    <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-slate-200 text-slate-700 shrink-0">5</span>
+                    <span class="truncate">Ekspor Laporan</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Content Panels -->
+        <div class="flex-grow flex flex-col">
+
+            <!-- TAB 0: PROFIL INSTANSI -->
+            <section id="panel-0" class="tab-panel bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 flex flex-col gap-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-xl font-bold text-slate-900">Informasi & Profil Instansi / Perusahaan</h2>
+                    <p class="text-sm text-slate-500 mt-1">Lengkapi data berikut untuk keperluan identifikasi laporan audit tata kelola teknologi informasi.</p>
+                </div>
+                
+                <form id="profile-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">Nama Instansi / Badan Usaha / Lembaga</label>
+                        <input type="text" id="instansi-nama" placeholder="Contoh: PT Digital Nusantara / Kementerian X" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm transition" required>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">Sektor / Bidang Usaha</label>
+                        <select id="instansi-sektor" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm transition bg-white">
+                            <option value="Pemerintahan / SPBE">Pemerintahan / Instansi Publik (SPBE)</option>
+                            <option value="Perbankan / Keuangan">Perbankan / Lembaga Keuangan / Fintek</option>
+                            <option value="Kesehatan / Rumah Sakit">Kesehatan / Rumah Sakit</option>
+                            <option value="Pendidikan / Universitas">Pendidikan / Universitas</option>
+                            <option value="Swasta / Enterprise Umum">Swasta / Enterprise Umum</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">Penanggung Jawab / Chief Information Officer (CIO)</label>
+                        <input type="text" id="instansi-pimpinan" placeholder="Nama & Gelar Penanggung Jawab" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm transition">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">Tim Evaluator / Auditor IT</label>
+                        <input type="text" id="instansi-auditor" placeholder="Nama Auditor / Tim Penilai Internal" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm transition">
+                    </div>
+                    <div class="space-y-2 md:col-span-2">
+                        <label class="block text-sm font-semibold text-slate-700">Catatan Ruang Lingkup Evaluasi</label>
+                        <textarea id="instansi-catatan" rows="3" placeholder="Tuliskan cakupan sistem, unit kerja, atau infrastruktur yang dievaluasi..." class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm transition"></textarea>
+                    </div>
+                </form>
+
+                <div class="flex justify-end pt-4 border-t border-slate-100">
+                    <button onclick="saveProfileAndNext()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl shadow-md transition flex items-center gap-2">
+                        Selanjutnya: Checklist Penilaian <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- TAB 1: CHECKLIST PENILAIAN -->
+            <section id="panel-1" class="tab-panel hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 flex flex-col gap-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">Checklist Evaluasi Tata Kelola IT</h2>
+                        <p class="text-sm text-slate-500 mt-1">Berikan penilaian objektif berdasarkan regulasi (UU PDP, UU ITE, SPBE, ISO 38500, COBIT).</p>
+                    </div>
+                    <!-- Domain Filter Pills -->
+                    <div id="domain-filters" class="flex flex-wrap gap-2">
+                        <!-- Generated dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- Checklist Items Container -->
+                <div id="checklist-container" class="space-y-6">
+                    <!-- Loaded via JS -->
+                </div>
+
+                <div class="flex justify-between pt-4 border-t border-slate-100">
+                    <button onclick="switchTab(0)" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left">></i> Sebelumnya
+                    </button>
+                    <button onclick="switchTab(2)" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl shadow-md transition flex items-center gap-2">
+                        Lihat Skor & Grafik <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- TAB 2: SKOR & GRAFIK -->
+            <section id="panel-2" class="tab-panel hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 flex flex-col gap-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-xl font-bold text-slate-900">Ringkasan Skor & Analisis Grafik</h2>
+                    <p class="text-sm text-slate-500 mt-1">Kalkulasi kematangan tata kelola teknologi informasi secara keseluruhan dan per domain.</p>
+                </div>
+
+                <!-- Score Overview Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 flex flex-col justify-between">
+                        <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Tingkat Kematangan (Maturity)</span>
+                        <div class="my-3">
+                            <span id="score-maturity" class="text-3xl font-extrabold text-indigo-950">Level 0</span>
+                            <p id="score-maturity-label" class="text-xs text-indigo-700 font-medium mt-1">Belum Terdefinisi</p>
+                        </div>
+                        <span class="text-xs text-indigo-500">Skala 1.0 - 5.0</span>
+                    </div>
+
+                    <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 flex flex-col justify-between">
+                        <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Persentase Kepatuhan</span>
+                        <div class="my-3">
+                            <span id="score-percentage" class="text-3xl font-extrabold text-emerald-950">0%</span>
+                            <p class="text-xs text-emerald-700 font-medium mt-1">Item Terpenuhi Sempurna</p>
+                        </div>
+                        <span class="text-xs text-emerald-500">Bobot Tertimbang</span>
+                    </div>
+
+                    <div class="bg-amber-50 border border-amber-100 rounded-2xl p-5 flex flex-col justify-between">
+                        <span class="text-xs font-semibold text-amber-600 uppercase tracking-wider">Item "Sebagian"</span>
+                        <div class="my-3">
+                            <span id="score-partial" class="text-3xl font-extrabold text-amber-950">0</span>
+                            <p class="text-xs text-amber-700 font-medium mt-1">Perlu Peningkatan / Dokumentasi</p>
+                        </div>
+                        <span class="text-xs text-amber-500">Perlu Perbaikan</span>
+                    </div>
+
+                    <div class="bg-rose-50 border border-rose-100 rounded-2xl p-5 flex flex-col justify-between">
+                        <span class="text-xs font-semibold text-rose-600 uppercase tracking-wider">Item "Belum"</span>
+                        <div class="my-3">
+                            <span id="score-unfulfilled" class="text-3xl font-extrabold text-rose-950">0</span>
+                            <p class="text-xs text-rose-700 font-medium mt-1">Area Risiko Tinggi / Kritis</p>
+                        </div>
+                        <span class="text-xs text-rose-500">Prioritas Utama</span>
+                    </div>
+                </div>
+
+                <!-- Charts Container -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4">
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col items-center">
+                        <h3 class="text-sm font-semibold text-slate-700 mb-4 self-start">Skor Kematangan per Domain Tata Kelola</h3>
+                        <div class="w-full h-64 relative flex items-center justify-center">
+                            <canvas id="domainBarChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col items-center">
+                        <h3 class="text-sm font-semibold text-slate-700 mb-4 self-start">Distribusi Status Penilaian</h3>
+                        <div class="w-full h-64 relative flex items-center justify-center">
+                            <canvas id="statusPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-4 border-t border-slate-100">
+                    <button onclick="switchTab(1)" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Sebelumnya
+                    </button>
+                    <button onclick="switchTab(3)" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl shadow-md transition flex items-center gap-2">
+                        Lihat Rekomendasi <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- TAB 3: REKOMENDASI -->
+            <section id="panel-3" class="tab-panel hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 flex flex-col gap-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-xl font-bold text-slate-900">Rekomendasi Tindakan Perbaikan</h2>
+                    <p class="text-sm text-slate-500 mt-1">Daftar rekomendasi aksi strategis dan operasional berdasarkan item yang belum atau sebagian terpenuhi.</p>
+                </div>
+
+                <div id="recommendations-container" class="space-y-4">
+                    <!-- Populated via JS -->
+                </div>
+
+                <div class="flex justify-between pt-4 border-t border-slate-100">
+                    <button onclick="switchTab(2)" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Sebelumnya
+                    </button>
+                    <button onclick="switchTab(4)" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl shadow-md transition flex items-center gap-2">
+                        Ekspor Laporan <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- TAB 4: EKSPOR LAPORAN -->
+            <section id="panel-4" class="tab-panel hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 flex flex-col gap-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-xl font-bold text-slate-900">Ekspor & Pratinjau Laporan Resmi</h2>
+                    <p class="text-sm text-slate-500 mt-1">Laporan lengkap ringkasan evaluasi tata kelola IT siap untuk dicetak atau disimpan sebagai dokumen PDF.</p>
+                </div>
+
+                <!-- Printable Document Preview -->
+                <div id="export-preview" class="border border-slate-300 rounded-2xl p-6 md:p-8 bg-white space-y-6 print-shadow">
+                    <div class="text-center border-b border-slate-200 pb-6">
+                        <h3 class="text-xl font-extrabold text-slate-900 uppercase tracking-wide">Laporan Hasil Evaluasi Tata Kelola IT</h3>
+                        <p id="preview-instansi-name" class="text-indigo-700 font-semibold text-base mt-1">[Nama Instansi]</p>
+                        <p class="text-xs text-slate-500 mt-1">Tanggal Evaluasi: <span id="preview-date">-</span> | Sektor: <span id="preview-sektor">-</span></p>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            <span class="text-xs text-slate-500 block">Level Kematangan</span>
+                            <span id="preview-level" class="text-lg font-bold text-slate-900">Level 0</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            <span class="text-xs text-slate-500 block">Kepatuhan</span>
+                            <span id="preview-compliance" class="text-lg font-bold text-slate-900">0%</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            <span class="text-xs text-slate-500 block">Item Terpenuhi</span>
+                            <span id="preview-done" class="text-lg font-bold text-emerald-600">0</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            <span class="text-xs text-slate-500 block">Item Perbaikan</span>
+                            <span id="preview-todo" class="text-lg font-bold text-rose-600">0</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-slate-800 text-sm border-l-4 border-indigo-600 pl-2">Ringkasan Penilaian per Domain</h4>
+                        <div id="preview-domain-summary" class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                               <thead>
+                                   <tr class="bg-slate-100 text-slate-700">
+                                       <th class="p-2.5 border border-slate-200">Domain Tata Kelola</th>
+                                       <th class="p-2.5 border border-slate-200 text-center">Terpenuhi</th>
+                                       <th class="p-2.5 border border-slate-200 text-center">Sebagian</th>
+                                       <th class="p-2.5 border border-slate-200 text-center">Belum</th>
+                                       <th class="p-2.5 border border-slate-200 text-center">Skor Domain</th>
+                                   </tr>
+                               </thead>
+                               <tbody id="preview-domain-table-body">
+                                   <!-- Filled via JS -->
+                               </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-slate-800 text-sm border-l-4 border-indigo-600 pl-2">Catatan & Pengesahan</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 text-xs text-slate-600">
+                            <div class="border border-slate-200 p-4 rounded-xl space-y-8">
+                                <p>Penanggung Jawab / Pimpinan Instansi:</p>
+                                <div class="pt-6 border-t border-dashed border-slate-300">
+                                    <p id="sign-pimpinan" class="font-bold text-slate-900">(............................................)</p>
+                                </div>
+                            </div>
+                            <div class="border border-slate-200 p-4 rounded-xl space-y-8">
+                                <p>Tim Evaluator / Auditor:</p>
+                                <div class="pt-6 border-t border-dashed border-slate-300">
+                                    <p id="sign-auditor" class="font-bold text-slate-900">(............................................)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-slate-100 no-print">
+                    <button onclick="switchTab(3)" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Sebelumnya
+                    </button>
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <button onclick="exportJSONData()" class="flex-1 sm:flex-none px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white font-medium text-sm rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-download"></i> Ekspor JSON
+                        </button>
+                        <button onclick="window.print()" class="flex-1 sm:flex-none px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-print"></i> Cetak / Simpan PDF
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto no-print">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            Lembar Kerja Evaluasi Tata Kelola IT &copy; 2026 - Berdasarkan UU PDP, UU ITE, Perpres SPBE, ISO/IEC 38500, dan COBIT.
+        </div>
+    </footer>
+
+    <!-- Notification Modal / Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-sm">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-message">Data berhasil disimpan.</span>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Data Checklist Evaluasi Tata Kelola IT (Sesuai Regulasi Indonesia & Framework Standar)
+        const evaluationData = [
+            {
+                id: "dom-1",
+                name: "1. Kebijakan & Strategi SPBE / IT",
+                regulation: "Perpres SPBE & ISO/IEC 38500",
+                description: "Evaluasi terhadap perencanaan strategis, arsitektur, dan peta jalan (roadmap) teknologi informasi instansi.",
+                items: [
+                    {
+                        id: "item-1-1",
+                        code: "KS-01",
+                        question: "Apakah instansi memiliki Dokumen Rencana Strategis (Renstra) / Peta Jalan (Roadmap) TIK yang selaras dengan tujuan organisasi?",
+                        weight: 3,
+                        status: "sudah", // 'sudah', 'sebagian', 'belum'
+                        note: "Renstra TIK 2024-2029 telah disahkan."
+                    },
+                    {
+                        id: "item-1-2",
+                        code: "KS-02",
+                        question: "Apakah terdapat Arsitektur SPBE / Enterprise Architecture (EA) yang mencakup proses bisnis, data, layanan, dan aplikasi?",
+                        weight: 3,
+                        status: "sebagian",
+                        note: "Proses bisnis dan aplikasi sudah terpetakan, arsitektur data sedang direview."
+                    },
+                    {
+                        id: "item-1-3",
+                        code: "KS-03",
+                        question: "Apakah kebijakan tata kelola IT disahkan oleh Pimpinan Tertinggi dan dikomunikasikan secara berkala?",
+                        weight: 2,
+                        status: "sudah",
+                        note: "SK Pimpinan diterbitkan setiap tahun."
+                    }
+                ]
+            },
+            {
+                id: "dom-2",
+                name: "2. Keamanan Informasi & Pelindungan Data (UU PDP)",
+                regulation: "UU Pelindungan Data Pribadi (UU PDP) & UU ITE",
+                description: "Evaluasi pelindungan privasi data pribadi, manajemen insiden siber, dan standar keamanan informasi (ISO 27001).",
+                items: [
+                    {
+                        id: "item-2-1",
+                        code: "SEC-01",
+                        question: "Apakah instansi telah menunjuk Pejabat / Petugas Pelindungan Data Pribadi (Data Protection Officer / DPO)?",
+                        weight: 3,
+                        status: "belum",
+                        note: "Belum ditunjuk secara resmi."
+                    },
+                    {
+                        id: "item-2-2",
+                        code: "SEC-02",
+                        question: "Apakah terdapat kebijakan enkripsi, kontrol akses ketat, serta audit keamanan siber rutin?",
+                        weight: 3,
+                        status: "sebagian",
+                        note: "Kontrol akses ada, enkripsi database belum menyeluruh."
+                    },
+                    {
+                        id: "item-2-3",
+                        code: "SEC-03",
+                        question: "Apakah ada prosedur penanganan insiden kebocoran data dan pelaporan kepada pihak berwenang / subjek data?",
+                        weight: 3,
+                        status: "belum",
+                        note: "SOP penanganan insiden masih dalam draft."
+                    }
+                ]
+            },
+            {
+                id: "dom-3",
+                name: "3. Layanan & Infrastruktur TIK",
+                regulation: "Standar Layanan Publik & ISO 20000",
+                description: "Evaluasi keandalan infrastruktur pusat data (datacenter/cloud), jaringan, serta manajemen layanan IT (ITSM).",
+                items: [
+                    {
+                        id: "item-3-1",
+                        code: "INF-01",
+                        question: "Apakah infrastruktur server dan aplikasi menggunakan Pusat Data Nasional (PDN) atau Cloud tersertifikasi?",
+                        weight: 3,
+                        status: "sudah",
+                        note: "Menggunakan cloud server tersertifikasi ISO 27001."
+                    },
+                    {
+                        id: "item-3-2",
+                        code: "INF-02",
+                        question: "Apakah terdapat Disaster Recovery Plan (DRP) dan backup data berkala yang teruji?",
+                        weight: 3,
+                        status: "sebagian",
+                        note: "Backup harian berjalan, simulasi failover DRP belum pernah diuji."
+                    },
+                    {
+                        id: "item-3-3",
+                        code: "INF-03",
+                        question: "Apakah tersedia layanan helpdesk / ticketing system untuk penanganan gangguan IT bagi pengguna?",
+                        weight: 2,
+                        status: "sudah",
+                        note: "Menggunakan sistem tiket internal."
+                    }
+                ]
+            },
+            {
+                id: "dom-4",
+                name: "4. Manajemen Risiko & Kepatuhan Hukum",
+                regulation: "COBIT Governance & Peraturan Perundangan",
+                description: "Evaluasi penilaian risiko teknologi, audit kepatuhan lisensi software, dan regulasi pengadaan barang/jasa TIK.",
+                items: [
+                    {
+                        id: "item-4-1",
+                        code: "RSK-01",
+                        question: "Apakah dilakukan identifikasi dan mitigasi risiko IT secara berkala (Risk Assessment)?",
+                        weight: 3,
+                        status: "sebagian",
+                        note: "Dilakukan jika ada proyek baru saja."
+                    },
+                    {
+                        id: "item-4-2",
+                        code: "RSK-02",
+                        question: "Apakah seluruh perangkat lunak (software) dan sistem operasi yang digunakan memiliki lisensi legal?",
+                        weight: 3,
+                        status: "sudah",
+                        note: "Menggunakan software berlisensi resmi."
+                    },
+                    {
+                        id: "item-4-3",
+                        code: "RSK-03",
+                        question: "Apakah pengadaan perangkat keras dan lunak TIK mematuhi regulasi PBJ Pemerintah/Perusahaan yang berlaku?",
+                        weight: 2,
+                        status: "sudah",
+                        note: "Melalui e-procurement / tender resmi."
+                    }
+                ]
+            }
+        ];
+
+        let currentTab = 0;
+        let activeDomainFilter = 'all';
+        let barChartInstance = null;
+        let pieChartInstance = null;
+
+        // Inisialisasi Aplikasi
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedData();
+            renderDomainFilters();
+            renderChecklist();
+            updateStatistics();
+            setupCharts();
+            updateExportPreview();
+        });
+
+        // Navigasi Tab
+        function switchTab(index) {
+            currentTab = index;
+            document.querySelectorAll('.tab-panel').forEach((panel, idx) => {
+                if (idx === index) {
+                    panel.classList.remove('hidden');
+                } else {
+                    panel.classList.add('hidden');
+                }
+            });
+
+            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                const spanNum = btn.querySelector('span');
+                if (idx === index) {
+                    btn.className = "tab-btn flex items-center justify-center sm:justify-start space-x-3 p-3 rounded-xl font-medium text-sm transition bg-indigo-50 text-indigo-700 border border-indigo-100";
+                    spanNum.className = "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-indigo-600 text-white shrink-0";
+                } else {
+                    btn.className = "tab-btn flex items-center justify-center sm:justify-start space-x-3 p-3 rounded-xl font-medium text-sm transition text-slate-600 hover:bg-slate-50";
+                    spanNum.className = "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-slate-200 text-slate-700 shrink-0";
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (index === 2) {
+                updateCharts();
+            } else if (index === 3) {
+                renderRecommendations();
+            } else if (index === 4) {
+                updateExportPreview();
+            }
+        }
+
+        function saveProfileAndNext() {
+            saveDataToMemory();
+            showToast("Profil instansi berhasil disimpan.");
+            switchTab(1);
+        }
+
+        // Render Domain Filter Pills di Checklist
+        function renderDomainFilters() {
+            const container = document.getElementById('domain-filters');
+            let html = `<button onclick="filterDomain('all')" class="px-3 py-1.5 text-xs font-medium rounded-lg transition ${activeDomainFilter === 'all' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">Semua Domain</button>`;
+            
+            evaluationData.forEach((dom, idx) => {
+                html += `<button onclick="filterDomain('${dom.id}')" class="px-3 py-1.5 text-xs font-medium rounded-lg transition ${activeDomainFilter === dom.id ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">Domain ${idx + 1}</button>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function filterDomain(domainId) {
+            activeDomainFilter = domainId;
+            renderDomainFilters();
+            renderChecklist();
+        }
+
+        // Render Checklist Interaktif
+        function renderChecklist() {
+            const container = document.getElementById('checklist-container');
+            let html = '';
+
+            const filteredDomains = activeDomainFilter === 'all' 
+                ? evaluationData 
+                : evaluationData.filter(d => d.id === activeDomainFilter);
+
+            filteredDomains.forEach(domain => {
+                html += `
+                    <div class="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50/50">
+                        <div class="bg-indigo-900 text-white px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                                <h3 class="font-bold text-sm sm:text-base">${domain.name}</h3>
+                                <p class="text-xs text-indigo-200">Referensi: ${domain.regulation}</p>
+                            </div>
+                            <span class="text-xs bg-indigo-800 text-indigo-100 px-2.5 py-1 rounded-full self-start sm:self-auto">${domain.description}</span>
+                        </div>
+                        <div class="p-4 sm:p-6 space-y-6">
+                `;
+
+                domain.items.forEach(item => {
+                    html += `
+                        <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">${item.code}</span>
+                                        <span class="text-xs text-slate-500 font-medium">Bobot: ${item.weight}</span>
+                                    </div>
+                                    <p class="text-sm font-semibold text-slate-900">${item.question}</p>
+                                </div>
+
+                                <!-- Status Buttons -->
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <button onclick="updateItemStatus('${item.id}', 'sudah')" class="px-3 py-1.5 text-xs font-semibold rounded-lg transition ${item.status === 'sudah' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-emerald-100 hover:text-emerald-800'}">
+                                        Sudah
+                                    </button>
+                                    <button onclick="updateItemStatus('${item.id}', 'sebagian')" class="px-3 py-1.5 text-xs font-semibold rounded-lg transition ${item.status === 'sebagian' ? 'bg-amber-500 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800'}">
+                                        Sebagian
+                                    </button>
+                                    <button onclick="updateItemStatus('${item.id}', 'belum')" class="px-3 py-1.5 text-xs font-semibold rounded-lg transition ${item.status === 'belum' ? 'bg-rose-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-800'}">
+                                        Belum
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Note Input -->
+                            <div class="pt-2 border-t border-slate-100 flex items-center gap-2">
+                                <i class="fa-solid fa-pen-to-square text-slate-400 text-xs"></i>
+                                <input type="text" value="${item.note || ''}" onchange="updateItemNote('${item.id}', this.value)" placeholder="Tambahkan catatan bukti dukung atau keterangan..." class="w-full text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 transition">
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div></div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Update Status & Catatan
+        function updateItemStatus(itemId, status) {
+            for (let dom of evaluationData) {
+                let item = dom.items.find(i => i.id === itemId);
+                if (item) {
+                    item.status = status;
+                    break;
+                }
+            }
+            saveDataToMemory();
+            renderChecklist();
+            updateStatistics();
+            showToast("Status penilaian diperbarui.");
+        }
+
+        function updateItemNote(itemId, noteText) {
+            for (let dom of evaluationData) {
+                let item = dom.items.find(i => i.id === itemId);
+                if (item) {
+                    item.note = noteText;
+                    break;
+                }
+            }
+            saveDataToMemory();
+        }
+
+        // Kalkulasi Statistik
+        function calculateStats() {
+            let totalWeight = 0;
+            let earnedWeight = 0;
+            let countSudah = 0;
+            let countSebagian = 0;
+            let countBelum = 0;
+            let totalItems = 0;
+
+            evaluationData.forEach(dom => {
+                dom.items.forEach(item => {
+                    totalItems++;
+                    totalWeight += item.weight;
+                    if (item.status === 'sudah') {
+                        earnedWeight += item.weight;
+                        countSudah++;
+                    } else if (item.status === 'sebagian') {
+                        earnedWeight += (item.weight * 0.5);
+                        countSebagian++;
+                    } else {
+                        countBelum++;
+                    }
+                });
+            });
+
+            let percentage = totalWeight > 0 ? Math.round((earnedWeight / totalWeight) * 100) : 0;
+            let maturityScore = totalWeight > 0 ? ((earnedWeight / totalWeight) * 4 + 1).toFixed(1) : 1.0;
+
+            let maturityLabel = "Belum Terdefinisi (Level 1)";
+            if (maturityScore >= 4.5) maturityLabel = "Optimal / Unggul (Level 5)";
+            else if (maturityScore >= 3.5) maturityLabel = "Terkelola & Terukur (Level 4)";
+            else if (maturityScore >= 2.5) maturityLabel = "Ditetapkan / Prosedural (Level 3)";
+            else if (maturityScore >= 1.5) maturityLabel = "Awal / Rintisan (Level 2)";
+
+            return { totalWeight, earnedWeight, percentage, maturityScore, maturityLabel, countSudah, countSebagian, countBelum, totalItems };
+        }
+
+        function updateStatistics() {
+            const stats = calculateStats();
+            document.getElementById('score-maturity').innerText = `Level ${stats.maturityScore}`;
+            document.getElementById('score-maturity-label').innerText = stats.maturityLabel;
+            document.getElementById('score-percentage').innerText = `${stats.percentage}%`;
+            document.getElementById('score-partial').innerText = stats.countSebagian;
+            document.getElementById('score-unfulfilled').innerText = stats.countBelum;
+        }
+
+        // Setup Charts
+        function setupCharts() {
+            const ctxBar = document.getElementById('domainBarChart').getContext('2d');
+            const ctxPie = document.getElementById('statusPieChart').getContext('2d');
+
+            const domainScores = evaluationData.map(dom => {
+                let domWeight = 0;
+                let domEarned = 0;
+                dom.items.forEach(item => {
+                    domWeight += item.weight;
+                    if (item.status === 'sudah') domEarned += item.weight;
+                    else if (item.status === 'sebagian') domEarned += (item.weight * 0.5);
+                });
+                return domWeight > 0 ? ((domEarned / domWeight) * 4 + 1).toFixed(1) : 1.0;
+            });
+
+            const stats = calculateStats();
+
+            barChartInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: evaluationData.map((d, i) => `Domain ${i + 1}`),
+                    datasets: [{
+                        label: 'Skor Kematangan (1-5)',
+                        data: domainScores,
+                        backgroundColor: '#6366f1',
+                        borderRadius: 8,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 1, max: 5, ticks: { stepSize: 1 } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            pieChartInstance = new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sudah Terpenuhi', 'Sebagian', 'Belum Terpenuhi'],
+                    datasets: [{
+                        data: [stats.countSudah, stats.countSebagian, stats.countBelum],
+                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } }
+                }
+            });
+        }
+
+        function updateCharts() {
+            if (!barChartInstance || !pieChartInstance) return;
+
+            const domainScores = evaluationData.map(dom => {
+                let domWeight = 0;
+                let domEarned = 0;
+                dom.items.forEach(item => {
+                    domWeight += item.weight;
+                    if (item.status === 'sudah') domEarned += item.weight;
+                    else if (item.status === 'sebagian') domEarned += (item.weight * 0.5);
+                });
+                return domWeight > 0 ? ((domEarned / domWeight) * 4 + 1).toFixed(1) : 1.0;
+            });
+
+            const stats = calculateStats();
+
+            barChartInstance.data.datasets[0].data = domainScores;
+            barChartInstance.update();
+
+            pieChartInstance.data.datasets[0].data = [stats.countSudah, stats.countSebagian, stats.countBelum];
+            pieChartInstance.update();
+        }
+
+        // Render Recommendations
+        function renderRecommendations() {
+            const container = document.getElementById('recommendations-container');
+            let html = '';
+            let hasRecs = false;
+
+            evaluationData.forEach((dom, dIdx) => {
+                dom.items.forEach(item => {
+                    if (item.status !== 'sudah') {
+                        hasRecs = true;
+                        let urgencyClass = item.status === 'belum' ? 'border-rose-200 bg-rose-50/50 text-rose-900' : 'border-amber-200 bg-amber-50/50 text-amber-900';
+                        let badgeClass = item.status === 'belum' ? 'bg-rose-600 text-white' : 'bg-amber-500 text-white';
+                        let badgeText = item.status === 'belum' ? 'Prioritas Tinggi (Belum)' : 'Perlu Peningkatan (Sebagian)';
+
+                        html += `
+                            <div class="border ${urgencyClass} rounded-2xl p-5 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold bg-white px-2.5 py-1 rounded-md border border-slate-200 text-slate-800">${item.code}</span>
+                                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${badgeClass}">${badgeText}</span>
+                                    </div>
+                                    <span class="text-xs font-medium text-slate-500">Domain ${dIdx + 1}</span>
+                                </div>
+                                <p class="text-sm font-semibold text-slate-900">${item.question}</p>
+                                <div class="text-xs bg-white/80 p-3 rounded-xl border border-slate-200 space-y-1">
+                                    <p class="font-bold text-slate-800"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Rekomendasi Tindakan Perbaikan:</p>
+                                    <p class="text-slate-600">${getRecommendationText(item.code, item.status)}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            });
+
+            if (!hasRecs) {
+                html = `
+                    <div class="text-center py-12 bg-emerald-50 rounded-2xl border border-emerald-100 space-y-3">
+                        <div class="w-12 h-12 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto text-xl shadow-md">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-emerald-900">Luar Biasa! Seluruh Item Telah Terpenuhi</h3>
+                        <p class="text-xs text-emerald-700 max-w-md mx-auto">Tata kelola teknologi informasi instansi Anda telah memenuhi seluruh kriteria evaluasi standar. Pertahankan audit berkala secara konsisten.</p>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function getRecommendationText(code, status) {
+            const recommendationsMap = {
+                "KS-01": "Segera susun dan sahkan dokumen Renstra TIK yang melibatkan lintas unit kerja serta diselaraskan dengan visi misi instansi.",
+                "KS-02": "Lakukan pemetaan Enterprise Architecture (EA) mengacu pada kerangka kerja SPBE nasional secara bertahap.",
+                "KS-03": "Pastikan setiap kebijakan tata kelola IT didukung oleh SK formal pimpinan tertinggi dan disosialisasikan kepada seluruh pegawai.",
+                "SEC-01": "Tunjuk dan tetapkan Pejabat Pelindungan Data Pribadi (DPO) internal sesuai amanat UU Pelindungan Data Pribadi (UU PDP).",
+                "SEC-02": "Tingkatkan keamanan data dengan mengaktifkan enkripsi end-to-end, firewall canggih, dan audit kontrol akses secara berkala.",
+                "SEC-03": "Susun Standar Operasional Prosedur (SOP) tanggap darurat insiden siber dan mekanisme pelaporan insiden kebocoran data.",
+                "INF-01": "Migrasikan infrastruktur server kritikal ke Pusat Data Nasional (PDN) atau layanan Cloud berstandar ISO 27001.",
+                "INF-02": "Lakukan simulasi pemulihan bencana (Disaster Recovery Drill) secara rutin untuk menguji keandalan rencana cadangan data.",
+                "INF-03": "Implementasikan sistem layanan helpdesk terpusat untuk mendokumentasikan setiap gangguan dan perbaikan layanan IT.",
+                "RSK-01": "Lakukan lokakarya manajemen risiko TIK tahunan untuk mengidentifikasi ancaman siber dan operasional baru.",
+                "RSK-02": "Lakukan audit lisensi software secara menyeluruh dan ganti software non-legal dengan alternatif open-source atau lisensi resmi.",
+                "RSK-03": "Pastikan seluruh proses pengadaan perangkat keras/lunak TIK mematuhi prinsip transparansi PBJ dan spesifikasi teknis yang memadai."
+            };
+            return recommendationsMap[code] || "Lakukan perbaikan dokumentasi dan implementasi operasional sesuai standar regulasi yang berlaku.";
+        }
+
+        // Update Export Preview
+        function updateExportPreview() {
+            const nama = document.getElementById('instansi-nama').value || '[Belum diisi]';
+            const sektor = document.getElementById('instansi-sektor').value || '[Belum diisi]';
+            const pimpinan = document.getElementById('instansi-pimpinan').value || '(Pimpinan Instansi)';
+            const auditor = document.getElementById('instansi-auditor').value || '(Tim Auditor)';
+
+            document.getElementById('preview-instansi-name').innerText = nama;
+            document.getElementById('preview-sektor').innerText = sektor;
+            document.getElementById('preview-date').innerText = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            
+            const stats = calculateStats();
+            document.getElementById('preview-level').innerText = `Level ${stats.maturityScore}`;
+            document.getElementById('preview-compliance').innerText = `${stats.percentage}%`;
+            document.getElementById('preview-done').innerText = stats.countSudah;
+            document.getElementById('preview-todo').innerText = stats.countSebagian + stats.countBelum;
+
+            document.getElementById('sign-pimpinan').innerText = `( ${pimpinan} )`;
+            document.getElementById('sign-auditor').innerText = `( ${auditor} )`;
+
+            let tableHtml = '';
+            evaluationData.forEach((dom, i) => {
+                let dSudah = dom.items.filter(i => i.status === 'sudah').length;
+                let dSebagian = dom.items.filter(i => i.status === 'sebagian').length;
+                let dBelum = dom.items.filter(i => i.status === 'belum').length;
+                let dWeight = 0;
+                let dEarned = 0;
+                dom.items.forEach(item => {
+                    dWeight += item.weight;
+                    if (item.status === 'sudah') dEarned += item.weight;
+                    else if (item.status === 'sebagian') dEarned += (item.weight * 0.5);
+                });
+                let dScore = dWeight > 0 ? ((dEarned / dWeight) * 4 + 1).toFixed(1) : '1.0';
+
+                tableHtml += `
+                    <tr>
+                        <td class="p-2.5 border border-slate-200 font-medium">Domain ${i + 1}: ${dom.name}</td>
+                        <td class="p-2.5 border border-slate-200 text-center text-emerald-600 font-bold">${dSudah}</td>
+                        <td class="p-2.5 border border-slate-200 text-center text-amber-600 font-bold">${dSebagian}</td>
+                        <td class="p-2.5 border border-slate-200 text-center text-rose-600 font-bold">${dBelum}</td>
+                        <td class="p-2.5 border border-slate-200 text-center font-bold text-slate-900">Level ${dScore}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('preview-domain-table-body').innerText = '';
+            document.getElementById('preview-domain-table-body').innerHTML = tableHtml;
+        }
+
+        // Simpan ke localStorage
+        function saveDataToMemory() {
+            const profile = {
+                nama: document.getElementById('instansi-nama').value,
+                sektor: document.getElementById('instansi-sektor').value,
+                pimpinan: document.getElementById('instansi-pimpinan').value,
+                auditor: document.getElementById('instansi-auditor').value,
+                catatan: document.getElementById('instansi-catatan').value
+            };
+            localStorage.setItem('itg_profile', JSON.stringify(profile));
+            localStorage.setItem('itg_evaluation', JSON.stringify(evaluationData));
+        }
+
+        function loadSavedData() {
+            const savedProfile = localStorage.getItem('itg_profile');
+            if (savedProfile) {
+                const p = JSON.parse(savedProfile);
+                document.getElementById('instansi-nama').value = p.nama || '';
+                document.getElementById('instansi-sektor').value = p.sektor || 'Pemerintahan / SPBE';
+                document.getElementById('instansi-pimpinan').value = p.pimpinan || '';
+                document.getElementById('instansi-auditor').value = p.auditor || '';
+                document.getElementById('instansi-catatan').value = p.catatan || '';
+            }
+
+            const savedEval = localStorage.getItem('itg_evaluation');
+            if (savedEval) {
+                try {
+                    const parsed = JSON.parse(savedEval);
+                    // Merge status & notes back
+                    parsed.forEach(savedDom => {
+                        let dom = evaluationData.find(d => d.id === savedDom.id);
+                        if (dom) {
+                            savedDom.items.forEach(savedItem => {
+                                let item = dom.items.find(i => i.id === savedItem.id);
+                                if (item) {
+                                    item.status = savedItem.status;
+                                    item.note = savedItem.note;
+                                }
+                            });
+                        }
+                    });
+                } catch (e) {
+                    console.error("Gagal memuat data tersimpan", e);
+                }
+            }
+        }
+
+        function resetData() {
+            if (confirm("Apakah Anda yakin ingin mereset seluruh penilaian ke pengaturan awal?")) {
+                localStorage.removeItem('itg_profile');
+                localStorage.removeItem('itg_evaluation');
+                location.reload();
+            }
+        }
+
+        function exportJSONData() {
+            const profile = {
+                nama: document.getElementById('instansi-nama').value,
+                sektor: document.getElementById('instansi-sektor').value,
+                pimpinan: document.getElementById('instansi-pimpinan').value,
+                auditor: document.getElementById('instansi-auditor').value,
+                catatan: document.getElementById('instansi-catatan').value
+            };
+            const exportObj = {
+                profile: profile,
+                evaluation: evaluationData,
+                statistics: calculateStats(),
+                exportDate: new Date().toISOString()
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `evaluasi_it_governance_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Data laporan JSON berhasil diunduh.");
+        }
+
+        // Toast Notification Helper
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

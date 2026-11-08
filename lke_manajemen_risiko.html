@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lembar Kerja Evaluasi Penerapan Manajemen Risiko (MRPN & ISO 31000)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; color: black; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Header Profesional -->
+    <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-50 border-b border-slate-800 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brand-600 p-2.5 rounded-xl shadow-md text-white">
+                    <i class="fa-solid fa-shield-halved text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight">Evaluasi Manajemen Risiko Terpadu</h1>
+                    <p class="text-xs text-slate-400">Berbasis Perpres No. 39/2023 (MRPN), BPKP, & ISO 31000:2018</p>
+                </div>
+            </div>
+
+            <!-- Ringkasan Status & Skor Header -->
+            <div class="flex items-center gap-6 bg-slate-800/80 px-4 py-2.5 rounded-xl border border-slate-700/60 shadow-inner">
+                <div>
+                    <div class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Tingkat Kematangan</div>
+                    <div id="headerMaturityLabel" class="text-sm font-bold text-brand-400">Memadai (Level 3)</div>
+                </div>
+                <div class="h-8 w-px bg-slate-700"></div>
+                <div>
+                    <div class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Skor Total</div>
+                    <div id="headerScoreValue" class="text-sm font-bold text-emerald-400">78.5 / 100</div>
+                </div>
+            </div>
+
+            <!-- Tombol Aksi -->
+            <div class="flex items-center gap-2">
+                <button onclick="openGuideModal()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition border border-slate-700 flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-book-open text-brand-400"></i> Panduan
+                </button>
+                <button onclick="resetEvaluation()" class="px-3 py-2 bg-slate-800 hover:bg-rose-950/50 hover:text-rose-400 text-slate-200 text-xs font-medium rounded-lg transition border border-slate-700 flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-rotate-right"></i> Reset
+                </button>
+                <button onclick="window.print()" class="px-3 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1.5 shadow-md">
+                    <i class="fa-solid fa-print"></i> Cetak PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
+
+        <!-- Panel Informasi Instansi & Identitas Evaluasi -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <h2 class="text-base font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-building-columns text-brand-600"></i> Informasi Unit Kerja / Instansi
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Instansi / Perusahaan</label>
+                    <input type="text" id="metaInstansi" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="Contoh: Kementerian / PT ABC" value="Kementerian / Lembaga Contoh">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Unit Kerja / Direktorat</label>
+                    <input type="text" id="metaUnit" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="Contoh: Direktorat Manajemen Risiko" value="Direktorat Jenderal Pembangunan Nasional">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Tim Evaluator</label>
+                    <input type="text" id="metaEvaluator" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="Contoh: Tim Satgas MR" value="Tim Satuan Tugas Manajemen Risiko">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tahun Evaluasi</label>
+                    <select id="metaTahun" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        <option value="2026" selected>2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Analitik & Visualisasi (Chart.js) -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Radar / Bar Chart Per Pilar -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 lg:col-span-2 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-brand-600"></i> Tingkat Kematangan Per Pilar Manajemen Risiko
+                        </h3>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium">Skala 1 - 4</span>
+                    </div>
+                    <div class="relative h-64 w-full">
+                        <canvas id="maturityRadarChart"></canvas>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-5 gap-2 text-center text-xs text-slate-500">
+                    <div>Pilar 1: Konteks</div>
+                    <div>Pilar 2: Identifikasi</div>
+                    <div>Pilar 3: Analisis</div>
+                    <div>Pilar 4: Mitigasi</div>
+                    <div>Pilar 5: Pemantauan</div>
+                </div>
+            </div>
+
+            <!-- Kartu Status Kematangan & Rekomendasi Singkat -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-gauge-high text-brand-600"></i> Status Kematangan & Ringkasan
+                    </h3>
+                    <div id="summaryCardBox" class="p-4 rounded-xl bg-brand-50 border border-brand-100 mb-4">
+                        <div class="text-xs font-bold text-brand-800 uppercase tracking-wide mb-1" id="evalCategoryTitle">TERDEFINISI (LEVEL 3)</div>
+                        <p class="text-xs text-slate-600 leading-relaxed" id="evalCategoryDesc">Penerapan manajemen risiko telah berjalan konsisten dan selaras dengan regulasi nasional, namun masih memerlukan optimalisasi integrasi strategis.</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-500">Pilar Tertinggi:</span>
+                            <span class="font-semibold text-slate-800" id="highestPillarName">-</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-500">Pilar Perlu Perhatian:</span>
+                            <span class="font-semibold text-rose-600" id="lowestPillarName">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="scrollToRecommendation()" class="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Lihat Rekomendasi Otomatis
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigasi Tab / Pilar Evaluasi -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <!-- Tabs Header -->
+            <div class="flex overflow-x-auto bg-slate-50 border-b border-slate-200 no-print scrollbar-none">
+                <button onclick="switchTab(1)" id="tab-btn-1" class="tab-btn px-6 py-4 text-xs font-bold border-b-2 border-brand-600 text-brand-600 bg-white whitespace-nowrap flex items-center gap-2 transition">
+                    <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-[10px]">1</span> Konteks & Sasaran
+                </button>
+                <button onclick="switchTab(2)" id="tab-btn-2" class="tab-btn px-6 py-4 text-xs font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2 transition">
+                    <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px]">2</span> Identifikasi Risiko
+                </button>
+                <button onclick="switchTab(3)" id="tab-btn-3" class="tab-btn px-6 py-4 text-xs font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2 transition">
+                    <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px]">3</span> Analisis & Evaluasi
+                </button>
+                <button onclick="switchTab(4)" id="tab-btn-4" class="tab-btn px-6 py-4 text-xs font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2 transition">
+                    <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px]">4</span> Mitigasi / Penanganan
+                </button>
+                <button onclick="switchTab(5)" id="tab-btn-5" class="tab-btn px-6 py-4 text-xs font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2 transition">
+                    <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px]">5</span> Pemantauan & Komunikasi
+                </button>
+            </div>
+
+            <!-- Tabs Content Container -->
+            <div class="p-6">
+                <!-- Pilar 1 -->
+                <div id="tab-content-1" class="tab-content space-y-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-50/60 p-4 rounded-xl border border-brand-100">
+                        <div>
+                            <h3 class="text-sm font-bold text-brand-900">Pilar 1: Penetapan Konteks & Sasaran (Context & Objectives)</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">Menilai sejauh mana instansi menetapkan ruang lingkup, konteks internal/eksternal, serta keselarasan sasaran dengan MRPN dan ISO 31000.</p>
+                        </div>
+                        <div class="text-xs font-semibold text-brand-700 bg-white px-3 py-1 rounded-lg border border-brand-200 shadow-sm">
+                            Bobot Pilar: 20%
+                        </div>
+                    </div>
+                    <div id="indicators-container-1" class="space-y-6"></div>
+                </div>
+
+                <!-- Pilar 2 -->
+                <div id="tab-content-2" class="tab-content space-y-6 hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-50/60 p-4 rounded-xl border border-brand-100">
+                        <div>
+                            <h3 class="text-sm font-bold text-brand-900">Pilar 2: Identifikasi Risiko (Risk Identification)</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">Menilai kelengkapan proses penjaringan sumber risiko, kejadian risiko, penyebab, dan dampak terhadap pencapaian sasaran.</p>
+                        </div>
+                        <div class="text-xs font-semibold text-brand-700 bg-white px-3 py-1 rounded-lg border border-brand-200 shadow-sm">
+                            Bobot Pilar: 20%
+                        </div>
+                    </div>
+                    <div id="indicators-container-2" class="space-y-6"></div>
+                </div>
+
+                <!-- Pilar 3 -->
+                <div id="tab-content-3" class="tab-content space-y-6 hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-50/60 p-4 rounded-xl border border-brand-100">
+                        <div>
+                            <h3 class="text-sm font-bold text-brand-900">Pilar 3: Analisis & Evaluasi Risiko (Risk Analysis & Evaluation)</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">Menilai efektivitas kriteria kemungkinan (likelihood), tingkat dampak (consequence), dan penentuan level risiko inheren & residual.</p>
+                        </div>
+                        <div class="text-xs font-semibold text-brand-700 bg-white px-3 py-1 rounded-lg border border-brand-200 shadow-sm">
+                            Bobot Pilar: 20%
+                        </div>
+                    </div>
+                    <div id="indicators-container-3" class="space-y-6"></div>
+                </div>
+
+                <!-- Pilar 4 -->
+                <div id="tab-content-4" class="tab-content space-y-6 hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-50/60 p-4 rounded-xl border border-brand-100">
+                        <div>
+                            <h3 class="text-sm font-bold text-brand-900">Pilar 4: Mitigasi & Penanganan Risiko (Risk Treatment)</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">Menilai penyusunan rencana aksi penanganan risiko, penanggung jawab, jadwal, dan pengalokasian sumber daya.</p>
+                        </div>
+                        <div class="text-xs font-semibold text-brand-700 bg-white px-3 py-1 rounded-lg border border-brand-200 shadow-sm">
+                            Bobot Pilar: 20%
+                        </div>
+                    </div>
+                    <div id="indicators-container-4" class="space-y-6"></div>
+                </div>
+
+                <!-- Pilar 5 -->
+                <div id="tab-content-5" class="tab-content space-y-6 hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-50/60 p-4 rounded-xl border border-brand-100">
+                        <div>
+                            <h3 class="text-sm font-bold text-brand-900">Pilar 5: Pemantauan, Reviu & Komunikasi (Monitoring & Review)</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">Menilai mekanisme pelaporan berkala, reviu efektivitas pengendalian, serta keterlibatan pemangku kepentingan.</p>
+                        </div>
+                        <div class="text-xs font-semibold text-brand-700 bg-white px-3 py-1 rounded-lg border border-brand-200 shadow-sm">
+                            Bobot Pilar: 20%
+                        </div>
+                    </div>
+                    <div id="indicators-container-5" class="space-y-6"></div>
+                </div>
+
+                <!-- Navigasi Bawah Antar Tab -->
+                <div class="mt-8 pt-6 border-t border-slate-200 flex justify-between items-center no-print">
+                    <button id="prevTabBtn" onclick="navigateTab(-1)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Sebelumnya
+                    </button>
+                    <span id="tabIndicatorText" class="text-xs font-medium text-slate-500">Pilar 1 dari 5</span>
+                    <button id="nextTabBtn" onclick="navigateTab(1)" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold rounded-lg transition flex items-center gap-2 shadow-sm">
+                        Selanjutnya <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Generator Rekomendasi Otomatis & Rencana Tindak Lanjut -->
+        <section id="recommendationSection" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice text-brand-600"></i> Rekomendasi Strategis & Action Plan Otomatis
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Dihasilkan secara otomatis berdasarkan tingkat kematangan dan celah penilaian pada setiap pilar.</p>
+                </div>
+                <button onclick="generateAIRecommendation()" class="px-4 py-2 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 rounded-xl text-xs font-semibold transition flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-rotate"></i> Perbarui Analisis
+                </button>
+            </div>
+
+            <div id="recommendationContent" class="space-y-4">
+                <!-- Diisi via JavaScript -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 mt-12 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+            <div>
+                <p>&copy; 2026 Lembar Kerja Evaluasi Manajemen Risiko. Sesuai Perpres No. 39 Tahun 2023 & ISO 31000.</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="inline-flex items-center gap-1 text-emerald-400 font-medium">
+                    <i class="fa-solid fa-circle-check text-[10px]"></i> Auto-Save Aktif (LocalStorage)
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Panduan Regulasi -->
+    <div id="guideModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-book text-brand-600"></i> Panduan Regulasi & Kerangka Evaluasi
+                </h3>
+                <button onclick="closeGuideModal()" class="text-slate-400 hover:text-slate-700 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="text-xs text-slate-600 space-y-3 leading-relaxed">
+                <p><strong>1. Perpres No. 39 Tahun 2023 tentang Manajemen Risiko Pembangunan Nasional (MRPN):</strong><br> Mengamanatkan agar penerapan manajemen risiko terintegrasi dalam siklus perencanaan, penganggaran, pelaksanaan, hingga pertanggungjawaban program pembangunan nasional dan daerah.</p>
+                <p><strong>2. Peraturan BPKP No. 4 Tahun 2021:</strong><br> Pedoman evaluasi pengelolaan risiko instansi pemerintah sebagai acuan pengawasan intern untuk mengukur tingkat maturitas (maturity level) penyelenggaraan manajemen risiko.</p>
+                <p><strong>3. Standar ISO 31000:2018:</strong><br> Kerangka kerja (framework) dan proses manajemen risiko internasional yang menitikberatkan pada penciptaan dan pelindungan nilai (value creation & protection).</p>
+                <p><strong>Skala Penilaian Tingkat Kematangan:</strong></p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li><strong>Level 1 (Awal / Initial - Bobot 25):</strong> Proses belum terstruktur, reaktif, dan ad-hoc.</li>
+                    <li><strong>Level 2 (Berkembang / Repeatable - Bobot 50):</strong> Mulai diterapkan pada unit tertentu secara parsial.</li>
+                    <li><strong>Level 3 (Memadai / Defined - Bobot 75):</strong> Kebijakan dan prosedur formal ditetapkan dan konsisten.</li>
+                    <li><strong>Level 4 (Optimal / Managed & Optimizing - Bobot 100):</strong> Terintegrasi penuh, dievaluasi berkala, dan berbasis perbaikan berkesinambungan.</li>
+                </ul>
+            </div>
+            <div class="pt-4 border-t border-slate-100 flex justify-end">
+                <button onclick="closeGuideModal()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold shadow-sm">
+                    Mengerti & Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Aplikasi Interaktif -->
+    <script>
+        // Struktur Data Indikator Evaluasi Manajemen Risiko (5 Pilar)
+        const evaluationData = [
+            {
+                pillar: 1,
+                title: "Penetapan Konteks & Sasaran",
+                indicators: [
+                    {
+                        id: "p1_1",
+                        question: "Apakah instansi telah menetapkan konteks eksternal dan internal (sosial, hukum, finansial, teknologi) yang relevan dengan sasaran organisasi?",
+                        guideline: "Perpres 39/2023 Pasal 5 & ISO 31000 Klausul 5.4",
+                        options: [
+                            { score: 25, label: "Level 1: Konteks belum diidentifikasi secara formal." },
+                            { score: 50, label: "Level 2: Konteks diidentifikasi parsial oleh sebagian unit kerja." },
+                            { score: 75, label: "Level 3: Konteks ditetapkan secara formal dan didokumentasikan dalam dokumen renstra/RKAP." },
+                            { score: 100, label: "Level 4: Konteks dikaji berkala serta diselaraskan dengan dinamika eksternal nasional/global." }
+                        ]
+                    },
+                    {
+                        id: "p1_2",
+                        question: "Apakah sasaran strategis instansi selaras dengan kerangka Manajemen Risiko Pembangunan Nasional (MRPN)?",
+                        guideline: "Perpres No. 39 Tahun 2023 tentang MRPN",
+                        options: [
+                            { score: 25, label: "Level 1: Sasaran belum terhubung dengan kebijakan MRPN." },
+                            { score: 50, label: "Level 2: Keselarasan dilakukan secara manual pada beberapa program." },
+                            { score: 75, label: "Level 3: Sasaran strategis terintegrasi dengan prioritas nasional/pembangunan." },
+                            { score: 100, label: "Level 4: Integrasi penuh sasaran pembangunan nasional dengan cascading risiko hingga level terendah." }
+                        ]
+                    },
+                    {
+                        id: "p1_3",
+                        question: "Apakah selera risiko (risk appetite) dan toleransi risiko telah ditetapkan oleh Pimpinan Tertinggi?",
+                        guideline: "ISO 31000 Klausul 5.3 & BPKP",
+                        options: [
+                            { score: 25, label: "Level 1: Belum ada pernyataan selera risiko." },
+                            { score: 50, label: "Level 2: Selera risiko ada namun bersifat informal/lisan." },
+                            { score: 75, label: "Level 3: Selera risiko ditetapkan secara tertulis dalam kebijakan pimpinan." },
+                            { score: 100, label: "Level 4: Selera risiko dikomunikasikan secara aktif dan digunakan sebagai acuan pengambilan keputusan strategis." }
+                        ]
+                    }
+                ]
+            },
+            {
+                pillar: 2,
+                title: "Identifikasi Risiko",
+                indicators: [
+                    {
+                        id: "p2_1",
+                        question: "Apakah proses identifikasi risiko melibatkan seluruh unit kerja dan pemangku kepentingan terkait (participatory)?",
+                        guideline: "ISO 31000 Klausul 6.4.2",
+                        options: [
+                            { score: 25, label: "Level 1: Identifikasi risiko hanya dilakukan oleh unit manajemen risiko saja." },
+                            { score: 50, label: "Level 2: Sebagian besar unit kerja dilibatkan dengan panduan dasar." },
+                            { score: 75, label: "Level 3: Pelibatan aktif seluruh unit kerja menggunakan perangkat/workshop identifikasi." },
+                            { score: 100, label: "Level 4: Melibatkan ekosistem eksternal, mitra strategis, dan publik dalam identifikasi risiko pembangunan." }
+                        ]
+                    },
+                    {
+                        id: "p2_2",
+                        question: "Apakah identifikasi risiko mencakup akar penyebab (root cause), peristiwa risiko, dan dampak nyata terhadap sasaran?",
+                        guideline: "Peraturan BPKP No. 4 Tahun 2021",
+                        options: [
+                            { score: 25, label: "Level 1: Hanya mencantumkan peristiwa risiko tanpa analisis penyebab." },
+                            { score: 50, label: "Level 2: Mengidentifikasi penyebab dan dampak namun belum terstandarisasi." },
+                            { score: 75, label: "Level 3: Menggunakan format standar (Sebab-Peristiwa-Dampak) yang komprehensif." },
+                            { score: 100, label: "Level 4: Menggunakan analisis rantai sebab akibat yang mendalam serta skenario futuristik." }
+                        ]
+                    }
+                ]
+            },
+            {
+                pillar: 3,
+                title: "Analisis & Evaluasi Risiko",
+                indicators: [
+                    {
+                        id: "p3_1",
+                        question: "Apakah instansi memiliki kriteria kemungkinan (likelihood) dan dampak (consequence) yang teruji dan terdokumentasi?",
+                        guideline: "ISO 31000 Klausul 6.4.5",
+                        options: [
+                            { score: 25, label: "Level 1: Kriteria kualitatif/kuantitatif belum jelas atau subjektif." },
+                            { score: 25, label: "Level 1: Kriteria kualitatif/kuantitatif belum jelas atau subjektif." },
+                            { score: 50, label: "Level 2: Matriks analisis risiko tersedia namun belum disosialisasikan." },
+                            { score: 75, label: "Level 3: Matriks level risiko (5x5 atau sejenis) ditetapkan resmi untuk seluruh unit." },
+                            { score: 100, label: "Level 4: Matriks dievaluasi dan disesuaikan secara dinamis dengan kompleksitas makro." }
+                        ]
+                    },
+                    {
+                        id: "p3_2",
+                        question: "Apakah evaluasi risiko membandingkan level risiko inheren/residual dengan kriteria selera risiko untuk menentukan prioritas penanganan?",
+                        guideline: "ISO 31000 Klausul 6.4.6",
+                        options: [
+                            { score: 25, label: "Level 1: Peringkat risiko tidak diurutkan untuk penanganan." },
+                            { score: 50, label: "Level 2: Peringkat risiko diurutkan namun penetapan prioritas belum konsisten." },
+                            { score: 75, label: "Level 3: Peta risiko (Risk Map) disusun untuk memilah risiko tinggi, sedang, dan rendah." },
+                            { score: 100, label: "Level 4: Peta risiko terintegrasi secara real-time dengan dashboard eksekutif." }
+                        ]
+                    }
+                ]
+            },
+            {
+                pillar: 4,
+                title: "Mitigasi & Penanganan Risiko",
+                indicators: [
+                    {
+                        id: "p4_1",
+                        question: "Apakah setiap risiko prioritas memiliki Rencana Tindak Pengendalian (RTP) / Mitigasi yang jelas, terukur, dan memiliki penanggung jawab?",
+                        guideline: "Perpres 39/2023 & ISO 31000 Klausul 6.5",
+                        options: [
+                            { score: 25, label: "Level 1: Rencana mitigasi bersifat umum tanpa target waktu." },
+                            { score: 50, label: "Level 2: Sebagian besar risiko memiliki rencana penanganan dan PIC." },
+                            { score: 75, label: "Level 3: RTP lengkap dengan target output, jadwal pelaksanaan, dan alokasi anggaran." },
+                            { score: 100, label: "Level 4: Efektivitas penanganan dipantau secara otomatis melalui sistem pengendalian internal terpadu." }
+                        ]
+                    },
+                    {
+                        id: "p4_2",
+                        question: "Apakah opsi penanganan risiko dipilih secara optimal (menghindari, memindahkan, mengurangi, atau menerima risiko)?",
+                        guideline: "ISO 31000 Klausul 6.5.2",
+                        options: [
+                            { score: 25, label: "Level 1: Opsi penanganan dipilih tanpa kajian cost-benefit." },
+                            { score: 50, label: "Level 2: Opsi dipilih berdasarkan pertimbangan biaya dan sumber daya." },
+                            { score: 75, label: "Level 3: Kajian opsi penanganan risiko mendokumentasikan efisiensi dan mitigasi residu." },
+                            { score: 100, label: "Level 4: Optimasi biaya penanganan terhadap penurunan level risiko terukur secara kuantitatif." }
+                        ]
+                    }
+                ]
+            },
+            {
+                pillar: 5,
+                title: "Pemantauan, Reviu & Komunikasi",
+                indicators: [
+                    {
+                        id: "p5_1",
+                        question: "Apakah terdapat mekanisme pelaporan berkala (triwulanan/semesteran) atas pelaksanaan manajemen risiko kepada pimpinan?",
+                        guideline: "Peraturan BPKP No. 4 Tahun 2021",
+                        options: [
+                            { score: 25, label: "Level 1: Pelaporan hanya dilakukan saat ada audit atau insiden." },
+                            { score: 50, label: "Level 2: Pelaporan dilakukan secara periodik tetapi tidak terstruktur." },
+                            { score: 75, label: "Level 3: Laporan pemantauan risiko disampaikan secara rutin setiap triwulan kepada pimpinan." },
+                            { score: 100, label: "Level 4: Dashboard pelaporan risiko real-time diakses langsung oleh pengambil keputusan strategis." }
+                        ]
+                    },
+                    {
+                        id: "p5_2",
+                        question: "Apakah komunikasi dan konsultasi risiko berjalan efektif antara unit pengelola risiko, Satuan Pengawas Intern (SPI), dan pemangku kepentingan?",
+                        guideline: "ISO 31000 Klausul 6.2",
+                        options: [
+                            { score: 25, label: "Level 1: Komunikasi risiko bersifat searah dan minim koordinasi." },
+                            { score: 50, label: "Level 2: Koordinasi dilakukan saat penyusunan profil risiko tahunan." },
+                            { score: 75, label: "Level 3: Forum komunikasi risiko rutin diselenggarakan bersama SPI dan manajemen." },
+                            { score: 100, label: "Level 4: Budaya sadar risiko (risk culture) menjadi bagian integral dari tata kelola organisasi." }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        let currentTab = 1;
+        let radarChartInstance = null;
+        let userResponses = {}; // Simpan skor dan catatan auditor
+
+        // Inisialisasi LocalStorage atau Default
+        function initData() {
+            const saved = localStorage.getItem('risk_eval_data_2026');
+            if (saved) {
+                try {
+                    userResponses = JSON.parse(saved);
+                } catch(e) {
+                    userResponses = {};
+                }
+            }
+
+            // Set default values jika belum ada
+            evaluationData.forEach(pilar => {
+                pilar.indicators.forEach(ind => {
+                    if (!userResponses[ind.id]) {
+                        userResponses[ind.id] = {
+                            score: 75, // Default Level 3 (Memadai)
+                            evidence: "Dokumen SOP dan Laporan Profil Risiko Unit Kerja Tahun 2026."
+                        };
+                    }
+                });
+            });
+        }
+
+        function saveData() {
+            localStorage.setItem('risk_eval_data_2026', JSON.stringify(userResponses));
+            calculateAndUpdateDashboard();
+        }
+
+        // Render Indikator ke HTML
+        function renderIndicators() {
+            evaluationData.forEach(pilar => {
+                const container = document.getElementById(`indicators-container-${pilar.pillar}`);
+                if (!container) return;
+                
+                let html = '';
+                pilar.indicators.forEach((ind, index) => {
+                    const currentScore = userResponses[ind.id] ? userResponses[ind.id].score : 75;
+                    const currentEvidence = userResponses[ind.id] ? userResponses[ind.id].evidence : '';
+
+                    html += `
+                        <div class="bg-slate-50/70 border border-slate-200 rounded-xl p-5 space-y-4 shadow-sm">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="space-y-1">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-md border border-brand-200">Indikator ${pilar.pillar}.${index + 1}</span>
+                                    <h4 class="text-xs font-semibold text-slate-900 leading-snug">${ind.question}</h4>
+                                    <p class="text-[11px] text-slate-500 italic"><i class="fa-solid fa-scale-balanced mr-1 text-slate-400"></i> Acuan: ${ind.guideline}</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-200/60">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1.5">Penilaian Tingkat Pemenuhan / Kematangan</label>
+                                    <select onchange="updateScore('${ind.id}', this.value)" class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                        <option value="25" ${currentScore == 25 ? 'selected' : ''}>Level 1: Awal / Belum Optimal (Skor 25)</option>
+                                        <option value="50" ${currentScore == 50 ? 'selected' : ''}>Level 2: Berkembang / Parsial (Skor 50)</option>
+                                        <option value="75" ${currentScore == 75 ? 'selected' : ''}>Level 3: Memadai / Konsisten (Skor 75)</option>
+                                        <option value="100" ${currentScore == 100 ? 'selected' : ''}>Level 4: Optimal / Terintegrasi Penuh (Skor 100)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1.5">Bukti Dukung / Dokumen Referensi / Catatan Auditor</label>
+                                    <input type="text" value="${currentEvidence}" oninput="updateEvidence('${ind.id}', this.value)" placeholder="Contoh: SK Tim MR No. 12/2026, Notulensi Rapat..." class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
+
+        function updateScore(indId, val) {
+            if (!userResponses[indId]) userResponses[indId] = {};
+            userResponses[indId].score = parseInt(val);
+            saveData();
+        }
+
+        function updateEvidence(indId, val) {
+            if (!userResponses[indId]) userResponses[indId] = {};
+            userResponses[indId].evidence = val;
+            saveData();
+        }
+
+        // Navigasi Tab
+        function switchTab(tabNum) {
+            currentTab = tabNum;
+            for (let i = 1; i <= 5; i++) {
+                const content = document.getElementById(`tab-content-${i}`);
+                const btn = document.getElementById(`tab-btn-${i}`);
+                if (i === tabNum) {
+                    content.classList.remove('hidden');
+                    btn.className = "tab-btn px-6 py-4 text-xs font-bold border-b-2 border-brand-600 text-brand-600 bg-white whitespace-nowrap flex items-center gap-2 transition";
+                    btn.querySelector('span').className = "w-6 h-6 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-[10px]";
+                } else {
+                    content.classList.add('hidden');
+                    btn.className = "tab-btn px-6 py-4 text-xs font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2 transition";
+                    btn.querySelector('span').className = "w-6 h-6 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px]";
+                }
+            }
+            document.getElementById('tabIndicatorText').innerText = `Pilar ${tabNum} dari 5`;
+            document.getElementById('prevTabBtn').disabled = (tabNum === 1);
+            document.getElementById('nextTabBtn').disabled = (tabNum === 5);
+        }
+
+        function navigateTab(direction) {
+            let newTab = currentTab + direction;
+            if (newTab >= 1 && newTab <= 5) {
+                switchTab(newTab);
+                window.scrollTo({ top: 300, behavior: 'smooth' });
+            }
+        }
+
+        // Kalkulasi Skor per Pilar & Keseluruhan
+        function calculateScores() {
+            let pillarScores = [];
+            let totalOverall = 0;
+
+            evaluationData.forEach(pilar => {
+                let sum = 0;
+                pilar.indicators.forEach(ind => {
+                    sum += (userResponses[ind.id] ? userResponses[ind.id].score : 75);
+                });
+                let avg = sum / pilar.indicators.length;
+                pillarScores.push(Math.round(avg * 10) / 10);
+                totalOverall += avg;
+            });
+
+            let overallAvg = Math.round((totalOverall / evaluationData.length) * 10) / 10;
+            return { pillarScores, overallAvg };
+        }
+
+        // Update Dashboard & Chart
+        function calculateAndUpdateDashboard() {
+            const { pillarScores, overallAvg } = calculateScores();
+
+            // Update Header
+            document.getElementById('headerScoreValue').innerText = `${overallAvg} / 100`;
+            
+            let maturityText = "";
+            let catTitle = "";
+            let catDesc = "";
+            let badgeClass = "";
+
+            if (overallAvg >= 85) {
+                maturityText = "Optimal (Level 4)";
+                catTitle = "OPTIMAL & TERINTEGRASI PENUH (LEVEL 4)";
+                catDesc = "Penerapan manajemen risiko telah menyatu dalam budaya kerja dan pengambilan keputusan strategis instansi.";
+            } else if (overallAvg >= 65) {
+                maturityText = "Memadai (Level 3)";
+                catTitle = "MEMADAI & KONSISTEN (LEVEL 3)";
+                catDesc = "Penerapan manajemen risiko telah berjalan secara formal dan konsisten sesuai standar perundang-undangan.";
+            } else if (overallAvg >= 45) {
+                maturityText = "Berkembang (Level 2)";
+                catTitle = "BERKEMBANG & PARSIAL (LEVEL 2)";
+                catDesc = "Manajemen risiko baru diterapkan di beberapa unit kerja dan belum sepenuhnya terstandarisasi.";
+            } else {
+                maturityText = "Awal (Level 1)";
+                catTitle = "TINGKAT AWAL / INITIAL (LEVEL 1)";
+                catDesc = "Penerapan manajemen risiko masih bersifat insidental dan belum memiliki kerangka kerja formal.";
+            }
+
+            document.getElementById('headerMaturityLabel').innerText = maturityText;
+            document.getElementById('evalCategoryTitle').innerText = catTitle;
+            document.getElementById('evalCategoryDesc').innerText = catDesc;
+
+            // Cari Pilar Tertinggi & Terendah
+            let maxScore = Math.max(...pillarScores);
+            let minScore = Math.min(...pillarScores);
+            let maxIndex = pillarScores.indexOf(maxScore);
+            let minIndex = pillarScores.indexOf(minScore);
+
+            document.getElementById('highestPillarName').innerText = `${evaluationData[maxIndex].title} (${maxScore})`;
+            document.getElementById('lowestPillarName').innerText = `${evaluationData[minIndex].title} (${minScore})`;
+
+            // Update Chart
+            if (radarChartInstance) {
+                radarChartInstance.data.datasets[0].data = pillarScores;
+                radarChartInstance.update();
+            }
+
+            // Generate Rekomendasi
+            renderRecommendations(pillarScores, minIndex);
+        }
+
+        // Inisialisasi Chart.js
+        function initChart() {
+            const { pillarScores } = calculateScores();
+            const ctx = document.getElementById('maturityRadarChart').getContext('2d');
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Pilar 1: Konteks', 'Pilar 2: Identifikasi', 'Pilar 3: Analisis', 'Pilar 4: Mitigasi', 'Pilar 5: Pemantauan'],
+                    datasets: [{
+                        label: 'Skor Kematangan',
+                        data: pillarScores,
+                        backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                        borderColor: '#2563eb',
+                        pointBackgroundColor: '#1e40af',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#2563eb',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e2e8f0' },
+                            grid: { color: '#e2e8f0' },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { stepSize: 25, font: { size: 10 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // Generator Rekomendasi Otomatis
+        function renderRecommendations(pillarScores, lowestIndex) {
+            const container = document.getElementById('recommendationContent');
+            let html = '';
+
+            // Rekomendasi spesifik berdasarkan pilar terendah
+            const lowPillar = evaluationData[lowestIndex];
+            html += `
+                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5 text-base"></i>
+                    <div>
+                        <h4 class="text-xs font-bold text-amber-900">Area Fokus Perbaikan Utama (Prioritas Tinggi)</h4>
+                        <p class="text-xs text-amber-800 mt-1">Pilar <strong>"${lowPillar.title}"</strong> memiliki skor terendah di antara pilar lainnya. Disarankan agar instansi segera menyusun program percepatan penguatan pada aspek ini sesuai dengan standar Perpres No. 39 Tahun 2023.</p>
+                    </div>
+                </div>
+            `;
+
+            // Daftar Action Plan Berdasarkan Skor Pilar
+            html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">`;
+            evaluationData.forEach((pilar, idx) => {
+                let score = pillarScores[idx];
+                let statusColor = score >= 75 ? 'text-emerald-600 bg-emerald-50 border-emerald-200' : 'text-amber-600 bg-amber-50 border-amber-200';
+                let actionText = "";
+
+                if (score >= 75) {
+                    actionText = "Pertahankan konsistensi penerapan, lakukan reviu tahunan, dan tingkatkan integrasi otomatisasi pemantauan.";
+                } else if (score >= 50) {
+                    actionText = "Perlu penyusunan SOP formal, sosialisasi intensif kepada seluruh unit kerja, serta dokumentasi bukti dukung yang lebih rapi.";
+                } else {
+                    actionText = "Perlu intervensi manajemen puncak, pembentukan satuan tugas khusus, dan asistensi teknis penerapan kerangka manajemen risiko.";
+                }
+
+                html += `
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <h5 class="text-xs font-bold text-slate-800">${pilar.title}</h5>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md border ${statusColor}">Skor: ${score}</span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">${actionText}</p>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+
+            container.innerHTML = html;
+        }
+
+        function scrollToRecommendation() {
+            document.getElementById('recommendationSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openGuideModal() {
+            document.getElementById('guideModal').classList.remove('hidden');
+        }
+
+        function closeGuideModal() {
+            document.getElementById('guideModal').classList.add('hidden');
+        }
+
+        function resetEvaluation() {
+            if (confirm("Apakah Anda yakin ingin mereset seluruh penilaian lembar kerja ke pengaturan awal?")) {
+                localStorage.removeItem('risk_eval_data_2026');
+                userResponses = {};
+                initData();
+                renderIndicators();
+                calculateAndUpdateDashboard();
+            }
+        }
+
+        // Jalankan saat halaman dimuat
+        window.onload = function() {
+            initData();
+            renderIndicators();
+            initChart();
+            calculateAndUpdateDashboard();
+        };
+    </script>
+</body>
+</html>

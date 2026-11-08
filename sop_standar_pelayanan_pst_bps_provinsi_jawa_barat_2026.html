@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOP Standar Pelayanan Statistik Terpadu (PST) BPS Provinsi Jawa Barat 2026</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bps: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            navy: '#0f172a',
+                            blue: '#0284c7',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 11pt;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-break {
+                page-break-before: always;
+            }
+            .print-card {
+                box-shadow: none !important;
+                border: 1px solid #cbd5e1 !important;
+                margin-bottom: 2rem !important;
+            }
+            .tab-content {
+                display: block !important;
+            }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-emerald-500 selection:text-white">
+
+    <!-- Notification Banner / Modal Simulation -->
+    <div id="notification-box" class="fixed bottom-4 right-4 z-50 transform translate-y-32 opacity-0 transition-all duration-300 max-w-sm bg-slate-900 text-white px-5 py-4 rounded-xl shadow-2xl flex items-center space-x-3 border border-slate-700 no-print">
+        <div id="notif-icon" class="text-emerald-400 text-xl"><i class="fa-solid fa-circle-check"></i></div>
+        <div>
+            <h5 id="notif-title" class="font-bold text-sm">Informasi</h5>
+            <p id="notif-desc" class="text-xs text-slate-300"></p>
+        </div>
+        <button onclick="hideNotification()" class="ml-auto text-slate-400 hover:text-white text-sm"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- Header / Kop Surat Resmi BPS -->
+    <header class="bg-gradient-to-r from-slate-900 via-bps-navy to-bps-800 text-white shadow-xl no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center space-x-4 text-center md:text-left">
+                    <div class="bg-white p-3 rounded-2xl shadow-lg inline-block">
+                        <!-- BPS Logo Placeholder / SVG -->
+                        <svg class="w-12 h-12 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-xs uppercase tracking-widest text-emerald-400 font-bold mb-1">Badan Pusat Statistik Provinsi Jawa Barat</div>
+                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Standar Operasional Prosedur (SOP) Pelayanan</h1>
+                        <p class="text-xs text-slate-300 mt-1">Berdasarkan SK Kepala BPS Provinsi Jawa Barat Nomor 260/3200/KPG Tahun 2026</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg transition-all flex items-center space-x-2 text-sm transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span>Cetak / Ekspor PDF</span>
+                    </button>
+                    <button onclick="expandAll(true)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-medium px-4 py-2.5 rounded-xl transition-all text-sm">
+                        <i class="fa-solid fa-expand mr-1"></i> Buka Semua
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Subheader / Search & Quick Stats -->
+    <section class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <!-- Search Filter -->
+                <div class="relative w-full md:w-96">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="searchInput" onkeyup="filterServices()" placeholder="Cari layanan, persyaratan, atau dasar hukum..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                </div>
+                <!-- Quick Info Chips -->
+                <div class="flex items-center space-x-3 text-xs font-medium text-slate-600 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
+                    <span class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-200 flex items-center space-x-1 whitespace-nowrap"><i class="fa-solid fa-shield-halved mr-1"></i> 4 Jenis Layanan Utama</span>
+                    <span class="bg-sky-50 text-sky-700 px-3 py-1.5 rounded-lg border border-sky-200 flex items-center space-x-1 whitespace-nowrap"><i class="fa-solid fa-clock mr-1"></i> Jangka Waktu Transparan</span>
+                    <span class="bg-amber-50 text-amber-700 px-3 py-1.5 rounded-lg border border-amber-200 flex items-center space-x-1 whitespace-nowrap"><i class="fa-solid fa-hand-holding-dollar mr-1"></i> PNBP & Rp0,-</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Container with Tabs -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Print Title Header (Only visible on print) -->
+        <div class="hidden print:block text-center mb-8 pb-4 border-b-2 border-black">
+            <h2 class="text-xl font-bold uppercase">Dokumen Standar Operasional Prosedur (SOP)</h2>
+            <h3 class="text-lg font-semibold">Pelayanan Statistik Terpadu (PST) BPS Provinsi Jawa Barat</h3>
+            <p class="text-sm mt-1">Lampiran Keputusan Kepala BPS Provinsi Jawa Barat Nomor 260/3200/KPG Tahun 2026</p>
+        </div>
+
+        <!-- Interactive Navigation Tabs -->
+        <div class="flex overflow-x-auto space-x-2 bg-slate-200/80 p-1.5 rounded-2xl mb-8 no-print shadow-inner" id="serviceTabs">
+            <button onclick="switchTab('konsultasi')" id="tab-konsultasi" class="tab-btn flex-1 min-w-[200px] py-3 px-4 rounded-xl font-semibold text-sm transition-all flex items-center justify-center space-x-2 bg-white text-emerald-700 shadow-md">
+                <i class="fa-solid fa-comments"></i>
+                <span>1. Konsultasi Statistik</span>
+            </button>
+            <button onclick="switchTab('perpustakaan')" id="tab-perpustakaan" class="tab-btn flex-1 min-w-[200px] py-3 px-4 rounded-xl font-semibold text-sm transition-all flex items-center justify-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-white/50">
+                <i class="fa-solid fa-book-open"></i>
+                <span>2. Perpustakaan</span>
+            </button>
+            <button onclick="switchTab('berbayar')" id="tab-berbayar" class="tab-btn flex-1 min-w-[200px] py-3 px-4 rounded-xl font-semibold text-sm transition-all flex items-center justify-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-white/50">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span>3. Produk Statistik Berbayar</span>
+            </button>
+            <button onclick="switchTab('rekomendasi')" id="tab-rekomendasi" class="tab-btn flex-1 min-w-[200px] py-3 px-4 rounded-xl font-semibold text-sm transition-all flex items-center justify-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-white/50">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>4. Rekomendasi Kegiatan</span>
+            </button>
+        </div>
+
+        <!-- CONTENT AREA FOR SERVICES -->
+        <div id="serviceContentContainer" class="space-y-12">
+
+            <!-- ========================================== -->
+            <!-- SERVICE 1: KONSULTASI STATISTIK -->
+            <!-- ========================================== -->
+            <div id="content-konsultasi" class="service-section space-y-8 transition-all duration-300">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print-card">
+                    <div class="bg-gradient-to-r from-emerald-700 to-teal-800 text-white p-6 sm:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <span class="bg-emerald-500/30 text-emerald-100 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-emerald-400/30">Layanan 01</span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold mt-2">Standar Pelayanan Konsultasi Statistik</h2>
+                            <p class="text-emerald-100 text-sm mt-1">Layanan konsultasi informasi (data/metadata/klasifikasi) statistik secara offline & online.</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-semibold border border-white/20 flex items-center"><i class="fa-solid fa-bolt mr-2 text-yellow-300"></i> Maks. 10 Menit / 1 Hari Kerja</span>
+                        </div>
+                    </div>
+
+                    <!-- Service Delivery Components -->
+                    <div class="p-6 sm:p-8 space-y-8">
+                        <div class="border-b border-slate-200 pb-4">
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                                <i class="fa-solid fa-truck-fast text-emerald-600 mr-2"></i> Komponen Service Delivery (Penyelenggaraan Layanan)
+                            </h3>
+                        </div>
+
+                        <!-- Grid Persyaratan & Waktu & Biaya & Produk -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-clipboard-list text-emerald-600 mr-2"></i> Persyaratan</h4>
+                                <div class="text-xs text-slate-600 space-y-2">
+                                    <p class="font-semibold text-slate-700">1. Offline (Kunjungan Langsung):</p>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Berkunjung ke Unit PST BPS Provinsi Jabar Lantai 1.</li>
+                                        <li>Memiliki email & nomor telepon aktif.</li>
+                                        <li>Mengisi buku tamu via Aplikasi SAMBUT.</li>
+                                        <li>Mengajukan permintaan kepada petugas.</li>
+                                    </ul>
+                                    <p class="font-semibold text-slate-700 mt-2">2. Online:</p>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Memiliki akun di <code class="bg-slate-200 px-1 rounded">pst.bps.go.id</code> (kecuali WhatsApp).</li>
+                                        <li>Mengajukan via Portal PST, WhatsApp, atau E-mail.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-clock text-emerald-600 mr-2"></i> Jangka Waktu</h4>
+                                <div class="text-xs text-slate-600 space-y-2">
+                                    <p><strong class="text-slate-800">Offline:</strong> Maksimal 10 menit sejak pengguna pada antrian sebelumnya selesai.</p>
+                                    <p><strong class="text-slate-800">Online:</strong> Maksimal 1 (satu) hari kerja.</p>
+                                    <p class="text-slate-500 italic mt-1">*Konsultasi online ditutup otomatis jika tidak ada respon selama 3 hari kerja.</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-tag text-emerald-600 mr-2"></i> Biaya / Tarif</h4>
+                                <div class="text-xs text-slate-600">
+                                    <span class="inline-block bg-emerald-100 text-emerald-800 font-bold px-3 py-1.5 rounded-lg text-sm mt-1">Tidak Dipungut Biaya (Rp0,-)</span>
+                                    <p class="mt-2 text-slate-500">Layanan konsultasi dasar diselenggarakan secara gratis bagi seluruh masyarakat.</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-box-open text-emerald-600 mr-2"></i> Produk Pelayanan</h4>
+                                <div class="text-xs text-slate-600">
+                                    <p class="font-semibold text-slate-800">Jasa Konsultasi Informasi:</p>
+                                    <ul class="list-disc pl-4 mt-1 space-y-1">
+                                        <li>Data Statistik</li>
+                                        <li>Metadata Statistik</li>
+                                        <li>Klasifikasi Statistik</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sistem, Mekanisme, dan Prosedur -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                            <h4 class="font-bold text-base text-slate-900 flex items-center"><i class="fa-solid fa-diagram-project text-emerald-600 mr-2"></i> Sistem, Mekanisme, dan Prosedur (SOP)</h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                                <!-- Prosedur Offline -->
+                                <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+                                    <h5 class="font-bold text-sm text-emerald-800 mb-3 flex items-center"><i class="fa-solid fa-user-clock mr-2"></i> Prosedur Kunjungan Langsung (Offline)</h5>
+                                    <ol class="text-xs space-y-3 text-slate-700">
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-emerald-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">1</span>
+                                            <div>Pengguna berkunjung ke Unit PST Lantai 1 BPS Provinsi Jabar, mengisi buku tamu via aplikasi <strong>SAMBUT</strong>, dan mengambil nomor antrian.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-emerald-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">2</span>
+                                            <div>Pengguna menunggu waktu dipanggil sesuai nomor antrian.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-emerald-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">3</span>
+                                            <div>Pengguna menyampaikan permintaan konsultasi kepada petugas pelayanan.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-emerald-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">4</span>
+                                            <div>Petugas memberikan informasi kegiatan statistik dan ketersediaan data yang dikonsultasikan.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-emerald-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">5</span>
+                                            <div>Pengguna selesai mengakses layanan dan memberikan penilaian/rating kepuasan pelayanan.</div>
+                                        </li>
+                                    </ol>
+                                </div>
+
+                                <!-- Prosedur Online -->
+                                <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+                                    <h5 class="font-bold text-sm text-emerald-800 mb-3 flex items-center"><i class="fa-solid fa-globe mr-2"></i> Prosedur Secara Online</h5>
+                                    <ol class="text-xs space-y-3 text-slate-700">
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-emerald-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">1</span>
+                                            <div>Pengguna mengakses layanan via Portal <code class="bg-slate-200 px-1 rounded">pst.bps.go.id</code>, WhatsApp (085179928832), atau E-mail (<code class="bg-slate-200 px-1 rounded">pst3200@bps.go.id</code>).</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-emerald-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">2</span>
+                                            <div>Pengguna dapat mencari/searching riwayat konsultasi sebelumnya yang sejenis untuk efisiensi.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-emerald-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">3</span>
+                                            <div>Jika informasi belum tersedia, pengguna membuat transaksi konsultasi dan mengajukan pertanyaan.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-emerald-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">4</span>
+                                            <div>Petugas memberikan jawaban dan konsultasi statistik kepada pengguna.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-emerald-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">5</span>
+                                            <div>Pengguna selesai dan memberikan rating serta umpan balik kepuasan.</div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Penanganan Pengaduan -->
+                        <div class="bg-amber-50 border border-amber-200 p-5 rounded-xl text-xs text-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div>
+                                <h5 class="font-bold text-amber-900 text-sm mb-1 flex items-center"><i class="fa-solid fa-headset text-amber-600 mr-2"></i> Penanganan Pengaduan, Saran, dan Masukan</h5>
+                                <p class="text-slate-600">Kotak Saran Unit PST BPS Provinsi Jabar | Website: <a href="https://www.lapor.go.id" target="_blank" class="text-emerald-700 underline">lapor.go.id</a> / <a href="https://webapps.bps.go.id/pengaduan" target="_blank" class="text-emerald-700 underline">webapps.bps.go.id/pengaduan</a></p>
+                            </div>
+                            <div class="flex flex-wrap gap-2 text-xs font-semibold">
+                                <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-slate-700"><i class="fa-solid fa-envelope mr-1 text-emerald-600"></i> pengaduan3200@bps.go.id</span>
+                                <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-slate-700"><i class="fa-solid fa-phone mr-1 text-emerald-600"></i> 022-7272595</span>
+                                <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-slate-700"><i class="fa-brands fa-whatsapp mr-1 text-emerald-600"></i> 085179928832</span>
+                            </div>
+                        </div>
+
+                        <!-- Komponen Manufacturing (Pendukung) -->
+                        <div class="border-t border-slate-200 pt-6 space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                                <i class="fa-solid fa-industry text-emerald-600 mr-2"></i> Komponen Manufacturing (Pendukung & Pengelolaan)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-scale-balanced text-emerald-600 mr-1"></i> Dasar Hukum</strong>
+                                    <p class="text-slate-600">UU No. 16 Tahun 1997 tentang Statistik; UU No. 14 Tahun 2008 tentang Keterbukaan Informasi Publik; UU No. 25 Tahun 2009 tentang Pelayanan Publik; PP No. 51 Tahun 1999; PP No. 96 Tahun 2012; Perpres No. 1 Tahun 2025; PermenPANRB No. 15 Tahun 2014; Peraturan BPS No. 65 Tahun 2024 & No. 3 Tahun 2025.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-computer text-emerald-600 mr-1"></i> Sarana, Prasarana & Fasilitas</strong>
+                                    <p class="text-slate-600">Komputer, Meja, Kursi, Ruang Laktasi, Ruang Literasi Anak, CCTV, Loker, Kotak Saran, Buku/Pustaka Hardcopy, Scanner, Printer, Jaringan Intranet/Internet, Mesin Antrian, Portal pst.bps.go.id, dan Website jabar.bps.go.id.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-user-tie text-emerald-600 mr-1"></i> Kompetensi & Jumlah Pelaksana</strong>
+                                    <p class="text-slate-600"><strong>Kompetensi:</strong> Memahami perundang-undangan PST, komunikasi baik, menguasai prosedur, pengetahuan statistik memadai, mahir TI, ramah dan sopan.<br><strong>Jumlah:</strong> Offline max 3 orang, Online max 5 orang.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-eye text-emerald-600 mr-1"></i> Pengawasan & Jaminan</strong>
+                                    <p class="text-slate-600"><strong>Pengawasan:</strong> Dilaksanakan secara berjenjang oleh penanggung jawab pelayanan publik.<br><strong>Jaminan:</strong> Profesional sesuai SOP, akuntabel, transparan, serta kompensasi pelayanan jika tidak sesuai standar.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 md:col-span-2 lg:col-span-2">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-chart-line text-emerald-600 mr-1"></i> Evaluasi Kinerja Pelaksana</strong>
+                                    <p class="text-slate-600">Laporan evaluasi pelaksanaan tugas dan fungsi disampaikan kepada penanggung jawab pelayanan secara berkala setiap bulan dan setiap tahun, maupun apabila diperlukan sewaktu-waktu.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ========================================== -->
+            <!-- SERVICE 2: PERPUSTAKAAN -->
+            <!-- ========================================== -->
+            <div id="content-perpustakaan" class="service-section hidden space-y-8 transition-all duration-300">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print-card">
+                    <div class="bg-gradient-to-r from-sky-700 to-blue-800 text-white p-6 sm:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <span class="bg-sky-500/30 text-sky-100 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-sky-400/30">Layanan 02</span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold mt-2">Standar Pelayanan Perpustakaan</h2>
+                            <p class="text-sky-100 text-sm mt-1">Layanan perpustakaan tercetak (hardcopy) dan digital (softcopy berwatermark) secara offline & online.</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-semibold border border-white/20 flex items-center"><i class="fa-solid fa-bolt mr-2 text-yellow-300"></i> Maks. 5 Menit / Akses Mandiri</span>
+                        </div>
+                    </div>
+
+                    <!-- Service Delivery Components -->
+                    <div class="p-6 sm:p-8 space-y-8">
+                        <div class="border-b border-slate-200 pb-4">
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                                <i class="fa-solid fa-truck-fast text-sky-600 mr-2"></i> Komponen Service Delivery (Penyelenggaraan Layanan)
+                            </h3>
+                        </div>
+
+                        <!-- Grid Persyaratan & Waktu & Biaya & Produk -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-clipboard-list text-sky-600 mr-2"></i> Persyaratan</h4>
+                                <div class="text-xs text-slate-600 space-y-2">
+                                    <p class="font-semibold text-slate-700">1. Offline (Kunjungan Langsung):</p>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Berkunjung ke Unit PST BPS Provinsi Jabar Lantai 1.</li>
+                                        <li>Memiliki email & nomor telepon aktif.</li>
+                                        <li>Mengisi buku tamu via aplikasi <strong>SAMBUT</strong>.</li>
+                                        <li>Meletakkan tas pada loker yang disediakan.</li>
+                                    </ul>
+                                    <p class="font-semibold text-slate-700 mt-2">2. Online:</p>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Memiliki email aktif.</li>
+                                        <li>Memiliki akun pada portal <code class="bg-slate-200 px-1 rounded">pst.bps.go.id</code>.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-clock text-sky-600 mr-2"></i> Jangka Waktu</h4>
+                                <div class="text-xs text-slate-600 space-y-2">
+                                    <p><strong class="text-slate-800">Offline:</strong> Maksimal 5 menit setelah mengisi buku tamu dan sesuai ketersediaan fasilitas.</p>
+                                    <p><strong class="text-slate-800">Online:</strong> Langsung mencari dan mengunduh pustaka secara mandiri setelah registrasi.</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-tag text-sky-600 mr-2"></i> Biaya / Tarif</h4>
+                                <div class="text-xs text-slate-600">
+                                    <span class="inline-block bg-sky-100 text-sky-800 font-bold px-3 py-1.5 rounded-lg text-sm mt-1">Tidak Dipungut Biaya (Rp0,-)</span>
+                                    <p class="mt-2 text-slate-500">Layanan baca di tempat dan unduh publikasi digital disediakan tanpa biaya.</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-box-open text-sky-600 mr-2"></i> Produk Pelayanan</h4>
+                                <div class="text-xs text-slate-600 space-y-1">
+                                    <p class="font-semibold text-slate-800">Bentuk Produk:</p>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li><strong>Offline:</strong> Pustaka hardcopy (baca di tempat/scan mandiri) & softcopy berwatermark.</li>
+                                        <li><strong>Online:</strong> Pustaka softcopy berwatermark unduhan portal PST.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sistem, Mekanisme, dan Prosedur -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                            <h4 class="font-bold text-base text-slate-900 flex items-center"><i class="fa-solid fa-diagram-project text-sky-600 mr-2"></i> Sistem, Mekanisme, dan Prosedur (SOP)</h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                                <!-- Prosedur Offline -->
+                                <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+                                    <h5 class="font-bold text-sm text-sky-800 mb-3 flex items-center"><i class="fa-solid fa-user-clock mr-2"></i> Prosedur Kunjungan Langsung (Offline)</h5>
+                                    <ol class="text-xs space-y-3 text-slate-700">
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-sky-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">1</span>
+                                            <div>Pengguna berkunjung ke Unit PST BPS Provinsi Jabar Lantai 1.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-sky-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">2</span>
+                                            <div>Pengguna mengisi buku tamu melalui aplikasi <strong>SAMBUT</strong>.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-sky-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">3</span>
+                                            <div>Pengguna meletakkan tas pada loker penitipan yang tersedia.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-sky-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">4</span>
+                                            <div>Pengguna memilih layanan: 
+                                                <br>• <strong>Perpustakaan Tercetak:</strong> Membaca pustaka hardcopy di ruang baca dan dapat memanfaatkan scanner mandiri.
+                                                <br>• <strong>Perpustakaan Digital:</strong> Membaca softcopy pada portal pst.bps.go.id.
+                                            </div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-sky-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">5</span>
+                                            <div>Pengguna memberikan penilaian/rating kualitas layanan serta selesai.</div>
+                                        </li>
+                                    </ol>
+                                </div>
+
+                                <!-- Prosedur Online -->
+                                <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+                                    <h5 class="font-bold text-sm text-sky-800 mb-3 flex items-center"><i class="fa-solid fa-globe mr-2"></i> Prosedur Secara Online</h5>
+                                    <ol class="text-xs space-y-3 text-slate-700">
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-sky-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">1</span>
+                                            <div>Pengguna mengakses portal <code class="bg-slate-200 px-1 rounded">pst.bps.go.id</code>.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-sky-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">2</span>
+                                            <div>Pengguna melakukan registrasi akun / login.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-sky-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">3</span>
+                                            <div>Pengguna melakukan pencarian koleksi (searching) pustaka yang dibutuhkan.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-sky-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">4</span>
+                                            <div>Pengguna dapat membaca secara online atau mengunduh pustaka softcopy ber-watermark melalui menu unduh.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-sky-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">5</span>
+                                            <div>Pengguna memberikan rating kepuasan dan selesai menerima layanan.</div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Penanganan Pengaduan -->
+                        <div class="bg-amber-50 border border-amber-200 p-5 rounded-xl text-xs text-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div>
+                                <h5 class="font-bold text-amber-900 text-sm mb-1 flex items-center"><i class="fa-solid fa-headset text-amber-600 mr-2"></i> Penanganan Pengaduan, Saran, dan Masukan</h5>
+                                <p class="text-slate-600">Kotak Saran Unit PST BPS Jabar | Website: <a href="https://www.lapor.go.id" target="_blank" class="text-sky-700 underline">lapor.go.id</a></p>
+                            </div>
+                            <div class="flex flex-wrap gap-2 text-xs font-semibold">
+                                <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-slate-700"><i class="fa-solid fa-envelope mr-1 text-sky-600"></i> pengaduan3200@bps.go.id</span>
+                                <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-slate-700"><i class="fa-solid fa-phone mr-1 text-sky-600"></i> 022-7272595</span>
+                                <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-slate-700"><i class="fa-brands fa-whatsapp mr-1 text-sky-600"></i> 085179928832</span>
+                            </div>
+                        </div>
+
+                        <!-- Komponen Manufacturing (Pendukung) -->
+                        <div class="border-t border-slate-200 pt-6 space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                                <i class="fa-solid fa-industry text-sky-600 mr-2"></i> Komponen Manufacturing (Pendukung & Pengelolaan)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-scale-balanced text-sky-600 mr-1"></i> Dasar Hukum</strong>
+                                    <p class="text-slate-600">UU No. 16 Tahun 1997 tentang Statistik; UU No. 43 Tahun 2007 tentang Perpustakaan; UU No. 14 Tahun 2008; UU No. 25 Tahun 2009; PP No. 51 Tahun 1999; PP No. 96 Tahun 2012; PP No. 24 Tahun 2014; Perpres No. 1 Tahun 2025; PermenPANRB No. 15 Tahun 2014; Peraturan Perpusnas No. 7 Tahun 2022; Peraturan BPS No. 5/2023 jo No. 3/2025; Peraturan Kepala BPS No. 65 Tahun 2024.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-computer text-sky-600 mr-1"></i> Sarana, Prasarana & Fasilitas</strong>
+                                    <p class="text-slate-600">Komputer, Meja, Kursi, Ruang Laktasi, Ruang Literasi Anak, CCTV, Loker, Kotak Saran, Buku & Pustaka Hardcopy, Scanner, Printer, Jaringan Intranet/Internet, Mesin Antrian, Portal pst.bps.go.id, dan Website jabar.bps.go.id.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-user-tie text-sky-600 mr-1"></i> Kompetensi & Jumlah Pelaksana</strong>
+                                    <p class="text-slate-600"><strong>Kompetensi:</strong> Memahami peraturan perundang-undangan, komunikasi lisan baik, menguasai prosedur, pengetahuan perpustakaan dan statistik memadai, mahir TI, bahasa Indonesia & Inggris, serta ramah.<br><strong>Jumlah:</strong> Minimal 2 (dua) orang.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-eye text-sky-600 mr-1"></i> Pengawasan & Jaminan</strong>
+                                    <p class="text-slate-600"><strong>Pengawasan:</strong> Secara berjenjang oleh penanggung jawab pelayanan publik.<br><strong>Jaminan:</strong> Profesional sesuai SOP, kompensasi pelayanan jika tidak sesuai standar, serta akuntabel dan transparan.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 md:col-span-2 lg:col-span-2">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-chart-line text-sky-600 mr-1"></i> Evaluasi Kinerja Pelaksana</strong>
+                                    <p class="text-slate-600">Laporan evaluasi pelaksanaan tugas dan fungsi disampaikan kepada penanggung jawab pelayanan secara berkala setiap bulan dan setiap tahun, maupun apabila diperlukan sewaktu-waktu.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ========================================== -->
+            <!-- SERVICE 3: PRODUK STATISTIK BERBAYAR -->
+            <!-- ========================================== -->
+            <div id="content-berbayar" class="service-section hidden space-y-8 transition-all duration-300">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print-card">
+                    <div class="bg-gradient-to-r from-amber-600 to-orange-700 text-white p-6 sm:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <span class="bg-amber-500/30 text-amber-100 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-amber-400/30">Layanan 03</span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold mt-2">Standar Pelayanan Produk Statistik Berbayar</h2>
+                            <p class="text-amber-100 text-sm mt-1">Layanan penjualan publikasi, data mikro, dan/atau peta digital wilkerstat (PNBP & Layanan Rp0,-).</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-semibold border border-white/20 flex items-center"><i class="fa-solid fa-bolt mr-2 text-yellow-300"></i> Maks. 10 Hari Kerja (Online)</span>
+                        </div>
+                    </div>
+
+                    <!-- Service Delivery Components -->
+                    <div class="p-6 sm:p-8 space-y-8">
+                        <div class="border-b border-slate-200 pb-4">
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                                <i class="fa-solid fa-truck-fast text-amber-600 mr-2"></i> Komponen Service Delivery (Penyelenggaraan Layanan)
+                            </h3>
+                        </div>
+
+                        <!-- Grid Persyaratan & Waktu & Biaya & Produk -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-clipboard-list text-amber-600 mr-2"></i> Persyaratan</h4>
+                                <div class="text-xs text-slate-600 space-y-2">
+                                    <p class="font-semibold text-slate-700">1. Umum:</p>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Berkunjung ke unit PST BPS Jabar Lantai 1 atau akses <code class="bg-slate-200 px-1 rounded">silastik.bps.go.id</code> & <code class="bg-slate-200 px-1 rounded">pst.bps.go.id</code>.</li>
+                                        <li>Email aktif & NPWP aktif (khusus swasta).</li>
+                                        <li>Mengisi buku tamu via SAMBUT.</li>
+                                    </ul>
+                                    <p class="font-semibold text-slate-700 mt-2">2. Data Mikro & Peta Wilkerstat:</p>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Menyetujui syarat penjualan & format.</li>
+                                        <li>Mengisi Abstraksi Penggunaan Data & menandatangani <strong>Surat Perjanjian Penggunaan Data (SPPD)</strong>.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-clock text-amber-600 mr-2"></i> Jangka Waktu</h4>
+                                <div class="text-xs text-slate-600 space-y-2">
+                                    <p><strong class="text-slate-800">Offline:</strong> Maksimal 10 menit sejak antrian sebelumnya selesai.</p>
+                                    <p><strong class="text-slate-800">Online:</strong> Maksimal 10 (sepuluh) hari kerja setelah permintaan jelas dan persyaratan lengkap.</p>
+                                    <p class="text-slate-500 italic">*Invoice berlaku hingga 1 bulan sejak diterbitkan.</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-tag text-amber-600 mr-2"></i> Biaya / Tarif</h4>
+                                <div class="text-xs text-slate-600 space-y-1">
+                                    <p><strong class="text-slate-800">Berbayar PNBP:</strong> Sesuai PP No. 13 Tahun 2024 tentang Jenis dan Tarif PNBP BPS.</p>
+                                    <p class="mt-1"><strong class="text-slate-800">Layanan Rp0,-:</strong> Tersedia bagi pihak tertentu sesuai ketentuan tarif Rp0,00 (Peraturan BPS No. 2 Tahun 2019).</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-box-open text-amber-600 mr-2"></i> Produk Pelayanan</h4>
+                                <div class="text-xs text-slate-600 space-y-1">
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Publikasi dalam format softcopy/hardcopy.</li>
+                                        <li>Data mikro lengkap (fullset) atau sebagian sesuai variabel/wilayah.</li>
+                                        <li>Peta digital wilayah kerja statistik (wilkerstat).</li>
+                                        <li>Kuitansi pembelian & Surat Balasan.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sistem, Mekanisme, dan Prosedur -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                            <h4 class="font-bold text-base text-slate-900 flex items-center"><i class="fa-solid fa-diagram-project text-amber-600 mr-2"></i> Sistem, Mekanisme, dan Prosedur (SOP)</h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                                <!-- Prosedur Berbayar / PNBP -->
+                                <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+                                    <h5 class="font-bold text-sm text-amber-900 mb-3 flex items-center"><i class="fa-solid fa-file-invoice-dollar mr-2"></i> Prosedur Layanan Berbayar PNBP</h5>
+                                    <ol class="text-xs space-y-3 text-slate-700">
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-amber-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">1</span>
+                                            <div>Pengguna mengakses portal <code class="bg-slate-200 px-1 rounded">silastik.bps.go.id</code> / berkunjung langsung ke PST BPS Jabar.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-amber-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">2</span>
+                                            <div>Pengguna memilih produk statistik dan mengisi formulir permintaan serta abstraksi data / SPPD khusus data mikro & peta wilkerstat.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-amber-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">3</span>
+                                            <div>Petugas memverifikasi isian, menyiapkan produk, dan mengirimkan <strong>invoice</strong> / contoh data / dokumen SPPD.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-amber-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">4</span>
+                                            <div>Pengguna melakukan pembayaran sesuai invoice serta menandatangani & mengirimkan SPPD ke BPS Provinsi Jabar.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-amber-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">5</span>
+                                            <div>Bendahara memverifikasi pembayaran & petugas memverifikasi SPPD. Setelah valid, kuitansi dan produk statistik dikirimkan via portal PST untuk diunduh pengguna.</div>
+                                        </li>
+                                    </ol>
+                                </div>
+
+                                <!-- Prosedur Layanan Rp0,- -->
+                                <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+                                    <h5 class="font-bold text-sm text-amber-900 mb-3 flex items-center"><i class="fa-solid fa-gift mr-2"></i> Prosedur Layanan Produk Statistik Rp0,-</h5>
+                                    <ol class="text-xs space-y-3 text-slate-700">
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-amber-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">1</span>
+                                            <div>Pengguna mengakses portal <code class="bg-slate-200 px-1 rounded">pst.bps.go.id</code>.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-amber-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">2</span>
+                                            <div>Pengguna menyiapkan dan mengunggah surat permohonan data sesuai ketentuan tarif Rp0,00 (pihak tertentu yang memenuhi syarat).</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-amber-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">3</span>
+                                            <div>Petugas menyiapkan produk dan mengirimkan surat balasan permohonan data setelah verifikasi selesai.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-amber-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">4</span>
+                                            <div>Khusus data mikro/peta wilkerstat, pengguna menerima, menandatangani, dan mengunggah kembali SPPD elektronik ke portal PST.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-amber-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">5</span>
+                                            <div>Setelah verifikasi SPPD valid, pengguna dapat mengunduh produk statistik dan memberikan rating pelayanan.</div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Penanganan Pengaduan -->
+                        <div class="bg-amber-50 border border-amber-200 p-5 rounded-xl text-xs text-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div>
+                                <h5 class="font-bold text-amber-900 text-sm mb-1 flex items-center"><i class="fa-solid fa-headset text-amber-600 mr-2"></i> Penanganan Pengaduan, Saran, dan Masukan</h5>
+                                <p class="text-slate-600">Kotak Saran Unit PST BPS Jabar | Website: <a href="https://www.lapor.go.id" target="_blank" class="text-amber-700 underline">lapor.go.id</a></p>
+                            </div>
+                            <div class="flex flex-wrap gap-2 text-xs font-semibold">
+                                <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-slate-700"><i class="fa-solid fa-envelope mr-1 text-amber-600"></i> pengaduan3200@bps.go.id</span>
+                                <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-slate-700"><i class="fa-solid fa-phone mr-1 text-amber-600"></i> 022-7272595</span>
+                                <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-slate-700"><i class="fa-brands fa-whatsapp mr-1 text-amber-600"></i> 085179928832</span>
+                            </div>
+                        </div>
+
+                        <!-- Komponen Manufacturing (Pendukung) -->
+                        <div class="border-t border-slate-200 pt-6 space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                                <i class="fa-solid fa-industry text-amber-600 mr-2"></i> Komponen Manufacturing (Pendukung & Pengelolaan)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-scale-balanced text-amber-600 mr-1"></i> Dasar Hukum</strong>
+                                    <p class="text-slate-600">UU No. 16/1997 tentang Statistik; UU No. 14/2008; UU No. 25/2009; PP No. 51/1999; PP No. 96/2012; PP No. 7/2015; PP No. 13/2024 tentang Tarif PNBP BPS; Perpres No. 86/2007 jo No. 1/2025; PermenPANRB No. 15/2014; Peraturan BPS No. 2/2019 (Tarif Rp0,-); Peraturan BPS No. 7/2020; Peraturan Kepala BPS No. 65/2024.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-computer text-amber-600 mr-1"></i> Sarana, Prasarana & Fasilitas</strong>
+                                    <p class="text-slate-600">Komputer, Meja, Kursi, Ruang Laktasi, Ruang Literasi Anak, CCTV, Loker, Kotak Saran, Buku & Pustaka Hardcopy, Scanner, Printer, Jaringan Intranet/Internet, Mesin Antrian, Portal pst.bps.go.id, dan Website jabar.bps.go.id.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-user-tie text-amber-600 mr-1"></i> Kompetensi & Jumlah Pelaksana</strong>
+                                    <p class="text-slate-600"><strong>Kompetensi:</strong> Memahami peraturan perundang-undangan, komunikasi lisan baik, menguasai prosedur, pengetahuan statistik memadai, mahir TI, keterampilan bahasa, ramah dan sopan.<br><strong>Jumlah:</strong> Maksimal 5 orang (Offline & Online).</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-eye text-amber-600 mr-1"></i> Pengawasan & Jaminan</strong>
+                                    <p class="text-slate-600"><strong>Pengawasan:</strong> Secara berjenjang oleh penanggung jawab pelayanan publik.<br><strong>Jaminan:</strong> Profesional sesuai SOP, kompensasi pelayanan jika tidak sesuai standar, akuntabel dan transparan.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 md:col-span-2 lg:col-span-2">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-chart-line text-amber-600 mr-1"></i> Evaluasi Kinerja Pelaksana</strong>
+                                    <p class="text-slate-600">Laporan evaluasi pelaksanaan tugas dan fungsi disampaikan kepada penanggung jawab pelayanan secara berkala setiap bulan dan setiap tahun, maupun apabila diperlukan sewaktu-waktu.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ========================================== -->
+            <!-- SERVICE 4: REKOMENDASI KEGIATAN STATISTIK -->
+            <!-- ========================================== -->
+            <div id="content-rekomendasi" class="service-section hidden space-y-8 transition-all duration-300">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print-card">
+                    <div class="bg-gradient-to-r from-purple-700 to-indigo-800 text-white p-6 sm:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <span class="bg-purple-500/30 text-purple-100 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-purple-400/30">Layanan 04</span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold mt-2">Standar Pelayanan Rekomendasi Kegiatan Statistik</h2>
+                            <p class="text-purple-100 text-sm mt-1">Layanan evaluasi dan penerbitan surat rekomendasi kegiatan statistik sektoral secara offline & online.</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-semibold border border-white/20 flex items-center"><i class="fa-solid fa-bolt mr-2 text-yellow-300"></i> Maks. 14 Hari Kerja</span>
+                        </div>
+                    </div>
+
+                    <!-- Service Delivery Components -->
+                    <div class="p-6 sm:p-8 space-y-8">
+                        <div class="border-b border-slate-200 pb-4">
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                                <i class="fa-solid fa-truck-fast text-purple-600 mr-2"></i> Komponen Service Delivery (Penyelenggaraan Layanan)
+                            </h3>
+                        </div>
+
+                        <!-- Grid Persyaratan & Waktu & Biaya & Produk -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-clipboard-list text-purple-600 mr-2"></i> Persyaratan</h4>
+                                <div class="text-xs text-slate-600 space-y-2">
+                                    <p class="font-semibold text-slate-700">1. Offline (Kunjungan Langsung):</p>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Berkunjung ke Unit PST BPS Provinsi Jabar Lantai 1.</li>
+                                        <li>Email & No. HP aktif terhubung WhatsApp.</li>
+                                        <li>Mengisi buku tamu via Aplikasi SAMBUT.</li>
+                                        <li>Mengajukan permohonan rekomendasi kepada petugas.</li>
+                                    </ul>
+                                    <p class="font-semibold text-slate-700 mt-2">2. Online:</p>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Memiliki email & No. HP aktif (WhatsApp).</li>
+                                        <li>Memiliki akun di <code class="bg-slate-200 px-1 rounded">pst.bps.go.id</code>.</li>
+                                        <li>Mengajukan permohonan via Portal PST.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-clock text-purple-600 mr-2"></i> Jangka Waktu</h4>
+                                <div class="text-xs text-slate-600 space-y-2">
+                                    <p>Pengguna akan menerima notifikasi via e-mail dan WhatsApp tentang hasil pemeriksaan formulir rekomendasi kegiatan statistik sektoral maksimal <strong class="text-slate-800">14 (empat belas) hari kerja</strong> sejak berkas dinyatakan lengkap dan jelas.</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-tag text-purple-600 mr-2"></i> Biaya / Tarif</h4>
+                                <div class="text-xs text-slate-600">
+                                    <span class="inline-block bg-purple-100 text-purple-800 font-bold px-3 py-1.5 rounded-lg text-sm mt-1">Tidak Dipungut Biaya (Rp0,-)</span>
+                                    <p class="mt-2 text-slate-500">Pemberian rekomendasi kegiatan statistik sektoral diselenggarakan secara gratis.</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center"><i class="fa-solid fa-box-open text-purple-600 mr-2"></i> Produk Pelayanan</h4>
+                                <div class="text-xs text-slate-600 space-y-1">
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Saran, masukan, pertimbangan, solusi, dan rekomendasi penyelenggaraan kegiatan statistik.</li>
+                                        <li><strong>Surat Rekomendasi Kegiatan Statistik Sektoral</strong> yang disahkan oleh Kepala BPS Provinsi Jawa Barat.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sistem, Mekanisme, dan Prosedur -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                            <h4 class="font-bold text-base text-slate-900 flex items-center"><i class="fa-solid fa-diagram-project text-purple-600 mr-2"></i> Sistem, Mekanisme, dan Prosedur (SOP)</h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                                <!-- Prosedur Offline -->
+                                <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+                                    <h5 class="font-bold text-sm text-purple-900 mb-3 flex items-center"><i class="fa-solid fa-user-clock mr-2"></i> Prosedur Kunjungan Langsung (Offline)</h5>
+                                    <ol class="text-xs space-y-3 text-slate-700">
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-purple-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">1</span>
+                                            <div>Pengguna berkunjung ke Unit PST BPS Provinsi Jabar Lantai 1, mengisi buku tamu via SAMBUT, mengambil nomor antrian, dan menunggu panggilan.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-purple-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">2</span>
+                                            <div>Petugas memberikan softcopy formulir rekomendasi kegiatan statistik sektoral dan menjelaskan panduan pengisiannya.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-purple-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">3</span>
+                                            <div>Petugas mendampingi pengguna membuat akun dan login di portal <code class="bg-slate-200 px-1 rounded">pst.bps.go.id</code>.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-purple-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">4</span>
+                                            <div>Petugas mendampingi pencarian referensi kegiatan statistik yang sudah direkomendasikan sebelumnya serta pengajuan rancangan kegiatan.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-purple-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">5</span>
+                                            <div>Petugas & tim terkait mengevaluasi rancangan, menyusun naskah surat rekomendasi yang disahkan Kepala BPS Provinsi Jabar, lalu dikirim via portal. Pengguna memberikan rating.</div>
+                                        </li>
+                                    </ol>
+                                </div>
+
+                                <!-- Prosedur Online -->
+                                <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+                                    <h5 class="font-bold text-sm text-purple-900 mb-3 flex items-center"><i class="fa-solid fa-globe mr-2"></i> Prosedur Secara Online</h5>
+                                    <ol class="text-xs space-y-3 text-slate-700">
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-purple-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">1</span>
+                                            <div>Pengguna mengakses portal <code class="bg-slate-200 px-1 rounded">pst.bps.go.id</code> dan melakukan login akun.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-purple-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">2</span>
+                                            <div>Pengguna mencari referensi kegiatan statistik yang telah mendapatkan rekomendasi BPS.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-purple-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">3</span>
+                                            <div>Pengguna mengisi dan mengunggah formulir rancangan rekomendasi kegiatan statistik sektoral di portal PST.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-purple-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">4</span>
+                                            <div>Petugas memeriksa, mengevaluasi bersama tim terkait, dan Direktur/Kepala BPS mengesahkan surat rekomendasi.</div>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="bg-purple-600 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 text-xs">5</span>
+                                            <div>Petugas mengirimkan surat rekomendasi ke portal PST. Pengguna mengunduh dokumen dan memberikan rating kepuasan.</div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Penanganan Pengaduan -->
+                        <div class="bg-amber-50 border border-amber-200 p-5 rounded-xl text-xs text-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div>
+                                <h5 class="font-bold text-amber-900 text-sm mb-1 flex items-center"><i class="fa-solid fa-headset text-amber-600 mr-2"></i> Penanganan Pengaduan, Saran, dan Masukan</h5>
+                                <p class="text-slate-600">Kotak Saran Unit PST BPS Jabar | Website: <a href="https://www.lapor.go.id" target="_blank" class="text-purple-700 underline">lapor.go.id</a></p>
+                            </div>
+                            <div class="flex flex-wrap gap-2 text-xs font-semibold">
+                                <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-slate-700"><i class="fa-solid fa-envelope mr-1 text-purple-600"></i> pengaduan3200@bps.go.id</span>
+                                <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-slate-700"><i class="fa-solid fa-phone mr-1 text-purple-600"></i> 022-7272595</span>
+                                <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-slate-700"><i class="fa-brands fa-whatsapp mr-1 text-purple-600"></i> 085179928832</span>
+                            </div>
+                        </div>
+
+                        <!-- Komponen Manufacturing (Pendukung) -->
+                        <div class="border-t border-slate-200 pt-6 space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                                <i class="fa-solid fa-industry text-purple-600 mr-2"></i> Komponen Manufacturing (Pendukung & Pengelolaan)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-scale-balanced text-purple-600 mr-1"></i> Dasar Hukum</strong>
+                                    <p class="text-slate-600">UU No. 16/1997 tentang Statistik; UU No. 14/2008; UU No. 25/2009; PP No. 51/1999; PP No. 96/2012; Perpres No. 39/2019 tentang Satu Data Indonesia; Perpres No. 86/2007 jo No. 1/2025; PermenPANRB No. 15/2014; Peraturan Kepala BPS No. 65/2024; Peraturan BPS No. 5/2023 jo No. 3/2025.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-computer text-purple-600 mr-1"></i> Sarana, Prasarana & Fasilitas</strong>
+                                    <p class="text-slate-600">Komputer, Meja, Kursi, Ruang Laktasi, Ruang Literasi Anak, CCTV, Loker, Kotak Saran, Buku & Pustaka Hardcopy, Scanner, Printer, Jaringan Intranet/Internet, Mesin Antrian, Portal pst.bps.go.id, dan Website jabar.bps.go.id.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-user-tie text-purple-600 mr-1"></i> Kompetensi & Jumlah Pelaksana</strong>
+                                    <p class="text-slate-600"><strong>Kompetensi:</strong> Memahami peraturan perundang-undangan, komunikasi lisan baik, menguasai prosedur, pengetahuan statistik memadai, mahir TI, keterampilan bahasa, ramah dan sopan.<br><strong>Jumlah:</strong> Minimal 3 (tiga) orang.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-eye text-purple-600 mr-1"></i> Pengawasan & Jaminan</strong>
+                                    <p class="text-slate-600"><strong>Pengawasan:</strong> Secara berjenjang oleh penanggung jawab pelayanan publik.<br><strong>Jaminan:</strong> Profesional sesuai SOP, kompensasi pelayanan jika tidak sesuai standar, akuntabel dan transparan.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 md:col-span-2 lg:col-span-2">
+                                    <strong class="text-slate-900 block mb-1 text-sm"><i class="fa-solid fa-chart-line text-purple-600 mr-1"></i> Evaluasi Kinerja Pelaksana</strong>
+                                    <p class="text-slate-600">Laporan evaluasi pelaksanaan tugas dan fungsi disampaikan kepada penanggung jawab pelayanan secara berkala setiap bulan dan setiap tahun, maupun apabila diperlukan sewaktu-waktu.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 mt-16 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs space-y-3">
+            <p class="font-semibold text-slate-300">Badan Pusat Statistik Provinsi Jawa Barat</p>
+            <p>Jl. PHH. Mustofa No. 43 Bandung 40124 | Telp: 022-7272595 | Email: pst3200@bps.go.id</p>
+            <p class="text-slate-500">&copy; 2026 Pelayanan Statistik Terpadu (PST) BPS Provinsi Jawa Barat. Hak Cipta Dilindungi Undang-Undang.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        function switchTab(serviceKey) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.service-section');
+            sections.forEach(sec => sec.classList.add('hidden'));
+
+            // Remove active styles from all tabs
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(t => {
+                t.classList.remove('bg-white', 'text-emerald-700', 'shadow-md');
+                t.classList.add('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/50');
+            });
+
+            // Show target section
+            const targetSec = document.getElementById('content-' + serviceKey);
+            if (targetSec) {
+                targetSec.classList.remove('hidden');
+            }
+
+            // Activate target tab
+            const targetTab = document.getElementById('tab-' + serviceKey);
+            if (targetTab) {
+                targetTab.classList.remove('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/50');
+                targetTab.classList.add('bg-white', 'text-emerald-700', 'shadow-md');
+            }
+
+            showNotification('Berpindah Layanan', 'Menampilkan Standar Pelayanan ' + capitalizeFirst(serviceKey));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function expandAll(showAll) {
+            const sections = document.querySelectorAll('.service-section');
+            if (showAll) {
+                sections.forEach(sec => sec.classList.remove('hidden'));
+                showNotification('Tampilan Lengkap', 'Semua dokumen SOP 4 layanan ditampilkan sekaligus untuk kemudahan baca & cetak.');
+            }
+        }
+
+        function filterServices() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const sections = document.querySelectorAll('.service-section');
+            
+            sections.forEach(sec => {
+                const text = sec.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    sec.style.display = 'block';
+                } else {
+                    sec.style.display = query === '' ? 'block' : 'none';
+                }
+            });
+        }
+
+        function showNotification(title, desc) {
+            const box = document.getElementById('notification-box');
+            document.getElementById('notif-title').innerText = title;
+            document.getElementById('notif-desc').innerText = desc;
+            box.classList.remove('translate-y-32', 'opacity-0');
+            setTimeout(hideNotification, 4000);
+        }
+
+        function hideNotification() {
+            const box = document.getElementById('notification-box');
+            box.classList.add('translate-y-32', 'opacity-0');
+        }
+
+        function capitalizeFirst(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    </script>
+</body>
+</html>

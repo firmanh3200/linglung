@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKE Mandiri Pra-Pengajuan Rekomendasi Statistik - BPS Provinsi Jawa Barat</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        bps: {
+                            50: '#eef8ff',
+                            100: '#d9f0ff',
+                            500: '#0085ff',
+                            600: '#0066cc',
+                            700: '#0052a3',
+                            800: '#004182',
+                            900: '#003366',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-50 font-sans text-slate-800 antialiased" x-data="praPengajuanApp()">
+
+    <!-- Wrapper -->
+    <div class="min-h-full flex flex-col">
+
+        <!-- Navbar / Header -->
+        <header class="bg-gradient-to-r from-bps-900 via-bps-800 to-bps-700 text-white shadow-lg sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-20 items-center">
+                    <!-- Logo & Title -->
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/20 shadow-inner">
+                            <i class="fa-solid fa-clipboard-check text-2xl text-amber-400"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-amber-400 text-slate-900 text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Pra-Pengajuan WBBM</span>
+                                <span class="text-xs text-sky-200 font-medium">BPS Provinsi Jawa Barat</span>
+                            </div>
+                            <h1 class="text-lg sm:text-xl font-bold tracking-tight">LKE Mandiri Rekomendasi Kegiatan Statistik</h1>
+                        </div>
+                    </div>
+                    <!-- Header Action Buttons -->
+                    <div class="hidden md:flex items-center space-x-3">
+                        <button @click="saveProgress()" class="bg-white/10 hover:bg-white/20 text-white font-medium px-4 py-2.5 rounded-xl transition duration-200 flex items-center space-x-2 border border-white/20">
+                            <i class="fa-solid fa-floppy-disk text-amber-300"></i>
+                            <span>Simpan Progress</span>
+                        </button>
+                        <button @click="resetForm()" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 text-xs font-medium px-3 py-2.5 rounded-xl transition border border-rose-500/30">
+                            Reset Simulasi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+            <!-- Toast Notification -->
+            <div x-show="showAlert" x-transition.opacity x-cloak class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl shadow-sm flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>
+                    <span class="text-sm font-medium" x-text="alertMessage"></span>
+                </div>
+                <button @click="showAlert = false" class="text-emerald-500 hover:text-emerald-700"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Wizard Step Navigation Bar -->
+            <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 mb-8">
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                    <template x-for="step in steps" :key="step.id">
+                        <button @click="currentStep = step.id"
+                            :class="currentStep === step.id ? 'bg-bps-600 text-white shadow-md shadow-bps-500/20 border-bps-600' : (completedSteps.includes(step.id) ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100')"
+                            class="p-3 rounded-xl border text-left transition duration-200 flex flex-col justify-between">
+                            <div class="flex justify-between items-center w-full mb-1">
+                                <span class="text-xs font-bold uppercase tracking-wider" x-text="'Tahap ' + step.id"></span>
+                                <i :class="completedSteps.includes(step.id) ? 'fa-solid fa-circle-check text-emerald-600' : 'fa-regular fa-circle text-slate-400'"></i>
+                            </div>
+                            <span class="text-xs font-semibold line-clamp-1" x-text="step.title"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- STEP 1: INFORMASI UMUM & RANCANGAN SURVEI -->
+            <div x-show="currentStep === 1" x-cloak class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                    <div class="border-b border-slate-100 pb-4 mb-6">
+                        <span class="bg-bps-100 text-bps-800 text-xs font-bold px-3 py-1 rounded-full">Langkah 1 dari 5</span>
+                        <h2 class="text-xl font-bold text-slate-900 mt-2">Informasi Umum & Rancangan Survei Sektoral</h2>
+                        <p class="text-sm text-slate-500 mt-0.5">Masukkan identitas kegiatan statistik dan parameter metodologi survei instansi Anda.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Judul Kegiatan Statistik / Survei *</label>
+                            <input type="text" x-model="formData.judul" placeholder="Contoh: Survei Kepuasan Layanan Publik Sektoral 2026" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-bps-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Instansi / Produsen Data *</label>
+                            <input type="text" x-model="formData.instansi" placeholder="Contoh: Dinas Komunikasi dan Informatika Provinsi Jabar" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-bps-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Sektor Kegiatan *</label>
+                            <select x-model="formData.sektor" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-bps-500">
+                                <option value="">-- Pilih Sektor Statistik --</option>
+                                <option value="Pemerintahan">Pemerintahan & Aparatur</option>
+                                <option value="Ekonomi">Ekonomi, Keuangan & Perdagangan</option>
+                                <option value="Kependudukan">Kependudukan & Ketenagakerjaan</option>
+                                <option value="Sosial">Sosial, Pendidikan & Kesehatan</option>
+                                <option value="Infrastruktur">Infrastruktur & Lingkungan Hidup</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Metode Pengumpulan Data *</label>
+                            <select x-model="formData.metode" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-bps-500">
+                                <option value="">-- Pilih Metode --</option>
+                                <option value="Wawancara Tatap Muka">Wawancara Tatap Muka (PAPI/CAPI)</option>
+                                <option value="Pencacahan Mandiri Online">Pencacahan Mandiri Online (CAWI)</option>
+                                <option value="Wawancara Telepon">Wawancara Telepon (CATI)</option>
+                                <option value="Kompilasi Produk Administrasi">Kompilasi Produk Administrasi</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Target Responden / Populasi *</label>
+                            <input type="text" x-model="formData.targetResponden" placeholder="Contoh: UMKM di 27 Kabupaten/Kota" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-bps-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Frekuensi Penyelenggaraan *</label>
+                            <select x-model="formData.frekuensi" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-bps-500">
+                                <option value="Tahunan">Tahunan (Annual)</option>
+                                <option value="Triwulanan">Triwulanan (Quarterly)</option>
+                                <option value="Bulanan">Bulanan (Monthly)</option>
+                                <option value="Sewaktu-waktu">Ad-hoc / Sewaktu-waktu</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <button @click="validateStep1()" class="bg-bps-600 hover:bg-bps-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2">
+                        <span>Lanjut ke Standar Data</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: STANDAR DATA & KONSEP DEFINISI -->
+            <div x-show="currentStep === 2" x-cloak class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                    <div class="border-b border-slate-100 pb-4 mb-6">
+                        <span class="bg-bps-100 text-bps-800 text-xs font-bold px-3 py-1 rounded-full">Langkah 2 dari 5</span>
+                        <h2 class="text-xl font-bold text-slate-900 mt-2">Prinsip 1: Standar Data & Konsep Definisi</h2>
+                        <p class="text-sm text-slate-500 mt-0.5">Pastikan variabel menggunakan konsep baku, definisi operasional yang jelas, dan klasifikasi referensi BPS.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <template x-for="(item, index) in checklists.step2" :key="index">
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                <div class="space-y-1">
+                                    <h4 class="font-bold text-slate-900 text-sm" x-text="item.question"></h4>
+                                    <p class="text-xs text-slate-500" x-text="item.desc"></p>
+                                </div>
+                                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                                    <select x-model="item.status" class="bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-bps-500">
+                                        <option value="Terpenuhi">Terpenuhi (Skor 100)</option>
+                                        <option value="Sebagian">Sebagian (Skor 50)</option>
+                                        <option value="Belum">Belum (Skor 0)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <div class="flex justify-between">
+                    <button @click="currentStep = 1" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-6 py-3 rounded-xl transition flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Kembali</span>
+                    </button>
+                    <button @click="currentStep = 3" class="bg-bps-600 hover:bg-bps-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2">
+                        <span>Lanjut ke Metadata Statistik</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: METADATA STATISTIK -->
+            <div x-show="currentStep === 3" x-cloak class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                    <div class="border-b border-slate-100 pb-4 mb-6">
+                        <span class="bg-bps-100 text-bps-800 text-xs font-bold px-3 py-1 rounded-full">Langkah 3 dari 5</span>
+                        <h2 class="text-xl font-bold text-slate-900 mt-2">Prinsip 2: Metadata Statistik & Kuesioner</h2>
+                        <p class="text-sm text-slate-500 mt-0.5">Kelengkapan rancangan kuesioner terstruktur, kerangka sampel, dan dokumen metodologi teknis.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <template x-for="(item, index) in checklists.step3" :key="index">
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                <div class="space-y-1">
+                                    <h4 class="font-bold text-slate-900 text-sm" x-text="item.question"></h4>
+                                    <p class="text-xs text-slate-500" x-text="item.desc"></p>
+                                </div>
+                                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                                    <select x-model="item.status" class="bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-bps-500">
+                                        <option value="Terpenuhi">Terpenuhi (Skor 100)</option>
+                                        <option value="Sebagian">Sebagian (Skor 50)</option>
+                                        <option value="Belum">Belum (Skor 0)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <div class="flex justify-between">
+                    <button @click="currentStep = 2" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-6 py-3 rounded-xl transition flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Kembali</span>
+                    </button>
+                    <button @click="currentStep = 4" class="bg-bps-600 hover:bg-bps-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2">
+                        <span>Lanjut ke Interoperabilitas</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 4: INTEROPERABILITAS & FORMAT PERTUKARAN -->
+            <div x-show="currentStep === 4" x-cloak class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                    <div class="border-b border-slate-100 pb-4 mb-6">
+                        <span class="bg-bps-100 text-bps-800 text-xs font-bold px-3 py-1 rounded-full">Langkah 4 dari 5</span>
+                        <h2 class="text-xl font-bold text-slate-900 mt-2">Prinsip 3 & 4: Interoperabilitas & Format Data Terbuka</h2>
+                        <p class="text-sm text-slate-500 mt-0.5">Kesiapan data untuk dibagipakaikan melalui format terstruktur (CSV, XLSX, API) dan kode etik survei.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <template x-for="(item, index) in checklists.step4" :key="index">
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                <div class="space-y-1">
+                                    <h4 class="font-bold text-slate-900 text-sm" x-text="item.question"></h4>
+                                    <p class="text-xs text-slate-500" x-text="item.desc"></p>
+                                </div>
+                                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                                    <select x-model="item.status" class="bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-bps-500">
+                                        <option value="Terpenuhi">Terpenuhi (Skor 100)</option>
+                                        <option value="Sebagian">Sebagian (Skor 50)</option>
+                                        <option value="Belum">Belum (Skor 0)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <div class="flex justify-between">
+                    <button @click="currentStep = 3" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-6 py-3 rounded-xl transition flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Kembali</span>
+                    </button>
+                    <button @click="currentStep = 5" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2">
+                        <span>Lihat Hasil Evaluasi Mandiri</span>
+                        <i class="fa-solid fa-flag-checkered"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 5: RINGKASAN & KELAYAKAN PRA-PENGAJUAN -->
+            <div x-show="currentStep === 5" x-cloak class="space-y-6">
+                <!-- Score & Status Card -->
+                <div class="bg-gradient-to-br from-bps-900 to-bps-800 text-white rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="space-y-2 text-center md:text-left">
+                        <span class="bg-amber-400 text-slate-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Hasil Simulasi LKE</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold" x-text="formData.judul || 'Judul Belum Diisi'"></h2>
+                        <p class="text-sm text-sky-200" x-text="(formData.instansi || 'Instansi') + ' | Sektor: ' + (formData.sektor || 'Umum')"></p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl text-center min-w-[220px]">
+                        <div class="text-xs text-sky-200 font-medium uppercase tracking-wider mb-1">Skor Kesiapan SDI</div>
+                        <div class="text-4xl font-black text-amber-300" x-text="calculateScore() + ' / 100'"></div>
+                        <div class="mt-2 inline-block px-3 py-1 rounded-full text-xs font-bold shadow-sm"
+                            :class="{
+                                'bg-emerald-500 text-white': getStatusCategory().level === 'Layak',
+                                'bg-amber-400 text-slate-900': getStatusCategory().level === 'Perbaikan',
+                                'bg-rose-500 text-white': getStatusCategory().level === 'Tidak Layak'
+                            }" x-text="getStatusCategory().text"></div>
+                    </div>
+                </div>
+
+                <!-- Analysis & Recommendations -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Detail Aspek -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+                        <h3 class="text-base font-bold text-slate-900 flex items-center space-x-2">
+                            <i class="fa-solid fa-chart-pie text-bps-600"></i>
+                            <span>Cakupan Prinsip Satu Data Indonesia</span>
+                        </h3>
+                        <div class="space-y-3">
+                            <template x-for="(val, name) in getCategoryScores()" :key="name">
+                                <div>
+                                    <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                        <span x-text="name"></span>
+                                        <span x-text="val + '%'"></span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                                        <div class="bg-bps-600 h-2.5 rounded-full transition-all duration-500" :style="`width: ${val}%`"></div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Checklist Perbaikan / Catatan -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+                        <h3 class="text-base font-bold text-slate-900 flex items-center space-x-2">
+                            <i class="fa-solid fa-clipboard-list text-amber-500"></i>
+                            <span>Rekomendasi Tindak Lanjut</span>
+                        </h3>
+                        <div class="space-y-2 text-sm">
+                            <template x-for="rec in getRecommendations()" :key="rec">
+                                <div class="flex items-start space-x-3 p-3 bg-amber-50/60 border border-amber-200/60 rounded-xl text-amber-900">
+                                    <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5"></i>
+                                    <span class="text-xs font-medium" x-text="rec"></span>
+                                </div>
+                            </template>
+                            <div x-show="getRecommendations().length === 0" class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-medium flex items-center space-x-3">
+                                <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+                                <span>Semua indikator prinsip Satu Data Indonesia telah terpenuhi dengan sangat baik. Rancangan survei siap diajukan ke portal pst.bps.go.id!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Action Buttons -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                    <button @click="currentStep = 4" class="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-6 py-3 rounded-xl transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Kembali Periksa</span>
+                    </button>
+                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+                        <button @click="printReport()" class="w-full sm:w-auto bg-bps-600 hover:bg-bps-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-print"></i>
+                            <span>Cetak Laporan LKE</span>
+                        </button>
+                        <button @click="alertReadyForSubmit()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Siap Submit ke PST BPS Jabar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500 no-print">
+            <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <p>&copy; 2026 Badan Pusat Statistik Provinsi Jawa Barat. Zona Integritas Wilayah Birokrasi Bersih dan Melayani (WBBM).</p>
+                <div class="font-medium text-bps-700">Layanan Rekomendasi Kegiatan Statistik Sektoral</div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Alpine.js Application Script -->
+    <script>
+        function praPengajuanApp() {
+            return {
+                currentStep: 1,
+                completedSteps: [],
+                showAlert: false,
+                alertMessage: '',
+                steps: [
+                    { id: 1, title: 'Informasi Umum' },
+                    { id: 2, title: 'Standar Data' },
+                    { id: 3, title: 'Metadata Statistik' },
+                    { id: 4, title: 'Interoperabilitas' },
+                    { id: 5, title: 'Hasil & Rekomendasi' }
+                ],
+                formData: {
+                    judul: '',
+                    instansi: '',
+                    sektor: '',
+                    metode: '',
+                    targetResponden: '',
+                    frekuensi: 'Tahunan'
+                },
+                checklists: {
+                    step2: [
+                        { question: 'Kesesuaian Konsep & Definisi Operasional', desc: 'Apakah variabel yang dikumpulkan telah menggunakan definisi baku nasional/internasional?', status: 'Terpenuhi' },
+                        { question: 'Penggunaan Klasifikasi Baku BPS', desc: 'Apakah survei menggunakan klasifikasi baku (KBLI, KBKI, KBLS, dll)?', status: 'Terpenuhi' },
+                        { question: 'Ketepatan Satuan Ukur & Rumus Penghitungan', desc: 'Apakah rumus indikator turunan sudah didefinisikan secara matematis?', status: 'Terpenuhi' }
+                    ],
+                    step3: [
+                        { question: 'Ketersediaan Metadata Kegiatan & Variabel', desc: 'Apakah dokumen metadata lengkap mencakup metodologi dan cakupan wilayah?', status: 'Terpenuhi' },
+                        { question: 'Rancangan Kuesioner Terstruktur', desc: 'Apakah instrumen pengumpulan data/kuesioner sudah diuji coba (pilot survey)?', status: 'Terpenuhi' },
+                        { question: 'Kerangka Sampel (Sampling Frame) Jelas', desc: 'Apakah sumber kerangka sampel menggunakan direktori resmi yang valid?', status: 'Terpenuhi' }
+                    ],
+                    step4: [
+                        { question: 'Format Data Terbuka & Interoperabilitas', desc: 'Apakah format hasil data siap dibagipakaikan dalam bentuk CSV, XLSX, atau API?', status: 'Terpenuhi' },
+                        { question: 'Penerapan Kode Etik & Kerahasiaan Statistik', desc: 'Apakah instansi menjamin perlindungan kerahasiaan responden sesuai UU Statistik?', status: 'Terpenuhi' }
+                    ]
+                },
+                init() {
+                    const saved = localStorage.getItem('lke_pra_pengajuan_bps_jabar');
+                    if (saved) {
+                        try {
+                            const parsed = JSON.parse(saved);
+                            this.formData = parsed.formData || this.formData;
+                            this.checklists = parsed.checklists || this.checklists;
+                        } catch(e) {
+                            console.error('Gagal memuat penyimpanan lokal', e);
+                        }
+                    }
+                },
+                validateStep1() {
+                    if (!this.formData.judul || !this.formData.instansi || !this.formData.sektor || !this.formData.metode) {
+                        alert('Mohon lengkapi semua field bertanda bintang (*) pada informasi umum survei.');
+                        return;
+                    }
+                    if (!this.completedSteps.includes(1)) this.completedSteps.push(1);
+                    this.currentStep = 2;
+                },
+                calculateScore() {
+                    let totalItems = 0;
+                    let scoreSum = 0;
+                    Object.keys(this.checklists).forEach(key => {
+                        this.checklists[key].forEach(item => {
+                            totalItems++;
+                            if (item.status === 'Terpenuhi') scoreSum += 100;
+                            else if (item.status === 'Sebagian') scoreSum += 50;
+                            else scoreSum += 0;
+                        });
+                    });
+                    if (totalItems === 0) return 0;
+                    return Math.round(scoreSum / totalItems);
+                },
+                getCategoryScores() {
+                    const calcCat = (arr) => {
+                        let sum = 0;
+                        arr.forEach(i => {
+                            if (i.status === 'Terpenuhi') sum += 100;
+                            else if (i.status === 'Sebagian') sum += 50;
+                        });
+                        return Math.round(sum / arr.length);
+                    };
+                    return {
+                        'Standar Data & Konsep': calcCat(this.checklists.step2),
+                        'Metadata & Kuesioner': calcCat(this.checklists.step3),
+                        'Interoperabilitas & Format': calcCat(this.checklists.step4)
+                    };
+                },
+                getStatusCategory() {
+                    const score = this.calculateScore();
+                    if (score >= 80) return { level: 'Layak', text: 'Layak Pra-Pengajuan' };
+                    if (score >= 50) return { level: 'Perbaikan', text: 'Perlu Perbaikan Dokumen' };
+                    return { level: 'Tidak Layak', text: 'Belum Memenuhi Syarat' };
+                },
+                getRecommendations() {
+                    let recs = [];
+                    Object.keys(this.checklists).forEach(key => {
+                        this.checklists[key].forEach(item => {
+                            if (item.status !== 'Terpenuhi') {
+                                recs.push(`Periksa kembali bagian: "${item.question}" karena status masih "${item.status}".`);
+                            }
+                        });
+                    });
+                    return recs;
+                },
+                saveProgress() {
+                    localStorage.setItem('lke_pra_pengajuan_bps_jabar', JSON.stringify({
+                        formData: this.formData,
+                        checklists: this.checklists
+                    }));
+                    this.alertMessage = 'Progress simulasi pra-pengajuan berhasil disimpan!';
+                    this.showAlert = true;
+                    setTimeout(() => { this.showAlert = false; }, 4000);
+                },
+                resetForm() {
+                    if (confirm('Apakah Anda yakin ingin mereset seluruh form simulasi?')) {
+                        localStorage.removeItem('lke_pra_pengajuan_bps_jabar');
+                        window.location.reload();
+                    }
+                },
+                printReport() {
+                    window.print();
+                },
+                alertReadyForSubmit() {
+                    alert('Simulasi LKE Mandiri Anda telah tuntas. Silakan salin hasil ini atau lampirkan nomor registrasi saat mengunggah rancangan survei resmi di portal pst.bps.go.id.');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

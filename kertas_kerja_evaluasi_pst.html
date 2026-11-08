@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kertas Kerja Evaluasi Triwulanan Standar Pelayanan PST BPS Provinsi Jawa Barat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --secondary: #0f766e;
+            --accent: #f59e0b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        header p {
+            font-size: 0.9rem;
+            color: #93c5fd;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            background: var(--bg-card);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn:hover {
+            background: #e2e8f0;
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 4px rgba(30, 58, 138, 0.2);
+        }
+
+        .eval-period-box {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #f8fafc;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .eval-period-box label {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .eval-period-box select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-weight: 600;
+            color: var(--text-main);
+            background: white;
+        }
+
+        .btn-export {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .btn-export:hover {
+            background: #059669;
+        }
+
+        .service-section {
+            display: none;
+        }
+
+        .service-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border-left: 4px solid var(--primary-light);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box h4 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-box p {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #f1f5f9;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 0.65rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            margin-top: 3rem;
+        }
+
+        @media print {
+            body { background: white; }
+            header { position: static !important; }
+            .controls { display: none; }
+            .eval-period-box { border: 1px solid #ccc; background: #fff !important; -webkit-print-color-adjust: exact; }
+            .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+            .service-section { display: block !important; page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Kertas Kerja Evaluasi Triwulanan Standar Pelayanan</h1>
+        <p>Badan Pusat Statistik (BPS) Provinsi Jawa Barat | Berdasarkan SK Kepala BPS Provinsi Jawa Barat No. 260 Tahun 2026 [cite: 1]</p>
+    </header>
+
+    <div class="container">
+        <!-- Periode Evaluasi Dropdown Box -->
+        <div class="eval-period-box">
+            <label><i class="fa-solid fa-calendar-days"></i> Periode Evaluasi:</label>
+            <select id="triwulan-select">
+                <option value="Triwulan I">Triwulan I (Januari - Maret)</option>
+                <option value="Triwulan II" selected>Triwulan II (April - Juni)</option>
+                <option value="Triwulan III">Triwulan III (Juli - September)</option>
+                <option value="Triwulan IV">Triwulan IV (Oktober - Desember)</option>
+            </select>
+            <select id="tahun-select">
+                <option value="2026" selected>2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+            </select>
+            <span style="margin-left: auto; font-size: 0.85rem; color: var(--text-muted);">*Silakan pilih periode laporan sebelum mengisi atau mencetak</span>
+        </div>
+
+        <!-- Controls & Navigation -->
+        <div class="controls">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('konsultasi')"><i class="fa-solid fa-comments"></i> Konsultasi Statistik</button>
+                <button class="tab-btn" onclick="switchTab('perpustakaan')"><i class="fa-solid fa-book"></i> Perpustakaan</button>
+                <button class="tab-btn" onclick="switchTab('berbayar')"><i class="fa-solid fa-file-invoice-dollar"></i> Produk Statistik Berbayar</button>
+                <button class="tab-btn" onclick="switchTab('rekomendasi')"><i class="fa-solid fa-clipboard-check"></i> Rekomendasi Kegiatan</button>
+            </div>
+            <button class="btn-export" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> Ekspor / Cetak PDF</button>
+        </div>
+
+        <!-- Summary Dashboard -->
+        <div class="summary-cards">
+            <div class="stat-card">
+                <h3>Total Layanan Utama</h3>
+                <div class="value">4 Jenis</div>
+            </div>
+            <div class="stat-card">
+                <h3>Periode Evaluasi</h3>
+                <div class="value" id="display-periode">Triwulan II 2026</div>
+            </div>
+            <div class="stat-card">
+                <h3>Standar Acuan</h3>
+                <div class="value">SK No. 260/2026 [cite: 1]</div>
+            </div>
+            <div class="stat-card">
+                <h3>Target Kepuasan</h3>
+                <div class="value">&gt; 88.00</div>
+            </div>
+        </div>
+
+        <!-- 1. KONSULTASI STATISTIK -->
+        <section id="konsultasi" class="service-section active">
+            <div class="card">
+                <h2><i class="fa-solid fa-comments"></i> 1. Evaluasi Layanan Konsultasi Statistik</h2>
+                <div class="info-grid">
+                    <div class="info-box">
+                        <h4>Produk Pelayanan</h4>
+                        <p>Jasa konsultasi informasi (data/metadata/klasifikasi) statistik [cite: 6]</p>
+                    </div>
+                    <div class="info-box">
+                        <h4>Jangka Waktu</h4>
+                        <p>Offline: Maks. 10 menit | Online: Maks. 1 hari kerja [cite: 6]</p>
+                    </div>
+                    <div class="info-box">
+                        <h4>Tarif / Biaya</h4>
+                        <p><span class="badge badge-success">Tidak Dipungut Biaya (Rp0) [cite: 6]</span></p>
+                    </div>
+                </div>
+
+                <h3>Formulir Evaluasi Kinerja Triwulanan</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">No</th>
+                            <th style="width: 25%;">Komponen Standar Pelayanan</th>
+                            <th style="width: 30%;">Indikator & Target Evaluasi Triwulan</th>
+                            <th style="width: 40%;">Catatan / Realisasi & Tindak Lanjut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><strong>Persyaratan & Prosedur</strong><br><small>Aplikasi SAMBUT & Portal PST [cite: 5, 6]</small></td>
+                            <td>Kelancaran antrean offline dan kemudahan akses portal online tanpa kendala sistem.</td>
+                            <td><textarea placeholder="Masukkan evaluasi kesesuaian persyaratan & prosedur..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><strong>Jangka Waktu Pelayanan</strong><br><small>Offline &lt;10 mnt, Online &lt;1 hari [cite: 6]</small></td>
+                            <td>Persentase ketepatan waktu pelayanan sesuai SOP mencapai &ge; 95%.</td>
+                            <td><textarea placeholder="Masukkan analisis capaian waktu pelayanan..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><strong>Kompetensi & Jumlah Pelaksana</strong><br><small>Offline max 3 orang, Online max 5 orang [cite: 8]</small></td>
+                            <td>Kecukupan jumlah petugas front-office & pemahaman teknis statistik yang memadai [cite: 8].</td>
+                            <td><textarea placeholder="Masukkan evaluasi kesiapan & kompetensi pelaksana..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><strong>Penanganan Pengaduan & Rating</strong><br><small>SAMBUT, Kotak Saran, Lapor.go.id [cite: 5, 6]</small></td>
+                            <td>Responsivitas pengaduan & nilai rata-rata kepuasan pengguna layanan (SKM).</td>
+                            <td><textarea placeholder="Masukkan rekapitulasi pengaduan & nilai rating triwulanan..."></textarea></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 2. PERPUSTAKAAN -->
+        <section id="perpustakaan" class="service-section">
+            <div class="card">
+                <h2><i class="fa-solid fa-book"></i> 2. Evaluasi Layanan Perpustakaan</h2>
+                <div class="info-grid">
+                    <div class="info-box">
+                        <h4>Produk Pelayanan</h4>
+                        <p>Pustaka hardcopy dan softcopy berwatermark [cite: 10]</p>
+                    </div>
+                    <div class="info-box">
+                        <h4>Jangka Waktu</h4>
+                        <p>Offline: Maks. 5 menit | Online: Akses mandiri instan [cite: 10]</p>
+                    </div>
+                    <div class="info-box">
+                        <h4>Tarif / Biaya</h4>
+                        <p><span class="badge badge-success">Tidak Dipungut Biaya (Rp0) [cite: 10]</span></p>
+                    </div>
+                </div>
+
+                <h3>Formulir Evaluasi Kinerja Triwulanan</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">No</th>
+                            <th style="width: 25%;">Komponen Standar Pelayanan</th>
+                            <th style="width: 30%;">Indikator & Target Evaluasi Triwulan</th>
+                            <th style="width: 40%;">Catatan / Realisasi & Tindak Lanjut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><strong>Sarana & Prasarana Literasi</strong><br><small>Ruang baca, loker, komputer, scanner [cite: 12]</small></td>
+                            <td>Kondisi fisik sarana prasarana ruang baca, ketertiban loker, dan fungsi pemindai mandiri [cite: 9, 12].</td>
+                            <td><textarea placeholder="Evaluasi fasilitas perpustakaan fisik & digital..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><strong>Ketersediaan Koleksi & Watermark</strong><br><small>Pustaka hardcopy & softcopy portal PST [cite: 9, 10]</small></td>
+                            <td>Kelengkapan koleksi publikasi terbaru dan keamanan dokumen digital (watermark) [cite: 10].</td>
+                            <td><textarea placeholder="Evaluasi ketersediaan dan pembaruan koleksi..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><strong>Kompetensi & Jumlah Pelaksana</strong><br><small>Minimal 2 orang pelaksana [cite: 12]</small></td>
+                            <td>Keramahan, kecepatan pelayanan sirkulasi buku, serta pendampingan literasi anak/umum [cite: 9, 12].</td>
+                            <td><textarea placeholder="Evaluasi kinerja petugas perpustakaan..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><strong>Kepuasan Pengguna & Pengaduan</strong><br><small>Kotak saran, email, WhatsApp [cite: 10]</small></td>
+                            <td>Tindak lanjut saran buku baru dan penyelesaian kendala unduh dokumen digital.</td>
+                            <td><textarea placeholder="Masukkan evaluasi masukan dan rating perpustakaan..."></textarea></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3. PRODUK STATISTIK BERBAYAR -->
+        <section id="berbayar" class="service-section">
+            <div class="card">
+                <h2><i class="fa-solid fa-file-invoice-dollar"></i> 3. Evaluasi Layanan Produk Statistik Berbayar</h2>
+                <div class="info-grid">
+                    <div class="info-box">
+                        <h4>Produk Pelayanan</h4>
+                        <p>Publikasi softcopy, Data Mikro, Peta Digital Wilkerstat (PNBP / Rp0) [cite: 16, 17]</p>
+                    </div>
+                    <div class="info-box">
+                        <h4>Jangka Waktu</h4>
+                        <p>Offline: Maks. 10 menit | Online: Maks. 10 hari kerja [cite: 17]</p>
+                    </div>
+                    <div class="info-box">
+                        <h4>Tarif / Biaya</h4>
+                        <p><span class="badge badge-warning">PP No. 13 Tahun 2024 / Rp0 [cite: 17, 18]</span></p>
+                    </div>
+                </div>
+
+                <h3>Formulir Evaluasi Kinerja Triwulanan</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">No</th>
+                            <th style="width: 25%;">Komponen Standar Pelayanan</th>
+                            <th style="width: 30%;">Indikator & Target Evaluasi Triwulan</th>
+                            <th style="width: 40%;">Catatan / Realisasi & Tindak Lanjut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><strong>Mekanisme Silastik & SPPD</strong><br><small>Verifikasi abstraksi & Surat Perjanjian Data [cite: 13, 14]</small></td>
+                            <td>Kecepatan verifikasi abstraksi data mikro/peta wilkerstat dan validasi SPPD oleh petugas [cite: 14].</td>
+                            <td><textarea placeholder="Evaluasi alur verifikasi data mikro & SPPD..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><strong>Jangka Waktu & Pembayaran PNBP</strong><br><small>Invoice max 1 bulan, Proses max 10 hari kerja [cite: 16, 17]</small></td>
+                            <td>Ketepatan waktu penerbitan invoice, verifikasi pembayaran oleh bendahara, & penyerahan produk [cite: 14, 16].</td>
+                            <td><textarea placeholder="Evaluasi ketepatan waktu dan proses PNBP..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><strong>Pengelolaan Tarif Khusus (Rp0)</strong><br><small>Peraturan BPS No. 2 Tahun 2019 [cite: 18]</small></td>
+                            <td>Kepatuhan dan kecepatan pemrosesan permohonan data dengan tarif Rp0 (instansi/pendidikan).</td>
+                            <td><textarea placeholder="Evaluasi layanan permohonan tarif Rp0..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><strong>Penanganan Komplain & Pengaduan</strong><br><small>Ketidaksesuaian data / revisi invoice [cite: 14, 16]</small></td>
+                            <td>Efisiensi tindak lanjut permintaan perbaikan data atau kuitansi dari pengguna layanan [cite: 14, 16].</td>
+                            <td><textarea placeholder="Evaluasi penanganan komplain produk berbayar..."></textarea></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 4. REKOMENDASI KEGIATAN STATISTIK -->
+        <section id="rekomendasi" class="service-section">
+            <div class="card">
+                <h2><i class="fa-solid fa-clipboard-check"></i> 4. Evaluasi Layanan Rekomendasi Kegiatan Statistik</h2>
+                <div class="info-grid">
+                    <div class="info-box">
+                        <h4>Produk Pelayanan</h4>
+                        <p>Pertimbangan, solusi, & Surat Rekomendasi Kegiatan Statistik Sektoral [cite: 21]</p>
+                    </div>
+                    <div class="info-box">
+                        <h4>Jangka Waktu</h4>
+                        <p>Maks. 14 hari kerja sejak berkas lengkap & jelas [cite: 21]</p>
+                    </div>
+                    <div class="info-box">
+                        <h4>Tarif / Biaya</h4>
+                        <p><span class="badge badge-success">Tidak Dipungut Biaya (Rp0) [cite: 21]</span></p>
+                    </div>
+                </div>
+
+                <h3>Formulir Evaluasi Kinerja Triwulanan</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">No</th>
+                            <th style="width: 25%;">Komponen Standar Pelayanan</th>
+                            <th style="width: 30%;">Indikator & Target Evaluasi Triwulan</th>
+                            <th style="width: 40%;">Catatan / Realisasi & Tindak Lanjut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><strong>Pemeriksaan Rancangan & Evaluasi Tim</strong><br><small>Portal PST & koordinasi sektoral [cite: 20, 21]</small></td>
+                            <td>Kualitas pendampingan pengisian kuesioner dan ketepatan evaluasi rancangan survei/sensus sektoral [cite: 20, 21].</td>
+                            <td><textarea placeholder="Evaluasi proses pemeriksaan rancangan kegiatan..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><strong>Jangka Waktu Penyelesaian</strong><br><small>Maksimal 14 hari kerja [cite: 21]</small></td>
+                            <td>Persentase penerbitan Surat Rekomendasi oleh Kepala BPS Provinsi sesuai batas waktu 14 hari kerja [cite: 20, 21].</td>
+                            <td><textarea placeholder="Evaluasi capaian waktu penerbitan rekomendasi..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><strong>Kompetensi Tim Pelaksana</strong><br><small>Minimal 3 orang pelaksana terlatih [cite: 22]</small></td>
+                            <td>Penguasaan metodologi statistik, standar Satu Data Indonesia (SDI), dan komunikasi efektif [cite: 22].</td>
+                            <td><textarea placeholder="Evaluasi kompetensi tim teknis rekomendasi..."></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><strong>Kepuasan K/L/D/Instansi & Pelaporan</strong><br><small>Rating portal PST & pengawasan berjenjang [cite: 8, 21]</small></td>
+                            <td>Tingkat kepuasan instansi pengaju rekomendasi dan konsistensi laporan pengawasan internal.</td>
+                            <td><textarea placeholder="Evaluasi kepuasan mitra instansi & tindak lanjut..."></textarea></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- General Conclusion / Action Plan Card -->
+        <div class="card" style="margin-top: 2rem; border-left: 5px solid var(--primary);">
+            <h2><i class="fa-solid fa-clipboard-list"></i> Kesimpulan & Rencana Tindak Lanjut (Action Plan) Triwulanan</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+                <div>
+                    <label style="font-weight: 600; display: block; margin-bottom: 0.5rem; color: var(--primary);">Akar Masalah / Hambatan Utama Triwulan Ini:</label>
+                    <textarea style="min-height: 120px;" placeholder="Uraikan kendala atau hambatan operasional yang ditemukan selama triwulan berjalan..."></textarea>
+                </div>
+                <div>
+                    <label style="font-weight: 600; display: block; margin-bottom: 0.5rem; color: var(--primary);">Rekomendasi & Rencana Perbaikan Triwulan Berikutnya:</label>
+                    <textarea style="min-height: 120px;" placeholder="Uraikan langkah perbaikan, peningkatan fasilitas, atau penguatan SOP..."></textarea>
+                </div>
+            </div>
+            <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                <button class="tab-btn active" onclick="alert('Kertas kerja evaluasi berhasil disimpan ke sistem lokal!')"><i class="fa-solid fa-floppy-disk"></i> Simpan Kertas Kerja</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Badan Pusat Statistik Provinsi Jawa Barat. Hak Cipta Dilindungi.</p>
+        <p>Pelayanan Prima, Profesional, dan Berintegritas.</p>
+    </footer>
+
+    <script>
+        function switchTab(serviceId) {
+            const sections = document.querySelectorAll('.service-section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(serviceId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Update dashboard periode text dynamically when dropdown changes
+        const triwulanSelect = document.getElementById('triwulan-select');
+        const tahunSelect = document.getElementById('tahun-select');
+        const displayPeriode = document.getElementById('display-periode');
+
+        function updatePeriode() {
+            displayPeriode.textContent = `${triwulanSelect.value} ${tahunSelect.value}`;
+        }
+
+        triwulanSelect.addEventListener('change', updatePeriode);
+        tahunSelect.addEventListener('change', updatePeriode);
+    </script>
+</body>
+</html>

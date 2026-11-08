@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kertas Kerja Evaluasi (LKE) PerKI No. 1 Tahun 2021</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col font-sans antialiased">
+
+    <!-- Header / Navbar -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50 print:hidden">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/30 text-white flex items-center justify-center">
+                    <i class="fa-solid fa-clipboard-check text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight">LKE Evaluasi Keterbukaan Informasi Publik</h1>
+                    <p class="text-xs text-slate-400">Berdasarkan PerKI No. 1 Tahun 2021 tentang Standar Layanan Informasi Publik</p>
+                </div>
+            </div>
+            <!-- Action buttons -->
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="openResetModal()" class="px-3.5 py-2 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Reset
+                </button>
+                <button onclick="exportDataJSON()" class="px-3.5 py-2 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i> Ekspor JSON
+                </button>
+                <button onclick="triggerImport()" class="px-3.5 py-2 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-upload"></i> Impor
+                </button>
+                <input type="file" id="importFile" class="hidden" accept=".json" onchange="importDataJSON(event)">
+                <button onclick="window.print()" class="px-4 py-2 text-xs font-medium bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-sm transition flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Cetak / PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 flex flex-col gap-6">
+
+        <!-- Instansi & Ringkasan Score Card -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 print:grid-cols-2">
+            
+            <!-- Instansi Identity Box -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">Identitas Badan Publik</span>
+                        <button onclick="saveIdentity()" class="text-xs text-blue-600 hover:underline font-medium">Simpan</button>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Nama Instansi / Badan Publik</label>
+                            <input type="text" id="agencyName" value="Kementerian / Lembaga / BPS Kabupaten / Kota..." class="w-full text-sm font-semibold border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">Tim Evaluator</label>
+                                <input type="text" id="evaluatorName" value="Tim PPID Utama" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">Tahun Evaluasi</label>
+                                <input type="text" id="evalYear" value="2026" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                    <span>Status: Tersimpan Otomatis</span>
+                    <span id="lastSaved" class="font-medium text-slate-600">Baru saja</span>
+                </div>
+            </div>
+
+            <!-- Score / KPI Summary Box -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 lg:col-span-2 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md">Kalkulasi Keterbukaan Informasi</span>
+                    <div id="predicateBadge" class="px-3 py-1 text-xs font-bold rounded-full bg-slate-100 text-slate-700">Menghitung...</div>
+                </div>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 my-2">
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <span class="block text-xs text-slate-500 font-medium">Total Item</span>
+                        <span id="statTotal" class="text-xl font-bold text-slate-800">0</span>
+                    </div>
+                    <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                        <span class="block text-xs text-emerald-700 font-medium">Tersedia</span>
+                        <span id="statAvailable" class="text-xl font-bold text-emerald-700">0</span>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-xl border border-amber-100">
+                        <span class="block text-xs text-amber-700 font-medium">Belum Tersedia</span>
+                        <span id="statUnavail" class="text-xl font-bold text-amber-700">0</span>
+                    </div>
+                    <div class="bg-slate-100 p-3 rounded-xl border border-slate-200">
+                        <span class="block text-xs text-slate-600 font-medium">Tidak Relevan</span>
+                        <span id="statIrrelevant" class="text-xl font-bold text-slate-700">0</span>
+                    </div>
+                </div>
+
+                <!-- Progress Bar Percentage -->
+                <div>
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="font-medium text-slate-600">Indeks Keterbukaan (Kepatuhan PerKI 1/2021)</span>
+                        <span id="scorePercentage" class="font-bold text-slate-900 text-sm">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                        <div id="progressBar" class="bg-blue-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Filter & Search Bar -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 print:hidden">
+            <!-- Tabs Category -->
+            <div class="flex flex-wrap gap-1 w-full md:w-auto" id="categoryTabs">
+                <button onclick="switchCategory('all')" class="category-tab px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-900 text-white transition">Semua Kategori</button>
+                <button onclick="switchCategory('Berkala')" class="category-tab px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Informasi Berkala</button>
+                <button onclick="switchCategory('Serta Merta')" class="category-tab px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Serta Merta</button>
+                <button onclick="switchCategory('Setiap Saat')" class="category-tab px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Setiap Saat</button>
+                <button onclick="switchCategory('Dikecualikan')" class="category-tab px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Informasi Dikecualikan</button>
+            </div>
+
+            <!-- Search & Status Filter -->
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="relative flex-grow md:w-64">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-search text-xs"></i>
+                    </span>
+                    <input type="text" id="searchInput" oninput="filterTable()" placeholder="Cari rincian / pasal..." class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <select id="statusFilter" onchange="filterTable()" class="py-2 px-3 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-600">
+                    <option value="all">Semua Status</option>
+                    <option value="Tersedia">Tersedia</option>
+                    <option value="Belum Tersedia">Belum Tersedia</option>
+                    <option value="Tidak Relevan">Tidak Relevan</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Checklist Table Container -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse" id="checklistTable">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-600 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
+                            <th class="py-3 px-4 w-12 text-center">No</th>
+                            <th class="py-3 px-4 min-w-[280px]">Jenis / Rincian Informasi & Dasar Hukum</th>
+                            <th class="py-3 px-4 w-40">Status Ketersediaan</th>
+                            <th class="py-3 px-4 min-w-[220px]">Link / Bukti Dukung (URL)</th>
+                            <th class="py-3 px-4 min-w-[200px]">Catatan Verifikasi</th>
+                            <th class="py-3 px-4 w-20 text-center">Bobot</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-100 text-xs">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden p-12 text-center text-slate-400">
+                <i class="fa-solid fa-folder-open text-4xl mb-3"></i>
+                <p class="text-sm font-medium">Tidak ada item yang sesuai dengan pencarian atau filter.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-500 print:hidden mt-auto">
+        <p>Lembar Kerja Evaluasi Mandiri Keterbukaan Informasi Publik berdasarkan PerKI No. 1 Tahun 2021. Data tersimpan aman di browser Anda.</p>
+    </footer>
+
+    <!-- Custom Modal for Confirmation / Messages -->
+    <div id="customModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full mx-4 p-6 shadow-xl border border-slate-100 text-center">
+            <div id="modalIcon" class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4 text-lg">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 id="modalTitle" class="text-base font-bold text-slate-900 mb-2">Konfirmasi Tindakan</h3>
+            <p id="modalDesc" class="text-xs text-slate-500 mb-6">Apakah Anda yakin ingin mereset seluruh data LKE? Tindakan ini tidak dapat dibatalkan.</p>
+            <div class="flex gap-3">
+                <button onclick="closeModal()" class="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl text-xs transition">Batal</button>
+                <button id="modalConfirmBtn" onclick="confirmReset()" class="flex-1 py-2.5 px-4 bg-red-600 hover:bg-red-500 text-white font-medium rounded-xl text-xs transition">Ya, Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg text-xs font-medium z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastText">Perubahan berhasil disimpan</span>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // Master Data Checklist berdasarkan PerKI No. 1 Tahun 2021
+        const rawChecklistData = [
+            // INFORMASI BERKALA
+            {
+                id: 1,
+                category: "Berkala",
+                title: "Informasi Profil Badan Publik",
+                description: "Sejarah, visi, misi, tugas, fungsi, struktur organisasi, profil singkat pimpinan (nama, foto, riwayat singkat), serta alamat lengkap kantor/layanan.",
+                legal: "Pasal 9 s.d. Pasal 11 PerKI 1/2021",
+                weight: 5
+            },
+            {
+                id: 2,
+                category: "Berkala",
+                title: "Ringkasan Informasi Program dan/atau Kegiatan",
+                description: "Nama program/kegiatan, sasaran, target, jadwal pelaksanaan, anggaran (sumber dan jumlah), serta penanggung jawab pelaksanaan.",
+                legal: "Pasal 12 PerKI 1/2021",
+                weight: 5
+            },
+            {
+                id: 3,
+                category: "Berkala",
+                title: "Ringkasan Informasi Kinerja (Laporan Kinerja Instansi Pemerintah/LKJIP)",
+                description: "Capaian program/kegiatan, realisasi anggaran, hambatan/kendala, serta ringkasan laporan tahunan instansi.",
+                legal: "Pasal 13 PerKI 1/2021",
+                weight: 5
+            },
+            {
+                id: 4,
+                category: "Berkala",
+                title: "Ringkasan Laporan Keuangan",
+                description: "Rencana Kerja dan Anggaran (RKA), Dokumen Pelaksanaan Anggaran (DPA), serta Laporan Keuangan (Neraca, LRA, CaLK) yang telah diaudit BPK/inspektorat.",
+                legal: "Pasal 14 s.d. Pasal 17 PerKI 1/2021",
+                weight: 5
+            },
+            {
+                id: 5,
+                category: "Berkala",
+                title: "Informasi Pengadaan Barang dan Jasa (RUP & LPSE)",
+                description: "Rencana Umum Pengadaan (RUP), pengumuman pengadaan (tender/nontender), kontrak pengadaan, dan ringkasan laporan pelaksanaan pengadaan.",
+                legal: "Pasal 18 PerKI 1/2021",
+                weight: 5
+            },
+            {
+                id: 6,
+                category: "Berkala",
+                title: "Standar Layanan Informasi Publik (SLIP)",
+                description: "Maklumat pelayanan, prosedur permohonan informasi, prosedur pengajuan keberatan, prosedur penyelesaian sengketa, dan daftar tarif layanan (jika ada).",
+                legal: "Pasal 19 s.d. Pasal 22 PerKI 1/2021",
+                weight: 5
+            },
+            {
+                id: 7,
+                category: "Berkala",
+                title: "Prosedur Peringatan Dini dan Prosedur Evakuasi Keadaan Darurat",
+                description: "Informasi tata cara evakuasi, jalur darurat, titik kumpul, dan kontak darurat di lingkungan instansi.",
+                legal: "Pasal 23 PerKI 1/2021",
+                weight: 3
+            },
+            {
+                id: 8,
+                category: "Berkala",
+                title: "Daftar Informasi Publik (DIP) dan Daftar Informasi Dikecualikan",
+                description: "DIP berkala, serta merta, setiap saat, serta daftar informasi yang telah diuji konsekuensinya secara berkala.",
+                legal: "Pasal 24 PerKI 1/2021",
+                weight: 5
+            },
+            {
+                id: 9,
+                category: "Berkala",
+                title: "Informasi Hak dan Tata Cara Memperoleh Informasi Publik",
+                description: "Panduan hak pemohon, tata cara pengajuan permohonan, dan formulir permohonan informasi publik.",
+                legal: "Pasal 25 PerKI 1/2021",
+                weight: 3
+            },
+            {
+                id: 10,
+                category: "Berkala",
+                title: "Informasi tentang Peraturan, Keputusan, dan/atau Kebijakan",
+                description: "Dokumen regulasi/SK kepala instansi, SOP pelayanan, pedoman internal, dan produk hukum lainnya yang bersifat publik.",
+                legal: "Pasal 26 PerKI 1/2021",
+                weight: 5
+            },
+            {
+                id: 11,
+                category: "Berkala",
+                title: "Informasi Prosedur Kerja Pegawai / Organisasi",
+                description: "SOP internal instansi yang berkaitan dengan pelayanan publik dan administrasi perkantoran.",
+                legal: "Pasal 27 PerKI 1/2021",
+                weight: 3
+            },
+            {
+                id: 12,
+                category: "Berkala",
+                title: "Pengumuman Lowongan Formasi Jabatan / Seleksi Pengadaan Pegawai",
+                description: "Informasi penerimaan ASN/PPPK/honorer, tahapan seleksi, kriteria, dan pengumuman hasil seleksi (transparan).",
+                legal: "Pasal 28 PerKI 1/2021",
+                weight: 3
+            },
+
+            // INFORMASI SERTA MERTA
+            {
+                id: 13,
+                category: "Serta Merta",
+                title: "Informasi yang Dapat Mengancam Hajat Hidup Orang Banyak dan Ketertiban Umum",
+                description: "Potensi bencana alam (banjir, gempa, cuaca ekstrem), wabah penyakit menular, kegagalan infrastruktur vital, atau ancaman keamanan yang mendesak.",
+                legal: "Pasal 15 UU KIP jo. Pasal 31 PerKI 1/2021",
+                weight: 5
+            },
+            {
+                id: 14,
+                category: "Serta Merta",
+                title: "Sistem Penyampaian Informasi Serta Merta",
+                description: "Mekanisme fast-response penyebarluasan informasi darurat melalui media sosial, website resmi, SMS/WhatsApp blast, sirene, atau pengeras suara.",
+                legal: "Pasal 32 PerKI 1/2021",
+                weight: 4
+            },
+
+            // INFORMASI SETIAP SAAT
+            {
+                id: 15,
+                category: "Setiap Saat",
+                title: "Daftar Informasi Publik (DIP) Lengkap",
+                description: "DIP mutakhir yang mencakup seluruh informasi yang dikuasai badan publik beserta ringkasan isinya.",
+                legal: "Pasal 35 PerKI 1/2021",
+                weight: 5
+            },
+            {
+                id: 16,
+                category: "Setiap Saat",
+                title: "Informasi tentang Peraturan, Keputusan, dan Kebijakan Lengkap",
+                description: "Database peraturan, keputusan pimpinan, atau naskah perjanjian yang mengikat publik.",
+                legal: "Pasal 36 PerKI 1/2021",
+                weight: 4
+            },
+            {
+                id: 17,
+                category: "Setiap Saat",
+                title: "Surat-Surat Perjanjian / Kontrak Kerja Sama dengan Pihak Ketiga",
+                description: "Dokumen MoU, kontrak pengadaan barang/jasa, atau kerja sama kemitraan strategis beserta adendumnya.",
+                legal: "Pasal 37 PerKI 1/2021",
+                weight: 4
+            },
+            {
+                id: 18,
+                category: "Setiap Saat",
+                title: "Surat Masuk dan Surat Keluar yang Bersifat Publik",
+                description: "Agenda surat menyurat administrasi umum dan surat kedinasan yang berkaitan dengan pelayanan masyarakat.",
+                legal: "Pasal 38 PerKI 1/2021",
+                weight: 3
+            },
+            {
+                id: 19,
+                category: "Setiap Saat",
+                title: "Informasi Profil dan Harta Kekayaan Pejabat / Pimpinan (LHKPN/LHKASN)",
+                description: "Rekapitulasi atau bukti penyerahan LHKPN/LHKASN pimpinan instansi kepada KPK/Inspektorat.",
+                legal: "Pasal 39 PerKI 1/2021",
+                weight: 4
+            },
+            {
+                id: 20,
+                category: "Setiap Saat",
+                title: "Data Statistik / Data Sektoral Instansi",
+                description: "Hasil pendataan, sensus, survei, atau rekapitulasi data sektoral yang dikelola badan publik.",
+                legal: "Pasal 40 PerKI 1/2021",
+                weight: 4
+            },
+            {
+                id: 21,
+                category: "Setiap Saat",
+                title: "Prosedur Pengaduan / Layanan Aspirasi Masyarakat (LAPOR!)",
+                description: "Mekanisme pengaduan dugaan pelanggaran atau penyalahgunaan wewenang serta rekapitulasi tindak lanjut penanganannya.",
+                legal: "Pasal 41 PerKI 1/2021",
+                weight: 4
+            },
+
+            // INFORMASI DIKECURILKAN / DIKECAUALIKAN
+            {
+                id: 22,
+                category: "Dikecualikan",
+                title: "Dokumen Uji Konsekuensi Informasi Dikecualikan",
+                description: "Berita acara, matriks uji konsekuensi, dan pertimbangan tertulis bahwa pembukaan informasi dapat merugikan kepentingan yang dilindungi undang-undang (Pasal 17 UU KIP).",
+                legal: "Pasal 42 s.d. Pasal 48 PerKI 1/2021",
+                weight: 5
+            },
+            {
+                id: 23,
+                category: "Dikecualikan",
+                title: "Keputusan / SK Penetapan Informasi Dikecualikan",
+                description: "SK Pejabat Pengelola Informasi dan Dokumentasi (PPID) / Pimpinan Badan Publik tentang penetapan informasi yang dikecualikan yang masih berlaku (jangka waktu pengecualian belum kadaluarsa).",
+                legal: "Pasal 49 PerKI 1/2021",
+                weight: 5
+            },
+            {
+                id: 24,
+                category: "Dikecualikan",
+                title: "Register / Daftar Informasi yang Dikecualikan",
+                description: "Daftar khusus yang memuat nomor urut, jenis informasi dikecualikan, alasan pengecualian, serta jangka waktu pengecualian.",
+                legal: "Pasal 50 PerKI 1/2021",
+                weight: 4
+            }
+        ];
+
+        let state = {
+            activeCategory: 'all',
+            searchQuery: '',
+            statusFilter: 'all',
+            items: []
+        };
+
+        // Load data from localStorage or initialize
+        function loadData() {
+            const savedState = localStorage.getItem('lke_perki_state_v1');
+            const savedAgency = localStorage.getItem('lke_agency_name');
+            const savedEvaluator = localStorage.getItem('lke_evaluator_name');
+            const savedYear = localStorage.getItem('lke_eval_year');
+
+            if (savedAgency) document.getElementById('agencyName').value = savedAgency;
+            if (savedEvaluator) document.getElementById('evaluatorName').value = savedEvaluator;
+            if (savedYear) document.getElementById('evalYear').value = savedYear;
+
+            if (savedState) {
+                try {
+                    const parsed = JSON.parse(savedState);
+                    // Merge saved item attributes with master data to preserve structure if master updates
+                    state.items = rawChecklistData.map(master => {
+                        const found = parsed.find(p => p.id === master.id);
+                        return {
+                            ...master,
+                            status: found ? found.status : 'Belum Tersedia',
+                            link: found ? found.link : '',
+                            notes: found ? found.notes : ''
+                        };
+                    });
+                } catch(e) {
+                    initDefaultItems();
+                }
+            } else {
+                initDefaultItems();
+            }
+            renderTable();
+            updateDashboard();
+        }
+
+        function initDefaultItems() {
+            state.items = rawChecklistData.map(item => ({
+                ...item,
+                status: 'Belum Tersedia',
+                link: '',
+                notes: ''
+            }));
+        }
+
+        function saveData() {
+            localStorage.setItem('lke_perki_state_v1', JSON.stringify(state.items));
+            localStorage.setItem('lke_agency_name', document.getElementById('agencyName').value);
+            localStorage.setItem('lke_evaluator_name', document.getElementById('evaluatorName').value);
+            localStorage.setItem('lke_eval_year', document.getElementById('evalYear').value);
+            
+            const now = new Date();
+            document.getElementById('lastSaved').innerText = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            showToast();
+        }
+
+        function saveIdentity() {
+            saveData();
+        }
+
+        function showToast(msg = "Perubahan tersimpan otomatis") {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastText').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // Switch category tab
+        function switchCategory(cat) {
+            state.activeCategory = cat;
+            document.querySelectorAll('.category-tab').forEach(btn => {
+                btn.className = "category-tab px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+            });
+            event.target.className = "category-tab px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-900 text-white transition";
+            renderTable();
+        }
+
+        function filterTable() {
+            state.searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            state.statusFilter = document.getElementById('statusFilter').value;
+            renderTable();
+        }
+
+        // Render Table Body
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            let filtered = state.items.filter(item => {
+                const matchCat = state.activeCategory === 'all' || item.category === state.activeCategory;
+                const matchSearch = item.title.toLowerCase().includes(state.searchQuery) || 
+                                    item.description.toLowerCase().includes(state.searchQuery) || 
+                                    item.legal.toLowerCase().includes(state.searchQuery);
+                const matchStatus = state.statusFilter === 'all' || item.status === state.statusFilter;
+                return matchCat && matchSearch && matchStatus;
+            });
+
+            const emptyState = document.getElementById('emptyState');
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition border-b border-slate-100";
+                
+                // Status Badge border / background styling selector
+                let statusBg = "bg-amber-50 text-amber-700 border-amber-200";
+                if(item.status === 'Tersedia') statusBg = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                if(item.status === 'Tidak Relevan') statusBg = "bg-slate-100 text-slate-600 border-slate-200";
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-center font-medium text-slate-500 align-top">${item.id}</td>
+                    <td class="py-3 px-4 align-top">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-blue-50 text-blue-700 border border-blue-100">${item.category}</span>
+                            <span class="font-bold text-slate-900">${item.title}</span>
+                        </div>
+                        <p class="text-slate-600 text-[11px] mb-1 leading-relaxed">${item.description}</p>
+                        <span class="text-[10px] text-slate-400 font-medium italic"><i class="fa-solid fa-book-open mr-1"></i>${item.legal}</span>
+                    </td>
+                    <td class="py-3 px-4 align-top">
+                        <select onchange="updateItemStatus(${item.id}, this.value)" class="w-full text-xs font-semibold py-1.5 px-2 rounded-lg border ${statusBg} focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Tersedia" ${item.status === 'Tersedia' ? 'selected' : ''}>Tersedia</option>
+                            <option value="Belum Tersedia" ${item.status === 'Belum Tersedia' ? 'selected' : ''}>Belum Tersedia</option>
+                            <option value="Tidak Relevan" ${item.status === 'Tidak Relevan' ? 'selected' : ''}>Tidak Relevan</option>
+                        </select>
+                    </td>
+                    <td class="py-3 px-4 align-top">
+                        <div class="space-y-1">
+                            <input type="url" value="${item.link}" placeholder="https://..." onchange="updateItemLink(${item.id}, this.value)" class="w-full text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
+                            ${item.link ? `<a href="${item.link}" target="_blank" class="inline-flex items-center gap-1 text-[10px] text-blue-600 hover:underline"><i class="fa-solid fa-external-link-alt"></i> Buka Link</a>` : ''}
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 align-top">
+                        <textarea rows="2" placeholder="Catatan verifikator..." onchange="updateItemNotes(${item.id}, this.value)" class="w-full text-xs border border-slate-200 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50/50 resize-none">${item.notes}</textarea>
+                    </td>
+                    <td class="py-3 px-4 text-center align-top font-semibold text-slate-600">
+                        <span class="inline-block px-2 py-1 bg-slate-100 rounded-md">${item.weight}</span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updateDashboard();
+        }
+
+        function updateItemStatus(id, val) {
+            const item = state.items.find(i => i.id === id);
+            if (item) {
+                item.status = val;
+                saveData();
+                renderTable();
+            }
+        }
+
+        function updateItemLink(id, val) {
+            const item = state.items.find(i => i.id === id);
+            if (item) {
+                item.link = val;
+                saveData();
+            }
+        }
+
+        function updateItemNotes(id, val) {
+            const item = state.items.find(i => i.id === id);
+            if (item) {
+                item.notes = val;
+                saveData();
+            }
+        }
+
+        // Calculation & Summary Dashboard
+        function updateDashboard() {
+            const total = state.items.length;
+            const available = state.items.filter(i => i.status === 'Tersedia').length;
+            const unavail = state.items.filter(i => i.status === 'Belum Tersedia').length;
+            const irrelevant = state.items.filter(i => i.status === 'Tidak Relevan').length;
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statAvailable').innerText = available;
+            document.getElementById('statUnavail').innerText = unavail;
+            document.getElementById('statIrrelevant').innerText = irrelevant;
+
+            // Score calculation: (Available Weight / Total Eligible Weight) * 100
+            let totalWeight = 0;
+            let earnedWeight = 0;
+
+            state.items.forEach(i => {
+                if (i.status !== 'Tidak Relevan') {
+                    totalWeight += i.weight;
+                    if (i.status === 'Tersedia') {
+                        earnedWeight += i.weight;
+                    }
+                }
+            });
+
+            const percentage = totalWeight > 0 ? Math.round((earnedWeight / totalWeight) * 100) : 0;
+            document.getElementById('scorePercentage').innerText = percentage + '%';
+            document.getElementById('progressBar').style.width = percentage + '%';
+
+            // Predicate badge determination
+            const badge = document.getElementById('predicateBadge');
+            if (percentage >= 90) {
+                badge.className = "px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800";
+                badge.innerText = "Informatif (≥ 90%)";
+            } else if (percentage >= 80) {
+                badge.className = "px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800";
+                badge.innerText = "Menuju Informatif (80-89%)";
+            } else if (percentage >= 60) {
+                badge.className = "px-3 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-800";
+                badge.innerText = "Cukup Informatif (60-79%)";
+            } else if (percentage >= 40) {
+                badge.className = "px-3 py-1 text-xs font-bold rounded-full bg-orange-100 text-orange-800";
+                badge.innerText = "Kurang Informatif (40-59%)";
+            } else {
+                badge.className = "px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-800";
+                badge.innerText = "Tidak Informatif (< 40%)";
+            }
+        }
+
+        // Reset Modal Handlers
+        function openResetModal() {
+            document.getElementById('customModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
+
+        function confirmReset() {
+            localStorage.removeItem('lke_perki_state_v1');
+            initDefaultItems();
+            renderTable();
+            closeModal();
+            showToast('LKE berhasil direset ke awal');
+        }
+
+        // Export Data to JSON
+        function exportDataJSON() {
+            const dataToExport = {
+                agency: document.getElementById('agencyName').value,
+                evaluator: document.getElementById('evaluatorName').value,
+                year: document.getElementById('evalYear').value,
+                items: state.items
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `LKE_PerKI_2021_${document.getElementById('agencyName').value.replace(/[^a-zA-Z0-9]/g, '_')}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast('Data berhasil diekspor ke JSON');
+        }
+
+        // Import Trigger
+        function triggerImport() {
+            document.getElementById('importFile').click();
+        }
+
+        // Import JSON Data
+        function importDataJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.items && Array.isArray(imported.items)) {
+                        state.items = imported.items;
+                        if (imported.agency) document.getElementById('agencyName').value = imported.agency;
+                        if (imported.evaluator) document.getElementById('evaluatorName').value = imported.evaluator;
+                        if (imported.year) document.getElementById('evalYear').value = imported.year;
+                        saveData();
+                        renderTable();
+                        showToast('Data berhasil diimpor');
+                    } else {
+                        alert('Format file JSON tidak valid.');
+                    }
+                } catch(err) {
+                    alert('Gagal membaca file JSON.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Initialize on Load
+        window.onload = function() {
+            loadData();
+        };
+    </script>
+</body>
+</html>

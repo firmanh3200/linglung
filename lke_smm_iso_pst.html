@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lembar Kerja Evaluasi SMM ISO 9001:2015 - PST BPS Provinsi Jawa Barat</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bps: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#026aa7',
+                            700: '#035388',
+                            800: '#073c65',
+                            900: '#0a2a4a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-shadow { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header / Navbar -->
+    <header class="bg-bps-900 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-bps-600 p-2.5 rounded-xl shadow-inner flex items-center justify-center text-white text-xl font-bold">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-tight">PST BPS Provinsi Jawa Barat</h1>
+                    <p class="text-xs text-bps-200">Evaluasi Implementasi Sistem Manajemen Mutu (SMM) ISO 9001:2015</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-sm">
+                <button onclick="saveDataLocally()" class="bg-bps-600 hover:bg-bps-700 text-white px-3.5 py-2 rounded-lg font-medium transition shadow flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan Progres
+                </button>
+                <button onclick="resetData()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3.5 py-2 rounded-lg font-medium transition flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Reset
+                </button>
+                <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-lg font-medium transition shadow flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Cetak / PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+
+        <!-- Banner / Info Regulasi -->
+        <div class="bg-gradient-to-r from-bps-800 to-bps-700 rounded-2xl p-6 text-white shadow-md mb-6 relative overflow-hidden">
+            <div class="absolute right-0 bottom-0 opacity-10 translate-x-10 translate-y-10 text-white">
+                <i class="fa-solid fa-shield-halved text-9xl"></i>
+            </div>
+            <div class="relative z-10 max-w-3xl">
+                <span class="bg-bps-600 text-bps-100 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider inline-block mb-3">
+                    Standar Kepatuhan & Regulasi Terbaru
+                </span>
+                <h2 class="text-2xl font-bold mb-2">Lembar Kerja Evaluasi Layanan Statistik Terpadu</h2>
+                <p class="text-bps-100 text-sm leading-relaxed mb-4">
+                    Instrumen evaluasi mandiri berbasis Klausul ISO 9001:2015 yang diselaraskan dengan <strong>UU No. 25 Tahun 2009 tentang Pelayanan Publik</strong>, <strong>UU No. 16 Tahun 1997 tentang Statistik</strong>, serta PermenPANRB terkait Reformasi Birokrasi dan Zona Integritas.
+                </p>
+                <div class="flex flex-wrap gap-3 text-xs">
+                    <span class="bg-bps-900/50 backdrop-blur px-3 py-1.5 rounded-md border border-bps-600">
+                        <i class="fa-solid fa-check-circle text-emerald-400 mr-1.5"></i> ISO 9001:2015 Clause 4-10
+                    </span>
+                    <span class="bg-bps-900/50 backdrop-blur px-3 py-1.5 rounded-md border border-bps-600">
+                        <i class="fa-solid fa-check-circle text-emerald-400 mr-1.5"></i> UU Pelayanan Publik
+                    </span>
+                    <span class="bg-bps-900/50 backdrop-blur px-3 py-1.5 rounded-md border border-bps-600">
+                        <i class="fa-solid fa-check-circle text-emerald-400 mr-1.5"></i> UU Statistik
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard / Statistik Ringkasan -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Compliance Score</p>
+                    <h3 id="stat-score" class="text-3xl font-extrabold text-bps-700 mt-1">0%</h3>
+                    <p class="text-xs text-slate-400 mt-1">Tingkat Pemenuhan SMM</p>
+                </div>
+                <div class="w-12 h-12 bg-bps-50 text-bps-600 rounded-xl flex items-center justify-center text-xl shadow-inner">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Sesuai / Sudah</p>
+                    <h3 id="stat-sesuai" class="text-3xl font-extrabold text-emerald-600 mt-1">0</h3>
+                    <p class="text-xs text-slate-400 mt-1">Butir terimplementasi</p>
+                </div>
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl shadow-inner">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Dalam Proses</p>
+                    <h3 id="stat-proses" class="text-3xl font-extrabold text-amber-500 mt-1">0</h3>
+                    <p class="text-xs text-slate-400 mt-1">Butir sedang berjalan</p>
+                </div>
+                <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center text-xl shadow-inner">
+                    <i class="fa-solid fa-spinner"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Belum / Temuan</p>
+                    <h3 id="stat-belum" class="text-3xl font-extrabold text-rose-600 mt-1">0</h3>
+                    <p class="text-xs text-slate-400 mt-1">Butir perlu perbaikan</p>
+                </div>
+                <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center text-xl shadow-inner">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar Global -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-semibold text-slate-700">Progres Keseluruhan Implementasi</span>
+                <span id="progress-percent" class="text-sm font-bold text-bps-700">0%</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                <div id="progress-bar-fill" class="bg-bps-600 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Tab Navigasi Klausul -->
+        <div class="flex overflow-x-auto gap-2 pb-3 mb-6 no-print scrollbar-none" id="clause-tabs">
+            <button onclick="switchTab('all')" class="tab-btn active px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition bg-bps-700 text-white shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-layer-group"></i> Semua Klausul (4-10)
+            </button>
+            <button onclick="switchTab('klausul-4')" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-building"></i> 4. Konteks Organisasi
+            </button>
+            <button onclick="switchTab('klausul-5')" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-user-tie"></i> 5. Kepemimpinan
+            </button>
+            <button onclick="switchTab('klausul-6')" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-compass-drafting"></i> 6. Perencanaan
+            </button>
+            <button onclick="switchTab('klausul-7')" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-hands-holding-child"></i> 7. Dukungan
+            </button>
+            <button onclick="switchTab('klausul-8')" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-gears"></i> 8. Operasi PST
+            </button>
+            <button onclick="switchTab('klausul-9')" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie"></i> 9. Evaluasi Kinerja
+            </button>
+            <button onclick="switchTab('klausul-10')" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-trend-up"></i> 10. Perbaikan
+            </button>
+        </div>
+
+        <!-- Content Area: Lembar Kerja Evaluasi -->
+        <div id="evaluation-container" class="space-y-6">
+            <!-- Rendered dynamically via JavaScript -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500 no-print">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="font-medium text-slate-700">Badan Pusat Statistik Provinsi Jawa Barat - Pelayanan Statistik Terpadu (PST)</p>
+            <p class="mt-1">Sistem Manajemen Mutu ISO 9001:2015 Evaluation Worksheet &copy; 2026</p>
+        </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-sm">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-msg">Pesan notifikasi</span>
+    </div>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        // Data Struktur Lembar Kerja Evaluasi SMM ISO 9001:2015 PST BPS Jabar
+        const evaluationData = [
+            {
+                id: "klausul-4",
+                title: "Klausul 4: Konteks Organisasi",
+                icon: "fa-building",
+                desc: "Memahami organisasi dan konteksnya, kebutuhan pihak berkepentingan, serta ruang lingkup SMM PST BPS Jabar.",
+                items: [
+                    {
+                        no: "4.1",
+                        aspect: "Isu Internal dan Eksternal PST",
+                        requirement: "Apakah BPS Provinsi Jabar telah menetapkan isu internal dan eksternal yang relevan dengan tujuan strategis PST (misal: tren permintaan data digital, transformasi SATUDATA Indonesia)?",
+                        reference: "ISO 9001:2015 Clause 4.1; UU No. 16 Tahun 1997 tentang Statistik.",
+                        status: "Sesuai",
+                        notes: "Analisis SWOT dan PESTLE untuk PST telah diperbarui dalam dokumen Renstra dan Tusi BPS Jabar.",
+                        target: "Review berkala setiap triwulan."
+                    },
+                    {
+                        no: "4.2",
+                        aspect: "Kebutuhan dan Harapan Pihak Berkepentingan",
+                        requirement: "Apakah pemangku kepentingan PST (responden, peneliti, mahasiswa, OPD Pemprov Jabar) telah diidentifikasi kebutuhan dan persyaratannya?",
+                        reference: "ISO 9001:2015 Clause 4.2; UU No. 25 Tahun 2009 tentang Pelayanan Publik.",
+                        status: "Sesuai",
+                        notes: "Survey Kepuasan Masyarakat (SKM) rutin dilaksanakan secara online dan offline.",
+                        target: "Peningkatan Indeks Kepuasan Masyarakat (IKM) minimal kategori A."
+                    },
+                    {
+                        no: "4.3",
+                        aspect: "Penentuan Ruang Lingkup SMM PST",
+                        requirement: "Apakah ruang lingkup SMM mencakup seluruh layanan konsultasi statistik, perpustakaan, penjualan produk statistik, dan rekomendasi kegiatan statistik di PST Jabar?",
+                        reference: "ISO 9001:2015 Clause 4.3",
+                        status: "Sesuai",
+                        notes: "Ruang lingkup terdokumentasi dalam Manual Mutu PST.",
+                        target: "Konsisten diterapkan pada layanan loket fisik dan layanan terpadu online (PTSP/Web)."
+                    }
+                ]
+            },
+            {
+                id: "klausul-5",
+                title: "Klausul 5: Kepemimpinan",
+                icon: "fa-user-tie",
+                desc: "Komitmen manajemen puncak, fokus pada pelanggan, serta penetapan kebijakan mutu pelayanan statistik.",
+                items: [
+                    {
+                        no: "5.1",
+                        aspect: "Kepemimpinan dan Komitmen Manajemen Puncak",
+                        requirement: "Apakah Pimpinan BPS Provinsi Jabar menunjukkan kepemimpinan dan komitmen terhadap SMM dengan memastikan ketersediaan sumber daya dan fokus pada kepuasan pengguna data?",
+                        reference: "ISO 9001:2015 Clause 5.1; PermenPANRB Zona Integritas.",
+                        status: "Sesuai",
+                        notes: "Komitmen pimpinan tertuang dalam maklumat pelayanan dan pakta integritas pegawai PST.",
+                        target: "Evaluasi kinerja pelayanan oleh pimpinan setiap bulan."
+                    },
+                    {
+                        no: "5.2",
+                        aspect: "Kebijakan Mutu Pelayanan",
+                        requirement: "Apakah Kebijakan Mutu PST telah ditetapkan, dikomunikasikan, dipahami, dan tersedia bagi seluruh pegawai serta pemangku kepentingan?",
+                        reference: "ISO 9001:2015 Clause 5.2",
+                        status: "Sesuai",
+                        notes: "Kebijakan Mutu dipampang di ruang tunggu PST dan website resmi BPS Jabar.",
+                        target: "Pemahaman seluruh petugas front office terhadap kebijakan mutu 100%."
+                    },
+                    {
+                        no: "5.3",
+                        aspect: "Peran, Tanggung Jawab, dan Wewenang",
+                        requirement: "Apakah struktur organisasi PST, penanggung jawab layanan, dan petugas front/back office telah ditetapkan dengan uraian tugas (Job Description) yang jelas?",
+                        reference: "ISO 9001:2015 Clause 5.3",
+                        status: "Sesuai",
+                        notes: "SK Tim Pelayanan Statistik Terpadu diperbarui setiap tahun anggaran.",
+                        target: "Distribusi tugas layanan berjalan efektif tanpa tumpang tindih."
+                    }
+                ]
+            },
+            {
+                id: "klausul-6",
+                title: "Klausul 6: Perencanaan",
+                icon: "fa-compass-drafting",
+                desc: "Tindakan untuk mengatasi risiko dan peluang, serta sasaran mutu pelayanan statistik.",
+                items: [
+                    {
+                        no: "6.1",
+                        aspect: "Tindakan Mengatasi Risiko dan Peluang",
+                        requirement: "Apakah manajemen risiko operasional PST (misal: gangguan server perpustakaan digital, antrean membludak, komplain data) telah diidentifikasi dan dimitigasi?",
+                        reference: "ISO 9001:2015 Clause 6.1",
+                        status: "Dalam Proses",
+                        notes: "Register risiko layanan sudah ada, namun mitigasi untuk layanan online masih perlu penguatan.",
+                        target: "Penyempurnaan mitigasi risiko IT dan operasional pada Q3."
+                    },
+                    {
+                        no: "6.2",
+                        aspect: "Sasaran Mutu dan Perencanaan Pencapaiannya",
+                        requirement: "Apakah Sasaran Mutu PST (misal: waktu tanggapan/response time layanan < 15 menit, penyelesaian permohonan data tepat waktu) telah ditetapkan dan dimonitor?",
+                        reference: "ISO 9001:2015 Clause 6.2; Standar Pelayanan Publik",
+                        status: "Sesuai",
+                        notes: "Sasaran mutu dipantau melalui aplikasi monitoring layanan internal.",
+                        target: "Pencapaian sasaran mutu minimal 95% dari target tahunan."
+                    }
+                ]
+            },
+            {
+                id: "klausul-7",
+                title: "Klausul 7: Dukungan",
+                icon: "fa-hands-holding-child",
+                desc: "Sumber daya, kompetensi petugas, kepedulian, komunikasi, dan pengendalian informasi terdokumentasi.",
+                items: [
+                    {
+                        no: "7.1",
+                        aspect: "Sumber Daya (Personel, Infrastruktur, Lingkungan)",
+                        requirement: "Apakah sarana prasarana PST (ruang tunggu ramah disabilitas, komputer akses mandiri, jaringan internet stabil, AC, ruang laktasi) memadai?",
+                        reference: "ISO 9001:2015 Clause 7.1; UU No. 25 Tahun 2009",
+                        status: "Sesuai",
+                        notes: "Fasilitas fisik sangat representatif dan ramah kelompok rentan.",
+                        target: "Perawatan berkala fasilitas setiap bulan."
+                    },
+                    {
+                        no: "7.2",
+                        aspect: "Kompetensi Petugas Layanan",
+                        requirement: "Apakah petugas front office dan pustakawan PST memiliki kompetensi yang memadai (pelatihan service excellent, pemahaman produk statistik BPS)?",
+                        reference: "ISO 9001:2015 Clause 7.2",
+                        status: "Sesuai",
+                        notes: "Petugas telah mengikuti diklat pelayanan prima dan bedah publikasi BPS.",
+                        target: "Sertifikasi/pelatihan lanjutan untuk seluruh petugas."
+                    },
+                    {
+                        no: "7.5",
+                        aspect: "Informasi Terdokumentasi",
+                        requirement: "Apakah SOP pelayanan, maklumat layanan, tarif (PNBP jika ada), dan formulir permohonan data dikendalikan serta mudah diakses pengguna?",
+                        reference: "ISO 9001:2015 Clause 7.5",
+                        status: "Sesuai",
+                        notes: "Dokumen SOP terdokumentasi rapi di e-office dan arsip digital PST.",
+                        target: "Audit dokumen terdokumentasi secara berkala."
+                    }
+                ]
+            },
+            {
+                id: "klausul-8",
+                title: "Klausul 8: Operasi / Pelayanan PST",
+                icon: "fa-gears",
+                desc: "Perencanaan dan pengendalian operasional, persyaratan layanan statistik, serta penanganan pengaduan.",
+                items: [
+                    {
+                        no: "8.1",
+                        aspect: "Perencanaan dan Pengendalian Operasional",
+                        requirement: "Apakah alur pelayanan dari pendaftaran, konsultasi, penyerahan data, hingga pengisian SKM berjalan sesuai Standar Operasional Prosedur (SOP)?",
+                        reference: "ISO 9001:2015 Clause 8.1; UU No. 25 Tahun 2009",
+                        status: "Sesuai",
+                        notes: "SOP Pelayanan Terpadu berjalan terstandar dan dipatuhi oleh seluruh petugas.",
+                        target: "Zero maladministrasi dalam pelayanan."
+                    },
+                    {
+                        no: "8.2",
+                        aspect: "Persyaratan untuk Produk dan Layanan Statistik",
+                        requirement: "Apakah informasi jenis data (publikasi, mikrodata, peta wilayah kerja statistik) dikomunikasikan secara jelas kepada pengguna melalui brosur, infografis, dan website?",
+                        reference: "ISO 9001:2015 Clause 8.2; UU No. 16 Tahun 1997",
+                        status: "Sesuai",
+                        notes: "Katalog publikasi tersedia digital dan fisik di PST.",
+                        target: "Pembaruan katalog produk secara real-time saat publikasi rilis."
+                    },
+                    {
+                        no: "8.5",
+                        aspect: "Pengendalian Penyediaan Layanan",
+                        requirement: "Apakah terdapat mekanisme pencatatan buku tamu, log konsultasi, dan pelacakan status permohonan data (tracking system) bagi pengguna?",
+                        reference: "ISO 9001:2015 Clause 8.5",
+                        status: "Sesuai",
+                        notes: "Menggunakan sistem Buku Tamu Digital dan sistem ticketing pelayanan terintegrasi.",
+                        target: "Penyempurnaan integrasi sistem tracking online."
+                    },
+                    {
+                        no: "8.7",
+                        aspect: "Pengendalian Keluaran yang Tidak Sesuai",
+                        requirement: "Bagaimana penanganan jika terjadi ketidaksesuaian layanan (misal: data yang diberikan keliru, komplain lambatnya respon, atau ketidakpuasan tamu)?",
+                        reference: "ISO 9001:2015 Clause 8.7",
+                        status: "Dalam Proses",
+                        notes: "Mekanisme pengaduan via LAPOR! dan meja pengaduan internal sudah aktif, SOP eskalasi komplain sedang disempurnakan.",
+                        target: "Penyelesaian pengaduan maks 3 hari kerja."
+                    }
+                ]
+            },
+            {
+                id: "klausul-9",
+                title: "Klausul 9: Evaluasi Kinerja",
+                icon: "fa-chart-pie",
+                desc: "Pemantauan, pengukuran, analisis, kepuasan pelanggan, audit internal, dan tinjauan manajemen.",
+                items: [
+                    {
+                        no: "9.1",
+                        aspect: "Pemantauan, Pengukuran, Analisis, dan Evaluasi",
+                        requirement: "Apakah dilakukan analisis rutin terhadap data pengunjung PST, jenis layanan terpopuler, dan tingkat kepuasan masyarakat (SKM)?",
+                        reference: "ISO 9001:2015 Clause 9.1",
+                        status: "Sesuai",
+                        notes: "Laporan bulanan dan triwulanan SKM disusun dan dilaporkan kepada pimpinan.",
+                        target: "Publikasi laporan kepuasan triwulanan secara transparan."
+                    },
+                    {
+                        no: "9.2",
+                        aspect: "Audit Internal",
+                        requirement: "Apakah audit internal SMM terhadap PST BPS Jabar dijadwalkan dan dilaksanakan secara berkala oleh auditor internal yang tersertifikasi/berkompeten?",
+                        reference: "ISO 9001:2015 Clause 9.2",
+                        status: "Sesuai",
+                        notes: "Audit internal SMM BPS Jabar dilaksanakan terjadwal setiap tahun oleh Tim Auditor BPS.",
+                        target: "Tindak lanjut temuan audit internal selesai 100% dalam 14 hari."
+                    },
+                    {
+                        no: "9.3",
+                        aspect: "Tinjauan Manajemen (Management Review)",
+                        requirement: "Apakah hasil evaluasi SMM dan kinerja PST dibahas dalam Rapat Tinjauan Manajemen (RTM) bersama Kepala BPS Provinsi Jabar?",
+                        reference: "ISO 9001:2015 Clause 9.3",
+                        status: "Sesuai",
+                        notes: "RTM diselenggarakan minimal 1 kali dalam setahun dengan agenda evaluasi menyeluruh.",
+                        target: "Tindak lanjut keputusan RTM dimonitor secara ketat."
+                    }
+                ]
+            },
+            {
+                id: "klausul-10",
+                title: "Klausul 10: Perbaikan (Improvement)",
+                icon: "fa-arrow-trend-up",
+                desc: "Penanganan ketidaksesuaian, tindakan korektif, dan perbaikan berkelanjutan (continual improvement).",
+                items: [
+                    {
+                        no: "10.1",
+                        aspect: "Ketidaksesuaian dan Tindakan Korektif",
+                        requirement: "Apakah setiap temuan ketidaksesuaian atau komplain pengguna data dianalisis akar masalahnya (root cause analysis) dan diambil tindakan korektif agar tidak terulang?",
+                        reference: "ISO 9001:2015 Clause 10.1",
+                        status: "Sesuai",
+                        notes: "Formulir tindakan korektif dan pencegahan (TKP) diisi saat ditemukan kendala layanan.",
+                        target: "Pencegahan terulangnya kesalahan layanan yang sama."
+                    },
+                    {
+                        no: "10.3",
+                        aspect: "Perbaikan Berkelanjutan (Continual Improvement)",
+                        requirement: "Apakah PST BPS Jabar secara berkesinambungan melakukan inovasi pelayanan (misal: digitalisasi layanan, layanan jemput bola, pojok statistik di perguruan tinggi)?",
+                        reference: "ISO 9001:2015 Clause 10.3; Inovasi RB",
+                        status: "Sesuai",
+                        notes: "Pengembangan Pojok Statistik di berbagai universitas di Jabar serta inovasi layanan konsultasi virtual.",
+                        target: "Penambahan minimal 2 inovasi pelayanan baru setiap tahun."
+                    }
+                ]
+            }
+        ];
+
+        // Load data dari localStorage jika ada
+        function loadData() {
+            const saved = localStorage.getItem('bps_jabar_iso9001_data');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    // Merge saved status, notes, target back into evaluationData
+                    evaluationData.forEach(clause => {
+                        clause.items.forEach(item => {
+                            if (parsed[item.no]) {
+                                item.status = parsed[item.no].status || item.status;
+                                item.notes = parsed[item.no].notes !== undefined ? parsed[item.no].notes : item.notes;
+                                item.target = parsed[item.no].target !== undefined ? parsed[item.no].target : item.target;
+                            }
+                        });
+                    });
+                } catch(e) {
+                    console.error("Gagal memuat data tersimpan", e);
+                }
+            }
+        }
+
+        // Render Lembar Kerja ke DOM
+        function renderEvaluationSheet(filterClause = 'all') {
+            const container = document.getElementById('evaluation-container');
+            container.innerHTML = '';
+
+            let filteredData = evaluationData;
+            if (filterClause !== 'all') {
+                filteredData = evaluationData.filter(c => c.id === filterClause);
+            }
+
+            filteredData.forEach(clause => {
+                const section = document.createElement('div');
+                section.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print-shadow mb-6';
+                
+                let itemsHtml = '';
+                clause.items.forEach((item, idx) => {
+                    let statusBg = '';
+                    if(item.status === 'Sesuai') statusBg = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                    else if(item.status === 'Dalam Proses') statusBg = 'bg-amber-50 text-amber-700 border-amber-200';
+                    else statusBg = 'bg-rose-50 text-rose-700 border-rose-200';
+
+                    itemsHtml += `
+                        <div class="p-5 ${idx !== clause.items.length - 1 ? 'border-b border-slate-100' : ''} hover:bg-slate-50/50 transition">
+                            <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-3">
+                                <div class="flex items-start gap-3">
+                                    <span class="bg-bps-100 text-bps-800 text-xs font-bold px-2.5 py-1 rounded-md shrink-0 mt-0.5">${item.no}</span>
+                                    <div>
+                                        <h4 class="font-semibold text-slate-800 text-sm md:text-base">${item.aspect}</h4>
+                                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">${item.requirement}</p>
+                                        <div class="mt-2 text-[11px] text-bps-600 font-medium flex items-center gap-1.5">
+                                            <i class="fa-solid fa-scale-balanced"></i> Referensi: ${item.reference}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="shrink-0 flex items-center gap-2">
+                                    <select onchange="updateStatus('${item.no}', this.value)" class="text-xs font-semibold px-3 py-2 rounded-xl border focus:outline-none focus:ring-2 focus:ring-bps-500 shadow-sm transition cursor-pointer ${statusBg}">
+                                        <option value="Sesuai" ${item.status === 'Sesuai' ? 'selected' : ''}>Sesuai / Sudah</option>
+                                        <option value="Dalam Proses" ${item.status === 'Dalam Proses' ? 'selected' : ''}>Dalam Proses</option>
+                                        <option value="Belum" ${item.status === 'Belum' ? 'selected' : ''}>Belum / Temuan</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-3 border-t border-dashed border-slate-200">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Catatan / Temuan Audit / Bukti Dukung</label>
+                                    <input type="text" value="${item.notes}" oninput="updateNotes('${item.no}', this.value)" placeholder="Tuliskan catatan atau tautan bukti dukung..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-bps-500 transition">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Target Perbaikan / Tindak Lanjut</label>
+                                    <input type="text" value="${item.target}" oninput="updateTarget('${item.no}', this.value)" placeholder="Tuliskan target waktu atau rencana perbaikan..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-bps-500 transition">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                section.innerHTML = `
+                    <div class="bg-gradient-to-r from-bps-800 to-bps-700 px-6 py-4 flex items-center justify-between text-white">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center text-lg">
+                                <i class="fa-solid ${clause.icon}"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base">${clause.title}</h3>
+                                <p class="text-xs text-bps-100 hidden sm:block">${clause.desc}</p>
+                            </div>
+                        </div>
+                        <span class="text-xs bg-bps-900/60 text-bps-200 px-3 py-1 rounded-full font-medium border border-bps-600">
+                            ${clause.items.length} Butir Evaluasi
+                        </span>
+                    </div>
+                    <div class="divide-y divide-slate-100">
+                        ${itemsHtml}
+                    </div>
+                `;
+
+                container.appendChild(section);
+            });
+
+            updateStatistics();
+        }
+
+        // Update Status Interaktif
+        function updateStatus(no, val) {
+            for (let clause of evaluationData) {
+                let item = clause.items.find(i => i.no === no);
+                if (item) {
+                    item.status = val;
+                    break;
+                }
+            }
+            updateStatistics();
+            showToast("Status butir " + no + " diperbarui.");
+        }
+
+        // Update Catatan
+        function updateNotes(no, val) {
+            for (let clause of evaluationData) {
+                let item = clause.items.find(i => i.no === no);
+                if (item) {
+                    item.notes = val;
+                    break;
+                }
+            }
+        }
+
+        // Update Target
+        function updateTarget(no, val) {
+            for (let clause of evaluationData) {
+                let item = clause.items.find(i => i.no === no);
+                if (item) {
+                    item.target = val;
+                    break;
+                }
+            }
+        }
+
+        // Hitung Statistik Dashboard
+        function updateStatistics() {
+            let total = 0;
+            let sesuai = 0;
+            let proses = 0;
+            let belum = 0;
+
+            evaluationData.forEach(clause => {
+                clause.items.forEach(item => {
+                    total++;
+                    if (item.status === 'Sesuai') sesuai++;
+                    else if (item.status === 'Dalam Proses') proses++;
+                    else if (item.status === 'Belum') belum++;
+                });
+            });
+
+            // Score dihitung: Sesuai = 1 poin, Dalam Proses = 0.5 poin
+            let score = total > 0 ? Math.round(((sesuai + (proses * 0.5)) / total) * 100) : 0;
+
+            document.getElementById('stat-score').innerText = score + '%';
+            document.getElementById('stat-sesuai').innerText = sesuai;
+            document.getElementById('stat-proses').innerText = proses;
+            document.getElementById('stat-belum').innerText = belum;
+            document.getElementById('progress-percent').innerText = score + '%';
+            document.getElementById('progress-bar-fill').style.width = score + '%';
+        }
+
+        // Switch Tab
+        function switchTab(clauseId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-bps-700', 'text-white', 'shadow-sm');
+                btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-100');
+            });
+            event.currentTarget.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-100');
+            event.currentTarget.classList.add('bg-bps-700', 'text-white', 'shadow-sm');
+
+            renderEvaluationSheet(clauseId);
+        }
+
+        // Simpan Data ke LocalStorage
+        function saveDataLocally() {
+            let dataToSave = {};
+            evaluationData.forEach(clause => {
+                clause.items.forEach(item => {
+                    dataToSave[item.no] = {
+                        status: item.status,
+                        notes: item.notes,
+                        target: item.target
+                    };
+                });
+            });
+            localStorage.setItem('bps_jabar_iso9001_data', JSON.stringify(dataToSave));
+            showToast("Progres evaluasi berhasil disimpan secara lokal!");
+        }
+
+        // Reset Data ke default
+        function resetData() {
+            if(confirm("Apakah Anda yakin ingin mereset seluruh perubahan lembar kerja?")) {
+                localStorage.removeItem('bps_jabar_iso9001_data');
+                location.reload();
+            }
+        }
+
+        // Notifikasi Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msg = document.getElementById('toast-msg');
+            msg.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Inisialisasi on load
+        window.onload = function() {
+            loadData();
+            renderEvaluationSheet('all');
+        }
+    </script>
+</body>
+</html>

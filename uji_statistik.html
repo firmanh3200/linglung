@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Lengkap Statistik & Analisis Skripsi Mahasiswa</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-p-4" x-data="statApp()">
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        
+        <!-- HEADER -->
+        <header class="bg-gradient-to-r from-indigo-700 via-blue-700 to-indigo-800 rounded-2xl shadow-xl p-8 mb-8 text-white relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl font-bold">📊</div>
+            <div class="relative z-10">
+                <span class="bg-indigo-500/30 text-indigo-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider border border-indigo-400/30">Pusat Referensi Akademik Skripsi</span>
+                <h1 class="text-3xl md:text-4xl font-extrabold mt-3 mb-2 tracking-tight">Kamus & Panduan Metode Statistik Skripsi</h1>
+                <p class="text-indigo-100 text-sm md:text-base max-w-3xl leading-relaxed">
+                    Direktori lengkap metode statistik deskriptif, uji instrumen, asumsi klasik, parametrik, non-parametrik, multivariat, hingga analisis lanjutan lengkap dengan dasar penggunaan, syarat asumsi, tujuan, serta contoh judul penelitian nyata untuk mahasiswa tingkat akhir.
+                </p>
+            </div>
+        </header>
+
+        <!-- DASHBOARD STATS CARDS -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase">Total Metode</p>
+                    <h3 class="text-2xl font-bold text-slate-800 mt-1" x-text="totalMethods">36</h3>
+                </div>
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-xl font-bold">📑</div>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase">Kategori Utama</p>
+                    <h3 class="text-2xl font-bold text-slate-800 mt-1">6 Kategori</h3>
+                </div>
+                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl font-bold">🗂️</div>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase">Default Pagination</p>
+                    <h3 class="text-2xl font-bold text-slate-800 mt-1">5 Baris/Hal</h3>
+                </div>
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl font-bold">⚡</div>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase">Status Data</p>
+                    <h3 class="text-2xl font-bold text-emerald-600 mt-1">Terverifikasi</h3>
+                </div>
+                <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-xl font-bold">🎓</div>
+            </div>
+        </div>
+
+        <!-- CONTROLS CONTAINER -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                
+                <!-- SEARCH BAR -->
+                <div class="relative flex-1">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">🔍</span>
+                    <input type="text" x-model="search" @input="currentPage = 1" placeholder="Cari nama uji, teori, variabel, atau contoh judul skripsi..." 
+                        class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                </div>
+
+                <!-- PER PAGE SELECTOR -->
+                <div class="flex items-center gap-2">
+                    <label class="text-sm font-medium text-slate-600">Tampilkan:</label>
+                    <select x-model.number="perPage" @change="currentPage = 1" 
+                        class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                    <span class="text-sm text-slate-600">baris</span>
+                </div>
+            </div>
+
+            <!-- CATEGORY FILTER TABS -->
+            <div class="flex flex-wrap gap-2 mt-5 pt-4 border-t border-slate-100">
+                <button @click="selectedCategory = 'Semua'; currentPage = 1" 
+                    :class="selectedCategory === 'Semua' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition">
+                    Semua Metode
+                </button>
+                <button @click="selectedCategory = 'Statistik Deskriptif'; currentPage = 1" 
+                    :class="selectedCategory === 'Statistik Deskriptif' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition">
+                    Statistik Deskriptif
+                </button>
+                <button @click="selectedCategory = 'Uji Instrumen & Asumsi Klasik'; currentPage = 1" 
+                    :class="selectedCategory === 'Uji Instrumen & Asumsi Klasik' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition">
+                    Uji Instrumen & Asumsi Klasik
+                </button>
+                <button @click="selectedCategory = 'Statistik Parametrik'; currentPage = 1" 
+                    :class="selectedCategory === 'Statistik Parametrik' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition">
+                    Statistik Parametrik
+                </button>
+                <button @click="selectedCategory = 'Statistik Non-Parametrik'; currentPage = 1" 
+                    :class="selectedCategory === 'Statistik Non-Parametrik' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition">
+                    Statistik Non-Parametrik
+                </button>
+                <button @click="selectedCategory = 'Analisis Multivariat'; currentPage = 1" 
+                    :class="selectedCategory === 'Analisis Multivariat' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition">
+                    Analisis Multivariat
+                </button>
+                <button @click="selectedCategory = 'Analisis Data Lanjutan'; currentPage = 1" 
+                    :class="selectedCategory === 'Analisis Data Lanjutan' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition">
+                    Analisis Data Lanjutan
+                </button>
+            </div>
+        </div>
+
+        <!-- MAIN TABLE -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                            <th class="py-3 px-4 text-center w-12">No</th>
+                            <th class="py-3 px-4 w-44">Kategori & Nama Uji</th>
+                            <th class="py-3 px-4 w-60">Dasar Penggunaan & Syarat</th>
+                            <th class="py-3 px-4 w-72">Tujuan Penggunaan (Mahasiswa)</th>
+                            <th class="py-3 px-4">Contoh Judul Penelitian Skripsi</th>
+                            <th class="py-3 px-4 text-center w-24">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 text-sm">
+                        <template x-for="(item, index) in paginatedData" :key="item.id">
+                            <tr class="hover:bg-indigo-50/40 transition">
+                                <td class="py-3 px-4 text-center font-medium text-slate-500" x-text="startIndex + index + 1"></td>
+                                <td class="py-3 px-4">
+                                    <span class="inline-block px-2.5 py-1 text-[10px] font-bold rounded-full mb-1 uppercase tracking-wide"
+                                        :class="{
+                                            'bg-purple-100 text-purple-700': item.kategori === 'Statistik Deskriptif',
+                                            'bg-blue-100 text-blue-700': item.kategori === 'Uji Instrumen & Asumsi Klasik',
+                                            'bg-emerald-100 text-emerald-700': item.kategori === 'Statistik Parametrik',
+                                            'bg-amber-100 text-amber-700': item.kategori === 'Statistik Non-Parametrik',
+                                            'bg-rose-100 text-rose-700': item.kategori === 'Analisis Multivariat',
+                                            'bg-indigo-100 text-indigo-700': item.kategori === 'Analisis Data Lanjutan'
+                                        }" x-text="item.kategori"></span>
+                                    <div class="font-bold text-slate-900" x-text="item.nama"></div>
+                                    <div class="text-xs text-slate-500 italic" x-text="item.sub"></div>
+                                </td>
+                                <td class="py-3 px-4 text-xs text-slate-600 leading-relaxed" x-text="item.dasar"></td>
+                                <td class="py-3 px-4 text-xs text-slate-700 leading-relaxed" x-text="item.tujuan"></td>
+                                <td class="py-3 px-4 text-xs text-slate-600 italic leading-relaxed" x-text="item.contoh"></td>
+                                <td class="py-3 px-4 text-center">
+                                    <button @click="openModal(item)" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-600 font-semibold text-xs rounded-lg transition border border-indigo-200">
+                                        Detail
+                                    </button>
+                                </td>
+                            </tr>
+                        </template>
+                        <template x-if="filteredData.length === 0">
+                            <tr>
+                                <td colspan="6" class="py-8 text-center text-slate-400">
+                                    Tidak ada metode atau topik statistik yang cocok dengan pencarian Anda.
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PAGINATION FOOTER -->
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="text-xs text-slate-500">
+                    Menampilkan <span class="font-semibold" x-text="filteredData.length > 0 ? startIndex + 1 : 0"></span> sampai 
+                    <span class="font-semibold" x-text="Math.min(startIndex + perPage, filteredData.length)"></span> dari 
+                    <span class="font-semibold" x-text="filteredData.length"></span> entri 
+                    <span x-show="selectedCategory !== 'Semua'">(disaring dari <span x-text="statistics.length"></span> total data)</span>
+                </div>
+
+                <div class="flex items-center gap-1">
+                    <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"
+                        class="px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed">
+                        Sebelumnya
+                    </button>
+                    
+                    <template x-for="page in totalPages" :key="page">
+                        <button @click="changePage(page)" 
+                            :class="currentPage === page ? 'bg-indigo-600 text-white font-bold border-indigo-600' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-100'"
+                            class="w-8 h-8 rounded-lg text-xs border flex items-center justify-center transition" x-text="page">
+                        </button>
+                    </template>
+
+                    <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages || totalPages === 0"
+                        class="px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed">
+                        Berikutnya
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL DETAIL -->
+        <div x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" x-cloak>
+            <div @click.away="showModal = false" class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden transform transition-all">
+                <div class="bg-gradient-to-r from-indigo-700 to-blue-700 px-6 py-4 text-white flex justify-between items-center">
+                    <div>
+                        <span class="text-xs uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full font-semibold" x-text="activeItem.kategori"></span>
+                        <h3 class="text-xl font-bold mt-1" x-text="activeItem.nama"></h3>
+                    </div>
+                    <button @click="showModal = false" class="text-white/80 hover:text-white text-2xl font-bold">&times;</button>
+                </div>
+                <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-slate-700 text-sm">
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-xs uppercase text-indigo-600 mb-1">Sub-Jenis / Varian Metode</h4>
+                        <p class="bg-slate-50 p-3 rounded-lg border border-slate-200" x-text="activeItem.sub"></p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-xs uppercase text-indigo-600 mb-1">Dasar Penggunaan & Syarat Asumsi</h4>
+                        <p class="bg-slate-50 p-3 rounded-lg border border-slate-200 leading-relaxed" x-text="activeItem.dasar"></p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-xs uppercase text-indigo-600 mb-1">Tujuan Penggunaan untuk Mahasiswa</h4>
+                        <p class="bg-slate-50 p-3 rounded-lg border border-slate-200 leading-relaxed" x-text="activeItem.tujuan"></p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-xs uppercase text-indigo-600 mb-1">Contoh Judul Penelitian Skripsi</h4>
+                        <p class="bg-indigo-50 text-indigo-900 p-3 rounded-lg border border-indigo-200 font-medium italic leading-relaxed" x-text="activeItem.contoh"></p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-xs uppercase text-emerald-600 mb-1">Tips Menghadapi Sidang Dosen Penguji</h4>
+                        <p class="bg-emerald-50 text-emerald-900 p-3 rounded-lg border border-emerald-200 leading-relaxed" x-text="activeItem.tips"></p>
+                    </div>
+                </div>
+                <div class="bg-slate-100 px-6 py-3 border-t border-slate-200 flex justify-end">
+                    <button @click="showModal = false" class="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg transition">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-200 mt-12">
+            Pusat Referensi Metode & Analisis Skripsi Mahasiswa &bull; Dibangun dengan Tailwind CSS & Alpine.js
+        </footer>
+
+    </div>
+
+    <script>
+        function statApp() {
+            return {
+                search: '',
+                selectedCategory: 'Semua',
+                currentPage: 1,
+                perPage: 5,
+                showModal: false,
+                activeItem: {},
+                
+                statistics: [
+                    // STATISTIK DESKRIPTIF
+                    {
+                        id: 1,
+                        kategori: 'Statistik Deskriptif',
+                        nama: 'Mean (Rata-rata)',
+                        sub: 'Arithmetic Mean / Weighted Mean',
+                        dasar: 'Data berskala Interval atau Rasio (data kuantitatif kontinu/diskrit).',
+                        tujuan: 'Mengetahui nilai pusat atau rata-rata dari sebaran data sampel penelitian agar mudah diringkas.',
+                        contoh: 'Analisis Pendapatan Rata-rata UMKM Kuliner di Kota Bandung Selama Pandemi.',
+                        tips: 'Ingatkan penguji bahwa mean sangat sensitif terhadap nilai ekstrim (outlier).'
+                    },
+                    {
+                        id: 2,
+                        kategori: 'Statistik Deskriptif',
+                        nama: 'Median',
+                        sub: 'Nilai Tengah Data Terurut',
+                        dasar: 'Data berskala Ordinal, Interval, atau Rasio. Cocok untuk data dengan distribusi tidak normal atau ada outlier.',
+                        tujuan: 'Menentukan nilai tengah yang membagi data menjadi dua bagian yang sama besar.',
+                        contoh: 'Analisis Median Waktu Tunggu Pelayanan Publik di Kantor SAMSAT.',
+                        tips: 'Gunakan median jika data memiliki outlier ekstrem (seperti gaji atau pendapatan).'
+                    },
+                    {
+                        id: 3,
+                        kategori: 'Statistik Deskriptif',
+                        nama: 'Modus',
+                        sub: 'Nilai Paling Sering Muncul',
+                        dasar: 'Data berskala Nominal, Ordinal, Interval, maupun Rasio.',
+                        tujuan: 'Mengetahui kategori atau karakteristik data yang paling dominan atau sering muncul dalam sampel.',
+                        contoh: 'Analisis Jenis Kendaraan Paling Sering Melanggar Lalu Lintas di Perempatan Kota.',
+                        tips: 'Modus adalah satu-satunya ukuran pemusatan yang bisa dipakai untuk data berskala nominal.'
+                    },
+                    {
+                        id: 4,
+                        kategori: 'Statistik Deskriptif',
+                        nama: 'Standar Deviasi & Varian',
+                        sub: 'Simpangan Baku & Ragam',
+                        dasar: 'Data kuantitatif berskala Interval atau Rasio.',
+                        tujuan: 'Mengukur tingkat variasi atau sebaran data dari nilai rata-ratanya (seberapa homogen/heterogen sampel).',
+                        contoh: 'Analisis Tingkat Variasi Nilai Ujian Siswa Sekolah Menengah Atas Berbasis Zonasi.',
+                        tips: 'Standar deviasi kecil menunjukkan data mengumpul di sekitar rata-rata (homogen).'
+                    },
+                    {
+                        id: 5,
+                        kategori: 'Statistik Deskriptif',
+                        nama: 'Distribusi Frekuensi & Persentase',
+                        sub: 'Tabel Frekuensi & Grafik Batang/Pie',
+                        dasar: 'Semua skala data (Nominal, Ordinal, Interval, Rasio).',
+                        tujuan: 'Menyajikan ringkasan karakteristik responden (demografi) seperti usia, jenis kelamin, pendidikan.',
+                        contoh: 'Analisis Karakteristik Demografi Wisatawan Nusantara di Destinasi Wisata Alam.',
+                        tips: 'Wajib ada di Bab IV sebagai gambaran umum responden sebelum masuk uji hipotesis.'
+                    },
+
+                    // UJI INSTRUMEN & ASUMSI KLASIK
+                    {
+                        id: 6,
+                        kategori: 'Uji Instrumen & Asumsi Klasik',
+                        nama: 'Uji Validitas (Product Moment)',
+                        sub: 'Corrected Item-Total Correlation',
+                        dasar: 'Data ordinal hasil kuesioner skala Likert yang ditransformasi ke interval (Metode MSI) atau langsung.',
+                        tujuan: 'Memastikan setiap item pertanyaan kuesioner benar-benar sah dan akurat mengukur variabel yang diteliti.',
+                        contoh: 'Uji Validitas Instrumen Kuesioner Pengaruh Kualitas Pelayanan terhadap Kepuasan Pelanggan.',
+                        tips: 'Pastikan r hitung > r tabel (biasanya > 0.30 atau sig < 0.05) untuk menyatakan item valid.'
+                    },
+                    {
+                        id: 7,
+                        kategori: 'Uji Instrumen & Asumsi Klasik',
+                        nama: 'Uji Reliabilitas (Cronbach\'s Alpha)',
+                        sub: 'Alpha Cronbach & Split-Half',
+                        dasar: 'Instrumen penelitian berupa kuesioner ganda dengan skala Likert.',
+                        tujuan: 'Menguji konsistensi dan kestabilan jawaban responden jika kuesioner diisi ulang pada waktu berbeda.',
+                        contoh: 'Uji Reliabilitas Kuesioner E-Commerce terhadap Minat Beli Konsumen Generasi Z.',
+                        tips: 'Nilai Cronbach\'s Alpha minimal harus > 0.60 atau lebih baik > 0.70 agar kuesioner handal.'
+                    },
+                    {
+                        id: 8,
+                        kategori: 'Uji Instrumen & Asumsi Klasik',
+                        nama: 'Uji Normalitas Residual',
+                        sub: 'Kolmogorov-Smirnov & Shapiro-Wilk',
+                        dasar: 'Nilai residual dari model regresi berdistribusi normal.',
+                        tujuan: 'Memastikan data residual menyebar secara normal agar model statistik parametrik tidak bias.',
+                        contoh: 'Uji Normalitas Model Regresi Pengaruh Modal dan Tenaga Kerja terhadap Output UMKM.',
+                        tips: 'Nilai Asymp. Sig. (2-tailed) harus > 0.05 agar asumsi normalitas terpenuhi.'
+                    },
+                    {
+                        id: 9,
+                        kategori: 'Uji Instrumen & Asumsi Klasik',
+                        nama: 'Uji Multikolinearitas',
+                        sub: 'Tolerance dan VIF (Variance Inflation Factor)',
+                        dasar: 'Analisis regresi linear berganda dengan lebih dari satu variabel bebas.',
+                        tujuan: 'Mendeteksi ada atau tidaknya korelasi tinggi antar variabel independen dalam satu model.',
+                        contoh: 'Uji Multikolinearitas pada Model Pengaruh Harga, Promosi, dan Brand Image terhadap Keputusan Pembelian.',
+                        tips: 'Syarat bebas multikolinearitas: VIF < 10.0 dan Tolerance > 0.10.'
+                    },
+                    {
+                        id: 10,
+                        kategori: 'Uji Instrumen & Asumsi Klasik',
+                        nama: 'Uji Heteroskedastisitas',
+                        sub: 'Uji Glejser & Grafik Scatterplot',
+                        dasar: 'Model regresi linear untuk menguji kesamaan varians residual antar pengamatan.',
+                        tujuan: 'Memastikan tidak terjadi ketidaksamaan variance dari residual pengamatan satu ke pengamatan lain.',
+                        contoh: 'Uji Heteroskedastisitas pada Analisis Faktor yang Memengaruhi Harga Rumah.',
+                        tips: 'Jika nilai signifikansi (Sig.) uji Glejser > 0.05, maka tidak terjadi heteroskedastisitas.'
+                    },
+                    {
+                        id: 11,
+                        kategori: 'Uji Instrumen & Asumsi Klasik',
+                        nama: 'Uji Autokorelasi',
+                        sub: 'Durbin-Watson (DW Test)',
+                        dasar: 'Data time series (runtut waktu) dalam analisis regresi.',
+                        tujuan: 'Menguji apakah ada korelasi antara kesalahan pengganggu pada periode t dengan periode t-1.',
+                        contoh: 'Analisis Pengaruh Inflasi dan Suku Bunga terhadap Indeks Harga Saham Gabungan (IHSG).',
+                        tips: 'Nilai DW berada di sekitar du dan 4-du (bebas autokorelasi).'
+                    },
+
+                    // STATISTIK PARAMETRIK
+                    {
+                        id: 12,
+                        kategori: 'Statistik Parametrik',
+                        nama: 'Independent Sample t-Test',
+                        sub: 'Uji Beda Dua Sampel Independen',
+                        dasar: 'Data berskala interval/rasio, berdistribusi normal, dan berasal dari dua kelompok sampel yang tidak saling berpasangan.',
+                        tujuan: 'Membandingkan rata-rata dua kelompok sampel yang berbeda (misal: kelompok pria vs wanita).',
+                        contoh: 'Perbedaan Kinerja Karyawan antara Kantor Cabang Kota dan Kabupaten.',
+                        tips: 'Pastikan uji Levene\'s Test (Equality of Variances) diperiksa sebelum membaca nilai t-test.'
+                    },
+                    {
+                        id: 13,
+                        kategori: 'Statistik Parametrik',
+                        nama: 'Paired Sample t-Test',
+                        sub: 'Uji Beda Dua Sampel Berpasangan',
+                        dasar: 'Data berskala interval/rasio, berdistribusi normal, dan subjek yang sama diuji dua kali (pre-test dan post-test).',
+                        tujuan: 'Mengetahui efektivitas suatu perlakuan (treatment) sebelum dan sesudah diberikan intervensi.',
+                        contoh: 'Efektivitas Pelatihan Digital Marketing terhadap Omset Penjualan UMKM Sebelum dan Sesudah Pelatihan.',
+                        tips: 'Sangat populer untuk penelitian eksperimen atau quasi-eksperimen.'
+                    },
+                    {
+                        id: 14,
+                        kategori: 'Statistik Parametrik',
+                        nama: 'One-Way ANOVA',
+                        sub: 'Analisis Varian Satu Arah',
+                        dasar: 'Data kuantitatif berdistribusi normal dengan satu variabel independen berskala kategori (> 2 kelompok) dan variabel dependen metrik.',
+                        tujuan: 'Menguji perbedaan rata-rata antara tiga kelompok sampel atau lebih secara simultan.',
+                        contoh: 'Perbedaan Tingkat Kepuasan Pelanggan Berdasarkan Jenis Bank (BCA, Mandiri, BNI, BRI).',
+                        tips: 'Jika hasil signifikan, lanjutkan dengan Post-Hoc Test (misal Tukey) untuk tahu kelompok mana yang berbeda.'
+                    },
+                    {
+                        id: 15,
+                        kategori: 'Statistik Parametrik',
+                        nama: 'Two-Way ANOVA',
+                        sub: 'Analisis Varian Dua Arah',
+                        dasar: 'Dua variabel bebas berskala kategori dan satu variabel terikat berskala interval/rasio.',
+                        tujuan: 'Mengetahui pengaruh dua faktor secara mandiri maupun interaksi keduanya terhadap variabel terikat.',
+                        contoh: 'Pengaruh Metode Pembelajaran dan Motivasi Belajar terhadap Prestasi Akademik Mahasiswa.',
+                        tips: 'Perhatikan uji interaksi (Interaction Effect) apakah signifikan atau tidak.'
+                    },
+                    {
+                        id: 16,
+                        kategori: 'Statistik Parametrik',
+                        nama: 'Korelasi Pearson',
+                        sub: 'Product Moment Correlation',
+                        dasar: 'Data berpasangan berskala interval atau rasio, berdistribusi normal, dan hubungan linier.',
+                        tujuan: 'Mengukur kekuatan dan arah hubungan linier antara dua variabel kuantitatif.',
+                        contoh: 'Hubungan antara Tingkat Pendapatan dengan Jumlah Pengeluaran Konsumsi Rumah Tangga.',
+                        tips: 'Nilai r berkisar antara -1 hingga +1. Tanda plus/minus menunjukkan arah hubungan.'
+                    },
+                    {
+                        id: 17,
+                        kategori: 'Statistik Parametrik',
+                        nama: 'Regresi Linear Sederhana',
+                        sub: 'Simple Linear Regression',
+                        dasar: 'Satu variabel independen (X) dan satu variabel dependen (Y) berskala interval/rasio.',
+                        tujuan: 'Memprediksi besar perubahan nilai variabel dependen berdasarkan perubahan nilai variabel independen.',
+                        contoh: 'Pengaruh Biaya Iklan terhadap Volume Penjualan Produk Kosmetik.',
+                        tips: 'Perhatikan nilai koefisien determinasi (R Square) untuk melihat seberapa besar kontribusi X terhadap Y.'
+                    },
+                    {
+                        id: 18,
+                        kategori: 'Statistik Parametrik',
+                        nama: 'Regresi Linear Berganda',
+                        sub: 'Multiple Linear Regression',
+                        dasar: 'Dua atau lebih variabel independen (X1, X2, ...) dan satu variabel dependen (Y).',
+                        tujuan: 'Menganalisis pengaruh simultan dan parsial beberapa variabel bebas terhadap satu variabel terikat.',
+                        contoh: 'Pengaruh Harga, Kualitas Produk, dan Promosi terhadap Keputusan Pembelian Smartphone.',
+                        tips: 'Wajib lolos uji asumsi klasik (normalitas, multikolinearitas, heteroskedastisitas) sebelum uji F dan uji t.'
+                    },
+
+                    // STATISTIK NON-PARAMETRIK
+                    {
+                        id: 19,
+                        kategori: 'Statistik Non-Parametrik',
+                        nama: 'Mann-Whitney U Test',
+                        sub: 'Alternatif Independent t-Test',
+                        dasar: 'Data berskala ordinal atau interval/rasio yang tidak berdistribusi normal untuk dua kelompok independen.',
+                        tujuan: 'Menguji perbedaan median dua kelompok independen ketika asumsi normalitas parametrik dilanggar.',
+                        contoh: 'Perbedaan Tingkat Loyalitas Pelanggan antara Toko Konvensional dan Toko Online (Data Tidak Normal).',
+                        tips: 'Gunakan uji ini jika sampel kecil atau data skewness tinggi.'
+                    },
+                    {
+                        id: 20,
+                        kategori: 'Statistik Non-Parametrik',
+                        nama: 'Wilcoxon Signed Ranks Test',
+                        sub: 'Alternatif Paired t-Test',
+                        dasar: 'Data berskala ordinal/interval berpasangan dan tidak berdistribusi normal.',
+                        tujuan: 'Membandingkan dua pengukuran berpasangan pada sampel yang sama ketika data tidak memenuhi asumsi normalitas.',
+                        contoh: 'Perbedaan Skor Pengetahuan K3 Pekerja Sebelum dan Sesudah Simulasi Darurat Kebakaran.',
+                        tips: 'Berdasarkan peringkat (ranking) selisih nilai pasangan data.'
+                    },
+                    {
+                        id: 21,
+                        kategori: 'Statistik Non-Parametrik',
+                        nama: 'Kruskal-Wallis Test',
+                        sub: 'Alternatif One-Way ANOVA',
+                        dasar: 'Data ordinal atau kuantitatif lebih dari dua kelompok independen dengan distribusi tidak normal.',
+                        tujuan: 'Menguji perbedaan median antara tiga kelompok sampel independen atau lebih.',
+                        contoh: 'Perbedaan Kepuasan Kerja Berdasarkan Tingkat Pendidikan Karyawan (SD, SMP, SMA, Perguruan Tinggi).',
+                        tips: 'Merupakan paduan non-parametrik dari One-Way ANOVA.'
+                    },
+                    {
+                        id: 22,
+                        kategori: 'Statistik Non-Parametrik',
+                        nama: 'Friedman Test',
+                        sub: 'Alternatif Two-Way ANOVA Non-Parametrik',
+                        dasar: 'Data ordinal dari beberapa pengukuran berulang pada subjek yang sama dengan distribusi tidak normal.',
+                        tujuan: 'Menguji perbedaan beberapa kelompok data berpasangan (lebih dari 2 kondisi/waktu).',
+                        contoh: 'Perbedaan Penilaian Kualitas Layanan E-Banking pada Periode Pagi, Siang, dan Malam.',
+                        tips: 'Cocok untuk evaluasi berulang tanpa syarat distribusi normal.'
+                    },
+                    {
+                        id: 23,
+                        kategori: 'Statistik Non-Parametrik',
+                        nama: 'Chi-Square Test of Independence',
+                        sub: 'Uji Chi-Square K依 (Ketergantungan)',
+                        dasar: 'Data diskrit atau kategori berskala nominal/ordinal.',
+                        tujuan: 'Menguji ada atau tidaknya hubungan independensi antara dua variabel kategori (baris x kolom).',
+                        contoh: 'Hubungan antara Tingkat Pendapatan (Rendah/Tinggi) dengan Pemilihan Jenis Asuransi.',
+                        tips: 'Pastikan syarat nilaiExpected Frequency (sel bernilai < 5) memenuhi aturan statistik Chi-Square.'
+                    },
+                    {
+                        id: 24,
+                        kategori: 'Statistik Non-Parametrik',
+                        nama: 'Korelasi Spearman Rank',
+                        sub: 'Spearman\'s Rho',
+                        dasar: 'Data berskala ordinal atau data interval/rasio yang tidak berdistribusi normal.',
+                        tujuan: 'Mengukur kekuatan dan arah hubungan antara dua variabel berdasarkan peringkat data.',
+                        contoh: 'Hubungan antara Tingkat Stres (Skala Likert) dengan Kinerja Pegawai di Instansi Pemerintah.',
+                        tips: 'Tidak memerlukan asumsi normalitas data karena dihitung berdasarkan rank.'
+                    },
+                    {
+                        id: 25,
+                        kategori: 'Statistik Non-Parametrik',
+                        nama: 'Kendall\'s Tau-b / Tau-c',
+                        sub: 'Korelasi Peringkat Kendall',
+                        dasar: 'Data berskala ordinal dengan ukuran sampel kecil atau banyak data yang kembar (ties).',
+                        tujuan: 'Mengukur korelasi peringkat antarvariabel ordinal dengan presisi tinggi pada data kembar.',
+                        contoh: 'Hubungan Peringkat Kinerja Dosen dengan Penilaian Mahasiswa.',
+                        tips: 'Lebih akurat dibanding Spearman jika banyak nilai peringkat yang sama (ties).'
+                    },
+
+                    // ANALISIS MULTIVARIAT
+                    {
+                        id: 26,
+                        kategori: 'Analisis Multivariat',
+                        nama: 'MANOVA (Multivariate ANOVA)',
+                        sub: 'Analisis Varian Multivariat',
+                        dasar: 'Lebih dari satu variabel terikat (Y) berskala metrik dan satu atau lebih variabel bebas (X) berskala kategori.',
+                        tujuan: 'Menguji perbedaan rata-rata beberapa variabel terikat secara simultan antar kelompok sampel.',
+                        contoh: 'Pengaruh Program Pelatihan terhadap Peningkatan Kinerja dan Motivasi Kerja Karyawan Sekaligus.',
+                        tips: 'Menghindari bias kesalahan tipe I jika menguji variabel terikat satu per satu.'
+                    },
+                    {
+                        id: 27,
+                        kategori: 'Analisis Multivariat',
+                        nama: 'Analisis Faktor Eksploratori (EFA)',
+                        sub: 'Exploratory Factor Analysis',
+                        dasar: 'Banyak variabel indikator numerik/kuesioner untuk mereduksi dimensi.',
+                        tujuan: 'Mengelompokkan indikator-indikator yang saling berkorelasi menjadi beberapa faktor utama yang mendasarinya.',
+                        contoh: 'Reduksi Indikator Karakteristik Konsumen E-Commerce Menjadi Dimensi Utilitas Utama.',
+                        tips: 'Periksa nilai KMO Measure of Sampling Adequacy (> 0.50) dan Bartlett\'s Test (sig < 0.05).'
+                    },
+                    {
+                        id: 28,
+                        kategori: 'Analisis Multivariat',
+                        nama: 'Cluster Analysis',
+                        sub: 'K-Means & Hierarchical Clustering',
+                        dasar: 'Data multivariat kuantitatif untuk pengelompokan objek atau responden.',
+                        tujuan: 'Mengelompokkan sampel atau wilayah ke dalam beberapa cluster yang homogen secara internal dan heterogen antarcluster.',
+                        contoh: 'Klasterisasi Tingkat Kesejahteraan Kabupaten/Kota di Provinsi Jawa Barat Berdasarkan Indikator Makro.',
+                        tips: 'Sangat populer untuk penelitian geografi, ekonomi regional, dan segmentasi pasar.'
+                    },
+                    {
+                        id: 29,
+                        kategori: 'Analisis Multivariat',
+                        nama: 'Discriminant Analysis',
+                        sub: 'Analisis Diskriminan',
+                        dasar: 'Variabel terikat berupa kategori (2 atau lebih grup) dan variabel bebas berskala interval/rasio.',
+                        tujuan: 'Memprediksi keanggotaan kelompok sampel berdasarkan sekumpulan variabel prediktor metrik.',
+                        contoh: 'Model Klasifikasi Perusahaan Sehat dan Perusahaan Bangkrut Berdasarkan Rasio Keuangan.',
+                        tips: 'Mirip dengan regresi logistik tetapi mensyaratkan asumsi normalitas multivariat.'
+                    },
+                    {
+                        id: 30,
+                        kategori: 'Analisis Multivariat',
+                        nama: 'Canonical Correlation',
+                        sub: 'Korelasi Kanonik',
+                        dasar: 'Dua set variabel banyak (set variabel X dan set variabel Y) berskala interval/rasio.',
+                        tujuan: 'Menganalisis hubungan linier simultan antara beberapa variabel bebas dengan beberapa variabel terikat sekaligus.',
+                        contoh: 'Hubungan antara Karakteristik Demografi & Psikologis Konsumen dengan Pola Pembelian Berbagai Produk.',
+                        tips: 'Merupakan bentuk generalisasi tertinggi dari analisis korelasi berganda.'
+                    },
+
+                    // ANALISIS DATA LANJUTAN
+                    {
+                        id: 31,
+                        kategori: 'Analisis Data Lanjutan',
+                        nama: 'Path Analysis (Analisis Jalur)',
+                        sub: 'Model Kausalitas & Mediasi',
+                        dasar: 'Model hubungan sebab-akibat langsung dan tidak langsung antarvariabel (X -> M -> Y).',
+                        tujuan: 'Menguji peran variabel mediasi (perantara) dalam menjembatani pengaruh variabel independen terhadap dependen.',
+                        contoh: 'Pengaruh Kualitas Produk terhadap Kepuasan Pelanggan dan Dampaknya pada Loyalitas Merek.',
+                        tips: 'Gunakan Sobel Test atau Bootstrapping untuk menguji signifikansi pengaruh tidak langsung (mediasi).'
+                    },
+                    {
+                        id: 32,
+                        kategori: 'Analisis Data Lanjutan',
+                        nama: 'Moderated Regression Analysis (MRA)',
+                        sub: 'Analisis Interaksi / Variabel Moderasi',
+                        dasar: 'Persamaan regresi yang mengandung unsur perkalian antara variabel independen dengan variabel moderator (X * Z).',
+                        tujuan: 'Mengetahui apakah variabel moderator memperkuat atau memperlemah hubungan antara variabel bebas dan terikat.',
+                        contoh: 'Peran Budaya Organisasi sebagai Moderasi Pengaruh Kepemimpinan terhadap Kinerja Pegawai.',
+                        tips: 'Sentralisasi data (mean centering) sering digunakan untuk menghindari multikolinearitas tinggi pada MRA.'
+                    },
+                    {
+                        id: 33,
+                        kategori: 'Analisis Data Lanjutan',
+                        nama: 'Structural Equation Modeling (SEM-PLS)',
+                        sub: 'Partial Least Squares SEM (SmartPLS)',
+                        dasar: 'Model struktural kompleks dengan indikator reflektif/formatif, sampel kecil, dan distribusi data bebas (non-parametrik).',
+                        tujuan: 'Menguji model konseptual kompleks yang melibatkan banyak variabel laten (konstruk) dan indikator sekaligus.',
+                        contoh: 'Pengaruh Transformational Leadership dan Work-Life Balance terhadap Employee Engagement dan Turnover Intention.',
+                        tips: 'Sangat populer di skripsi manajemen, akuntansi, dan psikologi modern menggunakan software SmartPLS.'
+                    },
+                    {
+                        id: 34,
+                        kategori: 'Analisis Data Lanjutan',
+                        nama: 'SEM-CB (Covariance Based SEM)',
+                        sub: 'LISREL / AMOS / Lavaan',
+                        dasar: 'Sampel besar (> 200 responden), data berdistribusi normal multivariat, bertujuan konfirmasi teori.',
+                        tujuan: 'Menguji kesesuaian (Goodness of Fit) model teoritis secara keseluruhan dengan data empiris lapangan.',
+                        contoh: 'Konfirmasi Model Teoretis Kepuasan Pemustaka Terhadap Kualitas Layanan Perpustakaan.',
+                        tips: 'Perhatikan indikator fit seperti Chi-Square, RMSEA (< 0.08), CFI (> 0.90), dan TLI.'
+                    },
+                    {
+                        id: 35,
+                        kategori: 'Analisis Data Lanjutan',
+                        nama: 'Analisis Regresi Logistik',
+                        sub: 'Binary & Multinomial Logistic Regression',
+                        dasar: 'Variabel terikat (Y) bersifat kualitatif dikotomi (0 dan 1) atau politomi, variabel bebas bebas dari asumsi normalitas.',
+                        tujuan: 'Memprediksi probabilitas terjadinya suatu kejadian kategori berdasarkan variabel independen.',
+                        contoh: 'Faktor-faktor yang Memengaruhi Keputusan Mahasiswa Memilih Kuliah Sambil Bekerja (Ya/Tidak).',
+                        tips: 'Evaluasi model menggunakan Nagelkerke R Square dan uji Hosmer and Lemeshow.'
+                    },
+                    {
+                        id: 36,
+                        kategori: 'Analisis Data Lanjutan',
+                        nama: 'Analisis Survival (Survival Analysis)',
+                        sub: 'Kaplan-Meier & Cox Proportional Hazards',
+                        dasar: 'Data waktu hingga terjadinya suatu peristiwa (time-to-event data).',
+                        tujuan: 'Menganalisis durasi waktu sampai suatu peristiwa tertentu terjadi (misal: waktu tunggu kerja, masa retensi pelanggan).',
+                        contoh: 'Analisis Durasi Waktu Tunggu Lulusan Perguruan Tinggi Mendapatkan Pekerjaan Pertama.',
+                        tips: 'Sangat berguna jika ada data sensor (censored data) di mana responden berhenti sebelum event terjadi.'
+                    }
+                ],
+
+                get filteredData() {
+                    return this.statistics.filter(item => {
+                        const matchesCategory = this.selectedCategory === 'Semua' || item.kategori === this.selectedCategory;
+                        const query = this.search.toLowerCase();
+                        const matchesSearch = item.nama.toLowerCase().includes(query) ||
+                                              item.sub.toLowerCase().includes(query) ||
+                                              item.dasar.toLowerCase().includes(query) ||
+                                              item.tujuan.toLowerCase().includes(query) ||
+                                              item.contoh.toLowerCase().includes(query);
+                        return matchesCategory && matchesSearch;
+                    });
+                },
+
+                get totalMethods() {
+                    return this.statistics.length;
+                },
+
+                get totalPages() {
+                    return Math.ceil(this.filteredData.length / this.perPage);
+                },
+
+                get startIndex() {
+                    return (this.currentPage - 1) * this.perPage;
+                },
+
+                get paginatedData() {
+                    return this.filteredData.slice(this.startIndex, this.startIndex + this.perPage);
+                },
+
+                changePage(page) {
+                    if (page >= 1 && page <= this.totalPages) {
+                        this.currentPage = page;
+                    }
+                },
+
+                openModal(item) {
+                    this.activeItem = item;
+                    this.showModal = true;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

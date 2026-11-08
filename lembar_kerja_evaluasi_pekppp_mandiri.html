@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lembar Kerja Evaluasi PEKPPP-Mandiri</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            50: '#f0f4f8',
+                            100: '#d9e2ec',
+                            600: '#1e3a8a',
+                            700: '#1e40af',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                        gold: {
+                            500: '#d97706',
+                            600: '#b45309',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header Navigation -->
+    <header class="bg-navy-900 text-white shadow-md sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gold-500 p-2.5 rounded-xl text-navy-900 shadow-lg">
+                    <i class="fa-solid fa-scale-balanced text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-tight">PEKPPP-MANDIRI</h1>
+                    <p class="text-xs text-slate-300">Pemantauan & Evaluasi Kinerja Penyelenggaraan Pelayanan Publik</p>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center space-x-4 text-sm">
+                <span class="bg-navy-800 px-3 py-1.5 rounded-lg border border-navy-700 text-slate-200">
+                    <i class="fa-regular fa-calendar-days mr-2 text-gold-500"></i>Tahun Evaluasi: 2026
+                </span>
+                <button onclick="window.print()" class="bg-gold-500 hover:bg-gold-600 text-navy-900 font-semibold px-4 py-2 rounded-lg transition shadow-md flex items-center space-x-2">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Cetak / Ekspor PDF</span>
+                </button>
+            </div>
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-btn" class="text-slate-300 hover:text-white focus:outline-none p-2">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-navy-800 border-t border-navy-700 px-4 py-3 space-y-2">
+            <button onclick="window.print()" class="w-full text-left py-2 px-3 bg-gold-500 text-navy-900 font-bold rounded flex items-center space-x-2">
+                <i class="fa-solid fa-print"></i><span>Cetak / Ekspor PDF</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Notification Banner / Toast -->
+        <div id="toast" class="hidden fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl border-l-4 border-gold-500 flex items-center space-x-3 transition-all duration-300">
+            <i class="fa-solid fa-circle-check text-gold-500 text-lg"></i>
+            <div>
+                <p id="toast-title" class="font-bold text-sm">Berhasil</p>
+                <p id="toast-desc" class="text-xs text-slate-300">Perubahan berhasil disimpan.</p>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex overflow-x-auto space-x-2 bg-white p-2 rounded-2xl shadow-sm border border-slate-200 no-print">
+            <button onclick="switchTab('dashboard')" class="tab-btn whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 bg-navy-900 text-white shadow" data-target="dashboard">
+                <i class="fa-solid fa-chart-pie"></i><span>1. Dashboard & Panduan</span>
+            </button>
+            <button onclick="switchTab('aspek1')" class="tab-btn whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100" data-target="aspek1">
+                <i class="fa-solid fa-file-shield"></i><span>2. Kebijakan Pelayanan (25%)</span>
+            </button>
+            <button onclick="switchTab('aspek2')" class="tab-btn whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100" data-target="aspek2">
+                <i class="fa-solid fa-users-gear"></i><span>3. Profesionalisme SDM (15%)</span>
+            </button>
+            <button onclick="switchTab('aspek3')" class="tab-btn whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100" data-target="aspek3">
+                <i class="fa-solid fa-building-user"></i><span>4. Sarana Prasarana (15%)</span>
+            </button>
+            <button onclick="switchTab('aspek4')" class="tab-btn whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100" data-target="aspek4">
+                <i class="fa-solid fa-network-wired"></i><span>5. SIPP (15%)</span>
+            </button>
+            <button onclick="switchTab('aspek5')" class="tab-btn whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100" data-target="aspek5">
+                <i class="fa-solid fa-comments"></i><span>6. Konsultasi & Pengaduan (15%)</span>
+            </button>
+            <button onclick="switchTab('aspek6')" class="tab-btn whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100" data-target="aspek6">
+                <i class="fa-solid fa-lightbulb"></i><span>7. Inovasi (15%)</span>
+            </button>
+            <button onclick="switchTab('rekap')" class="tab-btn whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100" data-target="rekap">
+                <i class="fa-solid fa-square-poll-vertical"></i><span>8. Rekapitulasi & Hasil</span>
+            </button>
+        </div>
+
+        <!-- ================= TAB 1: DASHBOARD & PANDUAN ================= -->
+        <div id="tab-dashboard" class="tab-content space-y-6">
+            <div class="bg-gradient-to-r from-navy-900 to-navy-800 text-white p-8 rounded-3xl shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
+                    <i class="fa-solid fa-landmark"></i>
+                </div>
+                <div class="max-w-3xl space-y-4">
+                    <span class="bg-gold-500 text-navy-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Instrumen Resmi Kementerian PANRB</span>
+                    <h2 class="text-3xl font-bold">Lembar Kerja Evaluasi PEKPPP-Mandiri</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Aplikasi lembar kerja mandiri bagi instansi pemerintah untuk melakukan pengukuran, penilaian, dan evaluasi berkala terhadap Penyelenggaraan Pelayanan Publik berdasarkan regulasi terbaru.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <button onclick="switchTab('aspek1')" class="bg-gold-500 hover:bg-gold-600 text-navy-900 font-bold px-5 py-2.5 rounded-xl transition shadow-md flex items-center space-x-2 text-sm">
+                            <span>Mulai Evaluasi Sekarang</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <button onclick="resetData()" class="bg-navy-800 hover:bg-navy-700 text-slate-300 hover:text-white border border-navy-700 font-medium px-4 py-2.5 rounded-xl transition text-sm">
+                            <i class="fa-solid fa-rotate-right mr-2"></i>Reset Data Form
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dasar Hukum Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <div class="w-12 h-12 bg-navy-50 text-navy-600 rounded-xl flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-book-bookmark"></i>
+                    </div>
+                    <h3 class="font-bold text-navy-900 text-lg">UU No. 25 Tahun 2009</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Undang-Undang tentang Pelayanan Publik yang menjadi landasan utama hak, kewajiban, serta standar pelayanan penyelenggara negara.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <div class="w-12 h-12 bg-navy-50 text-navy-600 rounded-xl flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <h3 class="font-bold text-navy-900 text-lg">Permen PANRB No. 29/2022</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Pedoman Pemantauan dan Evaluasi Kinerja Penyelenggaraan Pelayanan Publik (PEKPPP) pada Instansi Pemerintah secara nasional.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <div class="w-12 h-12 bg-navy-50 text-navy-600 rounded-xl flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <h3 class="font-bold text-navy-900 text-lg">Permen PANRB No. 4/2023</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Penetapan instrumen evaluasi terpadu (F-01, F-02 Proses Pelayanan, & F-03 Persepsi Masyarakat) beserta formula pembobotan resmi.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Formula & Bobot Penilaian -->
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h3 class="text-xl font-bold text-navy-900">Formula & Bobot Aspek Evaluasi</h3>
+                    <p class="text-xs text-slate-500 mt-1">Struktur penilaian mandiri mengacu pada pedoman teknis kementerian.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <h4 class="font-semibold text-navy-900 text-sm">1. Kebijakan Pelayanan</h4>
+                                <p class="text-xs text-slate-500">Standar Pelayanan, Maklumat, Survei Kepuasan</p>
+                            </div>
+                            <span class="bg-navy-900 text-white font-bold text-sm px-3 py-1 rounded-lg">25%</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <h4 class="font-semibold text-navy-900 text-sm">2. Profesionalisme SDM</h4>
+                                <p class="text-xs text-slate-500">Kompetensi, Etika, Disiplin, Budaya Kerja</p>
+                            </div>
+                            <span class="bg-navy-900 text-white font-bold text-sm px-3 py-1 rounded-lg">15%</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <h4 class="font-semibold text-navy-900 text-sm">3. Sarana Prasarana</h4>
+                                <p class="text-xs text-slate-500">Fasilitas Umum, Aksesibilitas Disabilitas</p>
+                            </div>
+                            <span class="bg-navy-900 text-white font-bold text-sm px-3 py-1 rounded-lg">15%</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <h4 class="font-semibold text-navy-900 text-sm">4. Sistem Informasi Pelayanan Publik (SIPP)</h4>
+                                <p class="text-xs text-slate-500">Keterbukaan Informasi & Pengelolaan SIPP</p>
+                            </div>
+                            <span class="bg-navy-900 text-white font-bold text-sm px-3 py-1 rounded-lg">15%</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <h4 class="font-semibold text-navy-900 text-sm">5. Konsultasi & Pengaduan</h4>
+                                <p class="text-xs text-slate-500">SP4N-LAPOR!, Sarana Helpdesk, Tindak Lanjut</p>
+                            </div>
+                            <span class="bg-navy-900 text-white font-bold text-sm px-3 py-1 rounded-lg">15%</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <h4 class="font-semibold text-navy-900 text-sm">6. Inovasi Pelayanan Publik</h4>
+                                <p class="text-xs text-slate-500">Kemanfaatan, Keberlanjutan, Replikasi</p>
+                            </div>
+                            <span class="bg-navy-900 text-white font-bold text-sm px-3 py-1 rounded-lg">15%</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-navy-50 p-6 rounded-2xl border border-navy-100 space-y-4">
+                        <h4 class="font-bold text-navy-900 text-base"><i class="fa-solid fa-calculator mr-2 text-gold-500"></i>Rumus Indeks Akhir</h4>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 text-center font-mono text-xs sm:text-sm text-navy-900 shadow-inner">
+                            IPPK = (F-02 Proses Pelayanan × 75%) + (F-03 Persepsi Masyarakat × 25%)
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Nilai F-02 dihitung berdasarkan kumulatif keenam aspek di atas (skala 0 - 5 dikonversi ke skala 100), sedangkan F-03 diperoleh dari hasil survei persepsi penerima layanan eksternal. Dalam lembar kerja mandiri ini, Anda dapat mengisi estimasi nilai F-03 pada tab rekapitulasi untuk mendapatkan indeks akhir.
+                        </p>
+                        <div class="pt-2">
+                            <h5 class="font-bold text-xs text-navy-900 mb-2 uppercase tracking-wide">Kategori Predikat:</h5>
+                            <ul class="text-xs space-y-1 text-slate-700">
+                                <li class="flex justify-between"><span><strong class="text-emerald-700">Pelayanan Prima (A):</strong></span> <span>90.00 – 100.00</span></li>
+                                <li class="flex justify-between"><span><strong class="text-blue-700">Sangat Baik (B):</strong></span> <span>80.00 – 89.99</span></li>
+                                <li class="flex justify-between"><span><strong class="text-amber-700">Baik (C):</strong></span> <span>70.00 – 79.99</span></li>
+                                <li class="flex justify-between"><span><strong class="text-orange-700">Cukup (D):</strong></span> <span>60.00 – 69.99</span></li>
+                                <li class="flex justify-between"><span><strong class="text-red-700">Kurang (E):</strong></span> <span>&lt; 60.00</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= DYNAMIC ASPEK TABS CONTAINER ================= -->
+        <div id="aspek-container">
+            <!-- Aspek tabs will be dynamically rendered / loaded via JS -->
+        </div>
+
+        <!-- ================= TAB 8: REKAPITULASI & HASIL ================= -->
+        <div id="tab-rekap" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-navy-900">Rekapitulasi Hasil Evaluasi PEKPPP-Mandiri</h3>
+                        <p class="text-xs text-slate-500 mt-1">Ringkasan nilai mandiri per aspek beserta perhitungan indeks akhir.</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="exportJSON()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow flex items-center space-x-2">
+                            <i class="fa-solid fa-download"></i><span>Ekspor Data JSON</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Top Score Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-navy-900 text-white p-6 rounded-2xl shadow relative overflow-hidden">
+                        <p class="text-xs font-medium text-slate-300 uppercase tracking-wider">Nilai F-02 (Proses Pelayanan)</p>
+                        <h4 id="summary-f02" class="text-3xl font-ext500 font-bold mt-2 text-gold-500">0.00</h4>
+                        <p class="text-xs text-slate-400 mt-1">Skala 0 - 100 (Kumulatif Aspek 1-6)</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Nilai F-03 (Persepsi Masyarakat)</p>
+                            <span class="text-xs text-slate-400" title="Dapat diubah sesuai hasil survei eksternal"><i class="fa-solid fa-circle-info text-navy-600"></i></span>
+                        </div>
+                        <div class="mt-2 flex items-center space-x-3">
+                            <input type="number" id="f03-input" min="0" max="100" step="0.01" value="85.00" onchange="calculateResults()" class="w-28 text-xl font-bold px-3 py-1 rounded-xl border border-slate-300 focus:ring-2 focus:ring-navy-600 focus:outline-none">
+                            <span class="text-sm font-semibold text-slate-600">/ 100</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Bobot 25% dari total indeks</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-gold-500 to-amber-600 text-navy-900 p-6 rounded-2xl shadow-lg relative overflow-hidden">
+                        <p class="text-xs font-bold uppercase tracking-wider opacity-90">Indeks Pelayanan Publik Akhir</p>
+                        <h4 id="summary-final" class="text-3xl font-black mt-2">0.00</h4>
+                        <p id="summary-predikat" class="text-xs font-extrabold mt-1 uppercase tracking-wider bg-white/35 px-2 py-0.5 rounded inline-block">Belum Dinilai</p>
+                    </div>
+                </div>
+
+                <!-- Table Breakdown & Chart -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start pt-4">
+                    <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 uppercase font-bold text-xs border-b border-slate-200">
+                                    <th class="p-3">Aspek Evaluasi</th>
+                                    <th class="p-3 text-center">Bobot</th>
+                                    <th class="p-3 text-center">Nilai Rata-rata (0-5)</th>
+                                    <th class="p-3 text-center">Skor (0-100)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rekap-table-body" class="divide-y divide-slate-100">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-center">
+                        <h4 class="font-bold text-navy-900 text-sm mb-4">Grafik Capaian Per Aspek</h4>
+                        <div class="w-full h-64 relative">
+                            <canvas id="aspectChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 mt-auto no-print">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p class="font-semibold text-navy-900">Lembar Kerja Evaluasi PEKPPP-Mandiri &bull; Sesuai Permen PANRB Terbaru</p>
+            <p>Dirancang untuk membantu reformasi birokrasi dan peningkatan kualitas pelayanan publik nasional.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Data Struktur Aspek dan Indikator PEKPPP-Mandiri
+        const aspekData = [
+            {
+                id: 'aspek1',
+                title: 'Aspek 1: Kebijakan Pelayanan',
+                weight: '25%',
+                desc: 'Menilai ketersediaan, keterbukaan, dan kemutakhiran standar pelayanan serta maklumat pelayanan.',
+                indicators: [
+                    { id: 101, code: '1.1', title: 'Ketersediaan Standar Pelayanan (SP)', desc: 'Apakah unit penyelenggara telah menetapkan dan mengesahkan Standar Pelayanan untuk setiap jenis pelayanan?', tooltip: 'Harus ditetapkan oleh pimpinan instansi dan telah melalui uji publik/pembahasan.' },
+                    { id: 102, code: '1.2', title: 'Maklumat Pelayanan', desc: 'Apakah terdapat Maklumat Pelayanan yang dipublikasikan secara jelas, tegas, dan mudah dibaca oleh masyarakat?', tooltip: 'Berisi pernyataan kesanggupan penyelenggara untuk menyelenggarakan pelayanan sesuai standar.' },
+                    { id: 103, code: '1.3', title: 'Evaluasi / Reviu Standar Pelayanan', desc: 'Apakah standar pelayanan telah ditinjau/dievaluasi secara berkala minimal 3 tahun sekali?', tooltip: 'Dibuktikan dengan SK tim reviu atau berita acara evaluasi standar pelayanan.' },
+                    { id: 104, code: '1.4', title: 'Survei Kepuasan Masyarakat (SKM)', desc: 'Apakah unit pelayanan secara rutin melaksanakan SKM sekurang-kurangnya setahun sekali dan mempublikasikannya?', tooltip: 'Mengacu pada Permen PANRB No. 14 Tahun 2017 tentang Pedoman Penyusunan SKM.' }
+                ]
+            },
+            {
+                id: 'aspek2',
+                title: 'Aspek 2: Profesionalisme SDM',
+                weight: '15%',
+                desc: 'Menilai kompetensi petugas, kode etik, budaya pelayanan prima, serta kedisiplinan.',
+                indicators: [
+                    { id: 201, code: '2.1', title: 'Kompetensi & Pelatihan Petugas', desc: 'Apakah petugas pelayanan mendapatkan pembinaan, bimbingan teknis, atau pelatihan pelayanan prima secara berkala?', tooltip: 'Sertifikat pelatihan, daftar hadir sosialisasi pelayanan prima.' },
+                    { id: 202, code: '2.2', title: 'Kode Etik & Budaya Pelayanan', desc: 'Apakah terdapat penerapan kode etik, sanksi pelanggaran, dan budaya kerja (senyum, salam, sapa) yang konsisten?', tooltip: 'Buku panduan kode etik, baliho budaya kerja, ID card petugas.' },
+                    { id: 203, code: '2.3', title: 'Kecukupan Jumlah Petugas', desc: 'Apakah rasio jumlah petugas front office/pelayanan sebanding dengan volume kunjungan pemohon harian?', tooltip: 'Analisis beban kerja (ABK) atau rekapitulasi penugasan petugas.' }
+                ]
+            },
+            {
+                id: 'aspek3',
+                title: 'Aspek 3: Sarana Prasarana',
+                weight: '15%',
+                desc: 'Menilai kenyamanan fasilitas pelayanan, kebersihan, ruang tunggu, serta fasilitas khusus kelompok rentan.',
+                indicators: [
+                    { id: 301, code: '3.1', title: 'Fasilitas Ruang Tunggu & Kenyamanan', desc: 'Apakah tersedia ruang tunggu yang bersih, kursi yang cukup, pendingin udara/ventilasi yang baik, dan fasilitas pendukung?', tooltip: 'Foto kondisi ruang tunggu, toilet bersih, fasilitas air minum/charger.' },
+                    { id: 302, code: '3.2', title: 'Aksesibilitas Kelompok Rentan / Difabel', desc: 'Apakah tersedia fasilitas akses ramah difabel (ramp, kursi roda, Guiding Block, toilet khusus, loket prioritas)?', tooltip: 'Fasilitas fisik yang dapat diakses penyandang disabilitas, lansia, ibu hamil.' },
+                    { id: 303, code: '3.3', title: 'Fasilitas Penunjang Lainnya', desc: 'Apakah tersedia fasilitas seperti ruang laktasi/menyusui, area bermain anak, dan pojok baca/internet?', tooltip: 'Kelengkapan fasilitas pendukung kenyamanan pemohon.' }
+                ]
+            },
+            {
+                id: 'aspek4',
+                title: 'Aspek 4: Sistem Informasi Pelayanan Publik (SIPP)',
+                weight: '15%',
+                desc: 'Menilai keterbukaan informasi pelayanan melalui portal nasional SIPP dan media digital instansi.',
+                indicators: [
+                    { id: 401, code: '4.1', title: 'Pengisian / Integrasi SIPP Nasional', desc: 'Apakah seluruh jenis pelayanan telah diinput dan dimutakhirkan dalam aplikasi SIPP (sipp.menpan.go.id)?', tooltip: 'Tautan profil SIPP unit kerja yang aktif dan up-to-date.' },
+                    { id: 402, code: '4.2', title: 'Website Resmi & Media Informasi', desc: 'Apakah informasi pelayanan tersedia secara transparan di website resmi instansi atau media sosial terverifikasi?', tooltip: 'Link halaman web pelayanan yang mudah diakses publik.' }
+                ]
+            },
+            {
+                id: 'aspek5',
+                title: 'Aspek 5: Konsultasi & Pengaduan',
+                weight: '15%',
+                desc: 'Menilai efektivitas pengelolaan pengaduan masyarakat dan integrasi dengan SP4N-LAPOR!.',
+                indicators: [
+                    { id: 501, code: '5.1', title: 'Integrasi SP4N-LAPOR!', desc: 'Apakah unit telah terhubung dan aktif menindaklanjuti pengaduan masyarakat melalui aplikasi SP4N-LAPOR!?', tooltip: 'Akun admin aktif dan rekap penanganan aduan tepat waktu.' },
+                    { id: 502, code: '5.2', title: 'Saluran Pengaduan Mandiri & Helpdesk', desc: 'Apakah tersedia sarana pengaduan/konsultasi langsung (meja pengaduan, WhatsApp resmi, hotline) beserta SOP penanganannya?', tooltip: 'SOP penanganan pengaduan dan bukti respons log.' }
+                ]
+            },
+            {
+                id: 'aspek6',
+                title: 'Aspek 6: Inovasi Pelayanan Publik',
+                weight: '15%',
+                desc: 'Menilai keberadaan inovasi pelayanan publik yang solutif, berdampak, dan berkelanjutan.',
+                indicators: [
+                    { id: 601, code: '6.1', title: 'Implementasi Inovasi Pelayanan', desc: 'Apakah unit telah menciptakan atau mereplikasi inovasi pelayanan publik yang menyelesaikan hambatan layanan?', tooltip: 'Dokumen proposal inovasi, SK tim inovasi, atau bukti keikutsertaan KIPP.' },
+                    { id: 602, code: '6.2', title: 'Evaluasi & Keberlanjutan Inovasi', desc: 'Apakah inovasi tersebut dievaluasi dampaknya secara berkala dan dapat dirasakan langsung manfaatnya oleh masyarakat?', tooltip: 'Data statistik pemanfaatan inovasi oleh pengguna.' }
+                ]
+            }
+        ];
+
+        // State Penyimpanan Nilai Evaluasi (Disimpan di localStorage jika didukung)
+        let evaluationState = JSON.parse(localStorage.getItem('pekppp_state')) || {};
+
+        // Inisialisasi Aplikasi
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAspekTabs();
+            renderRekapTable();
+            calculateResults();
+
+            // Mobile menu toggle
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if(mobileBtn && mobileMenu) {
+                mobileBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+
+        // Render Tabs Aspek secara Dinamis ke DOM
+        function renderAspekTabs() {
+            const container = document.getElementById('aspek-container');
+            let htmlContent = '';
+
+            aspekData.forEach((aspek, index) => {
+                const isHidden = index !== 0 ? 'hidden' : '';
+                htmlContent += `
+                    <div id="tab-${aspek.id}" class="tab-content ${isHidden} space-y-6">
+                        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                            <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                <div>
+                                    <span class="bg-navy-50 text-navy-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Bobot Aspek: ${aspek.weight}</span>
+                                    <h3 class="text-xl font-bold text-navy-900 mt-2">${aspek.title}</h3>
+                                    <p class="text-xs text-slate-500 mt-1">${aspek.desc}</p>
+                                </div>
+                                <div class="bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 text-right">
+                                    <span class="text-xs text-slate-500 block">Rata-rata Aspek</span>
+                                    <span id="avg-${aspek.id}" class="text-lg font-ext500 font-bold text-navy-900">0.00 / 5.00</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-6">
+                `;
+
+                aspek.indicators.forEach((ind, i) => {
+                    const valKey = `val_${ind.id}`;
+                    const linkKey = `link_${ind.id}`;
+                    const noteKey = `note_${ind.id}`;
+
+                    const currentVal = evaluationState[valKey] !== undefined ? evaluationState[valKey] : 3;
+                    const currentLink = evaluationState[linkKey] || '';
+                    const currentNote = evaluationState[noteKey] || '';
+
+                    htmlContent += `
+                        <div class="p-5 rounded-2xl bg-slate-50/70 border border-slate-200 space-y-4">
+                            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                                <div class="space-y-1">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="bg-navy-900 text-white text-xs font-bold px-2.5 py-1 rounded-lg">${ind.code}</span>
+                                        <h4 class="font-bold text-navy-900 text-sm sm:text-base">${ind.title}</h4>
+                                    </div>
+                                    <p class="text-xs text-slate-600 leading-relaxed">${ind.desc}</p>
+                                    <p class="text-[11px] text-amber-700 italic bg-amber-50 px-2 py-1 rounded border border-amber-200 inline-block mt-1">
+                                        <i class="fa-solid fa-lightbulb mr-1"></i>Petunjuk: ${ind.tooltip}
+                                    </p>
+                                </div>
+                                <div class="flex flex-col items-start md:items-end min-w-[150px]">
+                                    <label class="text-xs font-semibold text-slate-700 mb-1">Skala Nilai (0 - 5):</label>
+                                    <select onchange="updateValue(${ind.id}, this.value, '${aspek.id}')" id="select-${ind.id}" class="bg-white border border-slate-300 font-bold text-navy-900 rounded-xl px-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-navy-600 focus:outline-none w-full md:w-36">
+                                        <option value="5" ${currentVal == 5 ? 'selected' : ''}>5 - Sempurna (A)</option>
+                                        <option value="4" ${currentVal == 4 ? 'selected' : ''}>4 - Baik Sekali (B)</option>
+                                        <option value="3" ${currentVal == 3 ? 'selected' : ''}>3 - Baik (C)</option>
+                                        <option value="2" ${currentVal == 2 ? 'selected' : ''}>2 - Cukup (D)</option>
+                                        <option value="1" ${currentVal == 1 ? 'selected' : ''}>1 - Kurang (E)</option>
+                                        <option value="0" ${currentVal == 0 ? 'selected' : ''}>0 - Tidak Ada (F)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-slate-200/60">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-1"><i class="fa-solid fa-link mr-1 text-navy-600"></i>Tautan Bukti Dukung (Google Drive / Dokumen)</label>
+                                    <input type="url" placeholder="https://drive.google.com/..." value="${currentLink}" onchange="updateLink(${ind.id}, this.value)" class="w-full text-xs bg-white border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-navy-600 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-1"><i class="fa-solid fa-pen-to-square mr-1 text-navy-600"></i>Catatan & Rekomendasi Perbaikan</label>
+                                    <input type="text" placeholder="Masukkan catatan atau rencana tindak lanjut..." value="${currentNote}" onchange="updateNote(${ind.id}, this.value)" class="w-full text-xs bg-white border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-navy-600 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                htmlContent += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = htmlContent;
+        }
+
+        // Navigasi Antar Tab
+        function switchTab(targetId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-navy-900', 'text-white', 'shadow');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+
+            const activeContent = document.getElementById(`tab-${targetId}`);
+            if(activeContent) activeContent.classList.remove('hidden');
+
+            const activeBtn = document.querySelector(`.tab-btn[data-target="${targetId}"]`);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+                activeBtn.classList.add('bg-navy-900', 'text-white', 'shadow');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if(targetId === 'rekap') {
+                calculateResults();
+            }
+        }
+
+        // Update Nilai Indikator
+        function updateValue(indId, val, aspekId) {
+            evaluationState[`val_${indId}`] = parseFloat(val);
+            saveState();
+            calculateAspectAverage(aspekId);
+            showToast('Nilai Disimpan', 'Penilaian mandiri telah diperbarui.');
+        }
+
+        // Update Link Bukti Dukung
+        function updateLink(indId, val) {
+            evaluationState[`link_${indId}`] = val;
+            saveState();
+        }
+
+        // Update Catatan
+        function updateNote(indId, val) {
+            evaluationState[`note_${indId}`] = val;
+            saveState();
+        }
+
+        // Simpan ke localStorage
+        function saveState() {
+            localStorage.setItem('pekppp_state', JSON.stringify(evaluationState));
+        }
+
+        // Hitung Rata-rata per Aspek
+        function calculateAspectAverage(aspekId) {
+            const aspek = aspekData.find(a => a.id === aspekId);
+            if(!aspek) return 0;
+
+            let sum = 0;
+            aspek.indicators.forEach(ind => {
+                const val = evaluationState[`val_${ind.id}`] !== undefined ? evaluationState[`val_${ind.id}`] : 3;
+                sum += val;
+            });
+            const avg = sum / aspek.indicators.length;
+            const avgEl = document.getElementById(`avg-${aspekId}`);
+            if(avgEl) avgEl.innerText = avg.toFixed(2) + ' / 5.00';
+            return avg;
+        }
+
+        // Hitung Seluruh Rekapitulasi & Skor Akhir
+        let aspectChartInstance = null;
+
+        function calculateResults() {
+            let totalF02Score = 0;
+            const aspectScores = [];
+
+            aspekData.forEach(aspek => {
+                let sum = 0;
+                aspek.indicators.forEach(ind => {
+                    const val = evaluationState[`val_${ind.id}`] !== undefined ? evaluationState[`val_${ind.id}`] : 3;
+                    sum += val;
+                });
+                const avg = sum / aspek.indicators.length;
+                // Konversi skala 0-5 ke skala 0-100
+                const score100 = (avg / 5) * 100;
+                aspectScores.push({ title: aspek.title, avg: avg, score: score100, weight: aspek.weight });
+            });
+
+            // Bobot F-02 Kumulatif (Aspek 1: 25%, Aspek 2-6: masing-masing 15%)
+            // Namun dalam praktiknya rata-rata tertimbang aspek atau konversi total:
+            // Mari hitung rata-rata tertimbang F-02
+            // Aspek 1 (25%), Aspek 2 (15%), Aspek 3 (15%), Aspek 4 (15%), Aspek 5 (15%), Aspek 6 (15%) = 100%
+            const weights = [0.25, 0.15, 0.15, 0.15, 0.15, 0.15];
+            let weightedSumF02 = 0;
+            aspectScores.forEach((item, idx) => {
+                weightedSumF02 += item.score * weights[idx];
+            });
+
+            const f02Final = weightedSumF02; // skala 0-100
+            document.getElementById('summary-f02').innerText = f02Final.toFixed(2);
+
+            // Ambil input F-03
+            const f03InputVal = parseFloat(document.getElementById('f03-input').value) || 85.00;
+
+            // Rumus Indeks Akhir: (75% * F02) + (25% * F03)
+            const finalIndex = (0.75 * f02Final) + (0.25 * f03InputVal);
+            document.getElementById('summary-final').innerText = finalIndex.toFixed(2);
+
+            // Tentukan Predikat
+            let predikatText = 'Kurang (E)';
+            let predikatClass = 'bg-red-500 text-white';
+            if(finalIndex >= 90) {
+                predikatText = 'Pelayanan Prima (A)';
+                predikatClass = 'bg-emerald-600 text-white';
+            } else if(finalIndex >= 80) {
+                predikatText = 'Sangat Baik (B)';
+                predikatClass = 'bg-blue-600 text-white';
+            } else if(finalIndex >= 70) {
+                predikatText = 'Baik (C)';
+                predikatClass = 'bg-amber-500 text-navy-900';
+            } else if(finalIndex >= 60) {
+                predikatText = 'Cukup (D)';
+                predikatClass = 'bg-orange-500 text-white';
+            }
+
+            const predEl = document.getElementById('summary-predikat');
+            predEl.className = `text-xs font-extrabold mt-1 uppercase tracking-wider px-2 py-0.5 rounded inline-block ${predikatClass}`;
+            predEl.innerText = predikatText;
+
+            // Update tabel rekap
+            renderRekapTableBody(aspectScores);
+
+            // Update Chart
+            updateChart(aspectScores);
+        }
+
+        function renderRekapTableBody(scores) {
+            const tbody = document.getElementById('rekap-table-body');
+            if(!tbody) return;
+            let html = '';
+            scores.forEach((item, i) => {
+                html += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 font-semibold text-navy-900">${item.title}</td>
+                        <td class="p-3 text-center">${item.weight}</td>
+                        <td class="p-3 text-center">${item.avg.toFixed(2)} / 5.00</td>
+                        <td class="p-3 text-center font-bold text-navy-800">${item.score.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderRekapTable() {
+            // Initial call
+            calculateResults();
+        }
+
+        // Render Chart.js
+        function updateChart(scores) {
+            const ctx = document.getElementById('aspectChart');
+            if(!ctx) return;
+
+            const labels = ['Kebijakan', 'SDM', 'Sarpras', 'SIPP', 'Pengaduan', 'Inovasi'];
+            const dataValues = scores.map(s => s.score);
+
+            if(aspectChartInstance) {
+                aspectChartInstance.data.datasets[0].data = dataValues;
+                aspectChartInstance.update();
+                return;
+            }
+
+            aspectChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Skor Capaian (0-100)',
+                        data: dataValues,
+                        backgroundColor: '#1e3a8a',
+                        borderRadius: 8,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // Reset Data
+        function resetData() {
+            if(confirm('Apakah Anda yakin ingin mereset seluruh isian lembar kerja mandiri?')) {
+                localStorage.removeItem('pekppp_state');
+                evaluationState = {};
+                renderAspekTabs();
+                calculateResults();
+                showToast('Data Direset', 'Semua isian formulir telah dikosongkan.');
+            }
+        }
+
+        // Ekspor Data JSON
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(evaluationState, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "evaluasi_pekppp_mandiri_2026.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast('Ekspor Berhasil', 'Data lembar kerja berhasil diunduh dalam format JSON.');
+        }
+
+        // Toast Notification helper
+        function showToast(title, desc) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-desc').innerText = desc;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

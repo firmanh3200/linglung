@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ensiklopedia Teknik Sampling Modern</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter & Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans h-full antialiased flex flex-col min-h-screen">
+
+    <!-- Header Navigation -->
+    <header class="bg-indigo-900 text-white shadow-xl relative overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.3),transparent_50%)]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-indigo-500/30 text-indigo-200 text-xs font-semibold px-3 py-1 rounded-full border border-indigo-400/30">
+                            <i class="fa-solid fa-graduation-cap mr-1"></i> Referensi Akademik & Riset
+                        </span>
+                        <span class="bg-emerald-500/30 text-emerald-200 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-400/30">
+                            <i class="fa-solid fa-check-circle mr-1"></i> Data Terverifikasi
+                        </span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Ensiklopedia Teknik Sampling</h1>
+                    <p class="text-indigo-200 mt-1 text-sm sm:text-base max-w-2xl">
+                        Panduan komprehensif metodologi pengambilan sampel penelitian kuantitatif & kualitatif untuk mahasiswa, peneliti, dan instansi survei.
+                    </p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="openStatsModal()" class="bg-indigo-800/80 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm border border-indigo-700 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie"></i> Ringkasan Kategori
+                    </button>
+                    <button onclick="exportData()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-all shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-download"></i> Unduh Ringkasan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- Stat Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Metode</p>
+                    <h3 class="text-2xl font-bold text-slate-900" id="stat-total">10</h3>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-dice"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Probability Sampling</p>
+                    <h3 class="text-2xl font-bold text-slate-900" id="stat-prob">5</h3>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-filter-circle-xmark"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Non-Probability</p>
+                    <h3 class="text-2xl font-bold text-slate-900" id="stat-nonprob">5</h3>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-book-bookmark"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Status Panduan</p>
+                    <h3 class="text-lg font-bold text-emerald-600">Aktif & Lengkap</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- DataTable Card Wrapper -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            
+            <!-- Toolbar: Search, Filters & Page Size -->
+            <div class="p-5 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                
+                <!-- Search Box -->
+                <div class="relative w-full md:w-80">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Cari teknik, definisi, atau contoh..." 
+                        class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                </div>
+
+                <!-- Filters & Entries Per Page -->
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                    <!-- Category Filter -->
+                    <select id="categoryFilter" onchange="handleFilter()" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="all">Semua Kategori</option>
+                        <option value="Probability Sampling">Probability Sampling</option>
+                        <option value="Non-Probability Sampling">Non-Probability Sampling</option>
+                    </select>
+
+                    <!-- Rows per page -->
+                    <div class="flex items-center gap-2 text-sm text-slate-500">
+                        <span>Tampilkan:</span>
+                        <select id="pageSizeSelect" onchange="changePageSize()" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="5" selected>5</option>
+                            <option value="10">10</option>
+                            <option value="all">Semua</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse" id="samplingTable">
+                    <thead>
+                        <tr class="bg-slate-50/75 border-b border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-wider">
+                            <th class="py-4 px-6 cursor-pointer hover:text-indigo-600 transition-colors" onclick="sortTable('name')">
+                                Teknik Sampling <i class="fa-solid fa-sort ml-1"></i>
+                            </th>
+                            <th class="py-4 px-6 cursor-pointer hover:text-indigo-600 transition-colors" onclick="sortTable('category')">
+                                Kategori <i class="fa-solid fa-sort ml-1"></i>
+                            </th>
+                            <th class="py-4 px-6">Definisi & Teori Singkat</th>
+                            <th class="py-4 px-6 text-center">Aksi Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-100 text-sm text-slate-700">
+                        <!-- Javascript will populate rows here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="p-5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="text-sm text-slate-500" id="tableInfo">
+                    Menampilkan 0 dari 0 data
+                </div>
+                <div class="flex items-center gap-1" id="paginationControls">
+                    <!-- Pagination buttons populated by JS -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+            <!-- Modal Header -->
+            <div class="bg-indigo-900 text-white p-6 relative">
+                <button onclick="closeModal()" class="absolute top-5 right-5 text-indigo-200 hover:text-white bg-indigo-800/60 hover:bg-indigo-800 w-8 h-8 rounded-full flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <span id="modalCategory" class="bg-indigo-700/80 text-indigo-100 text-xs font-semibold px-3 py-1 rounded-full border border-indigo-600"></span>
+                <h2 id="modalTitle" class="text-2xl font-bold mt-2"></h2>
+            </div>
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto space-y-6">
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open"></i> Definisi & Penjelasan Teoretis
+                    </h4>
+                    <p id="modalDefinition" class="text-slate-600 leading-relaxed text-sm bg-slate-50 p-4 rounded-xl border border-slate-100"></p>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-amber-600 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-bullseye"></i> Dasar & Tujuan Penggunaan
+                    </h4>
+                    <p id="modalPurpose" class="text-slate-600 leading-relaxed text-sm bg-amber-50/60 p-4 rounded-xl border border-amber-100/60"></p>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb"></i> Contoh Penerapan Nyata (BPS / Akademik)
+                    </h4>
+                    <p id="modalExample" class="text-slate-600 leading-relaxed text-sm bg-emerald-50/60 p-4 rounded-xl border border-emerald-100/60"></p>
+                </div>
+            </div>
+            <!-- Modal Footer -->
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-end">
+                <button onclick="closeModal()" class="bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-all shadow-sm">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary / Statistics Modal -->
+    <div id="statsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-6 space-y-6">
+            <div class="flex justify-between items-center border-b pb-4">
+                <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Ringkasan Teknik Sampling
+                </h3>
+                <button onclick="closeStatsModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="space-y-4 text-sm text-slate-600">
+                <p>Metodologi pengambilan sampel terbagi secara garis besar menjadi dua kelompok utama:</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-2xl">
+                        <h4 class="font-bold text-blue-900 mb-1">Probability Sampling</h4>
+                        <p class="text-xs text-blue-700 leading-relaxed">Setiap anggota populasi memiliki peluang yang sama (diketahui > 0) untuk terpilih. Ideal untuk generalisasi statistik yang kuat.</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-100 p-4 rounded-2xl">
+                        <h4 class="font-bold text-amber-900 mb-1">Non-Probability Sampling</h4>
+                        <p class="text-xs text-amber-700 leading-relaxed">Peluang anggota populasi untuk terpilih tidak diketahui. Sering digunakan pada riset kualitatif, populasi tersembunyi, atau uji awal.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeStatsModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-all">
+                    Mengerti
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toastMessage">Berhasil menyalin data!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-slate-500">
+            <p>Ensiklopedia Teknik Sampling &copy; 2026 &bull; Dibuat untuk Mendukung Riset Akademik & Survei Nasional</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Data & Table Engine -->
+    <script>
+        // Comprehensive Dataset on Sampling Techniques
+        const samplingData = [
+            {
+                id: 1,
+                name: "Simple Random Sampling",
+                category: "Probability Sampling",
+                definition: "Teknik penarikan sampel di mana setiap unsur atau anggota populasi memiliki kesempatan yang sama dan independen untuk dipilih menjadi sampel.",
+                purpose: "Digunakan ketika populasi bersifat homogen atau relatif seragam, serta ketika daftar kerangka sampel (sampling frame) lengkap tersedia.",
+                example: "Badan Pusat Statistik (BPS) memilih 500 rumah tangga secara acak dari daftar seluruh kepala keluarga di suatu kecamatan menggunakan tabel angka random."
+            },
+            {
+                id: 2,
+                name: "Systematic Sampling",
+                category: "Probability Sampling",
+                definition: "Teknik penarikan sampel di mana anggota populasi dipilih berdasarkan interval waktu, urutan, atau jarak tertentu dari daftar yang telah diberi nomor urut.",
+                purpose: "Digunakan untuk menghemat waktu dan tenaga dalam populasi yang besar namun sudah tersusun secara teratur (misalnya daftar nama mahasiswa atau pasien).",
+                example: "Peneliti memilih setiap nama ke-10 dari daftar 1.000 karyawan perusahaan untuk diwawancarai mengenai tingkat kepuasan kerja."
+            },
+            {
+                id: 3,
+                name: "Stratified Random Sampling",
+                category: "Probability Sampling",
+                definition: "Teknik pengambilan sampel dengan membagi populasi ke dalam sub-kelompok yang homogen (strata) berdasarkan karakteristik tertentu, kemudian sampel ditarik secara acak dari tiap strata.",
+                purpose: "Digunakan ketika populasi bersifat heterogen dan peneliti ingin memastikan bahwa setiap sub-kelompok penting terwakili secara proporsional dalam sampel.",
+                example: "Penelitian tingkat pendapatan penduduk desa yang dibagi strata pendidikannya (SD, SMP, SMA, Perguruan Tinggi) sebelum diambil sampel acak dari masing-masing tingkat."
+            },
+            {
+                id: 4,
+                name: "Cluster Sampling",
+                category: "Probability Sampling",
+                definition: "Teknik di mana populasi dibagi menjadi kelompok-kelompok atau klaster geografis/organisasi, lalu beberapa klaster dipilih secara acak, dan seluruh anggota dalam klaster terpilih dijadikan sampel.",
+                purpose: "Digunakan ketika populasi tersebar luas secara geografis dan tidak tersedia kerangka sampel individu yang lengkap, sehingga klaster (seperti kelurahan atau sekolah) lebih efisien.",
+                example: "Survei kesehatan anak balita tingkat provinsi dengan memilih 5 kabupaten/kota secara acak, lalu memeriksa seluruh balita di wilayah tersebut."
+            },
+            {
+                id: 5,
+                name: "Multistage Sampling",
+                category: "Probability Sampling",
+                definition: "Kombinasi dari beberapa metode probability sampling yang dilakukan secara bertingkat (multi-stage) dari unit besar hingga unit terkecil.",
+                purpose: "Digunakan untuk survei berskala nasional yang sangat besar dan kompleks untuk mengefisiensikan biaya dan mobilitas lapangan.",
+                example: "BPS melakukan Susenas dengan tahap 1 memilih kecamatan acak, tahap 2 memilih desa/kelurahan, tahap 3 memilih rukun tetangga (RT), dan tahap 4 memilih rumah tangga."
+            },
+            {
+                id: 6,
+                name: "Accidental Sampling (Incidental)",
+                category: "Non-Probability Sampling",
+                definition: "Teknik penentuan sampel berdasarkan kebetulan, yaitu siapa saja yang secara tidak sengaja bertemu dengan peneliti dapat dijadikan sampel bila dipandang cocok.",
+                purpose: "Digunakan untuk tahap eksplorasi awal, pengujian instrumen kuesioner, atau ketika peneliti menemui kesulitan mencari responden spesifik.",
+                example: "Peneliti mall intercept menanyai pengunjung yang lewat di depan sebuah gerai toko untuk menguji tanggapan produk baru dalam waktu 2 jam."
+            },
+            {
+                id: 7,
+                name: "Purposive Sampling (Judgmental)",
+                category: "Non-Probability Sampling",
+                definition: "Teknik penentuan sampel berdasarkan pertimbangan atau kriteria khusus tertentu yang ditetapkan oleh peneliti sesuai tujuan penelitian.",
+                purpose: "Sangat lazim dalam penelitian kualitatif atau studi kasus mendalam di mana informan kunci harus menguasai fenomena yang diteliti secara spesifik.",
+                example: "Penelitian mengenai tata kelola keuangan desa dengan memilih 5 kepala desa dan 5 bendahara desa yang desanya meraih predikat wajar tanpa pengecualian (WTP) berturut-turut."
+            },
+            {
+                id: 8,
+                name: "Quota Sampling",
+                category: "Non-Probability Sampling",
+                definition: "Teknik penarikan sampel dari populasi yang memiliki ciri-ciri tertentu sampai dengan jumlah kuota yang diinginkan terpenuhi.",
+                purpose: "Digunakan ketika peneliti ingin memastikan jumlah minimum representasi dari berbagai kategori demografis tanpa menggunakan kerangka sampel acak.",
+                example: "Lembaga survei menetapkan kuota 100 responden pemilih pemula di kota X, dengan komposisi persis 50 pria dan 50 wanita, lalu mencari responden sampai kuota penuh."
+            },
+            {
+                id: 9,
+                name: "Snowball Sampling (Chain-Referral)",
+                category: "Non-Probability Sampling",
+                definition: "Teknik penentuan sampel yang awalnya berjumlah kecil, kemudian sampel tersebut diminta menunjuk atau merekomendasikan subjek lain untuk melengkapi data.",
+                purpose: "Digunakan pada populasi tersembunyi, tertutup, atau marjinal yang sulit dijangkau karena faktor privasi atau sensitivitas sosial.",
+                example: "Penelitian tentang pola hidup komunitas penderita penyakit langka tertentu atau jaringan mantan pecandu narkoba yang saling merekomendasikan kenalan mereka."
+            },
+            {
+                id: 10,
+                name: "Saturation Sampling (Sensus)",
+                category: "Non-Probability Sampling",
+                definition: "Teknik penentuan sampel di mana seluruh anggota populasi digunakan sebagai sampel. Sering disebut juga sebagai sensus.",
+                purpose: "Digunakan ketika jumlah populasi relatif kecil (biasanya kurang dari 30 orang) atau ketika peneliti ingin generalisasi mutlak tanpa kesalahan sampling.",
+                example: "Penelitian evaluasi kinerja pada seluruh pegawai di kantor dinas tertentu yang hanya berjumlah 22 orang staf."
+            }
+        ];
+
+        // State variables
+        let currentPage = 1;
+        let pageSize = 5;
+        let currentSearch = "";
+        let currentCategory = "all";
+        let sortField = "name";
+        let sortDirection = "asc";
+
+        // DOM Elements
+        const tableBody = document.getElementById("tableBody");
+        const searchInput = document.getElementById("searchInput");
+        const categoryFilter = document.getElementById("categoryFilter");
+        const pageSizeSelect = document.getElementById("pageSizeSelect");
+        const tableInfo = document.getElementById("tableInfo");
+        const paginationControls = document.getElementById("paginationControls");
+        const statTotal = document.getElementById("stat-total");
+        const statProb = document.getElementById("stat-prob");
+        const statNonProb = document.getElementById("stat-nonprob");
+
+        // Initialize App
+        function init() {
+            updateStats();
+            renderTable();
+        }
+
+        function updateStats() {
+            statTotal.textContent = samplingData.length;
+            const probCount = samplingData.filter(item => item.category === "Probability Sampling").length;
+            statProb.textContent = probCount;
+            statNonProb.textContent = samplingData.length - probCount;
+        }
+
+        function getFilteredData() {
+            return samplingData.filter(item => {
+                const matchesSearch = item.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                                      item.definition.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                                      item.example.toLowerCase().includes(currentSearch.toLowerCase());
+                const matchesCategory = currentCategory === "all" || item.category === currentCategory;
+                return matchesSearch && matchesCategory;
+            }).sort((a, b) => {
+                let valA = a[sortField].toLowerCase();
+                let valB = b[sortField].toLowerCase();
+                if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function renderTable() {
+            const filtered = getFilteredData();
+            const totalRows = filtered.length;
+            
+            // Handle pagination sizes
+            let paginatedData = [];
+            let totalPages = 1;
+
+            if (pageSize === "all") {
+                paginatedData = filtered;
+            } else {
+                const size = parseInt(pageSize);
+                totalPages = Math.ceil(totalRows / size) || 1;
+                if (currentPage > totalPages) currentPage = totalPages;
+                const start = (currentPage - 1) * size;
+                paginatedData = filtered.slice(start, start + size);
+            }
+
+            // Render table rows
+            tableBody.innerHTML = "";
+            if (paginatedData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center py-12 text-slate-400">
+                            <i class="fa-solid fa-folder-open text-3xl mb-2 block"></i>
+                            Tidak ditemukan teknik sampling yang sesuai dengan kriteria pencarian.
+                        </td>
+                    </tr>
+                `;
+            } else {
+                paginatedData.forEach(item => {
+                    const badgeClass = item.category === "Probability Sampling" 
+                        ? "bg-blue-50 text-blue-700 border-blue-200" 
+                        : "bg-amber-50 text-amber-700 border-amber-200";
+                    
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-slate-50/80 transition-colors group";
+                    tr.innerHTML = `
+                        <td class="py-4 px-6 font-semibold text-slate-900">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full ${item.category === 'Probability Sampling' ? 'bg-blue-500' : 'bg-amber-500'}"></span>
+                                ${item.name}
+                            </div>
+                        </td>
+                        <td class="py-4 px-6">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${badgeClass}">
+                                ${item.category}
+                            </span>
+                        </td>
+                        <td class="py-4 px-6 text-slate-600 max-w-md truncate">
+                            ${item.definition}
+                        </td>
+                        <td class="py-4 px-6 text-center">
+                            <button onclick="openModal(${item.id})" class="bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition-all shadow-sm inline-flex items-center gap-1.5 group-hover:shadow">
+                                <i class="fa-solid fa-eye"></i> Detail
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            }
+
+            // Render pagination info
+            if (pageSize === "all") {
+                tableInfo.textContent = `Menampilkan seluruh ${totalRows} data`;
+                paginationControls.innerHTML = "";
+            } else {
+                const size = parseInt(pageSize);
+                const startRange = totalRows === 0 ? 0 : (currentPage - 1) * size + 1;
+                const endRange = Math.min(currentPage * size, totalRows);
+                tableInfo.textContent = `Menampilkan ${startRange} - ${endRange} dari ${totalRows} data`;
+                renderPaginationButtons(totalPages);
+            }
+        }
+
+        function renderPaginationButtons(totalPages) {
+            paginationControls.innerHTML = "";
+
+            // Previous Button
+            const prevBtn = document.createElement("button");
+            prevBtn.innerHTML = `<i class="fa-solid fa-chevron-left text-xs"></i>`;
+            prevBtn.className = `px-3 py-2 rounded-xl text-sm font-medium border ${currentPage === 1 ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'}`;
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; renderTable(); } };
+            paginationControls.appendChild(prevBtn);
+
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    const pageBtn = document.createElement("button");
+                    pageBtn.textContent = i;
+                    pageBtn.className = `px-3.5 py-2 rounded-xl text-sm font-semibold border transition-all ${i === currentPage ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'}`;
+                    pageBtn.onclick = () => { currentPage = i; renderTable(); };
+                    paginationControls.appendChild(pageBtn);
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    const span = document.createElement("span");
+                    span.textContent = "...";
+                    span.className = "px-2 text-slate-400 text-sm";
+                    paginationControls.appendChild(span);
+                }
+            }
+
+            // Next Button
+            const nextBtn = document.createElement("button");
+            nextBtn.innerHTML = `<i class="fa-solid fa-chevron-right text-xs"></i>`;
+            nextBtn.className = `px-3 py-2 rounded-xl text-sm font-medium border ${currentPage === totalPages || totalPages === 0 ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'}`;
+            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+            nextBtn.onclick = () => { if (currentPage < totalPages) { currentPage++; renderTable(); } };
+            paginationControls.appendChild(nextBtn);
+        }
+
+        // Event Handlers
+        function handleSearch() {
+            currentSearch = searchInput.value;
+            currentPage = 1;
+            renderTable();
+        }
+
+        function handleFilter() {
+            currentCategory = categoryFilter.value;
+            currentPage = 1;
+            renderTable();
+        }
+
+        function changePageSize() {
+            pageSize = pageSizeSelect.value;
+            currentPage = 1;
+            renderTable();
+        }
+
+        function sortTable(field) {
+            if (sortField === field) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortField = field;
+                sortDirection = 'asc';
+            }
+            renderTable();
+        }
+
+        // Modal Controls
+        function openModal(id) {
+            const item = samplingData.find(d => d.id === id);
+            if (!item) return;
+
+            document.getElementById("modalTitle").textContent = item.name;
+            document.getElementById("modalCategory").textContent = item.category;
+            document.getElementById("modalDefinition").textContent = item.definition;
+            document.getElementById("modalPurpose").textContent = item.purpose;
+            document.getElementById("modalExample").textContent = item.example;
+
+            const modal = document.getElementById("detailModal");
+            modal.classList.remove("hidden");
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("detailModal");
+            modal.classList.add("hidden");
+        }
+
+        function openStatsModal() {
+            document.getElementById("statsModal").classList.remove("hidden");
+        }
+
+        function closeStatsModal() {
+            document.getElementById("statsModal").classList.add("hidden");
+        }
+
+        // Export functionality (mock copy/download summary)
+        function exportData() {
+            const textContent = samplingData.map(d => `${d.name} (${d.category})\nDefinisi: ${d.definition}\nTujuan: ${d.purpose}\nContoh: ${d.example}\n\n`).join("--------------------------------------------------\n");
+            
+            const textArea = document.createElement("textarea");
+            textArea.value = textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Ringkasan seluruh teknik sampling berhasil disalin ke clipboard!");
+            } catch (err) {
+                showToast("Gagal menyalin data.");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            document.getElementById("toastMessage").textContent = message;
+            toast.classList.remove("translate-y-20", "opacity-0");
+            setTimeout(() => {
+                toast.classList.add("translate-y-20", "opacity-0");
+            }, 3500);
+        }
+
+        // Window load initialization
+        window.onload = function() {
+            init();
+        }
+    </script>
+</body>
+</html>

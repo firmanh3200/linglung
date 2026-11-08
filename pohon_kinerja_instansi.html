@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Penyusunan Pohon Kinerja Instansi (Cascade Performance Tree)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Tree Connector Lines */
+        .tree-node::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -20px;
+            width: 20px;
+            height: 50%;
+            border-left: 2px solid #cbd5e1;
+            border-bottom: 2px solid #cbd5e1;
+        }
+        .tree-branch::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -20px;
+            width: 20px;
+            height: 2px;
+            background-color: #cbd5e1;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col font-sans antialiased">
+
+    <!-- Header Navbar -->
+    <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-700 p-2.5 rounded-xl shadow-inner text-indigo-200">
+                    <i class="fa-solid fa-sitemap text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Pohon Kinerja Instansi</h1>
+                    <p class="text-xs text-indigo-300">Cascade Performance Tree & Perencanaan Strategis</p>
+                </div>
+            </div>
+            
+            <!-- Aksi Global / Toolbar -->
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="openModalVision()" class="bg-indigo-800 hover:bg-indigo-700 text-indigo-100 text-xs font-medium px-3.5 py-2 rounded-lg transition border border-indigo-700 shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye"></i> Visi & Misi Utama
+                </button>
+                <button onclick="openInfoModal()" class="bg-indigo-800 hover:bg-indigo-700 text-indigo-100 text-xs font-medium px-3.5 py-2 rounded-lg transition border border-indigo-700 shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info"></i> Panduan
+                </button>
+                <button onclick="exportData()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium px-3.5 py-2 rounded-lg transition shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i> Ekspor JSON
+                </button>
+                <label class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium px-3.5 py-2 rounded-lg transition shadow-sm cursor-pointer flex items-center gap-2">
+                    <i class="fa-solid fa-upload"></i> Impor JSON
+                    <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
+                </label>
+                <button onclick="resetData()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-medium px-3 py-2 rounded-lg transition shadow-sm" title="Reset Semua Data">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
+
+        <!-- Notifikasi Pesan Kustom -->
+        <div id="toastMessage" class="hidden fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transition transform duration-300">
+            <span id="toastIcon" class="text-emerald-400 text-lg"></span>
+            <span id="toastText" class="text-sm font-medium">Berhasil menyimpan data!</span>
+        </div>
+
+        <!-- Dashboard Statistik -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sasaran Strategis</p>
+                    <h3 id="statLevel1" class="text-2xl font-bold text-indigo-900 mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-crosshairs"></i>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Indikator Kinerja (IKU)</p>
+                    <h3 id="statLevel2" class="text-2xl font-bold text-blue-900 mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Program / Kegiatan</p>
+                    <h3 id="statLevel3" class="text-2xl font-bold text-amber-900 mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sub-Kegiatan / Aksi</p>
+                    <h3 id="statLevel4" class="text-2xl font-bold text-emerald-900 mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visi Misi Ringkasan Banner -->
+        <div id="visionBanner" class="bg-gradient-to-r from-indigo-900 to-blue-800 text-white p-5 rounded-2xl shadow-md relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
+                <i class="fa-solid fa-mountain-sun"></i>
+            </div>
+            <div class="space-y-1 z-10">
+                <span class="bg-indigo-700/60 text-indigo-200 text-xs px-2.5 py-1 rounded-md font-semibold tracking-wide uppercase">Level 0: Visi & Misi Instansi</span>
+                <h2 id="displayVision" class="text-lg font-bold">Belum ada Visi Instansi ditetapkan.</h2>
+                <p id="displayMission" class="text-sm text-indigo-200 italic">Klik tombol edit untuk mengisi Visi dan Misi instansi Anda.</p>
+            </div>
+            <button onclick="openModalVision()" class="z-10 bg-white/10 hover:bg-white/20 text-white text-xs font-medium px-4 py-2 rounded-xl transition border border-white/20 flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Visi/Misi
+            </button>
+        </div>
+
+        <!-- Kontrol Tampilan & Pencarian -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-2 w-full md:w-auto">
+                <div class="relative flex-1 md:w-80">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="searchInput" oninput="renderApp()" placeholder="Cari sasaran, IKU, program, sub-kegiatan..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <!-- Tab Switcher View -->
+            <div class="flex items-center bg-slate-100 p-1 rounded-xl w-full md:w-auto justify-center">
+                <button id="btnTreeView" onclick="switchView('tree')" class="flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold transition bg-white text-indigo-900 shadow-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-sitemap"></i> Tampilan Pohon (Tree)
+                </button>
+                <button id="btnTableView" onclick="switchView('table')" class="flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold transition text-slate-600 hover:text-slate-900 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-table-cells"></i> Tampilan Matriks Tabel
+                </button>
+            </div>
+
+            <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                <button onclick="openNodeModal('add', 1, null)" class="w-full md:w-auto bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Tambah Sasaran (Level 1)
+                </button>
+            </div>
+        </div>
+
+        <!-- Workspace Utama -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 min-h-[400px]">
+            <!-- Tree View Container -->
+            <div id="treeViewContainer" class="space-y-6">
+                <!-- Data akan dirender secara dinamis oleh JavaScript -->
+            </div>
+
+            <!-- Table View Container -->
+            <div id="tableViewContainer" class="hidden overflow-x-auto custom-scrollbar">
+                <!-- Tabel matriks akan dirender di sini -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            Aplikasi Penyusunan Pohon Kinerja Instansi &copy; 2026. Data tersimpan secara otomatis dan aman di browser Anda.
+        </div>
+    </footer>
+
+    <!-- MODAL: Edit Visi Misi -->
+    <div id="modalVision" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 transform transition-all">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye text-indigo-600"></i> Pengaturan Visi & Misi Instansi (Level 0)
+                </h3>
+                <button onclick="closeModalVision()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="visionForm" onsubmit="saveVision(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Visi Instansi</label>
+                    <textarea id="inputVision" rows="2" required placeholder="Contoh: Terwujudnya Pelayanan Publik yang Prima, Akuntabel, dan Inovatif" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Misi Instansi</label>
+                    <textarea id="inputMission" rows="3" required placeholder="Contoh: 1. Meningkatkan kualitas tata kelola pemerintahan..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeModalVision()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-xl transition">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-md transition">Simpan Visi Misi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Tambah/Edit Node Pohon Kinerja -->
+    <div id="modalNode" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalNodeTitle" class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-sitemap text-indigo-600"></i> Tambah Elemen Kinerja
+                </h3>
+                <button onclick="closeNodeModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="nodeForm" onsubmit="saveNode(event)" class="space-y-4">
+                <input type="hidden" id="nodeAction">
+                <input type="hidden" id="nodeLevel">
+                <input type="hidden" id="nodeParentId">
+                <input type="hidden" id="nodeId">
+
+                <div>
+                    <label id="labelNodeTitle" class="block text-xs font-semibold text-slate-600 mb-1">Judul Sasaran Strategis</label>
+                    <input type="text" id="inputNodeTitle" required placeholder="Masukkan nama/deskripsi..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div id="wrapperNodeIndicator">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Indikator Kinerja Utama (IKU) / Ukuran Keberhasilan</label>
+                    <input type="text" id="inputNodeIndicator" placeholder="Contoh: Persentase kepuasan masyarakat (%)" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4" id="wrapperNodeTarget">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Target</label>
+                        <input type="text" id="inputNodeTarget" placeholder="Contoh: 95%" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Satuan</label>
+                        <input type="text" id="inputNodeUnit" placeholder="Contoh: % / Dokumen / Orang" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Penanggung Jawab / Unit Kerja (Opsional)</label>
+                    <input type="text" id="inputNodePic" placeholder="Contoh: Sekretariat / Bidang Perencanaan" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeNodeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-xl transition">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-md transition">Simpan Elemen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Panduan Info -->
+    <div id="modalInfo" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 max-h-[85vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-indigo-600"></i> Panduan Penyusunan Pohon Kinerja Instansi
+                </h3>
+                <button onclick="closeInfoModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-4 text-sm text-slate-600">
+                <div class="p-3 bg-indigo-50 rounded-xl border border-indigo-100 text-indigo-900">
+                    <p class="font-medium">Pohon Kinerja (Cascade Performance Tree) adalah kerangka logis yang menghubungkan Visi & Misi hingga ke tingkat aksi operasional sehari-hari.</p>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3">
+                        <span class="bg-indigo-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-800">Level 1: Tujuan / Sasaran Strategis</h4>
+                            <p class="text-xs">Merupakan kondisi nyata yang ingin dicapai instansi dalam jangka menengah (1-5 tahun).</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-800">Level 2: Indikator Kinerja Utama (IKU) & Target</h4>
+                            <p class="text-xs">Ukuran kuantitatif atau kualitatif keberhasilan pencapaian sasaran strategis beserta target tahunannya.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="bg-amber-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-800">Level 3: Program / Kegiatan Pendukung</h4>
+                            <p class="text-xs">Kumpulan kegiatan atau instrumen kebijakan untuk mencapai IKU.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="bg-emerald-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-800">Level 4: Sub-Kegiatan / Aksi Nyata</h4>
+                            <p class="text-xs">Rincian tindakan operasional harian yang dilaksanakan oleh unit kerja / pegawai.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeInfoModal()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-md transition">Mengerti</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Aplikasi -->
+    <script>
+        // Struktur Data Utama
+        let appData = {
+            vision: "Terwujudnya Instansi Pemerintah yang Akuntabel, Transparan, dan Berorientasi Hasil",
+            mission: "1. Meningkatkan kualitas perencanaan dan akuntabilitas kinerja.\n2. Mengoptimalkan pelayanan prima berbasis digital.",
+            tree: []
+        };
+
+        let currentView = 'tree'; // 'tree' or 'table'
+        let collapsedNodes = {}; // Menyimpan status collapse id node
+
+        // Inisialisasi awal saat halaman dimuat
+        window.onload = function() {
+            loadFromLocalStorage();
+            renderApp();
+        };
+
+        // Simpan ke LocalStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('pohon_kinerja_instansi_data', JSON.stringify(appData));
+            updateStats();
+        }
+
+        // Ambil dari LocalStorage
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('pohon_kinerja_instansi_data');
+            if (saved) {
+                try {
+                    appData = JSON.parse(saved);
+                } catch (e) {
+                    console.error("Gagal memparsing data lokal", e);
+                }
+            } else {
+                // Data Dummy Awal jika kosong
+                appData.tree = [
+                    {
+                        id: generateId(),
+                        title: "Meningkatnya Akuntabilitas Kinerja Instansi",
+                        indicator: "Nilai Evaluasi SAKIP Instansi",
+                        target: "AA",
+                        unit: "Predikat",
+                        pic: "Inspektorat / Perencanaan",
+                        children: [
+                            {
+                                id: generateId(),
+                                title: "Program Koordinasi dan Perencanaan Pembangunan",
+                                indicator: "Persentase Dokumen Perencanaan Tepat Waktu",
+                                target: "100",
+                                unit: "%",
+                                pic: "Sekretariat",
+                                children: [
+                                    {
+                                        id: generateId(),
+                                        title: "Penyusunan Dokumen Renstra dan LKJiP",
+                                        indicator: "Jumlah Dokumen Selesai",
+                                        target: "2",
+                                        unit: "Dokumen",
+                                        pic: "Sub Bagian Perencanaan",
+                                        children: []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ];
+                saveToLocalStorage();
+            }
+        }
+
+        function generateId() {
+            return 'node_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Tampilkan Toast Pesan
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toastMessage');
+            const icon = document.getElementById('toastIcon');
+            const text = document.getElementById('toastText');
+
+            text.textContent = message;
+            icon.className = isError ? "fa-solid fa-circle-exclamation text-rose-400 text-lg" : "fa-solid fa-circle-check text-emerald-400 text-lg";
+            
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Render Aplikasi Utama
+        function renderApp() {
+            // Update Visi Misi UI
+            document.getElementById('displayVision').textContent = appData.vision || "Belum ada Visi ditetapkan.";
+            document.getElementById('displayMission').textContent = appData.mission || "Belum ada Misi ditetapkan.";
+
+            updateStats();
+
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+
+            if (currentView === 'tree') {
+                document.getElementById('treeViewContainer').classList.remove('hidden');
+                document.getElementById('tableViewContainer').classList.add('hidden');
+                renderTreeView(appData.tree, document.getElementById('treeViewContainer'), 1, searchQuery);
+            } else {
+                document.getElementById('treeViewContainer').classList.add('hidden');
+                document.getElementById('tableViewContainer').classList.remove('hidden');
+                renderTableView();
+            }
+        }
+
+        // Update Statistik Dashboard
+        function updateStats() {
+            let count1 = 0, count2 = 0, count3 = 0, count4 = 0;
+
+            function countNodes(nodes, level) {
+                if (!nodes) return;
+                nodes.forEach(n => {
+                    if (level === 1) count1++;
+                    if (level === 2) count2++;
+                    if (level === 3) count3++;
+                    if (level === 4) count4++;
+                    if (n.children && n.children.length > 0) {
+                        countNodes(n.children, level + 1);
+                    }
+                });
+            }
+
+            countNodes(appData.tree, 1);
+
+            document.getElementById('statLevel1').textContent = count1;
+            document.getElementById('statLevel2').textContent = count2;
+            document.getElementById('statLevel3').textContent = count3;
+            document.getElementById('statLevel4').textContent = count4;
+        }
+
+        // Switch View Mode
+        function switchView(view) {
+            currentView = view;
+            const btnTree = document.getElementById('btnTreeView');
+            const btnTable = document.getElementById('btnTableView');
+
+            if (view === 'tree') {
+                btnTree.className = "flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold transition bg-white text-indigo-900 shadow-sm flex items-center justify-center gap-2";
+                btnTable.className = "flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold transition text-slate-600 hover:text-slate-900 flex items-center justify-center gap-2";
+            } else {
+                btnTable.className = "flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold transition bg-white text-indigo-900 shadow-sm flex items-center justify-center gap-2";
+                btnTree.className = "flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold transition text-slate-600 hover:text-slate-900 flex items-center justify-center gap-2";
+            }
+            renderApp();
+        }
+
+        // Render Tree View UI (Rekursif)
+        function renderTreeView(nodes, container, level, searchQuery) {
+            container.innerHTML = '';
+
+            if (!nodes || nodes.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                        <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-2"></i>
+                        <p class="text-sm font-medium text-slate-600">Belum ada Sasaran Strategis (Level 1) yang ditambahkan.</p>
+                        <button onclick="openNodeModal('add', 1, null)" class="mt-3 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-500 transition">Tambah Sasaran Pertama</button>
+                    </div>
+                `;
+                return;
+            }
+
+            nodes.forEach(node => {
+                // Filter pencarian
+                const matchesSearch = searchQuery === '' || 
+                    node.title.toLowerCase().includes(searchQuery) || 
+                    (node.indicator && node.indicator.toLowerCase().includes(searchQuery)) ||
+                    (node.pic && node.pic.toLowerCase().includes(searchQuery));
+
+                const isCollapsed = collapsedNodes[node.id] || false;
+                const hasChildren = node.children && node.children.length > 0;
+
+                // Warna badge level
+                let badgeBg = "bg-indigo-100 text-indigo-800 border-indigo-200";
+                let levelName = "Level 1: Sasaran Strategis";
+                if (level === 2) { badgeBg = "bg-blue-100 text-blue-800 border-blue-200"; levelName = "Level 2: IKU & Target"; }
+                else if (level === 3) { badgeBg = "bg-amber-100 text-amber-800 border-amber-200"; levelName = "Level 3: Program / Kegiatan"; }
+                else if (level === 4) { badgeBg = "bg-emerald-100 text-emerald-800 border-emerald-200"; levelName = "Level 4: Sub-Kegiatan / Aksi"; }
+
+                const cardDiv = document.createElement('div');
+                cardDiv.className = `relative transition-all ${matchesSearch ? '' : 'opacity-40 hover:opacity-100'}`;
+                
+                cardDiv.innerHTML = `
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 hover:shadow-md transition">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 pb-3 border-b border-slate-100">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-md border ${badgeBg}">${levelName}</span>
+                                ${node.pic ? `<span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md flex items-center gap-1"><i class="fa-solid fa-user-tie text-slate-400"></i> ${node.pic}</span>` : ''}
+                            </div>
+                            <div class="flex items-center space-x-1.5 self-end md:self-auto">
+                                ${level < 4 ? `
+                                    <button onclick="openNodeModal('add', ${level + 1}, '${node.id}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5" title="Tambah Level di Bawahnya">
+                                        <i class="fa-solid fa-plus text-[10px]"></i> Tambah Sub
+                                    </button>
+                                ` : ''}
+                                <button onclick="openNodeModal('edit', ${level}, null, '${node.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 transition rounded-lg hover:bg-slate-50" title="Edit">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button onclick="deleteNode('${node.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 transition rounded-lg hover:bg-slate-50" title="Hapus">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                                ${hasChildren ? `
+                                    <button onclick="toggleCollapse('${node.id}')" class="p-1.5 text-slate-400 hover:text-slate-700 transition rounded-lg hover:bg-slate-50 ml-2" title="${isCollapsed ? 'Expand' : 'Collapse'}">
+                                        <i class="fa-solid ${isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'}"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="pt-3 space-y-2">
+                            <h4 class="text-sm font-bold text-slate-800">${node.title}</h4>
+                            ${node.indicator ? `
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <div><span class="font-semibold text-slate-500">IKU:</span> <span class="text-slate-700">${node.indicator}</span></div>
+                                    <div><span class="font-semibold text-slate-500">Target:</span> <span class="font-bold text-indigo-600">${node.target || '-'} ${node.unit || ''}</span></div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Container Anak (Children Tree) -->
+                    <div id="children_${node.id}" class="pl-6 md:pl-10 mt-3 space-y-3 border-l-2 border-indigo-100 ml-4 ${isCollapsed ? 'hidden' : ''}"></div>
+                `;
+
+                container.appendChild(cardDiv);
+
+                // Render anak secara rekursif jika ada
+                if (hasChildren) {
+                    const childContainer = cardDiv.querySelector(`#children_${node.id}`);
+                    renderTreeView(node.children, childContainer, level + 1, searchQuery);
+                }
+            });
+        }
+
+        // Render Matriks Tabel View
+        function renderTableView() {
+            const container = document.getElementById('tableViewContainer');
+            
+            let rowsHtml = '';
+            
+            function flattenTree(nodes, l1='', l2='', l3='', l4='') {
+                if (!nodes) return;
+                nodes.forEach(n => {
+                    let curL1 = l1, curL2 = l2, curL3 = l3, curL4 = l4;
+                    if (n.level === 1 || (!l1 && !n.children)) { /* Tentukan level */ }
+                    
+                    // Rekursif kumpulkan baris datar
+                    if (n.children && n.children.length > 0) {
+                        // Traverse anak
+                    }
+                });
+            }
+
+            // Membangun baris tabel matriks secara komprehensif
+            let tableRows = [];
+            function traverseForTable(nodes, currentPath = {}) {
+                if (!nodes) return;
+                nodes.forEach(node => {
+                    let path = { ...currentPath };
+                    if (!path.l1) path.l1 = node;
+                    else if (!path.l2) path.l2 = node;
+                    else if (!path.l3) path.l3 = node;
+                    else if (!path.l4) path.l4 = node;
+
+                    if (!node.children || node.children.length === 0) {
+                        tableRows.push({ ...path });
+                    } else {
+                        traverseForTable(node.children, path);
+                    }
+                });
+            }
+
+            // Jika node tunggal tanpa anak
+            function traverseSingle(nodes, parentData = {}) {
+                if (!nodes) return;
+                nodes.forEach(n => {
+                    let item = { ...parentData };
+                    if (!item.lvl1 && n) item.lvl1 = n;
+                    else if (!item.lvl2 && n) item.lvl2 = n;
+                    else if (!item.lvl3 && n) item.lvl3 = n;
+                    else if (!item.lvl4 && n) item.lvl4 = n;
+
+                    if (n.children && n.children.length > 0) {
+                        traverseSingle(n.children, item);
+                    } else {
+                        tableRows.push(item);
+                    }
+                });
+            }
+
+            appData.tree.forEach(l1 => {
+                if (!l1.children || l1.children.length === 0) {
+                    tableRows.push({ lvl1: l1, lvl2: null, lvl3: null, lvl4: null });
+                } else {
+                    l1.children.forEach(l2 => {
+                        if (!l2.children || l2.children.length === 0) {
+                            tableRows.push({ lvl1: l1, lvl2: l2, lvl3: null, lvl4: null });
+                        } else {
+                            l2.children.forEach(l3 => {
+                                if (!l3.children || l3.children.length === 0) {
+                                    tableRows.push({ lvl1: l1, lvl2: l2, lvl3: l3, lvl4: null });
+                                } else {
+                                    l3.children.forEach(l4 => {
+                                        tableRows.push({ lvl1: l1, lvl2: l2, lvl3: l3, lvl4: l4 });
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+            if (tableRows.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-sm text-slate-400">Belum ada data untuk ditampilkan dalam bentuk tabel matriks.</div>`;
+                return;
+            }
+
+            let html = `
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-indigo-900 text-white">
+                            <th class="p-3 border border-indigo-800 rounded-tl-xl font-semibold">Sasaran Strategis (L1)</th>
+                            <th class="p-3 border border-indigo-800 font-semibold">IKU & Target (L2)</th>
+                            <th class="p-3 border border-indigo-800 font-semibold">Program / Kegiatan (L3)</th>
+                            <th class="p-3 border border-indigo-800 rounded-tr-xl font-semibold">Sub-Kegiatan / Aksi (L4)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+            `;
+
+            tableRows.forEach((row, idx) => {
+                html += `
+                    <tr class="${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'} hover:bg-indigo-50/30 transition">
+                        <td class="p-3 border border-slate-200 font-medium text-slate-800 align-top">
+                            ${row.lvl1 ? `<strong>${row.lvl1.title}</strong><br><span class="text-[10px] text-slate-500">PIC: ${row.lvl1.pic || '-'}</span>` : '-'}
+                        </td>
+                        <td class="p-3 border border-slate-200 text-slate-700 align-top">
+                            ${row.lvl2 ? `<strong>${row.lvl2.title}</strong><br><span class="text-indigo-600">IKU: ${row.lvl2.indicator || '-'} (${row.lvl2.target || '-'} ${row.lvl2.unit || ''})</span>` : '-'}
+                        </td>
+                        <td class="p-3 border border-slate-200 text-slate-700 align-top">
+                            ${row.lvl3 ? `<strong>${row.lvl3.title}</strong><br><span class="text-slate-500">${row.lvl3.indicator || ''}</span>` : '-'}
+                        </td>
+                        <td class="p-3 border border-slate-200 text-slate-700 align-top">
+                            ${row.lvl4 ? `<strong>${row.lvl4.title}</strong><br><span class="text-emerald-700 font-medium">Target: ${row.lvl4.target || '-'} ${row.lvl4.unit || ''}</span>` : '-'}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        // Toggle Collapse Node
+        function toggleCollapse(id) {
+            collapsedNodes[id] = !collapsedNodes[id];
+            renderApp();
+        }
+
+        // Modal Visi Misi
+        function openModalVision() {
+            document.getElementById('inputVision').value = appData.vision;
+            document.getElementById('inputMission').value = appData.mission;
+            document.getElementById('modalVision').classList.remove('hidden');
+        }
+        function closeModalVision() {
+            document.getElementById('modalVision').classList.add('hidden');
+        }
+        function saveVision(e) {
+            e.preventDefault();
+            appData.vision = document.getElementById('inputVision').value;
+            appData.mission = document.getElementById('inputMission').value;
+            saveToLocalStorage();
+            closeModalVision();
+            renderApp();
+            showToast("Visi & Misi instansi berhasil diperbarui!");
+        }
+
+        // Modal Panduan
+        function openInfoModal() {
+            document.getElementById('modalInfo').classList.remove('hidden');
+        }
+        function closeInfoModal() {
+            document.getElementById('modalInfo').classList.add('hidden');
+        }
+
+        // Modal Node (Tambah / Edit)
+        function openNodeModal(action, level, parentId = null, nodeId = null) {
+            const modal = document.getElementById('modalNode');
+            document.getElementById('nodeAction').value = action;
+            document.getElementById('nodeLevel').value = level;
+            document.getElementById('nodeParentId').value = parentId || '';
+            document.getElementById('nodeId').value = nodeId || '';
+
+            const titleEl = document.getElementById('modalNodeTitle');
+            const labelTitle = document.getElementById('labelNodeTitle');
+            const inputTitle = document.getElementById('inputNodeTitle');
+            const inputIndicator = document.getElementById('inputNodeIndicator');
+            const inputTarget = document.getElementById('inputNodeTarget');
+            const inputUnit = document.getElementById('inputNodeUnit');
+            const inputPic = document.getElementById('inputNodePic');
+
+            // Set label berdasarkan level
+            const levelNames = {
+                1: "Sasaran Strategis",
+                2: "Indikator Kinerja Utama (IKU)",
+                3: "Program / Kegiatan Pendukung",
+                4: "Sub-Kegiatan / Aksi Nyata"
+            };
+
+            titleEl.innerHTML = `<i class="fa-solid fa-sitemap text-indigo-600"></i> ${action === 'add' ? 'Tambah' : 'Edit'} ${levelNames[level] || 'Elemen'}`;
+            labelTitle.textContent = `Judul ${levelNames[level]}`;
+
+            if (action === 'edit' && nodeId) {
+                const node = findNodeById(appData.tree, nodeId);
+                if (node) {
+                    inputTitle.value = node.title || '';
+                    inputIndicator.value = node.indicator || '';
+                    inputTarget.value = node.target || '';
+                    inputUnit.value = node.unit || '';
+                    inputPic.value = node.pic || '';
+                }
+            } else {
+                inputTitle.value = '';
+                inputIndicator.value = '';
+                inputTarget.value = '';
+                inputUnit.value = '';
+                inputPic.value = '';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeNodeModal() {
+            document.getElementById('modalNode').classList.add('hidden');
+        }
+
+        // Cari node berdasarkan ID secara rekursif
+        function findNodeById(nodes, id) {
+            if (!nodes) return null;
+            for (let n of nodes) {
+                if (n.id === id) return n;
+                if (n.children) {
+                    let found = findNodeById(n.children, id);
+                    if (found) return found;
+                }
+            }
+            return null;
+        }
+
+        // Hapus node berdasarkan ID
+        function deleteNode(id) {
+            if (confirm("Apakah Anda yakin ingin menghapus elemen ini beserta seluruh sub-elemen di bawahnya?")) {
+                appData.tree = removeNodeRecursive(appData.tree, id);
+                saveToLocalStorage();
+                renderApp();
+                showToast("Elemen berhasil dihapus.");
+            }
+        }
+
+        function removeNodeRecursive(nodes, id) {
+            if (!nodes) return [];
+            return nodes.filter(n => n.id !== id).map(n => {
+                if (n.children) {
+                    n.children = removeNodeRecursive(n.children, id);
+                }
+                return n;
+            });
+        }
+
+        // Simpan Node dari Form Modal
+        function saveNode(e) {
+            e.preventDefault();
+            const action = document.getElementById('nodeAction').value;
+            const level = parseInt(document.getElementById('nodeLevel').value);
+            const parentId = document.getElementById('nodeParentId').value;
+            const nodeId = document.getElementById('nodeId').value;
+
+            const title = document.getElementById('inputNodeTitle').value;
+            const indicator = document.getElementById('inputNodeIndicator').value;
+            const target = document.getElementById('inputNodeTarget').value;
+            const unit = document.getElementById('inputNodeUnit').value;
+            const pic = document.getElementById('inputNodePic').value;
+
+            if (action === 'add') {
+                const newNode = {
+                    id: generateId(),
+                    title: title,
+                    indicator: indicator,
+                    target: target,
+                    unit: unit,
+                    pic: pic,
+                    children: []
+                };
+
+                if (level === 1 || !parentId) {
+                    appData.tree.push(newNode);
+                } else {
+                    const parentNode = findNodeById(appData.tree, parentId);
+                    if (parentNode) {
+                        if (!parentNode.children) parentNode.children = [];
+                        parentNode.children.push(newNode);
+                    }
+                }
+                showToast("Elemen baru berhasil ditambahkan!");
+            } else if (action === 'edit') {
+                const node = findNodeById(appData.tree, nodeId);
+                if (node) {
+                    node.title = title;
+                    node.indicator = indicator;
+                    node.target = target;
+                    node.unit = unit;
+                    node.pic = pic;
+                }
+                showToast("Elemen berhasil diperbarui!");
+            }
+
+            saveToLocalStorage();
+            closeNodeModal();
+            renderApp();
+        }
+
+        // Ekspor Data ke JSON
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `pohon_kinerja_instansi_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Data berhasil diekspor ke file JSON!");
+        }
+
+        // Impor Data dari JSON
+        function importData(event) {
+            const fileReader = new FileReader();
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0], "UTF-8");
+                fileReader.onload = function(e) {
+                    try {
+                        const parsed = JSON.parse(e.target.result);
+                        if (parsed && parsed.tree) {
+                            appData = parsed;
+                            saveToLocalStorage();
+                            renderApp();
+                            showToast("Data pohon kinerja berhasil diimpor!");
+                        } else {
+                            showToast("Format file JSON tidak valid.", true);
+                        }
+                    } catch (err) {
+                        showToast("Gagal membaca file JSON.", true);
+                    }
+                };
+            }
+        }
+
+        // Reset Semua Data
+        function resetData() {
+            if (confirm("PERHATIAN: Seluruh data pohon kinerja dan visi misi akan dihapus permanen. Lanjutkan?")) {
+                localStorage.removeItem('pohon_kinerja_instansi_data');
+                appData = { vision: "", mission: "", tree: [] };
+                renderApp();
+                showToast("Semua data telah direset.");
+            }
+        }
+    </script>
+</body>
+</html>

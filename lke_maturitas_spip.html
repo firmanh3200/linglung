@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lembar Kerja Evaluasi Maturitas SPIP Terintegrasi (Peraturan BPKP No. 5 Tahun 2021)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter & Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN for interactive visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        governance: {
+                            50: '#f0f6fc',
+                            100: '#d9e8f6',
+                            500: '#1e40af',
+                            600: '#1d4ed8',
+                            700: '#1e3a8a',
+                            800: '#172554',
+                            900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-shadow { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased h-full flex flex-col">
+
+    <!-- Header Navigation -->
+    <header class="bg-governance-900 text-white shadow-xl sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-governance-700 p-2.5 rounded-xl border border-governance-600 shadow-inner">
+                    <i class="fa-solid fa-shield-halved text-2xl text-blue-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                        SPIP Terintegrasi <span class="text-xs bg-blue-500/30 text-blue-300 border border-blue-400/30 px-2 py-0.5 rounded-full font-medium">BPKP No. 5/2021</span>
+                    </h1>
+                    <p class="text-xs text-slate-300">Lembar Kerja Evaluasi Mandiri (Self-Assessment) Maturitas Penyelenggaraan SPIP</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2.5 flex-wrap">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-governance-700 text-white transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard & Hasil
+                </button>
+                <button onclick="switchTab('worksheet')" id="nav-worksheet" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-pen"></i> Lembar Kerja Penilaian
+                </button>
+                <button onclick="switchTab('aoi')" id="nav-aoi" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-list-check"></i> Rencana Tindak (AOI)
+                </button>
+                <button onclick="window.print()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow">
+                    <i class="fa-solid fa-print"></i> Cetak / PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Notification Banner / Info Instansi -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-governance-600 bg-governance-50 px-2.5 py-1 rounded-md border border-governance-100">Instansi / Pemda / Kementerian</span>
+                    <span id="statusBadge" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200">Belum Evaluasi Optimal</span>
+                </div>
+                <h2 id="instansiNameDisplay" class="text-lg font-bold text-slate-900">Pemerintah / Instansi Pemerintah Contoh</h2>
+                <p class="text-xs text-slate-500">Evaluasi berbasis 3 Komponen Utama: Penetapan Tujuan, Struktur & Proses, serta Pencapaian Hasil (termasuk MRI & IEPK).</p>
+            </div>
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="text-right hidden sm:block">
+                    <div class="text-xs text-slate-400 font-medium">Skor Maturitas Total</div>
+                    <div id="headerTotalScore" class="text-2xl font-black text-governance-700">0.00</div>
+                </div>
+                <div class="bg-governance-50 border border-governance-100 p-3 rounded-xl flex items-center gap-3 w-full md:w-auto justify-between">
+                    <div>
+                        <div class="text-[10px] uppercase font-bold text-slate-400">Level Maturitas</div>
+                        <div id="headerMaturityLevel" class="text-base font-extrabold text-governance-900">Level 1 (Rintisan)</div>
+                    </div>
+                    <div id="headerIconLevel" class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center font-bold text-sm">
+                        1.0
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 1: DASHBOARD ==================== -->
+        <div id="tab-dashboard" class="space-y-6">
+            <!-- Top Metric Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Card 1 -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full -z-0 opacity-50"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-semibold text-slate-500">I. Penetapan Tujuan</span>
+                            <span class="p-2 bg-blue-100 text-blue-600 rounded-xl text-xs"><i class="fa-solid fa-bullseye"></i></span>
+                        </div>
+                        <div class="mt-3 flex items-baseline gap-2">
+                            <span id="scoreKomponen1" class="text-3xl font-extrabold text-slate-900">0.00</span>
+                            <span class="text-xs text-slate-400">/ 5.00</span>
+                        </div>
+                        <div class="mt-3">
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div id="barKomponen1" class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                            <span id="statusKomponen1" class="text-[11px] font-medium text-slate-500 mt-1 block">Level: Rintisan</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-bl-full -z-0 opacity-50"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-semibold text-slate-500">II. Struktur & Proses</span>
+                            <span class="p-2 bg-indigo-100 text-indigo-600 rounded-xl text-xs"><i class="fa-solid fa-cubes"></i></span>
+                        </div>
+                        <div class="mt-3 flex items-baseline gap-2">
+                            <span id="scoreKomponen2" class="text-3xl font-extrabold text-slate-900">0.00</span>
+                            <span class="text-xs text-slate-400">/ 5.00</span>
+                        </div>
+                        <div class="mt-3">
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div id="barKomponen2" class="bg-indigo-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                            <span id="statusKomponen2" class="text-[11px] font-medium text-slate-500 mt-1 block">Level: Rintisan</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-bl-full -z-0 opacity-50"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-semibold text-slate-500">III. Pencapaian Hasil</span>
+                            <span class="p-2 bg-emerald-100 text-emerald-600 rounded-xl text-xs"><i class="fa-solid fa-chart-line"></i></span>
+                        </div>
+                        <div class="mt-3 flex items-baseline gap-2">
+                            <span id="scoreKomponen3" class="text-3xl font-extrabold text-slate-900">0.00</span>
+                            <span class="text-xs text-slate-400">/ 5.00</span>
+                        </div>
+                        <div class="mt-3">
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div id="barKomponen3" class="bg-emerald-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                            <span id="statusKomponen3" class="text-[11px] font-medium text-slate-500 mt-1 block">Level: Rintisan</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 4 (MRI & IEPK Integration) -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-purple-50 rounded-bl-full -z-0 opacity-50"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-semibold text-slate-500">IV. Indeks Strategis (MRI & IEPK)</span>
+                            <span class="p-2 bg-purple-100 text-purple-600 rounded-xl text-xs"><i class="fa-solid fa-shield-virus"></i></span>
+                        </div>
+                        <div class="mt-3 flex items-baseline gap-2">
+                            <span id="scoreKomponen4" class="text-3xl font-extrabold text-slate-900">0.00</span>
+                            <span class="text-xs text-slate-400">/ 5.00</span>
+                        </div>
+                        <div class="mt-3">
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div id="barKomponen4" class="bg-purple-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                            <span id="statusKomponen4" class="text-[11px] font-medium text-slate-500 mt-1 block">MRI & IEPK Terintegrasi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and Interpretation Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Radar / Bar Chart Container -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-chart-radar text-governance-600"></i> Grafik Profil Maturitas SPIP Terintegrasi
+                        </h3>
+                        <span class="text-xs text-slate-400">Skala 1.0 - 5.0</span>
+                    </div>
+                    <div class="relative w-full h-72 flex items-center justify-center">
+                        <canvas id="maturityRadarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Interpretation Card -->
+                <div class="bg-governance-900 text-white p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-blue-300">Kesimpulan Evaluasi</span>
+                            <i class="fa-solid fa-award text-amber-400 text-xl"></i>
+                        </div>
+                        <h3 id="resultLevelTitle" class="text-xl font-bold text-white">Level 1 - Rintisan</h3>
+                        <p id="resultLevelDesc" class="text-xs text-slate-300 mt-2 leading-relaxed">
+                            Penyelenggaraan SPIP belum terstruktur. Pengendalian intern dilakukan secara insidental dan belum didokumentasikan dengan baik.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-700/80 space-y-3">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-400">Target Minimal UU:</span>
+                            <span class="font-semibold text-emerald-400">Level 3 (Terdefinisi)</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-400">Status Target:</span>
+                            <span id="targetStatusText" class="font-semibold text-amber-400">Belum Tercapai</span>
+                        </div>
+                        <button onclick="switchTab('worksheet')" class="w-full mt-2 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl text-xs transition shadow flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-pen-to-square"></i> Mulai / Ubah Penilaian
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Component Summary Table -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <h3 class="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-table-list text-governance-600"></i> Ringkasan Parameter Penilaian Peraturan BPKP No. 5 Tahun 2021
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200">
+                            <tr>
+                                <th class="py-3 px-4">Komponen & Unsur SPIP</th>
+                                <th class="py-3 px-4 text-center">Bobot</th>
+                                <th class="py-3 px-4 text-center">Skor Evaluasi</th>
+                                <th class="py-3 px-4">Level Kinerja</th>
+                                <th class="py-3 px-4 text-right">Aksi Cepat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryTableBody" class="divide-y divide-slate-100 text-slate-700">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 2: WORKSHEET ==================== -->
+        <div id="tab-worksheet" class="space-y-6 hidden">
+            <!-- Instruction Box -->
+            <div class="bg-blue-50 border border-blue-200 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="flex items-start gap-3">
+                    <div class="p-2 bg-blue-600 text-white rounded-xl text-sm mt-0.5"><i class="fa-solid fa-circle-info"></i></div>
+                    <div>
+                        <h4 class="font-bold text-blue-900 text-sm">Panduan Pengisian Lembar Kerja</h4>
+                        <p class="text-xs text-blue-700 mt-0.5">Masukkan nilai skala 1.00 s.d. 5.00 atau pilih tingkat kematangan untuk setiap sub-unsur berikut berdasarkan bukti dukung yang valid.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <button onclick="resetData()" class="px-3 py-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-medium rounded-lg text-xs transition">Reset Default</button>
+                    <button onclick="saveDataToStorage()" class="px-4 py-2 bg-governance-600 hover:bg-governance-700 text-white font-medium rounded-lg text-xs transition shadow">Simpan Data</button>
+                </div>
+            </div>
+
+            <!-- Accordion / Category Selector -->
+            <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3" id="categoryTabs">
+                <button onclick="selectCategory(0)" id="cat-btn-0" class="px-4 py-2 rounded-xl text-xs font-bold bg-governance-700 text-white transition shadow-sm">I. Penetapan Tujuan</button>
+                <button onclick="selectCategory(1)" id="cat-btn-1" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:bg-slate-100 transition border border-slate-200">II. Struktur & Proses</button>
+                <button onclick="selectCategory(2)" id="cat-btn-2" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:bg-slate-100 transition border border-slate-200">III. Pencapaian Hasil</button>
+                <button onclick="selectCategory(3)" id="cat-btn-3" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:bg-slate-100 transition border border-slate-200">IV. Indeks Strategis (MRI & IEPK)</button>
+            </div>
+
+            <!-- Category Form Container -->
+            <div id="worksheetContainer" class="space-y-6">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <!-- Bottom navigation inside worksheet -->
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="switchTab('dashboard')" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-xl text-xs transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard
+                </button>
+                <button onclick="switchTab('aoi')" class="px-5 py-2.5 bg-governance-600 hover:bg-governance-700 text-white font-semibold rounded-xl text-xs transition shadow flex items-center gap-2">
+                    Lihat Rencana Tindak (AOI) <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 3: AOI (ACTION PLAN) ==================== -->
+        <div id="tab-aoi" class="space-y-6 hidden">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-governance-600"></i> Area of Improvement (AOI) & Rencana Tindak Lanjut
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Rekomendasi perbaikan otomatis berdasarkan parameter dengan skor di bawah 3.00 (Belum Terdefinisi Optimal).</p>
+                    </div>
+                    <button onclick="generateAOI()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl text-xs transition shadow flex items-center gap-2">
+                        <i class="fa-solid fa-rotate"></i> Perbarui Rekomendasi
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200">
+                            <tr>
+                                <th class="py-3 px-4">Parameter / Sub-Unsur</th>
+                                <th class="py-3 px-4 text-center">Skor Saat Ini</th>
+                                <th class="py-3 px-4">Rekomendasi Perbaikan (AOI)</th>
+                                <th class="py-3 px-4">Target Waktu & PIC</th>
+                            </tr>
+                        </thead>
+                        <tbody id="aoiTableBody" class="divide-y divide-slate-100 text-slate-700">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 no-print">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 space-y-1">
+            <p>Aplikasi Evaluasi Mandiri Maturitas SPIP Terintegrasi berdasarkan Pedoman BPKP No. 5 Tahun 2021.</p>
+            <p class="text-slate-500 font-medium">Dirancang untuk mendukung tata kelola pemerintahan yang bersih, akuntabel, dan berintegritas.</p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Modal / Floating Message -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <div class="text-xs">
+            <div id="toastTitle" class="font-bold">Berhasil</div>
+            <div id="toastMessage" class="text-slate-300">Data berhasil disimpan.</div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Data Structure corresponding to Peraturan BPKP No. 5 Tahun 2021 (SPIP Terintegrasi)
+        // 3 Komponen Utama + Integrasi MRI & IEPK
+        const spipData = [
+            {
+                id: 0,
+                categoryName: "I. Penetapan Tujuan (Kualitas Penetapan Tujuan)",
+                weight: 0.15,
+                items: [
+                    { id: "p1_1", name: "Kualitas Sasaran Strategis (IKU / Cascading)", score: 3.20, desc: "Kesesuaian sasaran strategis dengan visi-misi daerah/instansi serta cascading yang jelas hingga level unit kerja terbawah." },
+                    { id: "p1_2", name: "Kualitas Indikator Kinerja & Target", score: 3.00, desc: "Indikator kinerja memenuhi kriteria SMART (Specific, Measurable, Achievable, Relevant, Time-bound) dengan target yang menantang." },
+                    { id: "p1_3", name: "Penyelarasan Tujuan Program & Kegiatan", score: 2.80, desc: "Konsistensi antara tujuan strategis dengan alokasi sumber daya, program, dan kegiatan operasional." }
+                ]
+            },
+            {
+                id: 1,
+                categoryName: "II. Struktur & Proses (5 Unsur SPIP)",
+                weight: 0.40,
+                items: [
+                    { id: "p2_1", name: "Unsur 1: Lingkungan Pengendalian", score: 3.10, desc: "Penegakan integritas, nilai etika, komitmen kompetensi, struktur organisasi yang memadai, dan pelimpahan wewenang." },
+                    { id: "p2_2", name: "Unsur 2: Penilaian Risiko", score: 2.70, desc: "Identifikasi risiko, analisis risiko secara komprehensif, dan perencanaan mitigasi risiko instansi." },
+                    { id: "p2_3", name: "Unsur 3: Kegiatan Pengendalian", score: 3.00, desc: "Reviu atas kinerja, pengamanan aset, pemisahan fungsi, pengendalian akses sistem informasi, dan prosedur operasional." },
+                    { id: "p2_4", name: "Unsur 4: Informasi & Komunikasi", score: 3.20, desc: "Ketersediaan informasi yang relevan dan tepat waktu, serta saluran komunikasi internal & eksternal yang efektif." },
+                    { id: "p2_5", name: "Unsur 5: Pemantauan Pengendalian Intern", score: 2.90, desc: "Pemantauan berkelanjutan (ongoing monitoring), evaluasi terpisah, dan tindak lanjut rekomendasi hasil audit/pengawasan." }
+                ]
+            },
+            {
+                id: 2,
+                categoryName: "III. Pencapaian Hasil (Efisiensi, Efektivitas & Kepatuhan)",
+                weight: 0.25,
+                items: [
+                    { id: "p3_1", name: "Efisiensi & Efektivitas Pencapaian Hasil", score: 3.00, desc: "Pencapaian output dan outcome program dengan optimalisasi penggunaan anggaran (value for money)." },
+                    { id: "p3_2", name: "Keandalan Pelaporan Keuangan", score: 3.40, desc: "Kualitas laporan keuangan, kepatuhan standar akuntansi pemerintahan, dan opini BPK (WTP)." },
+                    { id: "p3_3", name: "Pengamanan Aset Negara / Daerah", score: 3.10, desc: "Inventarisasi, pengamanan fisik, legalitas hukum, dan optimalisasi pemanfaatan Barang Milik Negara/Daerah (BMN/D)." },
+                    { id: "p3_4", name: "Ketaatan terhadap Peraturan Perundang-undangan", score: 3.20, desc: "Minimnya temuan pelanggaran regulasi, kepatuhan terhadap SOP, dan penyelesaian temuan pengawas." }
+                ]
+            },
+            {
+                id: 3,
+                categoryName: "IV. Indeks Strategis (MRI & IEPK)",
+                weight: 0.20,
+                items: [
+                    { id: "p4_1", name: "Manajemen Risiko Indeks (MRI)", score: 2.80, desc: "Kematangan penerapan manajemen risiko di seluruh unit instansi (budaya sadar risiko & efektivitas mitigasi)." },
+                    { id: "p4_2", name: "Indeks Efektivitas Pengendalian Korupsi (IEPK)", score: 2.90, desc: "Efektivitas pencegahan korupsi, penanganan benturan kepentingan, pengendalian gratifikasi, dan WBS." }
+                ]
+            }
+        ];
+
+        let currentActiveCategory = 0;
+        let radarChartInstance = null;
+
+        // Initialize App on DOM Load
+        document.addEventListener("DOMContentLoaded", function() {
+            loadDataFromStorage();
+            renderWorksheet(currentActiveCategory);
+            updateAllCalculations();
+            initRadarChart();
+        });
+
+        // Tab Switcher
+        function switchTab(tabId) {
+            ['dashboard', 'worksheet', 'aoi'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`).classList.remove('bg-governance-700', 'text-white', 'shadow-sm');
+                document.getElementById(`nav-${t}`).classList.add('bg-slate-800', 'text-slate-300');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.getElementById(`nav-${tabId}`).classList.add('bg-governance-700', 'text-white', 'shadow-sm');
+            document.getElementById(`nav-${tabId}`).classList.remove('bg-slate-800', 'text-slate-300');
+
+            if (tabId === 'dashboard') {
+                updateAllCalculations();
+                updateRadarChart();
+            } else if (tabId === 'aoi') {
+                generateAOI();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Worksheet Category Tab Selector
+        function selectCategory(catIndex) {
+            currentActiveCategory = catIndex;
+            for (let i = 0; i < spipData.length; i++) {
+                const btn = document.getElementById(`cat-btn-${i}`);
+                if (i === catIndex) {
+                    btn.className = "px-4 py-2 rounded-xl text-xs font-bold bg-governance-700 text-white transition shadow-sm";
+                } else {
+                    btn.className = "px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:bg-slate-100 transition border border-slate-200";
+                }
+            }
+            renderWorksheet(catIndex);
+        }
+
+        // Render Worksheet inputs
+        function renderWorksheet(catIndex) {
+            const container = document.getElementById("worksheetContainer");
+            const cat = spipData[catIndex];
+
+            let html = `
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+                    <div class="border-b border-slate-200 pb-4 flex justify-between items-center">
+                        <div>
+                            <span class="text-xs font-bold text-governance-600 uppercase">Komponen ${catIndex + 1} dari 4</span>
+                            <h3 class="text-lg font-bold text-slate-900">${cat.categoryName}</h3>
+                        </div>
+                        <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1 rounded-full border border-slate-200">Bobot Komponen: ${(cat.weight * 100)}%</span>
+                    </div>
+                    <div class="space-y-6">
+            `;
+
+            cat.items.forEach((item, idx) => {
+                html += `
+                    <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl space-y-3">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                            <div>
+                                <span class="text-[11px] font-bold text-slate-400">Parameter ${catIndex + 1}.${idx + 1}</span>
+                                <h4 class="font-bold text-slate-800 text-sm">${item.name}</h4>
+                            </div>
+                            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                                <span class="text-xs font-medium text-slate-500">Nilai (1.0 - 5.0):</span>
+                                <input type="number" id="input_${item.id}" value="${item.score.toFixed(2)}" min="1.00" max="5.00" step="0.05" 
+                                    onchange="updateItemScore('${item.id}', this.value)" 
+                                    class="w-24 px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-center font-bold text-sm text-governance-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-governance-500">
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-600">${item.desc}</p>
+                        <div class="flex items-center gap-2 pt-1">
+                            <input type="range" min="1" max="5" step="0.1" value="${item.score}" 
+                                oninput="document.getElementById('input_${item.id}').value = parseFloat(this.value).toFixed(2); updateItemScore('${item.id}', this.value)"
+                                class="w-full accent-governance-600 h-1.5 bg-slate-200 rounded-lg cursor-pointer">
+                            <span class="text-xs font-bold text-slate-500 w-8 text-right">${item.score.toFixed(1)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        // Update individual item score
+        function updateItemScore(itemId, val) {
+            let num = parseFloat(val);
+            if (isNaN(num)) num = 1.00;
+            if (num < 1) num = 1.00;
+            if (num > 5) num = 5.00;
+
+            for (let cat of spipData) {
+                for (let item of cat.items) {
+                    if (item.id === itemId) {
+                        item.score = num;
+                    }
+                }
+            }
+            updateAllCalculations();
+        }
+
+        // Calculate scores per component and total maturity score
+        function calculateScores() {
+            let componentScores = [];
+            let totalWeightedScore = 0;
+
+            spipData.forEach(cat => {
+                let sum = cat.items.reduce((acc, item) => acc + item.score, 0);
+                let avg = sum / cat.items.length;
+                componentScores.push(avg);
+                totalWeightedScore += avg * cat.weight;
+            });
+
+            return { componentScores, totalWeightedScore };
+        }
+
+        // Get maturity level text and color based on score
+        function getMaturityLevelInfo(score) {
+            if (score < 2.00) return { level: 1, title: "Level 1 (Rintisan)", color: "text-red-600", bg: "bg-red-100", badgeBg: "bg-red-50 text-red-700 border-red-200" };
+            if (score < 3.00) return { level: 2, title: "Level 2 (Berkembang)", color: "text-amber-600", bg: "bg-amber-100", badgeBg: "bg-amber-50 text-amber-700 border-amber-200" };
+            if (score < 4.00) return { level: 3, title: "Level 3 (Terdefinisi)", color: "text-blue-600", bg: "bg-blue-100", badgeBg: "bg-blue-50 text-blue-700 border-blue-200" };
+            if (score < 4.50) return { level: 4, title: "Level 4 (Terkelola & Terukur)", color: "text-indigo-600", bg: "bg-indigo-100", badgeBg: "bg-indigo-50 text-indigo-700 border-indigo-200" };
+            return { level: 5, title: "Level 5 (Optimum)", color: "text-emerald-600", bg: "bg-emerald-100", badgeBg: "bg-emerald-50 text-emerald-700 border-emerald-200" };
+        }
+
+        // Update all metrics and summary UI
+        function updateAllCalculations() {
+            const { componentScores, totalWeightedScore } = calculateScores();
+            const overallInfo = getMaturityLevelInfo(totalWeightedScore);
+
+            // Header updates
+            document.getElementById("headerTotalScore").innerText = totalWeightedScore.toFixed(2);
+            document.getElementById("headerMaturityLevel").innerText = overallInfo.title;
+            const iconLvl = document.getElementById("headerIconLevel");
+            iconLvl.innerText = totalWeightedScore.toFixed(1);
+            iconLvl.className = `w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm ${overallInfo.bg} ${overallInfo.color}`;
+
+            const statusBadge = document.getElementById("statusBadge");
+            statusBadge.className = `text-xs font-semibold px-2.5 py-1 rounded-full border ${overallInfo.badgeBg}`;
+            statusBadge.innerText = overallInfo.title;
+
+            // Dashboard cards update
+            for (let i = 0; i < 4; i++) {
+                const score = componentScores[i];
+                const info = getMaturityLevelInfo(score);
+                const pct = ((score - 1) / 4) * 100;
+
+                document.getElementById(`scoreKomponen${i+1}`).innerText = score.toFixed(2);
+                document.getElementById(`barKomponen${i+1}`).style.width = `${pct}%`;
+                document.getElementById(`statusKomponen${i+1}`).innerText = `Level: ${info.title}`;
+            }
+
+            // Dashboard Interpretation Box
+            document.getElementById("resultLevelTitle").innerText = overallInfo.title;
+            let descText = "";
+            if (overallInfo.level === 1) descText = "Penyelenggaraan SPIP belum terstruktur. Pengendalian intern dilakukan secara insidental dan belum didokumentasikan dengan baik.";
+            else if (overallInfo.level === 2) descText = "Penyelenggaraan SPIP telah mulai berkembang namun belum terstandarisasi secara menyeluruh di seluruh unit organisasi.";
+            else if (overallInfo.level === 3) descText = "Penyelenggaraan SPIP telah terdefinisi dengan baik, SOP dan kebijakan pengendalian telah diterapkan secara formal dan konsisten.";
+            else if (overallInfo.level === 4) descText = "Penyelenggaraan SPIP dikelola dan diukur secara kuantitatif serta terintegrasi antar unit organisasi.";
+            else descText = "Penyelenggaraan SPIP telah mencapai tingkat optimum dengan perbaikan berkelanjutan (continuous improvement) yang adaptif.";
+            
+            document.getElementById("resultLevelDesc").innerText = descText;
+
+            const targetStatusText = document.getElementById("targetStatusText");
+            if (overallInfo.level >= 3) {
+                targetStatusText.innerText = "Tercapai (Memenuhi Standar Minimal UU)";
+                targetStatusText.className = "font-semibold text-emerald-400";
+            } else {
+                targetStatusText.innerText = "Belum Tercapai (Target Min: Level 3)";
+                targetStatusText.className = "font-semibold text-amber-400";
+            }
+
+            // Summary Table Population
+            let tableHtml = "";
+            spipData.forEach((cat, i) => {
+                const score = componentScores[i];
+                const info = getMaturityLevelInfo(score);
+                tableHtml += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-4 font-semibold text-slate-800">${cat.categoryName}</td>
+                        <td class="py-3 px-4 text-center font-medium">${(cat.weight * 100)}%</td>
+                        <td class="py-3 px-4 text-center font-bold ${info.color}">${score.toFixed(2)}</td>
+                        <td class="py-3 px-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold border ${info.badgeBg}">${info.title}</span></td>
+                        <td class="py-3 px-4 text-right">
+                            <button onclick="selectCategory(${i}); switchTab('worksheet');" class="text-governance-600 hover:text-governance-800 font-medium underline">Evaluasi</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById("summaryTableBody").innerHTML = tableHtml;
+        }
+
+        // Initialize Radar Chart
+        function initRadarChart() {
+            const ctx = document.getElementById('maturityRadarChart').getContext('2d');
+            const { componentScores } = calculateScores();
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: [
+                        'I. Penetapan Tujuan',
+                        'II. Struktur & Proses',
+                        'III. Pencapaian Hasil',
+                        'IV. Indeks Strategis (MRI & IEPK)'
+                    ],
+                    datasets: [{
+                        label: 'Nilai Maturitas SPIP',
+                        data: componentScores,
+                        backgroundColor: 'rgba(30, 64, 175, 0.2)',
+                        borderColor: '#1e40af',
+                        pointBackgroundColor: '#1d4ed8',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#1d4ed8',
+                        borderWidth: 2
+                    }, {
+                        label: 'Target Minimal (Level 3)',
+                        data: [3, 3, 3, 3],
+                        backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                        borderColor: '#10b981',
+                        borderDash: [5, 5],
+                        borderWidth: 1.5,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e2e8f0' },
+                            grid: { color: '#e2e8f0' },
+                            suggestedMin: 1,
+                            suggestedMax: 5,
+                            ticks: { stepSize: 1, font: { size: 10 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+
+        // Update Radar Chart data
+        function updateRadarChart() {
+            if (radarChartInstance) {
+                const { componentScores } = calculateScores();
+                radarChartInstance.data.datasets[0].data = componentScores;
+                radarChartInstance.update();
+            }
+        }
+
+        // AOI (Action Plan) Generator
+        function generateAOI() {
+            const tbody = document.getElementById("aoiTableBody");
+            let aoiHtml = "";
+            let count = 0;
+
+            spipData.forEach(cat => {
+                cat.items.forEach(item => {
+                    if (item.score < 3.25) {
+                        count++;
+                        let rec = "Perlu penyusunan SOP formal, sosialisasi berkala, dan dokumentasi bukti dukung yang memadai.";
+                        if (item.id.includes('p1')) rec = "Penyelarasan IKU unit kerja dengan dokumen Perjanjian Kinerja dan Rencana Strategis secara berkala.";
+                        else if (item.id.includes('p2_2')) rec = "Pelaksanaan Bimbingan Teknis Identifikasi & Analisis Risiko bagi seluruh pemilik risiko (Risk Owner).";
+                        else if (item.id.includes('p4_1')) rec = "Penguatan maturitas Manajemen Risiko melalui reviu peta risiko triwulanan.";
+                        else if (item.id.includes('p4_2')) rec = "Optimalisasi sistem pengendalian gratifikasi dan Penanganan Benturan Kepentingan.";
+
+                        aoiHtml += `
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="py-3 px-4 font-semibold text-slate-800">${item.name}</td>
+                                <td class="py-3 px-4 text-center font-bold text-amber-600">${item.score.toFixed(2)}</td>
+                                <td class="py-3 px-4 text-slate-600">${rec}</td>
+                                <td class="py-3 px-4 text-slate-500 font-medium">Q3 2026 - Inspectorat / Bagian Perencanaan</td>
+                            </tr>
+                        `;
+                    }
+                });
+            });
+
+            if (count === 0) {
+                aoiHtml = `
+                    <tr>
+                        <td colspan="4" class="py-6 text-center text-slate-500 font-medium">Semua parameter telah mencapai skor di atas 3.25! Pertahankan kinerja tata kelola yang optimal.</td>
+                    </tr>
+                `;
+            }
+
+            tbody.innerHTML = aoiHtml;
+            showToast("Rencana Tindak (AOI) Berhasil Diperbarui");
+        }
+
+        // Local Storage Save / Load
+        function saveDataToStorage() {
+            localStorage.setItem('spip_eval_data', JSON.stringify(spipData));
+            showToast("Data Evaluasi Berhasil Disimpan ke Perangkat");
+        }
+
+        function loadDataFromStorage() {
+            const saved = localStorage.getItem('spip_eval_data');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed) && parsed.length === spipData.length) {
+                        spipData.forEach((cat, i) => {
+                            cat.items.forEach((item, j) => {
+                                if (parsed[i] && parsed[i].items && parsed[i].items[j]) {
+                                    item.score = parsed[i].items[j].score;
+                                }
+                            });
+                        });
+                    }
+                } catch(e) {
+                    console.error("Gagal memuat data tersimpan", e);
+                }
+            }
+        }
+
+        function resetData() {
+            if (confirm("Apakah Anda yakin ingin mereset seluruh penilaian ke nilai default?")) {
+                localStorage.removeItem('spip_eval_data');
+                location.reload();
+            }
+        }
+
+        // Toast notification helper
+        function showToast(message) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastMessage').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

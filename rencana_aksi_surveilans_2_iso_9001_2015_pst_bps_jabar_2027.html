@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rencana Aksi Surveilans 2 SMM ISO 9001:2015 PST BPS Jabar 2027</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        bps: {
+                            50: '#fdf4f8',
+                            100: '#fce7f3',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                            800: '#9d174d',
+                            900: '#831843',
+                        },
+                        action: {
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .print-shadow { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-action-500 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white shadow-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 p-3 rounded-xl backdrop-blur-md border border-white/20 shadow-inner">
+                    <i class="fa-solid fa-bolt text-3xl text-emerald-300"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="bg-emerald-500/30 text-emerald-200 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-emerald-400/30">Action Plan 2027</span>
+                        <span class="bg-teal-500/30 text-teal-200 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-teal-400/30">ISO 9001:2015</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Rencana Aksi (Action Plan) Surveilans 2 PST BPS Jabar</h1>
+                    <p class="text-xs sm:text-sm text-emerald-200">Langkah Taktis Operasional Pelayanan Statistik Terpadu BPS Provinsi Jawa Barat</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 no-print">
+                <button onclick="resetActionProgress()" class="bg-white/10 hover:bg-white/20 text-white px-3.5 py-2 rounded-xl text-sm font-medium transition border border-white/20 flex items-center gap-2 shadow-sm" title="Reset Aksi Progress">
+                    <i class="fa-solid fa-rotate-right"></i> Reset Progress
+                </button>
+                <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-emerald-900/40">
+                    <i class="fa-solid fa-print"></i> Cetak / Ekspor PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Explanation Card: Work Plan vs Action Plan -->
+        <section class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80 relative overflow-hidden">
+            <div class="absolute right-0 top-0 translate-x-8 -translate-y-8 w-64 h-64 bg-emerald-50 rounded-full pointer-events-none -z-0"></div>
+            <div class="relative z-10">
+                <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-question text-emerald-600"></i> Perbedaan Rencana Kerja vs. Rencana Aksi
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                    <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-100">
+                        <h3 class="font-bold text-blue-900 mb-1"><i class="fa-solid fa-calendar-days text-blue-600"></i> Rencana Kerja (Work Plan)</h3>
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                            Berfokus pada <strong>makro dan penjadwalan</strong>. Mengatur tahap besar, tenggat waktu bulanan, PIC makro, dan dokumen deliverable secara umum selama satu tahun penuh.
+                        </p>
+                    </div>
+                    <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-100">
+                        <h3 class="font-bold text-emerald-900 mb-1"><i class="fa-solid fa-bolt text-emerald-600"></i> Rencana Aksi (Action Plan)</h3>
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                            Berfokus pada <strong>taktis operasional harian / langkah eksekusi konkret</strong> (How-to). Menjabarkan instruksi kerja spesifik, indikator keberhasilan instan, dan langkah taktis penanganan hambatan.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-time Stats for Action Plan -->
+        <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Program Aksi</p>
+                    <h3 id="act-total" class="text-2xl font-bold text-slate-900 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 text-xl">
+                    <i class="fa-solid fa-tasks"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Aksi Selesai</p>
+                    <h3 id="act-completed" class="text-2xl font-bold text-emerald-600 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 text-xl">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Tingkat Penyelesaian Aksi</p>
+                    <h3 id="act-percent" class="text-2xl font-bold text-teal-600 mt-1">0%</h3>
+                </div>
+                <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600 text-xl">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Action Plan Grid / Cards -->
+        <div class="space-y-6" id="action-container">
+
+            <!-- Aksi 1 -->
+            <div class="action-card bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 transition" data-id="act-1">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 pb-4 border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" onchange="toggleActionCheck('act-1')" class="w-5 h-5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer">
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Aksi Taktis 01</span>
+                            <h3 class="text-lg font-bold text-slate-900">Digitalisasi & Pemutakhiran SOP Layanan Tamu PST</h3>
+                        </div>
+                    </div>
+                    <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full">PIC: Tim PST & Tim Mutu</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-crosshairs text-emerald-600"></i> Tujuan Operasional:</span>
+                        <p class="text-slate-600">Memastikan seluruh buku tamu fisik terintegrasi dengan sistem digital dan SOP pelayanan bebas dari redudansi birokrasi.</p>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-shoe-prints text-emerald-600"></i> Langkah Eksekusi Konkret:</span>
+                        <ul class="text-slate-600 list-disc list-inside space-y-1">
+                            <li>Uji coba QR Code buku tamu digital</li>
+                            <li>Revisi SOP standar waktu tunggu konsultasi</li>
+                            <li>Pemasangan standing banner Maklumat Pelayanan</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-bullseye text-emerald-600"></i> Indikator Keberhasilan:</span>
+                        <p class="text-slate-600">100% tamu mengisi buku tamu digital dengan rata-rata waktu tunggu pelayanan < 5 menit.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aksi 2 -->
+            <div class="action-card bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 transition" data-id="act-2">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 pb-4 border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" onchange="toggleActionCheck('act-2')" class="w-5 h-5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer">
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Aksi Taktis 02</span>
+                            <h3 class="text-lg font-bold text-slate-900">Pelatihan Intensif & Coaching Auditor Internal Mutu</h3>
+                        </div>
+                    </div>
+                    <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full">PIC: Auditor Internal</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-crosshairs text-emerald-600"></i> Tujuan Operasional:</span>
+                        <p class="text-slate-600">Meningkatkan ketajaman analisis temuan klausul ISO 9001:2015 bagi seluruh auditor internal BPS Jabar.</p>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-shoe-prints text-emerald-600"></i> Langkah Eksekusi Konkret:</span>
+                        <ul class="text-slate-600 list-disc list-inside space-y-1">
+                            <li>Simulasi teknik wawancara audit (Traceability Audit)</li>
+                            <li>Bedah kasus temuan minor dan mayor tahun sebelumnya</li>
+                            <li>Penyusunan kertas kerja audit berbasis digital</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-bullseye text-emerald-600"></i> Indikator Keberhasilan:</span>
+                        <p class="text-slate-600">Seluruh auditor internal menyelesaikan simulasi audit dengan hasil laporan sesuai standar ISO.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aksi 3 -->
+            <div class="action-card bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 transition" data-id="act-3">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 pb-4 border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" onchange="toggleActionCheck('act-3')" class="w-5 h-5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer">
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Aksi Taktis 03</span>
+                            <h3 class="text-lg font-bold text-slate-900">Audit Mutu Internal (AMI) & Bedah Temuan</h3>
+                        </div>
+                    </div>
+                    <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full">PIC: Auditor Internal & Tim PST</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-crosshairs text-emerald-600"></i> Tujuan Operasional:</span>
+                        <p class="text-slate-600">Menemukan potensi ketidaksesuaian sedini mungkin sebelum audit eksternal Surveilans 2 dilaksanakan.</p>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-shoe-prints text-emerald-600"></i> Langkah Eksekusi Konkret:</span>
+                        <ul class="text-slate-600 list-disc list-inside space-y-1">
+                            <li>Pelaksanaan audit lapangan oleh tim auditor</li>
+                            <li>Rapat pleno pembahasan temuan audit internal</li>
+                            <li>Penyusunan Lembar Kerja Evaluasi (LKE)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-bullseye text-emerald-600"></i> Indikator Keberhasilan:</span>
+                        <p class="text-slate-600">Terbitnya Laporan Hasil Audit (LHA) lengkap dengan daftar temuan untuk segera diperbaiki.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aksi 4 -->
+            <div class="action-card bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 transition" data-id="act-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 pb-4 border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" onchange="toggleActionCheck('act-4')" class="w-5 h-5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer">
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Aksi Taktis 04</span>
+                            <h3 class="text-lg font-bold text-slate-900">Simulasi Penilaian & Gladi Bersih Audit Eksternal</h3>
+                        </div>
+                    </div>
+                    <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full">PIC: Tim Mutu & Manajemen Puncak</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-crosshairs text-emerald-600"></i> Tujuan Operasional:</span>
+                        <p class="text-slate-600">Melatih mentalitas, kesiapan dokumen, dan penguasaan materi wawancara bagi seluruh petugas PST saat auditor eksternal hadir.</p>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-shoe-prints text-emerald-600"></i> Langkah Eksekusi Konkret:</span>
+                        <ul class="text-slate-600 list-disc list-inside space-y-1">
+                            <li>Simulasi Opening & Closing Meeting</li>
+                            <li>Pengecekan kesiapan meja layanan dan arsip digital</li>
+                            <li>Briefing mental dan koordinasi lintas seksi</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-bullseye text-emerald-600"></i> Indikator Keberhasilan:</span>
+                        <p class="text-slate-600">Seluruh petugas menjawab simulasi pertanyaan auditor dengan lancar dan berbasis bukti sahih.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aksi 5 -->
+            <div class="action-card bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 transition" data-id="act-5">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 pb-4 border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" onchange="toggleActionCheck('act-5')" class="w-5 h-5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer">
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Aksi Taktis 05</span>
+                            <h3 class="text-lg font-bold text-slate-900">Perbaikan Akar Masalah & Pelaksanaan RTM</h3>
+                        </div>
+                    </div>
+                    <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full">PIC: Manajemen Puncak & Tim Mutu</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-crosshairs text-emerald-600"></i> Tujuan Operasional:</span>
+                        <p class="text-slate-600">Memastikan siklus penjaminan mutu berjalan tuntas melalui Rapat Tinjauan Manajemen (RTM) tahun 2027.</p>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-shoe-prints text-emerald-600"></i> Langkah Eksekusi Konkret:</span>
+                        <ul class="text-slate-600 list-disc list-inside space-y-1">
+                            <li>Penyusunan Root Cause Analysis (RCA) temuan eksternal</li>
+                            <li>Pelaksanaan Rapat Tinjauan Manajemen (RTM) dipimpin Kepala BPS Jabar</li>
+                            <li>Arsip dokumen sertifikat dan laporan tahunan mutu</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-bullseye text-emerald-600"></i> Indikator Keberhasilan:</span>
+                        <p class="text-slate-600">Sertifikat ISO 9001:2015 PST BPS Jabar tetap dipertahankan tanpa catatan mayor yang belum ditutup.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 mt-12 text-center text-xs">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>&copy; 2027 Pelayanan Statistik Terpadu (PST) - Badan Pusat Statistik Provinsi Jawa Barat. All rights reserved.</p>
+            <p class="mt-1 text-slate-500">Rencana Aksi SMM ISO 9001:2015</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const actionIds = ['act-1', 'act-2', 'act-3', 'act-4', 'act-5'];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            actionIds.forEach(id => {
+                const isChecked = localStorage.getItem('surveilans_action_' + id) === 'true';
+                const checkbox = document.querySelector(`.action-card[data-id="${id}"] input[type="checkbox"]`);
+                if (checkbox) {
+                    checkbox.checked = isChecked;
+                    updateActionCardStyle(checkbox, isChecked);
+                }
+            });
+            updateActionStats();
+        });
+
+        function toggleActionCheck(id) {
+            const checkbox = document.querySelector(`.action-card[data-id="${id}"] input[type="checkbox"]`);
+            const isChecked = checkbox.checked;
+            localStorage.setItem('surveilans_action_' + id, isChecked);
+            updateActionCardStyle(checkbox, isChecked);
+            updateActionStats();
+        }
+
+        function updateActionCardStyle(checkbox, isChecked) {
+            const card = checkbox.closest('.action-card');
+            if (isChecked) {
+                card.classList.add('bg-emerald-50/30', 'border-emerald-300');
+                card.querySelector('h3').classList.add('line-through', 'text-slate-400');
+            } else {
+                card.classList.remove('bg-emerald-50/30', 'border-emerald-300');
+                card.querySelector('h3').classList.remove('line-through', 'text-slate-400');
+            }
+        }
+
+        function updateActionStats() {
+            const total = actionIds.length;
+            let completed = 0;
+            actionIds.forEach(id => {
+                if (localStorage.getItem('surveilans_action_' + id) === 'true') {
+                    completed++;
+                }
+            });
+            const percent = Math.round((completed / total) * 100);
+
+            document.getElementById('act-total').innerText = total;
+            document.getElementById('act-completed').innerText = completed;
+            document.getElementById('act-percent').innerText = percent + '%';
+        }
+
+        function resetActionProgress() {
+            if (confirm('Apakah Anda yakin ingin mereset seluruh progress rencana aksi?')) {
+                actionIds.forEach(id => {
+                    localStorage.removeItem('surveilans_action_' + id);
+                    const checkbox = document.querySelector(`.action-card[data-id="${id}"] input[type="checkbox"]`);
+                    if (checkbox) {
+                        checkbox.checked = false;
+                        updateActionCardStyle(checkbox, false);
+                    }
+                });
+                updateActionStats();
+            }
+        }
+    </script>
+</body>
+</html>

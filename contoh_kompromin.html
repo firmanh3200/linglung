@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kompilasi Data Administrasi Badan/Dinas Daerah</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 p-4 md:p-8 min-h-screen text-slate-800">
+
+    <div class="max-w-7xl mx-auto" x-data="datatableApp()">
+        
+        <!-- Header Section -->
+        <header class="mb-8 text-center md:text-left flex flex-col md:flex-row md:items-center md:justify-between bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-slate-100">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-semibold mb-3">
+                    <i class="fa-solid fa-database"></i> Portal Sektoral Daerah
+                </div>
+                <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
+                    Kompilasi Data Administrasi Daerah
+                </h1>
+                <p class="text-slate-500 text-sm mt-1">
+                    Direktori lengkap indikator komposit, variabel pembentuk agregat, dan klasifikasi data administrasi instansi daerah.
+                </p>
+            </div>
+            <div class="mt-4 md:mt-0 flex items-center justify-center gap-3">
+                <div class="bg-blue-50 border border-blue-100 px-4 py-2.5 rounded-xl text-center">
+                    <span class="block text-xs font-medium text-blue-600 uppercase tracking-wider">Total Data</span>
+                    <span class="text-xl font-bold text-blue-700" x-text="filteredData.length"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Card Container -->
+        <div class="bg-white rounded-2xl shadow-xl shadow-slate-100 border border-slate-100 overflow-hidden transition-all duration-300">
+            
+            <!-- Toolbar: Search & Per Page -->
+            <div class="p-5 md:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-slate-50/50">
+                <!-- Search Bar -->
+                <div class="relative flex-1 max-w-md">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input 
+                        type="text" 
+                        x-model.debounce.300ms="search" 
+                        @input="currentPage = 1"
+                        placeholder="Cari dinas, judul, indikator, atau variabel pembentuk..." 
+                        class="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+                    >
+                    <button 
+                        x-show="search.length > 0" 
+                        @click="search = ''; currentPage = 1;"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Per Page Selector -->
+                <div class="flex items-center gap-3 justify-end">
+                    <div class="flex items-center gap-2 text-sm text-slate-600">
+                        <span>Tampil</span>
+                        <select 
+                            x-model.number="perPage" 
+                            @change="currentPage = 1"
+                            class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                        <span>baris</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Section (Desktop & Tablet) -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/80 border-b border-slate-100 text-slate-500 text-xs font-semibold uppercase tracking-wider">
+                            <th class="py-4 px-4 sm:px-6 w-12 text-center">No</th>
+                            <th class="py-4 px-4 sm:px-6">Badan / Dinas Daerah</th>
+                            <th class="py-4 px-4 sm:px-6">Judul Kompilasi Data Administrasi</th>
+                            <th class="py-4 px-4 sm:px-6">Indikator yang Dihasilkan</th>
+                            <th class="py-4 px-4 sm:px-6">Variabel & Rincian Pembentuk Agregat</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm">
+                        <template x-for="(item, index) in paginatedData" :key="item.id">
+                            <tr class="hover:bg-blue-50/30 transition-colors duration-150 group">
+                                <!-- No -->
+                                <td class="py-4 px-4 sm:px-6 text-center font-medium text-slate-400 group-hover:text-blue-600" x-text="startIndex + index + 1"></td>
+                                
+                                <!-- Nama Badan / Dinas -->
+                                <td class="py-4 px-4 sm:px-6 align-top">
+                                    <div class="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold group-hover:bg-blue-100 group-hover:text-blue-800 transition-colors">
+                                        <i class="fa-solid fa-building-columns mr-1.5 opacity-70"></i>
+                                        <span x-text="item.dinas"></span>
+                                    </div>
+                                </td>
+
+                                <!-- Judul Kompilasi Data -->
+                                <td class="py-4 px-4 sm:px-6 align-top font-semibold text-slate-900">
+                                    <span x-text="item.judul"></span>
+                                </td>
+
+                                <!-- Indikator -->
+                                <td class="py-4 px-4 sm:px-6 align-top">
+                                    <span class="text-slate-700 block bg-emerald-50/60 text-emerald-800 border border-emerald-100/60 p-2 rounded-xl text-xs font-medium" x-text="item.indikator"></span>
+                                </td>
+
+                                <!-- Variabel & Rincian Agregat -->
+                                <td class="py-4 px-4 sm:px-6 align-top">
+                                    <div class="flex flex-wrap gap-1">
+                                        <template x-for="v in item.variabel.split('; ')">
+                                            <span class="inline-block bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-md font-medium border border-blue-100/50 mb-1" x-text="v"></span>
+                                        </template>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                        
+                        <!-- Empty State -->
+                        <tr x-show="paginatedData.length === 0">
+                            <td colspan="5" class="py-12 text-center text-slate-400">
+                                <div class="flex flex-col items-center justify-center space-y-3">
+                                    <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 text-lg">
+                                        <i class="fa-solid fa-folder-open"></i>
+                                    </div>
+                                    <p class="text-base font-medium text-slate-600">Tidak ada data yang ditemukan</p>
+                                    <p class="text-xs text-slate-400">Coba ubah kata kunci pencarian Anda.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer / Pagination Section -->
+            <div class="p-5 md:p-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/30">
+                <!-- Info Text -->
+                <div class="text-xs text-slate-500 font-medium text-center sm:text-left">
+                    Menampilkan <span class="font-semibold text-slate-700" x-text="filteredData.length > 0 ? startIndex + 1 : 0"></span> 
+                    sampai <span class="font-semibold text-slate-700" x-text="Math.min(startIndex + perPage, filteredData.length)"></span> 
+                    dari <span class="font-semibold text-slate-700" x-text="filteredData.length"></span> entri
+                    <span x-show="search.length > 0" class="text-blue-600">(difilter dari total 100 data)</span>
+                </div>
+
+                <!-- Pagination Buttons -->
+                <div class="flex items-center space-x-1">
+                    <!-- First Page -->
+                    <button 
+                        @click="currentPage = 1" 
+                        :disabled="currentPage === 1"
+                        class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                        <i class="fa-solid fa-angles-left"></i>
+                    </button>
+                    <!-- Prev Page -->
+                    <button 
+                        @click="currentPage--" 
+                        :disabled="currentPage === 1"
+                        class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                        <i class="fa-solid fa-angle-left mr-1"></i> Prev
+                    </button>
+
+                    <!-- Page Numbers Info -->
+                    <span class="px-3 py-1.5 text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-lg shadow-sm" x-text="currentPage + ' / ' + (totalPages || 1)"></span>
+
+                    <!-- Next Page -->
+                    <button 
+                        @click="currentPage++" 
+                        :disabled="currentPage >= totalPages"
+                        class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                        Next <i class="fa-solid fa-angle-right ml-1"></i>
+                    </button>
+                    <!-- Last Page -->
+                    <button 
+                        @click="currentPage = totalPages" 
+                        :disabled="currentPage >= totalPages"
+                        class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                        <i class="fa-solid fa-angles-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function datatableApp() {
+            return {
+                search: '',
+                perPage: 5,
+                currentPage: 1,
+                data: [
+                    { id: 1, dinas: 'Dinas Kependudukan dan Pencatatan Sipil', judul: 'Kompilasi Data Administrasi Kependudukan Bulanan', indikator: 'Laju Pertumbuhan Penduduk (Komposit Rasio Perubahan)', variabel: 'Jumlah Penduduk Lahir Hidup; Jumlah Penduduk Mati; Jumlah Penduduk Datang Migrasi Masuk; Jumlah Penduduk Pindah Keluar' },
+                    { id: 2, dinas: 'Dinas Kesehatan', judul: 'Kompilasi Data Cakupan Imunisasi Dasar Anak', indikator: 'Persentase Anak Usia 0-11 Bulan Imunisasi Lengkap (Indikator Komposit Proporsi)', variabel: 'Jumlah Bayi Sasaran Wilayah; Jumlah Bayi Mendapat Imunisasi BCG; Jumlah Bayi Mendapat Polio; Jumlah Bayi Mendapat DPT-HB-Hib' },
+                    { id: 3, dinas: 'Dinas Pendidikan', judul: 'Kompilasi Data Administrasi Angka Partisipasi Sekolah', indikator: 'Angka Partisipasi Murni / APM (Rasio Komposit Penduduk Bersekolah)', variabel: 'Jumlah Siswa Terdaftar Usia Tertentu; Jumlah Total Penduduk Kelompok Usia Sekolah yang Sesuai' },
+                    { id: 4, dinas: 'Dinas Pekerjaan Umum dan Penataan Ruang', judul: 'Kompilasi Data Administrasi Kondisi Jalan Daerah', indikator: 'Persentase Panjang Jalan Kondisi Mantap (Komposit Proporsi Baik & Sedang)', variabel: 'Variabel Utama: Kondisi Jalan (Klasifikasi: Baik, Sedang, Rusak Ringan, Rusak Berat); Panjang Ruas Jalan Kondisi Baik (Km); Panjang Ruas Jalan Kondisi Sedang (Km); Panjang Ruas Jalan Kondisi Rusak Ringan (Km); Panjang Ruas Jalan Kondisi Rusak Berat (Km)' },
+                    { id: 5, dinas: 'Dinas Sosial', judul: 'Kompilasi Data Administrasi Penyaluran Bantuan Sosial', indikator: 'Cakupan Rumah Tangga Sasaran Penerima Bantuan (Rasio Komposit Agregat)', variabel: 'Jumlah Rumah Tangga Sasaran Terverifikasi; Jumlah Rumah Tangga Telah Menerima Bantuan Sosial; Jenis Bantuan Sosial' },
+                    { id: 6, dinas: 'Dinas Tanaman Pangan dan Hortikultura', judul: 'Kompilasi Data Administrasi Produksi Tanaman Pangan', indikator: 'Produktivitas Pertanian Padi per Hektar (Rasio Agregat Output per Satuan Luas)', variabel: 'Total Produksi Gabah Kering Panen (Ton); Total Luas Panen (Hektar); Klasifikasi Varietas Padi' },
+                    { id: 7, dinas: 'Dinas Tenaga Kerja dan Transmigrasi', judul: 'Kompilasi Data Administrasi Pencari Kerja Terdaftar', indikator: 'Tingkat Penempatan Tenaga Kerja (Komposit Rasio Penempatan Terhadap Pencari Kerja)', variabel: 'Jumlah Pencari Kerja Terdaftar; Jumlah Lowongan Kerja Tersedia; Jumlah Pencari Kerja Berhasil Ditempatkan' },
+                    { id: 8, dinas: 'Dinas Koperasi, UKM dan Perdagangan', judul: 'Kompilasi Data Administrasi Perkembangan Koperasi Aktif', indikator: 'Rasio Koperasi Aktif terhadap Total Koperasi Terdaftar (Komposit Proporsi)', variabel: 'Jumlah Koperasi Melaksanakan RAT; Jumlah Koperasi Tidak Aktif; Total Koperasi Terdaftar' },
+                    { id: 9, dinas: 'Dinas Penanaman Modal dan PTSP', judul: 'Kompilasi Data Administrasi Realisasi Investasi PMDN/PMA', indikator: 'Nilai Pertumbuhan Investasi Total dan Penyerapan Tenaga Kerja (Agregat Komposit)', variabel: 'Nilai Realisasi PMDN; Nilai Realisasi PMA; Jumlah Proyek Terlaksana; Jumlah Tenaga Kerja Indonesia Terserap' },
+                    { id: 10, dinas: 'Dinas Lingkungan Hidup', judul: 'Kompilasi Data Administrasi Pengelolaan Sampah Perkotaan', indikator: 'Persentase Penanganan dan Pengurangan Sampah (Indikator Komposit Rasio Tonase)', variabel: 'Variabel Utama: Timbulan Sampah; Klasifikasi Pengelolaan (Terkumpul, Terangkut, Didaur Ulang, Masuk TPA); Volume Sampah Masuk TPA (Ton)' },
+                    { id: 11, dinas: 'Dinas Perhubungan', judul: 'Kompilasi Data Administrasi Pengujian Kendaraan Bermotor', indikator: 'Persentase Kendaraan Angkutan Umum Lulus Uji Berkala (Komposit Proporsi)', variabel: 'Variabel Utama: Hasil Uji KIR (Klasifikasi: Lulus Uji, Tidak Lulus Uji Rem, Tidak Lulus Uji Emisi); Jumlah Kendaraan Wajib Uji; Jumlah Kendaraan Lulus' },
+                    { id: 12, dinas: 'Dinas Pariwisata dan Kebudayaan', judul: 'Kompilasi Data Administrasi Kunjungan Wisatawan', indikator: 'Total Kunjungan Wisatawan Mancanegara dan Nusantara (Agregat Komposit)', variabel: 'Jumlah Wisatawan Mancanegara; Jumlah Wisatawan Nusantara; Nama Destinasi; Pendapatan Retribusi Wisata' },
+                    { id: 13, dinas: 'Dinas Perikanan', judul: 'Kompilasi Data Administrasi Produksi Perikanan Tangkap dan Budidaya', indikator: 'Total Volume dan Nilai Produksi Perikanan Daerah (Agregat Komposit Komoditas)', variabel: 'Variabel Utama: Sektor Perikanan (Klasifikasi: Tangkap Laut, Budidaya Tambak, Budidaya Air Tawar); Volume Produksi (Kg); Nilai Produksi (Rupiah)' },
+                    { id: 14, dinas: 'Dinas Perumahan dan Kawasan Permukiman', judul: 'Kompilasi Data Administrasi Penanganan Kawasan Kumuh', indikator: 'Persentase Penurunan Luas Kawasan Permukiman Kumuh (Komposit Proporsi)', variabel: 'Variabel Utama: Tingkat Kekumuhan (Klasifikasi: Ringan, Sedang, Berat); Luas Awal Permukiman Kumuh (Ha); Luas Wilayah Berhasil Ditangani (Ha)' },
+                    { id: 15, dinas: 'Dinas Ketahanan Pangan', judul: 'Kompilasi Data Administrasi Cadangan Pangan Pemerintah Daerah', indikator: 'Kecukupan Stok Cadangan Pangan Daerah (Rasio Agregat Ketahanan Stok)', variabel: 'Volume Stok Beras Cadangan Pemerintah; Standar Kebutuhan Minimum Daerah; Kapasitas Gudang Penyimpanan' },
+                    { id: 16, dinas: 'Badan Pendapatan Daerah', judul: 'Kompilasi Data Administrasi Realisasi Pajak Daerah', indikator: 'Persentase Pencapaian Target Pajak Daerah (Komposit Rasio Realisasi terhadap Target)', variabel: 'Variabel Utama: Jenis Pajak (Klasifikasi: PBB-P2, BPHTB, Pajak Hotel, Pajak Restoran); Target Pendapatan Pajak (Rupiah); Realisasi Penerimaan Pajak (Rupiah)' },
+                    { id: 17, dinas: 'Badan Kepegawaian dan Pengembangan SDM', judul: 'Kompilasi Data Administrasi Tingkat Kompetensi ASN', indikator: 'Rata-rata Jam Pengembangan Kompetensi per ASN (Komposit Agregat Rasio)', variabel: 'Total Jam Pelajaran Diklat Seluruh ASN; Jumlah Total Pegawai Negeri Sipil Aktif; Klasifikasi Jenis Diklat (Struktural, Teknis, Fungsional)' },
+                    { id: 18, dinas: 'Badan Perencanaan Pembangunan Daerah', judul: 'Kompilasi Data Administrasi Capaian Indikator Kinerja Utama (IKU)', indikator: 'Persentase Capaian Target IKU Pemerintah Daerah (Indikator Komposit Kinerja)', variabel: 'Jumlah Indikator Kinerja Ditetapkan; Jumlah Indikator Mencapai Target; Nilai Realisasi Capaian' },
+                    { id: 19, dinas: 'Badan Penanggulangan Bencana Daerah', judul: 'Kompilasi Data Administrasi Kejadian Bencana Alam', Indikator: 'Indeks Respon Cepat Kejadian Bencana (Komposit Waktu dan Dampak)', variabel: 'Variabel Utama: Jenis Bencana (Klasifikasi: Banjir, Longsor, Puting Beliung, Kebakaran); Waktu Tanggap (Menit); Jumlah Korban Terdampak; Estimasi Kerugian (Rupiah)' },
+                    { id: 20, dinas: 'Dinas Pemuda dan Olahraga', judul: 'Kompilasi Data Administrasi Pembinaan Atlet Berprestasi', indikator: 'Persentase Atlet Memperoleh Medali Kejuaraan (Komposit Proporsi Prestasi)', variabel: 'Variabel Utama: Jenis Medali (Klasifikasi: Emas, Perak, Perunggu); Jumlah Atlet Mengikuti Kompetisi; Jumlah Perolehan Medali' },
+                    { id: 21, dinas: 'Dinas Pemberdayaan Perempuan dan Perlindungan Anak', judul: 'Kompilasi Data Administrasi Kasus Kekerasan Perempuan dan Anak', indikator: 'Persentase Penyelesaian Kasus Kekerasan (Komposit Rasio Penanganan)', variabel: 'Variabel Utama: Status Penanganan (Klasifikasi: Selesai Mediasi, Proses Hukum, Dalam Pendampingan); Jumlah Laporan Kasus Masuk; Jumlah Kasus Terselesaikan' },
+                    { id: 22, dinas: 'Dinas Perpustakaan dan Kearsipan', judul: 'Kompilasi Data Administrasi Kunjungan Perpustakaan Daerah', indikator: 'Tingkat Pemanfaatan Koleksi Perpustakaan (Komposit Kunjungan dan Sirkulasi)', variabel: 'Jumlah Pengunjung Harian; Jumlah Buku Dipinjam; Jumlah Anggota Aktif Perpustakaan' },
+                    { id: 23, dinas: 'Dinas Komunikasi dan Informatika', judul: 'Kompilasi Data Administrasi Pengaduan Layanan Publik (SP4N-LAPOR)', indikator: 'Persentase Pengaduan Selesai Tepat Waktu (Komposit Rasio SLA)', variabel: 'Variabel Utama: Status Pengaduan (Klasifikasi: Selesai, Proses, Belum Ditanggapi); Jumlah Total Aduan Masuk; Jumlah Aduan Selesai Tepat Waktu' },
+                    { id: 24, dinas: 'Dinas Peternakan dan Kesehatan Hewan', judul: 'Kompilasi Data Administrasi Vaksinasi Hewan Ternak', indikator: 'Cakupan Persentase Vaksinasi Penyakit Hewan Menular (Komposit Proporsi Sasaran)', variabel: 'Variabel Utama: Jenis Ternak (Klasifikasi: Sapi, Kerbau, Kambing, Unggas); Jumlah Populasi Rentan; Jumlah Ternak Divaksin' },
+                    { id: 25, dinas: 'Dinas Pemadam Kebakaran', judul: 'Kompilasi Data Administrasi Penanganan Kebakaran dan Penyelamatan', indikator: 'Persentase Waktu Tanggap Kebakaran di Bawah 15 Menit (Komposit Rasio SLA Respon)', variabel: 'Jumlah Panggilan Darurat Masuk; Jumlah Armada Diterjunkan; Waktu Tiba di Lokasi (Menit); Klasifikasi Respon (Tepat Waktu, Terlambat)' },
+                    { id: 26, dinas: 'Dinas Kependudukan dan Pencatatan Sipil', judul: 'Kompilasi Data Administrasi Perekaman KTP-El Usia Pemula', indikator: 'Persentase Wajib KTP-El Pemula Terrekam (Indikator Komposit Proporsi Cakupan)', variabel: 'Jumlah Penduduk Wajib KTP-El Pemula Terdata; Jumlah Penduduk Pemula Selesai Rekaman Biometrik' },
+                    { id: 27, dinas: 'Dinas Kesehatan', judul: 'Kompilasi Data Administrasi Penanganan Prevalensi Stunting', indikator: 'Prevalensi Persentase Balita Stunting (Indikator Komposit Rasio Gizi Anak)', variabel: 'Jumlah Total Balita Ditimbang; Jumlah Balita Hasil Ukur Panjang/Tinggi Badan di Bawah Standar (Stunting)' },
+                    { id: 28, dinas: 'Dinas Pendidikan', judul: 'Kompilasi Data Administrasi Kelulusan dan Keterserapan Lulusan SMK', indikator: 'Persentase Lulusan SMK Bekerja atau Berwirausaha (Komposit Proporsi Kelulusan)', variabel: 'Variabel Utama: Status Pasca Lulus (Klasifikasi: Bekerja, Melanjutkan Kuliah, Berwirausaha, Belum Bekerja); Jumlah Total Lulusan SMK' },
+                    { id: 29, dinas: 'Dinas Pekerjaan Umum dan Penataan Ruang', judul: 'Kompilasi Data Administrasi Akses Air Minum Layak', indikator: 'Persentase Rumah Tangga Berakses Air Minum Layak (Komposit Proporsi Infrastruktur)', variabel: 'Jumlah Rumah Tangga Disurvei; Jumlah Rumah Tangga Menggunakan Sumber Air Minum Layak (PDAM/Sumur Bor terlindungi)' },
+                    { id: 30, dinas: 'Dinas Sosial', judul: 'Kompilasi Data Administrasi Penanganan Penyandang Disabilitas', indikator: 'Persentase Penyandang Disabilitas Menerima Layanan Rehabilitasi (Komposit Proporsi)', variabel: 'Jumlah Total Penyandang Disabilitas Terdata; Jumlah Disabilitas Mendapatkan Pelatihan Keterampilan dan Alat Bantu' },
+                    { id: 31, dinas: 'Dinas Tanaman Pangan dan Hortikultura', judul: 'Kompilasi Data Administrasi Serangan Organisme Pengganggu Tumbuhan (OPT)', indikator: 'Persentase Luas Tanaman Selamat dari Serangan Hama (Komposit Rasio Proteksi)', variabel: 'Variabel Utama: Tingkat Kerusakan OPT (Klasifikasi: Ringan, Sedang, Berat, Puso); Luas Lahan Terkena Serangan (Ha); Luas Lahan Berhasil Diselamatkan (Ha)' },
+                    { id: 32, dinas: 'Dinas Tenaga Kerja dan Transmigrasi', judul: 'Kompilasi Data Administrasi Pelatihan Keterampilan BLK', indikator: 'Persentase Peserta BLK Lulus Uji Kompetensi (Komposit Proporsi Sertifikasi)', variabel: 'Jumlah Peserta Pelatihan Terdaftar; Jumlah Peserta Mengikuti Uji Sertifikasi; Jumlah Peserta Dinyatakan Kompeten' },
+                    { id: 33, dinas: 'Dinas Koperasi, UMKM dan Perdagangan', judul: 'Kompilasi Data Administrasi Pasar Rakyat dan Harga Bahan Pokok', Indikator: 'Indeks Stabilitas Harga Komoditas Pangan Strategis (Komposit Rata-rata Harga Pasar)', variabel: 'Variabel Utama: Komoditas Pangan (Klasifikasi: Beras, Cabai, Daging, Minyak); Harga Rata-rata Harian di Pasar Rakyat (Rupiah)' },
+                    { id: 34, dinas: 'Dinas Penanaman Modal dan PTSP', judul: 'Kompilasi Data Administrasi Penerbitan Perizinan Berusaha', indikator: 'Persentase Perizinan Terbit Tepat Waktu Sesuai SOP (Komposit Rasio Kepatuhan SLA)', variabel: 'Jumlah Permohonan Izin Masuk; Jumlah Izin Diterbitkan; Jumlah Izin Selesai Sebelum/Tepat Batas Waktu SOP' },
+                    { id: 35, dinas: 'Dinas Lingkungan Hidup', judul: 'Kompilasi Data Administrasi Indeks Kualitas Lingkungan Hidup (IKLH)', indikator: 'Nilai Indeks Kualitas Lingkungan Hidup Komposit (Air, Udara, Lahan)', variabel: 'Nilai Indeks Kualitas Air (IKA); Nilai Indeks Kualitas Udara (IKU); Nilai Indeks Kualitas Lahan Tutupan Vegetasi (IKTL)' },
+                    { id: 36, dinas: 'Dinas Perhubungan', judul: 'Kompilasi Data Administrasi Kelaikan Rute Angkutan Umum', indikator: 'Persentase Trayek Angkutan Aktif Beroperasi (Komposit Proporsi Layanan)', variabel: 'Jumlah Trayek Ditetapkan; Jumlah Trayek Aktif Beroperasi; Rata-rata Load Factor Penumpang' },
+                    { id: 37, dinas: 'Dinas Pariwisata dan Kebudayaan', judul: 'Kompilasi Data Administrasi Pelestarian Cagar Budaya', indikator: 'Persentase Objek Diduga Cagar Budaya Ditetapkan Resmi (Komposit Proporsi Status)', variabel: 'Jumlah ODCB Teridentifikasi; Jumlah Objek Berhasil Ditetapkan SK Cagar Budaya; Kondisi Objek' },
+                    { id: 38, dinas: 'Dinas Perikanan', judul: 'Kompilasi Data Administrasi Bantuan Sarana Nelayan', indikator: 'Persentase Nelayan Kecil Menerima Bantuan Alat Tangkap (Komposit Proporsi Sasaran)', variabel: 'Jumlah Total Nelayan Kecil Terdaftar; Jumlah Nelayan Menerima Bantuan Mesin/Kapal; Jenis Alat Tangkap Diberikan' },
+                    { id: 39, dinas: 'Dinas Perumahan dan Kawasan Permukiman', judul: 'Kompilasi Data Administrasi Penerbitan Sertifikat Layak Fungsi (SLF)', indikator: 'Persentase Gedung Ber-SLF Terverifikasi (Komposit Proporsi Kelaikan Bangunan)', variabel: 'Jumlah Permohonan SLF Gedung; Jumlah Gedung Memenuhi Syarat Kelaikan Teknis dan Diterbitkan SLF' },
+                    { id: 40, dinas: 'Dinas Ketahanan Pangan', judul: 'Kompilasi Data Administrasi Keamanan Pangan Segar (PSAT)', indikator: 'Persentase Pangan Segar Bebas Residu Berbahaya (Komposit Proporsi Uji Lab)', variabel: 'Jumlah Sampel Pangan Diambil di Pasar; Jumlah Sampel Lulus Uji Laboratorium Bebas Pestisida/Logam Berat' },
+                    { id: 41, dinas: 'Badan Pendapatan Daerah', judul: 'Kompilasi Data Administrasi Pengelolaan BPHTB', indikator: 'Rasio Realisasi Penerimaan BPHTB Terhadap Potensi (Komposit Agregat Pendapatan)', variabel: 'Jumlah Transaksi Perolehan Hak Tanah; Total Nilai Perolehan Objek Pajak (NPOP); Realisasi Penerimaan BPHTB (Rupiah)' },
+                    { id: 42, dinas: 'Badan Kepegawaian dan Pengembangan SDM', judul: 'Kompilasi Data Administrasi Mutasi dan Promosi Jabatan ASN', indikator: 'Indeks Kesesuaian Penempatan Meritokrasi ASN (Komposit Proporsi Jabatan)', variabel: 'Jumlah ASN Mengalami Mutasi/Promosi; Jumlah Penempatan Sesuai Standar Kompetensi Jabatan' },
+                    { id: 43, dinas: 'Badan Perencanaan Pembangunan Daerah', judul: 'Kompilasi Data Administrasi Evaluasi Pelaksanaan Musrenbang', indikator: 'Persentase Usulan Masyarakat Diakomodasi APBD (Komposit Proporsi Aspirasi)', variabel: 'Jumlah Usulan Aspirasi Masuk Musrenbang; Jumlah Usulan Masuk Dokumen Perencanaan Anggaran APBD' },
+                    { id: 44, dinas: 'Badan Penanggulangan Bencana Daerah', judul: 'Kompilasi Data Administrasi Pelatihan Desa Tangguh Bencana (Destana)', indikator: 'Persentase Desa Rawan Bencana Memiliki Kapasitas Destana (Komposit Proporsi)', variabel: 'Jumlah Total Desa Rawan Bencana; Jumlah Desa Terbentuk Destana Aktif; Jumlah Relawan Terlatih' },
+                    { id: 45, dinas: 'Dinas Pemuda dan Olahraga', judul: 'Kompilasi Data Administrasi Pengelolaan Fasilitas Olahraga Publik', indikator: 'Tingkat Pemanfaatan Venue Olahraga Daerah (Komposit Rasio Frekuensi Penggunaan)', variabel: 'Jumlah Total Venue Olahraga Publik; Jumlah Hari Penggunaan per Bulan; Pendapatan Retribusi Sewa Venue' },
+                    { id: 46, dinas: 'Dinas Pemberdayaan Perempuan dan Perlindungan Anak', judul: 'Kompilasi Data Administrasi Kabupaten Layak Anak (KLA)', indikator: 'Skor Indeks Komposit Kabupaten Layak Anak (Evaluasi Klaster Hak Anak)', variabel: 'Nilai Klaster Kelembagaan; Nilai Klaster Hak Sipil & Kebebasan; Nilai Klaster Pengasuhan Keluarga; Nilai Klaster Kesehatan Dasar' },
+                    { id: 47, dinas: 'Dinas Perpustakaan dan Kearsipan', judul: 'Kompilasi Data Administrasi Penyelamatan Arsip Perangkat Daerah', indikator: 'Persentase Arsip Dinamis/Statis Terdigitisasi (Komposit Proporsi Arsip Digital)', variabel: 'Jumlah Total Arsip Fisik SKPD; Jumlah Arsip Berhasil Didigitisasi dan Diindeks dalam Sistem' },
+                    { id: 48, dinas: 'Dinas Komunikasi dan Informatika', judul: 'Kompilasi Data Administrasi SPBE (Sistem Pemerintahan Berbasis Elektronik)', indikator: 'Indeks Kematangan Komposit SPBE Pemerintah Daerah', variabel: 'Nilai Domain Kebijakan Internal SPBE; Nilai Domain Tata Kelola SPBE; Nilai Domain Layanan Publik SPBE' },
+                    { id: 49, dinas: 'Dinas Peternakan dan Kesehatan Hewan', judul: 'Kompilasi Data Administrasi Produksi Daging dan Telur Lokal', Indikator: 'Kecukupan Konsumsi Protein Hewani Daerah (Komposit Agregat Produksi)', variabel: 'Jumlah Pemotongan Ternak di RPH Resmi; Berat Daging Dihasilkan (Ton); Jumlah Produksi Telur Lokal' },
+                    { id: 50, dinas: 'Dinas Pemadam Kebakaran', judul: 'Kompilasi Data Administrasi Inspeksi Sarana Proteksi Kebakaran Gedung', indikator: 'Persentase Gedung Tinggi Memenuhi Standar Proteksi (Komposit Proporsi Kelaikan)', variabel: 'Jumlah Total Gedung Bertingkat Terdata; Jumlah Gedung Memiliki Sistem Proteksi (Hydrant/Sprinkler) Berfungsi' },
+                    { id: 51, dinas: 'Dinas Kependudukan dan Pencatatan Sipil', judul: 'Kompilasi Data Administrasi Penerbitan Akta Kelahiran Anak', indikator: 'Persentase Kepemilikan Akta Kelahiran Usia 0-18 Tahun (Komposit Proporsi Cakupan)', variabel: 'Jumlah Total Anak Usia 0-18 Tahun Terdata; Jumlah Anak Memiliki Akta Kelahiran Resmi' },
+                    { id: 52, dinas: 'Dinas Kesehatan', judul: 'Kompilasi Data Administrasi STBM (Sanitasi Total Berbasis Masyarakat)', indikator: 'Persentase Desa/Kelurahan Status ODF (Indikator Komposit Proporsi Sanitasi)', variabel: 'Jumlah Total Desa di Wilayah Kerja; Jumlah Desa Dinyatakan Bebas Buang Air Besar Sembarangan (ODF)' },
+                    { id: 53, dinas: 'Dinas Pendidikan', judul: 'Kompilasi Data Administrasi Rasio Guru dan Murid', indikator: 'Indeks Keseimbangan Beban Mengajar (Komposit Rasio Pendidik Terhadap Siswa)', variabel: 'Jumlah Total Guru Aktif Mengajar; Jumlah Total Siswa Terdaftar; Jenjang Satuan Pendidikan' },
+                    { id: 54, dinas: 'Dinas Pekerjaan Umum dan Penataan Ruang', judul: 'Kompilasi Data Administrasi Pengelolaan Sumber Daya Air Irigasi', indikator: 'Persentase Jaringan Irigasi Kondisi Baik (Komposit Proporsi Jaringan)', variabel: 'Variabel Utama: Kondisi Saluran Irigasi (Klasifikasi: Baik, Rusak Ringan, Rusak Berat); Total Panjang Jaringan Irigasi (Km); Panjang Kondisi Baik (Km)' },
+                    { id: 55, dinas: 'Dinas Sosial', judul: 'Kompilasi Data Administrasi Penanganan Lanjut Usia Telantar', indikator: 'Persentase Lansia Telantar Memperoleh Jaminan Sosial (Komposit Proporsi)', variabel: 'Jumlah Lansia Telantar Terdata; Jumlah Lansia Menerima Bantuan Sembako/Pangan dan Layanan Panti' },
+                    { id: 56, dinas: 'Dinas Tanaman Pangan dan Hortikultura', judul: 'Kompilasi Data Administrasi Penerapan Pertanian Organik', indikator: 'Persentase Luas Lahan Pertanian Organik Tersertifikasi (Komposit Proporsi Lahan)', variabel: 'Total Luas Lahan Pertanian Sawah; Luas Lahan Menerapkan Budidaya Organik Bersertifikat (Ha)' },
+                    { id: 57, dinas: 'Dinas Tenaga Kerja dan Transmigrasi', judul: 'Kompilasi Data Administrasi Pelaksanaan Hubungan Industrial', indikator: 'Persentase Penyelesaian Perselisihan Melalui Mediasi (Komposit Rasio Penyelesaian)', variabel: 'Jumlah Kasus Perselisihan Hubungan Industrial Masuk; Jumlah Kasus Berhasil Selesai Kesepakatan Bersama' },
+                    { id: 58, dinas: 'Dinas Koperasi, UMKM dan Perdagangan', judul: 'Kompilasi Data Administrasi Fasilitasi HAKI UMKM', indikator: 'Persentase UMKM Memiliki Sertifikat Merek Resmi (Komposit Proporsi Legalitas)', variabel: 'Jumlah UMKM Difasilitasi Pendaftaran Merek; Jumlah Sertifikat HAKI Merek Diterbitkan oleh Kemenkumham' },
+                    { id: 59, dinas: 'Dinas Penanaman Modal dan PTSP', judul: 'Kompilasi Data Administrasi Pengawasan Penanaman Modal (PMPK)', indikator: 'Persentase Perusahaan Patuh Laporan LKPM (Komposit Rasio Kepatuhan Pelaporan)', variabel: 'Jumlah Perusahaan Wajib Lapor LKPM; Jumlah Perusahaan Tepat Waktu Menyampaikan Laporan Kegiatan Penanaman Modal' },
+                    { id: 60, dinas: 'Dinas Lingkungan Hidup', judul: 'Kompilasi Data Administrasi Penerbitan Dokumen Lingkungan (AMDAL/UKL-UPL)', indikator: 'Persentase Dokumen Lingkungan Disetujui Tepat Waktu (Komposit Rasio Evaluasi)', variabel: 'Jumlah Dokumen AMDAL/UKL-UPL Masuk; Jumlah Dokumen Selesai Dievaluasi dan Disetujui Tepat Waktu' },
+                    { id: 61, dinas: 'Dinas Perhubungan', judul: 'Kompilasi Data Administrasi Kelaikan Terminal Penumpang', Indikator: 'Indeks Kelaikan Fasilitas Terminal Tipe C (Komposit Skor Utilitas)', variabel: 'Variabel Utama: Ketersediaan Fasilitas (Klasifikasi: Lengkap, Kurang Lengkap, Tidak Memadai); Jumlah Terminal Dinilai' },
+                    { id: 62, dinas: 'Dinas Pariwisata dan Kebudayaan', judul: 'Kompilasi Data Administrasi Pembinaan Kelompok Sadar Wisata (Pokdarwis)', indikator: 'Persentase Desa Wisata Berstatus Mandiri (Komposit Proporsi Kelembagaan)', variabel: 'Jumlah Total Desa Wisata Terbentuk; Jumlah Desa Wisata Berkategori Mandiri dengan Pokdarwis Aktif' },
+                    { id: 63, dinas: 'Dinas Perikanan', judul: 'Kompilasi Data Administrasi Konsumsi Ikan Masyarakat', Indikator: 'Angka Konsumsi Ikan (AKI) Per Kapita (Komposit Agregat Survei Konsumsi)', variabel: 'Total Estimasi Konsumsi Ikan Rumah Tangga (Kg/Tahun); Jumlah Total Populasi Penduduk Daerah' },
+                    { id: 64, dinas: 'Dinas Perumahan dan Kawasan Permukiman', judul: 'Kompilasi Data Administrasi Penyerahan PSU Perumahan', indikator: 'Persentase Perumahan Menyerahkan Prasarana Sarana Utilitas (Komposit Proporsi)', variabel: 'Jumlah Total Perumahan Pengembang Selesai; Jumlah Perumahan Telah Berita Acara Serah Terima (BAST) PSU' },
+                    { id: 65, dinas: 'Dinas Ketahanan Pangan', judul: 'Kompilasi Data Administrasi Gerakan Pangan Murah (GPM)', Indikator: 'Volume Komoditas Tersalurkan dalam Operasi Pasar Murah (Agregat Komposit)', variabel: 'Volume Beras Terjual (Kg); Volume Minyak Goreng Terjual (Liter); Jumlah Titik Penyelenggaraan Pasar Murah' },
+                    { id: 66, dinas: 'Badan Pendapatan Daerah', judul: 'Kompilasi Data Administrasi Pendapatan Retribusi Daerah', indikator: 'Persentase Capaian Target Retribusi Daerah (Komposit Rasio Realisasi Pendapatan)', variabel: 'Target Anggaran Retribusi Daerah (Rupiah); Realisasi Penerimaan Retribusi Pelayanan Umum dan Perizinan Tertentu (Rupiah)' },
+                    { id: 67, dinas: 'Badan Kepegawaian dan Pengembangan SDM', judul: 'Kompilasi Data Administrasi Pensiun dan Pemberhentian ASN', indikator: 'Persentase Penerbitan SK Pensiun Tepat Waktu (Komposit Rasio SLA Layanan)', variabel: 'Jumlah Pegawai Mencapai Batas Usia Pensiun (BUP); Jumlah SK Pensiun Terbit Sebelum TMT Pensiun' },
+                    { id: 68, dinas: 'Badan Perencanaan Pembangunan Daerah', judul: 'Kompilasi Data Administrasi Pemantauan Pelaksanaan CSR Perusahaan', Indikator: 'Total Nilai Kontribusi Program TJSL/CSR Perusahaan (Agregat Komposit Anggaran)', variabel: 'Jumlah Perusahaan Menyalurkan CSR; Total Nilai Anggaran Program CSR Tersalurkan (Rupiah); Klasifikasi Sektor Bantuan' },
+                    { id: 69, dinas: 'Badan Penanggulangan Bencana Daerah', judul: 'Kompilasi Data Administrasi Peta Risiko Bencana Daerah', indikator: 'Kelengkapan Dokumen Rencana Penanggulangan Bencana (Indikator Komposit Dokumen)', variabel: 'Jumlah Jenis Ancaman Bencana Terpetakan; Ketersediaan Peta Risiko Skala Detail; Status Pemutakhiran Dokumen RPB' },
+                    { id: 70, dinas: 'Dinas Pemuda dan Olahraga', judul: 'Kompilasi Data Administrasi Organisasi Kepemudaan Aktif', indikator: 'Persentase OKP Terdaftar Memiliki Program Pembinaan Rutin (Komposit Proporsi)', variabel: 'Jumlah Total Organisasi Kepemudaan Terdaftar; Jumlah OKP Aktif Menyelenggarakan Program Kerja Tahunan' },
+                    { id: 71, dinas: 'Dinas Pemberdayaan Perempuan dan Perlindungan Anak', judul: 'Kompilasi Data Administrasi PUSPAGA (Pusat Pembelajaran Keluarga)', indikator: 'Jumlah Keluarga Memanfaatkan Layanan Konseling Pengasuhan (Agregat Komposit)', variabel: 'Jumlah Sesi Konseling Keluarga Diselenggarakan; Jumlah Klien Keluarga Ditangani; Klasifikasi Permasalahan' },
+                    { id: 72, dinas: 'Dinas Perpustakaan dan Kearsipan', judul: 'Kompilasi Data Administrasi Transformasi Perpustakaan Inklusi Sosial', indikator: 'Jumlah Peserta Pelatihan Keterampilan Berbasis Literasi (Agregat Komposit)', variabel: 'Jumlah Pelatihan Keterampilan Diselenggarakan; Jumlah Peserta Masyarakat Hadir; Jenis Keterampilan Dilatih' },
+                    { id: 73, dinas: 'Dinas Komunikasi dan Informatika', judul: 'Kompilasi Data Administrasi Jaringan Internet Publik Gratis', indikator: 'Persentase Titik Hotspot Publik Aktif Beroperasi (Komposit Proporsi Infrastruktur)', variabel: 'Jumlah Titik Hotspot Publik Direncanakan; Jumlah Titik Hotspot Aktif Terhubung Bandwidth; Rata-rata Kecepatan (Mbps)' },
+                    { id: 74, dinas: 'Dinas Peternakan dan Kesehatan Hewan', judul: 'Kompilasi Data Administrasi Pengawasan Produk Asal Hewan', indikator: 'Persentase Produk Daging Layak Konsumsi di Pasaran (Komposit Proporsi Uji Aman)', variabel: 'Jumlah Sampel Daging Diambil di Pasar Tradisional; Jumlah Sampel Memenuhi Standar Aman, Sehat, Utuh, Halal (ASUH)' },
+                    { id: 75, dinas: 'Dinas Pemadam Kebakaran', judul: 'Kompilasi Data Administrasi Sosialisasi Mitigasi Kebakaran', Indikator: 'Jumlah Sekolah dan Pemukiman Teredukasi Mitigasi Kebakaran (Agregat Komposit)', variabel: 'Jumlah Sekolah Mengikuti Simulasi Evakuasi; Jumlah Warga Pemukiman Padat Terlatih Penggunaan APAR' },
+                    { id: 76, dinas: 'Dinas Kependudukan dan Pencatatan Sipil', judul: 'Kompilasi Data Administrasi Kepemilikan Kartu Identitas Anak (KIA)', indikator: 'Persentase Kepemilikan KIA Usia 0-17 Tahun Kurang 1 Hari (Komposit Proporsi Cakupan)', variabel: 'Jumlah Total Anak Usia Sasaran KIA; Jumlah Anak Selesai Pencetakan dan Distribusi Kartu Identitas Anak' },
+                    { id: 77, dinas: 'Dinas Kesehatan', judul: 'Kompilasi Data Administrasi Pelayanan Kesehatan Puskesmas', Indikator: 'Total Kunjungan Pasien Rawat Jalan dan Inap FKTP (Agregat Komposit Kunjungan)', variabel: 'Jumlah Kunjungan Poli Umum; Jumlah Kunjungan Poli Gigi; Jumlah Kunjungan Pelayanan KIA/KB di Puskesmas' },
+                    { id: 78, dinas: 'Dinas Pendidikan', judul: 'Kompilasi Data Administrasi Bantuan Beasiswa Pendidikan Daerah', indikator: 'Persentase Siswa/Mahasiswa Kurang Mampu Menerima Beasiswa (Komposit Proporsi)', variabel: 'Jumlah Total Pengaju Beasiswa Valid; Jumlah Siswa/Mahasiswa Ditetapkan Menerima Bantuan Dana Beasiswa' },
+                    { id: 79, dinas: 'Dinas Pekerjaan Umum dan Penataan Ruang', judul: 'Kompilasi Data Administrasi Penerbitan PBG (Persetujuan Bangunan Gedung)', indikator: 'Rata-rata Durasi Hari Penerbitan PBG Menggantikan IMB (Komposit SLA Teknis)', variabel: 'Jumlah Permohonan PBG Masuk; Jumlah PBG Diterbitkan; Rata-rata Waktu Proses Verifikasi Teknis (Hari)' },
+                    { id: 80, dinas: 'Dinas Sosial', judul: 'Kompilasi Data Administrasi Karang Taruna Aktif', indikator: 'Persentase Karang Taruna Klasifikasi Mandiri dan Utama (Komposit Proporsi)', variabel: 'Jumlah Total Karang Taruna Desa/Kelurahan; Jumlah Karang Taruna Klasifikasi Mandiri/Utama dengan Kegiatan Aktif' },
+                    { id: 81, dinas: 'Dinas Tanaman Pangan dan Hortikultura', judul: 'Kompilasi Data Administrasi Asuransi Usaha Tani Padi (AUTP)', indikator: 'Persentase Luas Lahan Terlindungi Asuransi Gagal Panen (Komposit Proporsi AUTP)', variabel: 'Total Luas Sawah Terdaftar Asuransi; Luas Lahan Mengalami Klaim Cair Akibat Gagal Panen Banjir/Hama (Ha)' },
+                    { id: 82, dinas: 'Dinas Tenaga Kerja dan Transmigrasi', judul: 'Kompilasi Data Administrasi Pengesahan Peraturan Perusahaan (PP)', indikator: 'Persentase Perusahaan Memiliki PP Sah Terdaftar (Komposit Proporsi Kepatuhan)', variabel: 'Jumlah Perusahaan Wajib Memiliki PP; Jumlah Perusahaan Berhasil Disahkan Dokumen Peraturan Perusahaannya' },
+                    { id: 83, dinas: 'Dinas Koperasi, UMKM dan Perdagangan', judul: 'Kompilasi Data Administrasi Sertifikasi Halal bagi UMKM', indikator: 'Persentase UMKM Kuliner Memiliki Sertifikat Halal (Komposit Proporsi Sehati)', variabel: 'Jumlah Pelaku UMKM Kuliner Terdata; Jumlah Produk UMKM Menerima Sertifikat Label Halal Resmi' },
+                    { id: 84, dinas: 'Dinas Penanaman Modal dan PTSP', judul: 'Kompilasi Data Administrasi Perizinan Keliling (Sipati)', Indikator: 'Jumlah Dokumen Terbit Melalui Layanan Jemput Bola (Agregat Komposit Layanan)', variabel: 'Jumlah Titik Lokasi Pelayanan Keliling Dilaksanakan; Jumlah Dokumen Izin Terbit di Tempat (NIB/IUMK)' },
+                    { id: 85, dinas: 'Dinas Lingkungan Hidup', judul: 'Kompilasi Data Administrasi Bank Sampah Unit dan Induk', Indikator: 'Total Volume Sampah Anorganik Berhasil Didaur Ulang (Agregat Komposit Tonase)', variabel: 'Jumlah Bank Sampah Aktif Terdaftar; Jumlah Nasabah Aktif; Total Berat Sampah Anorganik Terkumpul (Kg/Bulan)' },
+                    { id: 86, dinas: 'Dinas Perhubungan', judul: 'Kompilasi Data Administrasi Kelaikan Perlengkapan Jalan', indikator: 'Persentase Rambu dan PJU Berfungsi Normal (Komposit Proporsi Kondisi Infrastruktur)', variabel: 'Variabel Utama: Kondisi Perlengkapan Jalan (Klasifikasi: Berfungsi Normal, Padam/Rusak, Hilang); Total Titik PJU dan Rambu Terpasang' },
+                    { id: 87, dinas: 'Dinas Pariwisata dan Kebudayaan', judul: 'Kompilasi Data Administrasi Pendataan Hotel dan Restoran', indikator: 'Rata-rata Tingkat Penghunian Kamar / TPK Hotel (Komposit Rasio Okupansi)', variabel: 'Jumlah Total Kamar Hotel Tersedia; Jumlah Kamar Terjual; Rata-rata Lama Menginap Tamu (Hari)' },
+                    { id: 88, dinas: 'Dinas Perikanan', judul: 'Kompilasi Data Administrasi Kartu KUSUKA Pelaku Perikanan', indikator: 'Persentase Nelayan dan Pembudi Daya Memiliki Kartu KUSUKA (Komposit Proporsi)', variabel: 'Jumlah Total Nelayan dan Pembudi Daya Terdata; Jumlah Kartu KUSUKA Berhasil Dicetak dan Didistribusikan' },
+                    { id: 89, dinas: 'Dinas Perumahan dan Kawasan Permukiman', judul: 'Kompilasi Data Administrasi Rusunawa Sederhana', indikator: 'Tingkat Okupansi Hunian Rusunawa Daerah (Komposit Rasio Keterisian Unit)', variabel: 'Jumlah Total Unit Kamar Rusunawa Tersedia; Jumlah Unit Kamar Terisi Penghuni Sah; Realisasi Retribusi Sewa' },
+                    { id: 90, dinas: 'Dinas Ketahanan Pangan', judul: 'Kompilasi Data Administrasi Toko Tani Pangan Murah', indikator: 'Ketersediaan Stok Bahan Pokok Strategis Outlet Pangan (Agregat Komposit Stok)', variabel: 'Stok Beras Tersedia di Outlet (Kg); Stok Minyak Goreng Tersedia (Liter); Volume Penjualan Harga di Bawah HET' },
+                    { id: 91, dinas: 'Badan Pendapatan Daerah', judul: 'Kompilasi Data Administrasi Validasi Objek PBB-P2', indikator: 'Persentase Akurasi Database Objek Pajak PBB-P2 Terivalidasi (Komposit Proporsi)', variabel: 'Jumlah Total Objek Pajak PBB-P2 Terdaftar; Jumlah Objek Pajak Telah Dilakukan Pemutakhiran Lapangan' },
+                    { id: 92, dinas: 'Badan Kepegawaian dan Pengembangan SDM', judul: 'Kompilasi Data Administrasi Penilaian Kinerja ASN (E-Kinerja)', indikator: 'Persentase ASN Tepat Waktu Input Sasaran Kerja Pegawai (Komposit Proporsi Kepatuhan)', variabel: 'Jumlah Total Pegawai ASN Wajib Lapor SKP; Jumlah Pegawai Selesai Input Dokumen E-Kinerja Tepat Waktu' },
+                    { id: 93, dinas: 'Badan Perencanaan Pembangunan Daerah', judul: 'Kompilasi Data Administrasi Realisasi Anggaran Pembangunan Fisik', indikator: 'Persentase Serapan Anggaran Belanja Modal Infrastruktur (Komposit Rasio Keuangan)', variabel: 'Total Pagu Anggaran Belanja Modal DAK/DAU; Nilai Kontrak Pekerjaan Fisik; Nilai Realisasi Keuangan Terserap (Rupiah)' },
+                    { id: 94, dinas: 'Badan Penanggulangan Bencana Daerah', judul: 'Kompilasi Data Administrasi Logistik Gudang Siaga Bencana', indikator: 'Kecukupan Stok Logistik Bantuan Darurat Bencana (Agregat Komposit Persediaan)', variabel: 'Jumlah Paket Makanan Siap Saji Tersedia; Jumlah Tenda Pengungsian Layak; Jumlah Selimut dan Perlengkapan Logistik Darurat' },
+                    { id: 95, dinas: 'Dinas Pemuda dan Olahraga', judul: 'Kompilasi Data Administrasi Wirausaha Muda Pemula (WMP)', Indikator: 'Jumlah Wirausaha Muda Menerima Stimulan Usaha (Agregat Komposit Bantuan)', variabel: 'Jumlah Pemuda Mengajukan Proposal Usaha; Jumlah Wirausaha Muda Terpilih Menerima Bantuan Modal Stimulan; Nilai Bantuan' },
+                    { id: 96, dinas: 'Dinas Pemberdayaan Perempuan dan Perlindungan Anak', judul: 'Kompilasi Data Administrasi Forum Anak Daerah', indikator: 'Indeks Partisipasi Forum Anak Pelopor dan Pelapor (Komposit Skor Aktivitas)', variabel: 'Jumlah Kecamatan Membentuk Forum Anak; Jumlah Kegiatan Partisipasi Perencanaan Pembangunan Diikuti Anak' },
+                    { id: 97, dinas: 'Dinas Perpustakaan dan Kearsipan', judul: 'Kompilasi Data Administrasi Keanggotaan Perpustakaan Daerah', Indikator: 'Pertumbuhan Jumlah Anggota Baru Perpustakaan per Triwulan (Agregat Komposit)', variabel: 'Jumlah Pendaftar Anggota Baru Pelajar; Jumlah Anggota Mahasiswa; Jumlah Anggota Kategori Masyarakat Umum' },
+                    { id: 98, dinas: 'Dinas Komunikasi dan Informatika', judul: 'Kompilasi Data Administrasi Publikasi Informasi Media Resmi Pemerintah', Indikator: 'Total Volume Diseminasi Informasi Publik Kanal Resmi (Agregat Komposit Publikasi)', variabel: 'Jumlah Siaran Pers Dirilis; Jumlah Berita Tayang di Website Resmi; Jumlah Jangkauan Publik (Reach) Media Sosial Pemerintah' },
+                    { id: 99, dinas: 'Dinas Peternakan dan Kesehatan Hewan', judul: 'Kompilasi Data Administrasi Pemeriksaan Hewan Kurban', indikator: 'Persentase Hewan Kurban Memenuhi Syarat Sehat Layak (Komposit Proporsi Pemeriksaan)', variabel: 'Jumlah Tempat Penampungan Hewan Kurban Diawasi; Jumlah Total Sapi/Kambing Diperiksa; Jumlah Surat Keterangan Sehat Diterbitkan' },
+                    { id: 100, dinas: 'Dinas Pemadam Kebakaran', judul: 'Kompilasi Data Administrasi Ketersediaan Sumber Air Hidran Pemadam', indikator: 'Persentase Hidran Kota Berfungsi Optimal Darurat (Komposit Proporsi Infrastruktur Air)', variabel: 'Variabel Utama: Status Kondisi Hidran (Klasifikasi: Berfungsi Optimal, Tekanan Rendah, Rusak/Macet); Total Titik Hidran Kota Terpasang' }
+                ],
+                
+                get filteredData() {
+                    if (this.search.trim() === '') {
+                        return this.data;
+                    }
+                    const query = this.search.toLowerCase();
+                    return this.data.filter(item => {
+                        return item.dinas.toLowerCase().includes(query) ||
+                               item.judul.toLowerCase().includes(query) ||
+                               item.indikator.toLowerCase().includes(query) ||
+                               item.variabel.toLowerCase().includes(query);
+                    });
+                },
+
+                get totalPages() {
+                    return Math.ceil(this.filteredData.length / this.perPage);
+                },
+
+                get startIndex() {
+                    return (this.currentPage - 1) * this.perPage;
+                },
+
+                get paginatedData() {
+                    if (this.currentPage > this.totalPages && this.totalPages > 0) {
+                        this.currentPage = this.totalPages;
+                    }
+                    if (this.currentPage < 1) {
+                        this.currentPage = 1;
+                    }
+                    return this.filteredData.slice(this.startIndex, this.startIndex + this.perPage);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

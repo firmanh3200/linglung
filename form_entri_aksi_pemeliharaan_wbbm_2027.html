@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Entri Aksi Pemeliharaan WBBM Tahun 2027 - BPS Provinsi Jawa Barat</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            750: '#1e1b4b',
+                            900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; font-size: 12pt; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #cbd5e1; padding: 6px; }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-brand-900 text-white shadow-lg sticky top-0 z-40 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-600 p-3 rounded-xl shadow-md text-white flex items-center justify-center">
+                        <i class="fa-solid fa-shield-halved text-2xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="bg-indigo-500/30 text-indigo-300 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-indigo-400/30">ZI-WBBM 2027</span>
+                            <span class="bg-emerald-500/30 text-emerald-300 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-emerald-400/30">PDCA Framework</span>
+                        </div>
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white mt-1">Aksi Pemeliharaan WBBM</h1>
+                        <p class="text-xs sm:text-sm text-slate-300">Badan Pusat Statistik Provinsi Jawa Barat • Berdasarkan Permen PANRB No. 90/2021 & No. 5/2024</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="openModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Tambah Aksi Baru
+                    </button>
+                    <button onclick="exportJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2" title="Ekspor Data JSON">
+                        <i class="fa-solid fa-file-code"></i> Ekspor
+                    </button>
+                    <button onclick="triggerImport()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2" title="Impor Data JSON">
+                        <i class="fa-solid fa-file-import"></i> Impor
+                    </button>
+                    <input type="file" id="importFile" class="hidden" accept=".json" onchange="importJSON(event)">
+                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2" title="Cetak / PDF">
+                        <i class="fa-solid fa-print"></i> Cetak
+                    </button>
+                    <button onclick="resetData()" class="bg-rose-900/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/50 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2" title="Reset Default Template">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Notification Banner / Message Box -->
+        <div id="alertBox" class="hidden rounded-xl p-4 border transition-all duration-300 no-print flex items-center justify-between shadow-sm">
+            <div class="flex items-center space-x-3">
+                <i id="alertIcon" class="fa-solid text-lg"></i>
+                <span id="alertText" class="text-sm font-medium"></span>
+            </div>
+            <button onclick="hideAlert()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- Dashboard Summary & Metrics -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Aksi Pemeliharaan</p>
+                    <h3 id="statTotal" class="text-2xl font-bold text-slate-900 mt-1">0</h3>
+                    <p class="text-xs text-indigo-600 mt-1 font-medium"><i class="fa-solid fa-bullseye mr-1"></i> Target Tahun 2027</p>
+                </div>
+                <div class="bg-indigo-50 text-indigo-600 p-3 rounded-xl">
+                    <i class="fa-solid fa-clipboard-list text-xl"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Selesai (Completed)</p>
+                    <h3 id="statCompleted" class="text-2xl font-bold text-emerald-600 mt-1">0</h3>
+                    <p class="text-xs text-emerald-600 mt-1 font-medium"><i class="fa-solid fa-circle-check mr-1"></i> Evidens Valid</p>
+                </div>
+                <div class="bg-emerald-50 text-emerald-600 p-3 rounded-xl">
+                    <i class="fa-solid fa-square-check text-xl"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Dalam Proses (In Progress)</p>
+                    <h3 id="statInProgress" class="text-2xl font-bold text-amber-600 mt-1">0</h3>
+                    <p class="text-xs text-amber-600 mt-1 font-medium"><i class="fa-solid fa-spinner mr-1"></i> Tahap Implementasi</p>
+                </div>
+                <div class="bg-amber-50 text-amber-600 p-3 rounded-xl">
+                    <i class="fa-solid fa-clock-rotate-left text-xl"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Belum Mulai (Pending)</p>
+                    <h3 id="statPending" class="text-2xl font-bold text-slate-600 mt-1">0</h3>
+                    <p class="text-xs text-slate-500 mt-1 font-medium"><i class="fa-solid fa-hourglass-start mr-1"></i> Perencanaan Awal</p>
+                </div>
+                <div class="bg-slate-100 text-slate-600 p-3 rounded-xl">
+                    <i class="fa-solid fa-calendar-days text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Overview Bar -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 no-print">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-semibold text-slate-700">Tingkat Capaian Keseluruhan Aksi WBBM 2027</span>
+                <span id="progressPercentage" class="text-sm font-bold text-indigo-600">0%</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                <div id="progressBar" class="bg-indigo-600 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Search and Filters Section -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 items-center justify-between no-print">
+            <div class="relative w-full md:w-96">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" id="searchInput" oninput="filterTable()" placeholder="Cari aksi, PIC, atau target output..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+            </div>
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <select id="filterArea" onchange="filterTable()" class="bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="">Semua Area Perubahan</option>
+                    <option value="1. Manajemen Perubahan">1. Manajemen Perubahan</option>
+                    <option value="2. Penataan Tatalaksana">2. Penataan Tatalaksana</option>
+                    <option value="3. Penataan Sistem Manajemen SDM">3. Penataan Sistem Manajemen SDM</option>
+                    <option value="4. Penguatan Akuntabilitas Kinerja">4. Penguatan Akuntabilitas</option>
+                    <option value="5. Penguatan Pengawasan">5. Penguatan Pengawasan</option>
+                    <option value="6. Peningkatan Kualitas Pelayanan Publik">6. Peningkatan Pelayanan Publik</option>
+                </select>
+                <select id="filterStatus" onchange="filterTable()" class="bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="">Semua Status</option>
+                    <option value="Belum Mulai">Belum Mulai</option>
+                    <option value="Dalam Proses">Dalam Proses</option>
+                    <option value="Selesai">Selesai</option>
+                </select>
+                <select id="filterTriwulan" onchange="filterTable()" class="bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="">Semua Triwulan</option>
+                    <option value="Triwulan I">Triwulan I</option>
+                    <option value="Triwulan II">Triwulan II</option>
+                    <option value="Triwulan III">Triwulan III</option>
+                    <option value="Triwulan IV">Triwulan IV</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Main Data Table Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+                <div>
+                    <h2 class="text-base font-bold text-slate-900">Daftar Rencana Aksi Pemeliharaan WBBM 2027</h2>
+                    <p class="text-xs text-slate-500">BPS Provinsi Jawa Barat • Sinkronisasi Evaluasi Pembangunan Zona Integritas</p>
+                </div>
+                <span id="recordCount" class="text-xs font-semibold bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full border border-indigo-200">0 Item</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table id="wbbmTable" class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100/70 text-slate-600 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-200">
+                            <th class="p-3 sm:p-4">ID & Area Perubahan</th>
+                            <th class="p-3 sm:p-4">Judul Kegiatan & Target Output (SMART)</th>
+                            <th class="p-3 sm:p-4">Jadwal & PIC</th>
+                            <th class="p-3 sm:p-4">Indikator & Evidens</th>
+                            <th class="p-3 sm:p-4">Status & Catatan PDCA</th>
+                            <th class="p-3 sm:p-4 text-center no-print">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-200 text-sm">
+                        <!-- Dynamic Rows Injected Here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden p-12 text-center">
+                <div class="text-slate-300 text-4xl mb-3"><i class="fa-solid fa-folder-open"></i></div>
+                <h3 class="text-base font-semibold text-slate-700">Tidak ada data aksi pemeliharaan</h3>
+                <p class="text-xs text-slate-500 mt-1">Coba sesuaikan kata kunci pencarian atau tambahkan aksi baru.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal Form for Add/Edit -->
+    <div id="actionModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-200 transform transition-all">
+            <div class="sticky top-0 bg-white px-6 py-4 border-b border-slate-200 flex justify-between items-center z-10">
+                <h3 id="modalTitle" class="text-lg font-bold text-slate-900">Tambah Aksi Pemeliharaan Baru</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <form id="wbbmForm" onsubmit="saveAction(event)" class="p-6 space-y-4">
+                <input type="hidden" id="editIndex">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">ID Aksi / Kode Unik *</label>
+                        <input type="text" id="actionId" required placeholder="Contoh: MP-01" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Area Perubahan WBBM *</label>
+                        <select id="actionArea" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                            <option value="">Pilih Area Perubahan</option>
+                            <option value="1. Manajemen Perubahan">1. Manajemen Perubahan</option>
+                            <option value="2. Penataan Tatalaksana">2. Penataan Tatalaksana</option>
+                            <option value="3. Penataan Sistem Manajemen SDM">3. Penataan Sistem Manajemen SDM</option>
+                            <option value="4. Penguatan Akuntabilitas Kinerja">4. Penguatan Akuntabilitas</option>
+                            <option value="5. Penguatan Pengawasan">5. Penguatan Pengawasan</option>
+                            <option value="6. Peningkatan Kualitas Pelayanan Publik">6. Peningkatan Pelayanan Publik</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Judul / Nama Kegiatan Aksi Pemeliharaan *</label>
+                    <input type="text" id="actionTitle" required placeholder="Contoh: Internalisasi Budaya Kerja dan Core Values BerAKHLAK" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Target Output / Deliverable (Sesuai SMART Criteria) *</label>
+                    <textarea id="actionTarget" rows="2" required placeholder="Contoh: Tersusunnya laporan monev triwulanan dengan tingkat kepatuhan 100%" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Waktu Pelaksanaan / Triwulan *</label>
+                        <select id="actionTriwulan" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                            <option value="">Pilih Triwulan</option>
+                            <option value="Triwulan I">Triwulan I (Jan - Mar)</option>
+                            <option value="Triwulan II">Triwulan II (Apr - Jun)</option>
+                            <option value="Triwulan III">Triwulan III (Jul - Sep)</option>
+                            <option value="Triwulan IV">Triwulan IV (Okt - Des)</option>
+                            <option value="Berkelanjutan (Ongoing)">Berkelanjutan (Ongoing)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Penanggung Jawab / PIC & Tim *</label>
+                        <input type="text" id="actionPic" required placeholder="Contoh: Tim Area 1 / Bagian Umum" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Indikator Keberhasilan (KPI) *</label>
+                        <input type="text" id="actionKpi" required placeholder="Contoh: Indeks kepuasan > 85%" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Status Pelaksanaan *</label>
+                        <select id="actionStatus" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                            <option value="Belum Mulai">Belum Mulai</option>
+                            <option value="Dalam Proses">Dalam Proses</option>
+                            <option value="Selesai">Selesai</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Metode Verifikasi / Evidens (Bukti Dukung) *</label>
+                    <input type="text" id="actionEvidens" required placeholder="Contoh: Dokumen SK, Notula, Foto Kegiatan, Link Drive" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Catatan Evaluasi / Siklus PDCA (Plan-Do-Check-Act)</label>
+                    <textarea id="actionNotes" rows="2" placeholder="Catatan perencanaan tindak lanjut, hambatan, atau hasil evaluasi..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl shadow transition">Simpan Aksi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto text-center text-xs text-slate-500 no-print">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p class="font-semibold text-slate-700">Form Entri Aksi Pemeliharaan WBBM Tahun 2027 • BPS Provinsi Jawa Barat</p>
+            <p>Sistem Manajemen Kinerja & Zona Integritas berbasis Perencanaan Efektif dan Efisien (PDCA Cycle)</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Default Template Data for BPS Provinsi Jawa Barat WBBM Maintenance 2027
+        const defaultData = [
+            {
+                id: "MP-01",
+                area: "1. Manajemen Perubahan",
+                title: "Penyusunan Roadmap dan Roll-out Program Pembangunan ZI WBBM 2027",
+                target: "Tersusun dokumen roadmap pemeliharaan WBBM lengkap dengan penanggung jawab operasional di seluruh bagian.",
+                triwulan: "Triwulan I",
+                pic: "Tim Kerja Manajemen Perubahan",
+                kpi: "Dokumen Roadmap disahkan Kepala BPS Prov. Jabar",
+                evidens: "SK Tim & Dokumen Roadmap TTD",
+                status: "Selesai",
+                notes: "Plan: Reviu target RB. Do: Rapat koordinasi internal. Check: Validasi biro hukum/ortala. Act: Penetapan SK."
+            },
+            {
+                id: "MP-02",
+                area: "1. Manajemen Perubahan",
+                title: "Internalisasi Budaya Kerja BerAKHLAK dan Core Values Pelayanan Prima",
+                target: "Pelaksanaan morning briefing dan sosialisasi berkala minimal 2 kali sebulan untuk seluruh pegawai.",
+                triwulan: "Berkelanjutan (Ongoing)",
+                pic: "Bagian Umum & Kepegawaian",
+                kpi: "Kehadiran pegawai >95% dan hasil survei internal budaya kerja",
+                evidens: "Notula, Absensi, Dokumentasi Foto",
+                status: "Dalam Proses",
+                notes: "Pelaksanaan rutin setiap hari Senin secara hybrid."
+            },
+            {
+                id: "TT-01",
+                area: "2. Penataan Tatalaksana",
+                title: "Evaluasi dan Pemutakhiran Standar Operasional Prosedur (SOP) Layanan Statistik",
+                target: "100% SOP Layanan Statistik Terpadu dan Rekomendasi Statistik dimutakhiran sesuai bisnis proses baru.",
+                triwulan: "Triwulan II",
+                pic: "Tim Kerja Diseminasi & Statistik Rujukan",
+                kpi: "Jumlah SOP direvisi dan diintegrasikan ke e-SOP",
+                evidens: "Dokumen SOP Terupdate & SK Pengesahan",
+                status: "Belum Mulai",
+                notes: "Menunggu masukan dari unit pelayanan statistik terpadu."
+            },
+            {
+                id: "SDM-01",
+                area: "3. Penataan Sistem Manajemen SDM",
+                title: "Pemetaan Kompetensi Pegawai dan Evaluasi Kinerja Berbasis SKP Digital",
+                target: "Penyusunan matriks kompetensi dan penilaian triwulanan tepat waktu 100%.",
+                triwulan: "Triwulan III",
+                pic: "Sub Bagian Kepegawaian",
+                kpi: "Ketepatan waktu pelaporan SKP triwulanan 100%",
+                evidens: "Laporan Kinerja & Rekapitulasi SKP",
+                status: "Belum Mulai",
+                notes: "Integrasi dengan aplikasi kepegawaian nasional."
+            },
+            {
+                id: "AK-01",
+                area: "4. Penguatan Akuntabilitas Kinerja",
+                title: "Reviu Capaian Perjanjian Kinerja (PK) dan Evaluasi IKU Triwulanan",
+                target: "Penyusunan laporan monev IKU triwulanan tepat waktu dengan rekomendasi perbaikan strategis.",
+                triwulan: "Berkelanjutan (Ongoing)",
+                pic: "Tim Kerja Perencanaan & Keuangan",
+                kpi: "Nilai AKIP BPS Prov Jabar minimal kategori AA / A",
+                evidens: "Laporan Monev IKU & PK TTD",
+                status: "Dalam Proses",
+                notes: "Dilakukan monitoring berkala setiap akhir triwulan."
+            },
+            {
+                id: "PG-01",
+                area: "5. Penguatan Pengawasan",
+                title: "Penguatan Pengendalian Intern dan Sosialisasi Anti Gratifikasi / Whistleblowing System",
+                target: "Penyelenggaraan kampanye anti gratifikasi dan kepatuhan LHKPN/LHKASN 100% tepat waktu.",
+                triwulan: "Triwulan I",
+                pic: "Inspektorat / Tim Kepatuhan Internal",
+                kpi: "Tingkat kepatuhan LHKPN/LHKASN 100% sebelum batas waktu",
+                evidens: "Bukti Penerimaan LHKPN & Sertifikat Kepatuhan",
+                status: "Selesai",
+                notes: "Batas waktu pelaporan dipantau ketat."
+            },
+            {
+                id: "PP-01",
+                area: "6. Peningkatan Kualitas Pelayanan Publik",
+                title: "Survei Kepuasan Pelanggan (SKM) dan Perbaikan Fasilitas Pelayanan Statistik Terpadu (PST)",
+                target: "Indeks Kepuasan Masyarakat (IKM) PST mencapai minimal 88.00 (Kategori Sangat Baik).",
+                triwulan: "Triwulan IV",
+                pic: "Tim PST & Pelayanan Statistik",
+                kpi: "Nilai IKM min. 88.00 dengan rekomendasi tindak lanjut terselesaikan",
+                evidens: "Laporan SKM Triwulanan & Dokumentasi Sarpras",
+                status: "Belum Mulai",
+                notes: "Penyediaan fasilitas ramah disabilitas dan digital feedback."
+            }
+        ];
+
+        // LocalStorage Management
+        let actions = JSON.parse(localStorage.getItem('wbbm_actions_2027')) || defaultData;
+
+        function saveToLocalStorage() {
+            localStorage.setItem('wbbm_actions_2027', JSON.stringify(actions));
+        }
+
+        // Notification Banner
+        function showAlert(message, type = 'success') {
+            const alertBox = document.getElementById('alertBox');
+            const alertText = document.getElementById('alertText');
+            const alertIcon = document.getElementById('alertIcon');
+
+            alertText.textContent = message;
+            alertBox.className = "rounded-xl p-4 border transition-all duration-300 no-print flex items-center justify-between shadow-sm ";
+            
+            if (type === 'success') {
+                alertBox.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
+                alertIcon.className = "fa-solid fa-circle-check text-emerald-600 mr-2 text-lg";
+            } else {
+                alertBox.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
+                alertIcon.className = "fa-solid fa-circle-exclamation text-rose-600 mr-2 text-lg";
+            }
+
+            alertBox.classList.remove('hidden');
+            setTimeout(hideAlert, 4000);
+        }
+
+        function hideAlert() {
+            document.getElementById('alertBox').classList.add('hidden');
+        }
+
+        // Render Table and Dashboard Metrics
+        function renderTable(dataToRender = actions) {
+            const tbody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+            tbody.innerHTML = '';
+
+            if (dataToRender.length === 0) {
+                emptyState.classList.remove('hidden');
+                document.getElementById('recordCount').textContent = '0 Item';
+                updateStats();
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            document.getElementById('recordCount').textContent = `${dataToRender.length} Item`;
+
+            dataToRender.forEach((item, index) => {
+                // Find actual index in global actions array for editing/deleting if filtered
+                const globalIndex = actions.findIndex(a => a.id === item.id && a.title === item.title);
+
+                let badgeColor = 'bg-slate-100 text-slate-700 border-slate-200';
+                if (item.status === 'Selesai') badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                else if (item.status === 'Dalam Proses') badgeColor = 'bg-amber-50 text-amber-700 border-amber-200';
+                else if (item.status === 'Belum Mulai') badgeColor = 'bg-slate-100 text-slate-600 border-slate-200';
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-slate-50/80 transition-colors border-b border-slate-100';
+                row.innerHTML = `
+                    <td class="p-3 sm:p-4 align-top">
+                        <span class="inline-block font-mono bg-indigo-50 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded border border-indigo-200 mb-1">${escapeHtml(item.id)}</span>
+                        <div class="text-xs font-semibold text-slate-800">${escapeHtml(item.area)}</div>
+                    </td>
+                    <td class="p-3 sm:p-4 align-top">
+                        <div class="font-semibold text-slate-900 text-sm mb-1">${escapeHtml(item.title)}</div>
+                        <div class="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                            <strong class="text-slate-700">Target (SMART):</strong> ${escapeHtml(item.target)}
+                        </div>
+                    </td>
+                    <td class="p-3 sm:p-4 align-top text-xs">
+                        <div class="font-medium text-slate-800"><i class="fa-regular fa-calendar mr-1 text-slate-400"></i>${escapeHtml(item.triwulan)}</div>
+                        <div class="text-slate-500 mt-1"><i class="fa-solid fa-user-group mr-1 text-slate-400"></i>${escapeHtml(item.pic)}</div>
+                    </td>
+                    <td class="p-3 sm:p-4 align-top text-xs">
+                        <div class="font-medium text-slate-800"><span class="text-indigo-600 font-semibold">KPI:</span> ${escapeHtml(item.kpi)}</div>
+                        <div class="text-slate-500 mt-1"><span class="text-slate-600 font-semibold">Evidens:</span> ${escapeHtml(item.evidens)}</div>
+                    </td>
+                    <td class="p-3 sm:p-4 align-top text-xs">
+                        <span class="inline-block px-2.5 py-1 rounded-full text-xs font-semibold border ${badgeColor} mb-2">${escapeHtml(item.status)}</span>
+                        <div class="text-slate-500 italic bg-amber-50/50 p-1.5 rounded border border-amber-100 text-[11px]">
+                            <strong class="not-italic text-amber-800">PDCA:</strong> ${escapeHtml(item.notes || '-')}
+                        </div>
+                    </td>
+                    <td class="p-3 sm:p-4 align-top text-center no-print">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="editAction(${globalIndex})" class="p-1.5 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 rounded-lg transition" title="Edit">
+                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                            </button>
+                            <button onclick="deleteAction(${globalIndex})" class="p-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 rounded-lg transition" title="Hapus">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updateStats();
+        }
+
+        // Update Dashboard Stats Counters & Progress Bar
+        function updateStats() {
+            const total = actions.length;
+            const completed = actions.filter(a => a.status === 'Selesai').length;
+            const inProgress = actions.filter(a => a.status === 'Dalam Proses').length;
+            const pending = actions.filter(a => a.status === 'Belum Mulai').length;
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statCompleted').textContent = completed;
+            document.getElementById('statInProgress').textContent = inProgress;
+            document.getElementById('statPending').textContent = pending;
+
+            const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+            document.getElementById('progressPercentage').textContent = `${percentage}%`;
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+        }
+
+        // Filter Function
+        function filterTable() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const area = document.getElementById('filterArea').value;
+            const status = document.getElementById('filterStatus').value;
+            const triwulan = document.getElementById('filterTriwulan').value;
+
+            const filtered = actions.filter(item => {
+                const matchKeyword = item.title.toLowerCase().includes(keyword) || 
+                                     item.target.toLowerCase().includes(keyword) || 
+                                     item.pic.toLowerCase().includes(keyword) || 
+                                     item.id.toLowerCase().includes(keyword);
+                const matchArea = area === "" || item.area === area;
+                const matchStatus = status === "" || item.status === status;
+                const matchTriwulan = triwulan === "" || item.triwulan === triwulan;
+
+                return matchKeyword && matchArea && matchStatus && matchTriwulan;
+            });
+
+            renderTable(filtered);
+        }
+
+        // Modal Open / Close
+        function openModal(editIdx = null) {
+            const modal = document.getElementById('actionModal');
+            const modalTitle = document.getElementById('modalTitle');
+            document.getElementById('wbbmForm').reset();
+            document.getElementById('editIndex').value = '';
+
+            if (editIdx !== null) {
+                modalTitle.textContent = "Edit Aksi Pemeliharaan WBBM";
+                const item = actions[editIdx];
+                document.getElementById('editIndex').value = editIdx;
+                document.getElementById('actionId').value = item.id;
+                document.getElementById('actionArea').value = item.area;
+                document.getElementById('actionTitle').value = item.title;
+                document.getElementById('actionTarget').value = item.target;
+                document.getElementById('actionTriwulan').value = item.triwulan;
+                document.getElementById('actionPic').value = item.pic;
+                document.getElementById('actionKpi').value = item.kpi;
+                document.getElementById('actionStatus').value = item.status;
+                document.getElementById('actionEvidens').value = item.evidens;
+                document.getElementById('actionNotes').value = item.notes;
+            } else {
+                modalTitle.textContent = "Tambah Aksi Pemeliharaan Baru";
+                // Suggest ID code
+                document.getElementById('actionId').value = `ACT-${String(actions.length + 1).padStart(2, '0')}`;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('actionModal').classList.add('hidden');
+        }
+
+        // Save Action (Create or Update)
+        function saveAction(event) {
+            event.preventDefault();
+            const editIdx = document.getElementById('editIndex').value;
+
+            const newItem = {
+                id: document.getElementById('actionId').value.trim(),
+                area: document.getElementById('actionArea').value,
+                title: document.getElementById('actionTitle').value.trim(),
+                target: document.getElementById('actionTarget').value.trim(),
+                triwulan: document.getElementById('actionTriwulan').value,
+                pic: document.getElementById('actionPic').value.trim(),
+                kpi: document.getElementById('actionKpi').value.trim(),
+                status: document.getElementById('actionStatus').value,
+                evidens: document.getElementById('actionEvidens').value.trim(),
+                notes: document.getElementById('actionNotes').value.trim()
+            };
+
+            if (editIdx === "") {
+                actions.push(newItem);
+                showAlert("Aksi pemeliharaan baru berhasil ditambahkan!", "success");
+            } else {
+                actions[editIdx] = newItem;
+                showAlert("Aksi pemeliharaan berhasil diperbarui!", "success");
+            }
+
+            saveToLocalStorage();
+            closeModal();
+            filterTable();
+        }
+
+        // Edit Action Helper
+        function editAction(index) {
+            openModal(index);
+        }
+
+        // Delete Action
+        function deleteAction(index) {
+            if (confirm("Apakah Anda yakin ingin menghapus aksi pemeliharaan ini?")) {
+                actions.splice(index, 1);
+                saveToLocalStorage();
+                filterTable();
+                showAlert("Aksi pemeliharaan berhasil dihapus.", "success");
+            }
+        }
+
+        // Reset to Default Template
+        function resetData() {
+            if (confirm("Perhatian: Semua perubahan data akan diatur ulang ke template default 2027. Lanjutkan?")) {
+                actions = [...defaultData];
+                saveToLocalStorage();
+                filterTable();
+                showAlert("Data berhasil direset ke template default WBBM 2027.", "success");
+            }
+        }
+
+        // Export to JSON
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(actions, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "Aksi_Pemeliharaan_WBBM_2027_BPS_Jabar.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showAlert("Data berhasil diekspor dalam format JSON.", "success");
+        }
+
+        // Trigger Import File Dialog
+        function triggerImport() {
+            document.getElementById('importFile').click();
+        }
+
+        // Import JSON
+        function importJSON(event) {
+            const fileReader = new FileReader();
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0], "UTF-8");
+                fileReader.onload = function (e) {
+                    try {
+                        const parsed = JSON.parse(e.target.result);
+                        if (Array.isArray(parsed)) {
+                            actions = parsed;
+                            saveToLocalStorage();
+                            filterTable();
+                            showAlert("Data berhasil diimpor dari file JSON.", "success");
+                        } else {
+                            showAlert("Format file JSON tidak valid.", "error");
+                        }
+                    } catch (error) {
+                        showAlert("Gagal memparsing file JSON.", "error");
+                    }
+                };
+            }
+        }
+
+        // Utility: HTML Escape to prevent XSS
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#039;");
+        }
+
+        // Initialize on Load
+        window.onload = function() {
+            renderTable();
+        };
+    </script>
+</body>
+</html>

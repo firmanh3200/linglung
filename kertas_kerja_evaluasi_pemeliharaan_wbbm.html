@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kertas Kerja Evaluasi Pemeliharaan Keberlanjutan WBBM</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-break {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col antialiased">
+
+    <!-- Top Header -->
+    <header class="bg-slate-900 text-white shadow-md no-print sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2.5 rounded-xl shadow-inner text-white flex items-center justify-center">
+                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-tight">Evaluasi Keberlanjutan WBBM</h1>
+                    <p class="text-xs text-slate-400">Kertas Kerja Pemantauan & Penjaminan Mutu Zona Integritas</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 flex-wrap justify-center">
+                <button onclick="resetData()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg border border-slate-700 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Reset Data</span>
+                </button>
+                <button onclick="exportJSON()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg border border-slate-700 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Ekspor JSON</span>
+                </button>
+                <button onclick="importJSONClick()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg border border-slate-700 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-upload"></i>
+                    <span>Impor JSON</span>
+                </button>
+                <input type="file" id="importFile" class="hidden" accept=".json" onchange="importJSON(event)">
+                <button onclick="window.print()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Cetak / PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+
+        <!-- Dashboard Analytics Card -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Indikator</p>
+                    <h3 id="stat-total" class="text-2xl font-bold text-slate-900 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Selesai / Memenuhi</p>
+                    <h3 id="stat-selesai" class="text-2xl font-bold text-emerald-600 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-amber-600 uppercase tracking-wider">Dalam Proses</p>
+                    <h3 id="stat-proses" class="text-2xl font-bold text-amber-600 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Progres Keseluruhan</p>
+                    <h3 id="stat-persen" class="text-2xl font-bold text-indigo-600 mt-1">0%</h3>
+                </div>
+                <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Bar & Search Filter -->
+        <section class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div class="w-full md:w-1/2">
+                <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
+                    <span>Tingkat Kepatuhan & Keberlanjutan WBBM</span>
+                    <span id="progress-text">0%</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                    <div id="progress-bar" class="bg-indigo-600 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="w-full md:w-1/2 flex items-center gap-2">
+                <div class="relative flex-1">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </span>
+                    <input type="text" id="searchInput" oninput="filterChecklist()" placeholder="Cari indikator, pertanyaan, atau bukti dukung..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                </div>
+                <select id="statusFilter" onchange="filterChecklist()" class="py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                    <option value="all">Semua Status</option>
+                    <option value="Belum">Belum</option>
+                    <option value="Dalam Proses">Dalam Proses</option>
+                    <option value="Selesai">Selesai/Memenuhi</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Category Tabs -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="border-b border-slate-200 bg-slate-50/50 px-4 pt-3 overflow-x-auto no-print">
+                <nav class="flex space-x-2" id="categoryTabs" aria-label="Tabs">
+                    <!-- Tabs injected dynamically via JS -->
+                </nav>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-4 sm:p-6" id="categoryContent">
+                <!-- Checklist items injected via JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto no-print">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            Aplikasi Kertas Kerja Evaluasi Pemeliharaan WBBM &copy; 2026 &bull; Tersimpan otomatis di browser (LocalStorage)
+        </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 text-sm">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toast-msg">Perubahan berhasil disimpan</span>
+    </div>
+
+    <!-- JavaScript Data and App Logic -->
+    <script>
+        // WBBM Evaluation Data Structure: 6 Areas
+        const wbbmData = [
+            {
+                id: "area1",
+                name: "1. Manajemen Perubahan",
+                icon: "fa-solid fa-arrows-split-up-and-left",
+                description: "Evaluasi konsistensi pembangunan zona integritas, komitmen pimpinan, dan budaya kerja anti korupsi.",
+                items: [
+                    {
+                        code: "MP-01",
+                        question: "Apakah Tim Pembangunan ZI WBBM ditetapkan secara berkala dengan struktur yang jelas dan tugas yang terperinci?",
+                        guidance: "Pastikan SK Tim Pembangunan ZI tahun berjalan telah diterbitkan, melibatkan seluruh agen perubahan, dan ada kejelasan job description masing-masing sub-tim.",
+                        evidence: "1. SK Tim Pembangunan ZI terbaru.<br>2. Notulensi/Rapat pembentukan tim.<br>3. Rencana Kerja (Action Plan) tahunan.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    },
+                    {
+                        code: "MP-02",
+                        question: "Apakah Pimpinan dan Agen Perubahan secara konsisten menjadi role model dalam implementasi budaya kerja WBBM?",
+                        guidance: "Pimpinan memimpin apel, sosialisasi anti korupsi, serta memonitor pelaksanaan inovasi pelayanan secara langsung.",
+                        evidence: "1. Dokumentasi kegiatan pimpinan sebagai teladan (foto/video/notulen).<br>2. Laporan kinerja agen perubahan.<br>3. Hasil survei internal pemahaman budaya kerja.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    },
+                    {
+                        code: "MP-03",
+                        question: "Bagaimana efektivitas pemantauan dan evaluasi perubahan pola pikir (mindset) dan budaya kerja pegawai?",
+                        guidance: "Evaluasi berkala terhadap perubahan perilaku pegawai, tingkat disiplin, dan penerapan core values ASN BerAkhlak.",
+                        evidence: "1. Laporan hasil evaluasi perubahan mindset.<br>2. Rekapitulasi absensi dan disiplin pegawai.<br>3. Bukti sosialisasi core values ASN.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    }
+                ]
+            },
+            {
+                id: "area2",
+                name: "2. Penataan Tatalaksana",
+                icon: "fa-solid fa-sitemap",
+                description: "Evaluasi efisiensi dan transparansi prosedur operasional standar serta pemanfaatan teknologi informasi.",
+                items: [
+                    {
+                        code: "TL-01",
+                        question: "Apakah Standar Operasional Prosedur (SOP) layanan utama telah diperbarui, terintegrasi, dan mudah diakses publik?",
+                        guidance: "SOP harus menyesuaikan dengan regulasi terbaru, berbasis digital/elektronik, dan dipublikasikan di website resmi atau ruang pelayanan.",
+                        evidence: "1. Daftar SOP yang berlaku.<br>2. Tautan atau dokumen SOP utama.<br>3. Bukti sosialisasi SOP kepada pengguna layanan.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    },
+                    {
+                        code: "TL-02",
+                        question: "Sejauh mana efektivitas implementasi Sistem Pemerintahan Berbasis Elektronik (SPBE) dalam proses bisnis internal?",
+                        guidance: "Pemanfaatan aplikasi perkantoran terintegrasi (e-office, arsip digital, tanda tangan elektronik) untuk memangkas birokrasi.",
+                        evidence: "1. Screenshot/Dokumentasi sistem e-office atau aplikasi internal.<br>2. Laporan pemanfaatan TTE (Tanda Tangan Elektronik).<br>3. Rekapitulasi persuratan digital.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    },
+                    {
+                        code: "TL-03",
+                        question: "Apakah keterbukaan informasi publik dan pengelolaan e-gov berjalan optimal dan responsif?",
+                        guidance: "Website dan media sosial instansi aktif memuat informasi publik, transparansi anggaran, serta tanggapan pengaduan.",
+                        evidence: "1. Tautan website resmi dan media sosial aktif.<br>2. Laporan PPID (Pejabat Pengelola Informasi dan Dokumentasi).",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    }
+                ]
+            },
+            {
+                id: "area3",
+                name: "3. Penataan Sistem Manajemen SDM",
+                icon: "fa-solid fa-users-gear",
+                description: "Evaluasi sistem perencanaan pegawai, pengembangan kompetensi, penegakan aturan disiplin, dan sistem reward/punishment.",
+                items: [
+                    {
+                        code: "SDM-01",
+                        question: "Apakah perencanaan kebutuhan pegawai telah disusun berdasarkan analisis jabatan (Anjab) dan analisis beban kerja (ABK)?",
+                        guidance: "Kesesuaian formasi dan penempatan pegawai berdasarkan kompetensi dan beban kerja unit.",
+                        evidence: "1. Dokumen Anjab dan ABK mutakhir.<br>2. Peta jabatan instansi.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    },
+                    {
+                        code: "SDM-02",
+                        question: "Apakah penegakan aturan disiplin, kode etik, dan kode perilaku pegawai dilaksanakan secara konsisten?",
+                        guidance: "Penerapan sanksi yang tegas bagi pelanggar disiplin serta pemberian penghargaan (reward) bagi pegawai teladan.",
+                        evidence: "1. SK Tim Penegakan Disiplin.<br>2. Rekapitulasi pemberian reward dan punishment.<br>3. Berita acara sidang kode etik (jika ada).",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    },
+                    {
+                        code: "SDM-03",
+                        question: "Bagaimana keterukuran pengembangan kompetensi pegawai melalui jalur diklat/pelatihan minimal 20 JP per tahun?",
+                        guidance: "Setiap pegawai mendapatkan kesempatan pengembangan kompetensi yang merata dan tercatat dalam sistem kepegawaian.",
+                        evidence: "1. Rencana pengembangan kompetensi (Training Plan).<br>2. Sertifikat pelatihan / rekapitulasi Jam Pelajaran (JP) pegawai.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    }
+                ]
+            },
+            {
+                id: "area4",
+                name: "4. Penguatan Akuntabilitas",
+                icon: "fa-solid fa-scale-balanced",
+                description: "Evaluasi keterlibatan pimpinan dalam penyusunan perencanaan, pengukuran kinerja, dan akuntabilitas pelaporan.",
+                items: [
+                    {
+                        code: "AK-01",
+                        question: "Apakah pimpinan terlibat secara langsung dalam penyusunan Perjanjian Kinerja (PK) hingga tingkat eskalasi terendah?",
+                        guidance: "Cascade performance (pohon kinerja) yang jelas dari sasaran strategis utama hingga target individu pegawai.",
+                        evidence: "1. Dokumen Perjanjian Kinerja (PK) tahun berjalan.<br>2. Cascading / Pohon Kinerja instansi.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    },
+                    {
+                        code: "AK-02",
+                        question: "Bagaimana efektivitas pelaporan kinerja berkala (triwulanan/tahunan) dan evaluasi atas pencapaian target?",
+                        guidance: "Laporan Kinerja Instansi Pemerintah (LKjIP) tepat waktu, akurat, serta ditindaklanjuti dengan rekomendasi perbaikan.",
+                        evidence: "1. Dokumen LKjIP tahun sebelumnya.<br>2. Laporan evaluasi atas akuntabilitas kinerja internal.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    }
+                ]
+            },
+            {
+                id: "area5",
+                name: "5. Penguatan Pengawasan",
+                icon: "fa-solid fa-eye",
+                description: "Evaluasi pengendalian gratifikasi, penanganan pengaduan masyarakat, whistleblowing system, dan SPIP.",
+                items: [
+                    {
+                        code: "PG-01",
+                        question: "Apakah pengendalian gratifikasi, benturan kepentingan, dan WBS (Whistleblowing System) berjalan secara efektif?",
+                        guidance: "Terdapat unit pengendali gratifikasi (UPG), sosialisasi anti suap, serta penanganan pengaduan melalui WBS yang aman.",
+                        evidence: "1. SOP Pengendalian Gratifikasi dan WBS.<br>2. Laporan penerimaan/penolakan gratifikasi.<br>3. Bukti sosialisasi anti korupsi kepada stakeholder.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    },
+                    {
+                        code: "PG-02",
+                        question: "Apakah tindak lanjut atas temuan hasil pengawasan (APIP / BPK / Eksternal lainnya) telah diselesaikan 100%?",
+                        guidance: "Penyelesaian rekomendasi temuan audit secara tepat waktu dengan bukti setor atau perbaikan sistemik.",
+                        evidence: "1. Lembar tindak lanjut temuan audit.<br>2. Surat keterangan selesai tindak lanjut dari APIP/Auditor.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    }
+                ]
+            },
+            {
+                id: "area6",
+                name: "6. Kualitas Pelayanan Publik",
+                icon: "fa-solid fa-hand-holding-heart",
+                description: "Evaluasi standar pelayanan, maklumat, survei kepuasan masyarakat (SKM), inovasi pelayanan, dan pengelolaan pengaduan.",
+                items: [
+                    {
+                        code: "KP-01",
+                        question: "Apakah standar pelayanan dan maklumat pelayanan telah dipublikasikan secara jelas dan mudah diakses pengguna?",
+                        guidance: "Tersedia maklumat pelayanan, tarif (jika ada), persyaratan, dan waktu penyelesaian yang terpampang nyata baik offline maupun online.",
+                        evidence: "1. Banner/Flyer Standar Pelayanan & Maklumat.<br>2. Tautan layanan digital/website informasi pelayanan.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    },
+                    {
+                        code: "KP-02",
+                        question: "Bagaimana pelaksanaan Survei Kepuasan Masyarakat (SKM) secara berkala dan tindak lanjut perbaikannya?",
+                        guidance: "SKM dilakukan berkala (minimal per semester/triwulan), hasilnya dipublikasikan transparan, dan ada aksi nyata peningkatan mutu.",
+                        evidence: "1. Laporan hasil SKM periodik.<br>2. Bukti publikasi hasil SKM.<br>3. Rencana tindak lanjut perbaikan layanan.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    },
+                    {
+                        code: "KP-03",
+                        question: "Apakah terdapat inovasi pelayanan publik yang berkelanjutan, berdampak luas, dan memudahkan masyarakat?",
+                        guidance: "Inovasi yang konsisten berjalan, memangkas birokrasi, memberikan kemudahan akses, serta direplikasi atau dirasakan manfaatnya.",
+                        evidence: "1. Profil/Dokumentasi Inovasi Pelayanan.<br>2. Testimoni atau data pengguna layanan terbantu.<br>3. SK Pengelola Inovasi.",
+                        status: "Belum",
+                        pic: "",
+                        notes: "",
+                        link: ""
+                    }
+                ]
+            }
+        ];
+
+        let activeTab = "area1";
+        let localData = {};
+
+        // Initialize App
+        function initApp() {
+            loadFromStorage();
+            renderTabs();
+            renderContent();
+            updateDashboard();
+        }
+
+        // Load data from LocalStorage or initialize default
+        function loadFromStorage() {
+            const saved = localStorage.getItem('wbbm_eval_data_2026');
+            if (saved) {
+                try {
+                    localData = JSON.parse(saved);
+                } catch(e) {
+                    localData = {};
+                }
+            } else {
+                localData = {};
+                wbbmDaltaInit();
+            }
+        }
+
+        function wbbmDaltaInit() {
+            wbbmData.forEach(area => {
+                area.items.forEach(item => {
+                    localData[item.code] = {
+                        status: item.status,
+                        pic: item.pic,
+                        notes: item.notes,
+                        link: item.link
+                    };
+                });
+            });
+            saveToStorage();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('wbbm_eval_data_2026', JSON.stringify(localData));
+            updateDashboard();
+        }
+
+        // Render Tabs Navigation
+        function renderTabs() {
+            const tabsContainer = document.getElementById('categoryTabs');
+            tabsContainer.innerHTML = '';
+
+            wbbmData.forEach(area => {
+                const isActive = area.id === activeTab;
+                let areaCompleted = 0;
+                let areaTotal = area.items.length;
+                
+                area.items.forEach(item => {
+                    if (localData[item.code] && localData[item.code].status === 'Selesai') {
+                        areaCompleted++;
+                    }
+                });
+
+                const btn = document.createElement('button');
+                btn.onclick = () => {
+                    activeTab = area.id;
+                    renderTabs();
+                    renderContent();
+                };
+                btn.className = `flex items-center space-x-2 py-3 px-4 text-xs font-semibold rounded-t-xl border-b-2 transition whitespace-nowrap ${
+                    isActive 
+                    ? 'bg-white text-indigo-600 border-indigo-600 shadow-sm' 
+                    : 'text-slate-600 hover:text-slate-900 border-transparent hover:bg-slate-100/50'
+                }`;
+                btn.innerHTML = `
+                    <i class="${area.icon} text-sm"></i>
+                    <span>${area.name}</span>
+                    <span class="ml-1.5 px-2 py-0.5 text-[10px] rounded-full ${areaCompleted === areaTotal ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-700'}">${areaCompleted}/${areaTotal}</span>
+                `;
+                tabsContainer.appendChild(btn);
+            });
+        }
+
+        // Render Checklist Content for Active Tab
+        function renderContent() {
+            const container = document.getElementById('categoryContent');
+            const currentArea = wbbmData.find(a => a.id === activeTab);
+            
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            container.innerHTML = `
+                <div class="mb-6 pb-4 border-b border-slate-100">
+                    <h2 class="text-base font-bold text-slate-900 flex items-center space-x-2">
+                        <i class="${currentArea.icon} text-indigo-600"></i>
+                        <span>${currentArea.name}</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">${currentArea.description}</p>
+                </div>
+                <div class="space-y-6" id="checklist-items-container"></div>
+            `;
+
+            const itemsContainer = document.getElementById('checklist-items-container');
+
+            let filteredItems = currentArea.items.filter(item => {
+                const data = localData[item.code] || { status: 'Belum', pic: '', notes: '', link: '' };
+                const matchSearch = item.question.toLowerCase().includes(searchTerm) || 
+                                    item.code.toLowerCase().includes(searchTerm) || 
+                                    item.evidence.toLowerCase().includes(searchTerm);
+                const matchStatus = statusFilter === 'all' || data.status === statusFilter;
+                return matchSearch && matchStatus;
+            });
+
+            if (filteredItems.length === 0) {
+                itemsContainer.innerHTML = `
+                    <div class="text-center py-12 text-slate-400">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2"></i>
+                        <p class="text-xs font-medium">Tidak ada indikator yang sesuai dengan pencarian atau filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredItems.forEach(item => {
+                const data = localData[item.code] || { status: 'Belum', pic: '', notes: '', link: '' };
+                
+                let badgeColor = 'bg-slate-100 text-slate-700 border-slate-200';
+                if (data.status === 'Selesai') badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                if (data.status === 'Dalam Proses') badgeColor = 'bg-amber-50 text-amber-700 border-amber-200';
+
+                const card = document.createElement('div');
+                card.className = `bg-white rounded-2xl border border-slate-200 p-5 shadow-sm transition hover:shadow-md print-break`;
+                card.innerHTML = `
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 pb-4 border-b border-slate-100">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 font-bold text-xs rounded-lg">${item.code}</span>
+                            <span class="px-2.5 py-1 text-xs font-medium rounded-lg border ${badgeColor}">Status: ${data.status}</span>
+                        </div>
+                        <div class="flex items-center space-x-2 w-full md:w-auto">
+                            <label class="text-xs font-semibold text-slate-500 whitespace-nowrap">Status:</label>
+                            <select onchange="updateItemStatus('${item.code}', this.value)" class="py-1.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none w-full md:w-auto">
+                                <option value="Belum" ${data.status === 'Belum' ? 'selected' : ''}>Belum</option>
+                                <option value="Dalam Proses" ${data.status === 'Dalam Proses' ? 'selected' : ''}>Dalam Proses</option>
+                                <option value="Selesai" ${data.status === 'Selesai' ? 'selected' : ''}>Selesai/Memenuhi</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="py-4 space-y-3">
+                        <h3 class="text-sm md:text-base font-semibold text-slate-900">${item.question}</h3>
+                        
+                        <!-- Panduan & Bukti Dukung Accordion/Box -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                            <div class="bg-indigo-50/50 border border-indigo-100 p-3.5 rounded-xl">
+                                <p class="font-bold text-indigo-900 mb-1 flex items-center space-x-1.5">
+                                    <i class="fa-solid fa-circle-info text-indigo-600"></i>
+                                    <span>Panduan Evaluasi:</span>
+                                </p>
+                                <p class="text-slate-600 leading-relaxed">${item.guidance}</p>
+                            </div>
+                            <div class="bg-emerald-50/50 border border-emerald-100 p-3.5 rounded-xl">
+                                <p class="font-bold text-emerald-900 mb-1 flex items-center space-x-1.5">
+                                    <i class="fa-solid fa-file-shield text-emerald-600"></i>
+                                    <span>Bukti Dukung yang Diperlukan:</span>
+                                </p>
+                                <div class="text-slate-700 leading-relaxed">${item.evidence}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Form PIC, Catatan & Link Bukti Dukung -->
+                    <div class="pt-4 border-t border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Penanggung Jawab (PIC)</label>
+                            <input type="text" value="${escapeHtml(data.pic)}" onchange="updateItemField('${item.code}', 'pic', this.value)" placeholder="Nama / Sub-Tim PIC" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Catatan / Progres</label>
+                            <input type="text" value="${escapeHtml(data.notes)}" onchange="updateItemField('${item.code}', 'notes', this.value)" placeholder="Catatan atau kendala..." class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Tautan / Lampiran Bukti (URL)</label>
+                            <div class="flex items-center space-x-1.5">
+                                <input type="text" value="${escapeHtml(data.link)}" onchange="updateItemField('${item.code}', 'link', this.value)" placeholder="https://..." class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                ${data.link ? `<a href="${data.link}" target="_blank" class="p-1.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 transition" title="Buka Link"><i class="fa-solid fa-external-link text-xs"></i></a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                itemsContainer.appendChild(card);
+            });
+        }
+
+        // Update item status
+        function updateItemStatus(code, status) {
+            if (!localData[code]) localData[code] = {};
+            localData[code].status = status;
+            saveToStorage();
+            renderTabs();
+            renderContent();
+            showToast('Status indikator berhasil diperbarui');
+        }
+
+        // Update item text field (PIC, notes, link)
+        function updateItemField(code, field, value) {
+            if (!localData[code]) localData[code] = {};
+            localData[code][field] = value;
+            saveToStorage();
+            showToast('Perubahan berhasil disimpan');
+        }
+
+        // Filter search / status change
+        function filterChecklist() {
+            renderContent();
+        }
+
+        // Update Dashboard Statistics
+        function updateDashboard() {
+            let total = 0;
+            let selesai = 0;
+            let proses = 0;
+
+            wbbmData.forEach(area => {
+                area.items.forEach(item => {
+                    total++;
+                    const st = localData[item.code]?.status;
+                    if (st === 'Selesai') selesai++;
+                    else if (st === 'Dalam Proses') proses++;
+                });
+            });
+
+            const percent = total > 0 ? Math.round((selesai / total) * 100) : 0;
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-selesai').innerText = selesai;
+            document.getElementById('stat-proses').innerText = proses;
+            document.getElementById('stat-persen').innerText = percent + '%';
+            document.getElementById('progress-text').innerText = percent + '%';
+            document.getElementById('progress-bar').style.width = percent + '%';
+        }
+
+        // Reset Data Confirmation
+        function resetData() {
+            if (confirm('Apakah Anda yakin ingin mereset seluruh data evaluasi ke kondisi awal?')) {
+                localStorage.removeItem('wbbm_eval_data_2026');
+                loadFromStorage();
+                renderTabs();
+                renderContent();
+                updateDashboard();
+                showToast('Data berhasil direset');
+            }
+        }
+
+        // Export JSON
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(localData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "kertas_kerja_wbbm_evaluasi.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast('Laporan JSON berhasil diunduh');
+        }
+
+        // Import JSON trigger
+        function importJSONClick() {
+            document.getElementById('importFile').click();
+        }
+
+        // Import JSON file handler
+        function importJSON(event) {
+            const fileReader = new FileReader();
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0], "UTF-8");
+                fileReader.onload = function(e) {
+                    try {
+                        const parsed = JSON.parse(e.target.result);
+                        localData = parsed;
+                        saveToStorage();
+                        renderTabs();
+                        renderContent();
+                        updateDashboard();
+                        showToast('Data berhasil diimpor');
+                    } catch (error) {
+                        alert('Format file JSON tidak valid.');
+                    }
+                };
+            }
+        }
+
+        // Toast Notification Helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // HTML Escape Helper
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#039;");
+        }
+
+        // Run on load
+        window.onload = function() {
+            initApp();
+        };
+    </script>
+</body>
+</html>

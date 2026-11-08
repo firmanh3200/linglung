@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Entri Rencana Kegiatan Profesional</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            body { background: white !important; }
+            .no-print { display: none !important; }
+            .print-shadow { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen pb-20">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brand-600 text-white p-2 rounded-xl shadow-sm flex items-center justify-center">
+                    <i class="fa-solid fa-clipboard-list text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-slate-900 text-base sm:text-lg">Sistem Perencanaan & Manajemen Kegiatan</h1>
+                    <p class="text-xs text-slate-500">Berbasis Pendekatan SMART, PDCA & Kerangka Logis</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="resetForm()" class="px-3 py-2 text-xs sm:text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center space-x-1">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span class="hidden sm:inline">Reset Form</span>
+                </button>
+                <button onclick="window.print()" class="px-3 py-2 text-xs sm:text-sm font-medium text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition-colors flex items-center space-x-1 shadow-sm">
+                    <i class="fa-solid fa-print"></i>
+                    <span class="hidden sm:inline">Cetak / PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+
+        <!-- Notification Banner -->
+        <div id="alertBanner" class="hidden mb-6 p-4 rounded-xl border flex items-center justify-between transition-all duration-300">
+            <div class="flex items-center space-x-3">
+                <div id="alertIcon" class="text-xl"></div>
+                <div>
+                    <h4 id="alertTitle" class="font-semibold text-sm"></h4>
+                    <p id="alertMessage" class="text-xs mt-0.5"></p>
+                </div>
+            </div>
+            <button onclick="hideAlert()" class="text-slate-400 hover:text-slate-600 text-sm"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- Live Summary Dashboard (Card Metrics) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-4">
+                <div class="p-3 bg-blue-50 text-blue-600 rounded-xl text-lg">
+                    <i class="fa-solid fa-diagram-project"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 font-medium">Total Tahapan WBS</p>
+                    <h3 id="statTotalSteps" class="text-lg font-bold text-slate-800">0</h3>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-4">
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl text-lg">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 font-medium">Estimasi Total Anggaran</p>
+                    <h3 id="statTotalBudget" class="text-lg font-bold text-slate-800">Rp 0</h3>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-4">
+                <div class="p-3 bg-amber-50 text-amber-600 rounded-xl text-lg">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 font-medium">Potensi Risiko</p>
+                    <h3 id="statTotalRisks" class="text-lg font-bold text-slate-800">0</h3>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-4">
+                <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl text-lg">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 font-medium">Status Penyimpanan</p>
+                    <h3 id="statSaveStatus" class="text-sm font-bold text-slate-500 mt-1">Belum Disimpan</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Utama -->
+        <form id="activityForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
+
+            <!-- SECTION 1: Informasi Umum Kegiatan -->
+            <section class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 print-shadow">
+                <div class="flex items-center space-x-3 pb-4 mb-6 border-b border-slate-100">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-50 text-brand-600 flex items-center justify-center font-bold text-sm">1</div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Informasi Umum Kegiatan</h2>
+                        <p class="text-xs text-slate-500">Identitas utama, kategori, penanggung jawab, dan jadwal pelaksanaan.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Nama Kegiatan <span class="text-red-500">*</span></label>
+                        <input type="text" id="namaKegiatan" required placeholder="Contoh: Optimalisasi Integrasi Data Sektoral dan Pelayanan Publik Berbasis Elektronik" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:border-brand-500 transition-colors bg-slate-50/50">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Kategori / Domain Kegiatan <span class="text-red-500">*</span></label>
+                        <select id="kategori" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:border-brand-500 transition-colors bg-slate-50/50">
+                            <option value="">-- Pilih Kategori --</option>
+                            <option value="Sektoral">Pengembangan Data Sektoral</option>
+                            <option value="Evaluasi">Monitoring & Evaluasi Kinerja</option>
+                            <option value="Layanan Publik">Peningkatan Kualitas Layanan Publik</option>
+                            <option value="Pengembangan Aplikasi">Pengembangan & Integrasi Aplikasi</option>
+                            <option value="Kapasitas SDM">Peningkatan Kapasitas / Pelatihan SDM</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Penanggung Jawab / Tim (PIC) <span class="text-red-500">*</span></label>
+                        <input type="text" id="penanggungJawab" required placeholder="Contoh: Bidang Pengelolaan Informasi & Tim Teknis" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:border-brand-500 transition-colors bg-slate-50/50">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Tanggal Mulai <span class="text-red-500">*</span></label>
+                        <input type="date" id="tanggalMulai" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:border-brand-500 transition-colors bg-slate-50/50">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Tanggal Selesai <span class="text-red-500">*</span></label>
+                        <input type="date" id="tanggalSelesai" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:border-brand-500 transition-colors bg-slate-50/50">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Lokasi / Media Pelaksanaan <span class="text-red-500">*</span></label>
+                        <input type="text" id="lokasi" required placeholder="Contoh: Ruang Rapat Utama Lt. 3 / Daring via Zoom Meeting" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:border-brand-500 transition-colors bg-slate-50/50">
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Dasar Hukum & Latar Belakang -->
+            <section class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 print-shadow">
+                <div class="flex items-center space-x-3 pb-4 mb-6 border-b border-slate-100">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-50 text-brand-600 flex items-center justify-center font-bold text-sm">2</div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Dasar Hukum & Latar Belakang</h2>
+                        <p class="text-xs text-slate-500">Landasan regulasi yang berlaku serta urgensi pelaksanaan kegiatan.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Referensi Regulasi / Dasar Hukum</label>
+                        <textarea id="dasarHukum" rows="3" placeholder="Contoh: Undang-Undang No. 14 Tahun 2008 tentang Keterbukaan Informasi Publik, Peraturan Presiden tentang Satu Data Indonesia..." class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:border-brand-500 transition-colors bg-slate-50/50"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Urgensi & Latar Belakang Masalah <span class="text-red-500">*</span></label>
+                        <textarea id="latarBelakang" required rows="4" placeholder="Jelaskan mengapa kegiatan ini sangat mendesak dan masalah apa yang ingin diselesaikan..." class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:border-brand-500 transition-colors bg-slate-50/50"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Tujuan & Indikator Keberhasilan (SMART) -->
+            <section class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 print-shadow">
+                <div class="flex items-center space-x-3 pb-4 mb-6 border-b border-slate-100">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-50 text-brand-600 flex items-center justify-center font-bold text-sm">3</div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Tujuan & Indikator Keberhasilan (Kriteria SMART)</h2>
+                        <p class="text-xs text-slate-500">Specific, Measurable, Achievable, Relevant, & Time-bound.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Target Kinerja Utama <span class="text-red-500">*</span></label>
+                        <input type="text" id="targetKinerja" required placeholder="Contoh: Tersusunnya Dokumen Rencana Kerja dan Integrasi 10 Portal Data Sektor Unggulan" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:border-brand-500 transition-colors bg-slate-50/50">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Indikator Kinerja Utama (IKU) <span class="text-red-500">*</span></label>
+                        <textarea id="iku" required rows="3" placeholder="Contoh: Persentase kelengkapan metadata mencapai 100% dan tingkat kepuasan pengguna minimal 85%" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:border-brand-500 transition-colors bg-slate-50/50"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Output & Outcome Terukur <span class="text-red-500">*</span></label>
+                        <textarea id="outputOutcome" required rows="3" placeholder="Output: Laporan akhir & aplikasi. Outcome: Efisiensi waktu pelaporan data meningkat hingga 40%" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:border-brand-500 transition-colors bg-slate-50/50"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: Rincian Tahapan & Jadwal (WBS) -->
+            <section class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 print-shadow">
+                <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-100">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-50 text-brand-600 flex items-center justify-center font-bold text-sm">4</div>
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Rincian Tahapan & Jadwal (Work Breakdown Structure)</h2>
+                            <p class="text-xs text-slate-500">Tahapan aktivitas, penanggung jawab, bobot, dan status progres.</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addWbsRow()" class="px-3 py-1.5 bg-brand-50 text-brand-600 hover:bg-brand-100 rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 no-print">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Tambah Baris</span>
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                <th class="py-3 px-3 w-12">No</th>
+                                <th class="py-3 px-3">Aktivitas / Tahapan Kerja</th>
+                                <th class="py-3 px-3 w-48">PIC / Sub-Tim</th>
+                                <th class="py-3 px-3 w-28 text-center">Bobot (%)</th>
+                                <th class="py-3 px-3 w-36">Status</th>
+                                <th class="py-3 px-3 w-16 text-center no-print">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wbsTableBody" class="divide-y divide-slate-100 text-sm">
+                            <!-- Rows will be injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3 flex justify-between items-center text-xs text-slate-500">
+                    <span id="totalBobotWarning" class="font-medium">Total Bobot: <span id="sumBobot">0</span>% (Target: 100%)</span>
+                    <button type="button" onclick="distributeWeights()" class="text-brand-600 hover:underline font-medium no-print">Distribusi Otomatis Bobot</button>
+                </div>
+            </section>
+
+            <!-- SECTION 5: Rencana Anggaran & Sumber Daya (RAB) -->
+            <section class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 print-shadow">
+                <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-100">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-50 text-brand-600 flex items-center justify-center font-bold text-sm">5</div>
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Rencana Anggaran & Sumber Daya (RAB)</h2>
+                            <p class="text-xs text-slate-500">Rincian estimasi biaya pelaksanaan kegiatan berdasarkan komponen.</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addRabRow()" class="px-3 py-1.5 bg-brand-50 text-brand-600 hover:bg-brand-100 rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 no-print">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Tambah Item</span>
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                <th class="py-3 px-3 w-12">No</th>
+                                <th class="py-3 px-3">Komponen / Uraian Pengeluaran</th>
+                                <th class="py-3 px-3 w-24 text-center">Volume</th>
+                                <th class="py-3 px-3 w-28">Satuan</th>
+                                <th class="py-3 px-3 w-36">Harga Satuan (Rp)</th>
+                                <th class="py-3 px-3 w-40 text-right">Total (Rp)</th>
+                                <th class="py-3 px-3 w-16 text-center no-print">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rabTableBody" class="divide-y divide-slate-100 text-sm">
+                            <!-- Rows injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Total Anggaran Calculation Footer -->
+                <div class="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="text-xs text-slate-500">
+                        <span class="font-semibold text-slate-700">Catatan Keuangan:</span> Perhitungan subtotal otomatis dihitung dari Volume × Harga Satuan.
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Total Keseluruhan Anggaran:</span>
+                        <div id="grandTotalDisplay" class="text-xl font-bold text-brand-600">Rp 0</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: Manajemen Risiko & Mitigasi -->
+            <section class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 print-shadow">
+                <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-100">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-50 text-brand-600 flex items-center justify-center font-bold text-sm">6</div>
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Manajemen Risiko & Strategi Mitigasi</h2>
+                            <p class="text-xs text-slate-500">Identifikasi hambatan potensial serta rencana penanganannya.</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addRiskRow()" class="px-3 py-1.5 bg-brand-50 text-brand-600 hover:bg-brand-100 rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 no-print">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Tambah Risiko</span>
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                <th class="py-3 px-3 w-12">No</th>
+                                <th class="py-3 px-3">Potensi Risiko / Hambatan</th>
+                                <th class="py-3 px-3 w-36">Level Dampak</th>
+                                <th class="py-3 px-3">Strategi Mitigasi / Penanganan</th>
+                                <th class="py-3 px-3 w-16 text-center no-print">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="riskTableBody" class="divide-y divide-slate-100 text-sm">
+                            <!-- Rows injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Form Action Footer -->
+            <div class="flex items-center justify-end space-x-4 pt-4 no-print">
+                <button type="button" onclick="saveToLocalStorage()" class="px-6 py-3 text-sm font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-xl transition-colors shadow-xs flex items-center space-x-2">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>Simpan Sementara (Draft)</span>
+                </button>
+                <button type="submit" class="px-6 py-3 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl transition-colors shadow-sm flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Finalisasi & Validasi Rencana</span>
+                </button>
+            </div>
+
+        </form>
+    </main>
+
+    <!-- JavaScript Logic & Interactivity -->
+    <script>
+        // Initial Data Templates or loaded state
+        let wbsData = [
+            { id: 1, activity: "Penyusunan Kerangka Acuan Kerja (KAK) & Koordinasi Tim", pic: "Ketua Tim / Perencana", weight: 20, status: "Belum Mulai" },
+            { id: 2, activity: "Pengumpulan Data & Kebutuhan Sistem Sektoral", pic: "Tim Teknis Data", weight: 30, status: "Belum Mulai" },
+            { id: 3, activity: "Pelaksanaan Kegiatan Utama / Workshop / Implementasi", pic: "Seluruh Panitia", weight: 35, status: "Belum Mulai" },
+            { id: 4, activity: "Evaluasi, Pelaporan Akhir & Serah Terima Hasil", pic: "Tim Pelaporan", weight: 15, status: "Belum Mulai" }
+        ];
+
+        let rabData = [
+            { id: 1, item: "Honorarium Narasumber & Fasilitator", volume: 4, unit: "OJ", price: 750000 },
+            { id: 2, item: "Konsumsi Rapat / Workshop Peserta", volume: 30, unit: "Kotak", price: 50000 },
+            { id: 3, item: "Penyusunan & Penggandaan Dokumen Laporan", volume: 10, unit: "Eks", price: 150000 }
+        ];
+
+        let riskData = [
+            { id: 1, risk: "Keterlambatan penyediaan data dari instansi terkait", impact: "Sedang", mitigation: "Melakukan koordinasi intensif dan surat pengingat resmi lebih awal" },
+            { id: 2, risk: "Kehadiran peserta atau narasumber utama kurang optimal", impact: "Tinggi", mitigation: "Menyediakan opsi kehadiran hybrid (daring) serta konfirmasi H-3" }
+        ];
+
+        // On Load Initialization
+        window.onload = function() {
+            loadFromLocalStorage();
+            renderWbsTable();
+            renderRabTable();
+            renderRiskTable();
+            updateDashboardMetrics();
+            
+            // Set default dates if empty
+            if(!document.getElementById('tanggalMulai').value) {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('tanggalMulai').value = today;
+            }
+        };
+
+        // --- WBS FUNCTIONS ---
+        function renderWbsTable() {
+            const tbody = document.getElementById('wbsTableBody');
+            tbody.innerHTML = '';
+            wbsData.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-3 px-3 text-slate-500 font-medium">${index + 1}</td>
+                    <td class="py-3 px-3">
+                        <input type="text" value="${row.activity}" oninput="updateWbsData(${index}, 'activity', this.value)" class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 focus:border-brand-500 bg-white">
+                    </td>
+                    <td class="py-3 px-3">
+                        <input type="text" value="${row.pic}" oninput="updateWbsData(${index}, 'pic', this.value)" class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 focus:border-brand-500 bg-white">
+                    </td>
+                    <td class="py-3 px-3">
+                        <input type="number" min="0" max="100" value="${row.weight}" oninput="updateWbsData(${index}, 'weight', Number(this.value))" class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 focus:border-brand-500 text-center bg-white">
+                    </td>
+                    <td class="py-3 px-3">
+                        <select onchange="updateWbsData(${index}, 'status', this.value)" class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 focus:border-brand-500 bg-white">
+                            <option value="Belum Mulai" ${row.status === 'Belum Mulai' ? 'selected' : ''}>Belum Mulai</option>
+                            <option value="Dalam Proses" ${row.status === 'Dalam Proses' ? 'selected' : ''}>Dalam Proses</option>
+                            <option value="Selesai" ${row.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                        </select>
+                    </td>
+                    <td class="py-3 px-3 text-center no-print">
+                        <button type="button" onclick="removeWbsRow(${index})" class="text-red-400 hover:text-red-600 p-1.5"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateDashboardMetrics();
+        }
+
+        function addWbsRow() {
+            wbsData.push({ id: Date.now(), activity: "", pic: "", weight: 10, status: "Belum Mulai" });
+            renderWbsTable();
+        }
+
+        function removeWbsRow(index) {
+            wbsData.splice(index, 1);
+            renderWbsTable();
+        }
+
+        function updateWbsData(index, field, value) {
+            wbsData[index][field] = value;
+            if(field === 'weight') updateDashboardMetrics();
+        }
+
+        function distributeWeights() {
+            if(wbsData.length === 0) return;
+            const equalWeight = Math.floor(100 / wbsData.length);
+            let remainder = 100 - (equalWeight * wbsData.length);
+            wbsData.forEach((row, i) => {
+                row.weight = equalWeight + (i === 0 ? remainder : 0);
+            });
+            renderWbsTable();
+        }
+
+        // --- RAB FUNCTIONS ---
+        function renderRabTable() {
+            const tbody = document.getElementById('rabTableBody');
+            tbody.innerHTML = '';
+            rabData.forEach((row, index) => {
+                const subtotal = row.volume * row.price;
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-3 px-3 text-slate-500 font-medium">${index + 1}</td>
+                    <td class="py-3 px-3">
+                        <input type="text" value="${row.item}" oninput="updateRabData(${index}, 'item', this.value)" class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 focus:border-brand-500 bg-white">
+                    </td>
+                    <td class="py-3 px-3">
+                        <input type="number" min="1" value="${row.volume}" oninput="updateRabData(${index}, 'volume', Number(this.value))" class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 focus:border-brand-500 text-center bg-white">
+                    </td>
+                    <td class="py-3 px-3">
+                        <input type="text" value="${row.unit}" oninput="updateRabData(${index}, 'unit', this.value)" class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 focus:border-brand-500 bg-white">
+                    </td>
+                    <td class="py-3 px-3">
+                        <input type="number" min="0" step="1000" value="${row.price}" oninput="updateRabData(${index}, 'price', Number(this.value))" class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 focus:border-brand-500 bg-white">
+                    </td>
+                    <td class="py-3 px-3 text-right font-semibold text-slate-700">
+                        Rp ${formatRupiah(subtotal)}
+                    </td>
+                    <td class="py-3 px-3 text-center no-print">
+                        <button type="button" onclick="removeRabRow(${index})" class="text-red-400 hover:text-red-600 p-1.5"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateDashboardMetrics();
+        }
+
+        function addRabRow() {
+            rabData.push({ id: Date.now(), item: "", volume: 1, unit: "Unit", price: 0 });
+            renderRabTable();
+        }
+
+        function removeRabRow(index) {
+            rabData.splice(index, 1);
+            renderRabTable();
+        }
+
+        function updateRabData(index, field, value) {
+            rabData[index][field] = value;
+            renderRabTable(); // Re-render to update subtotals live
+        }
+
+        // --- RISK FUNCTIONS ---
+        function renderRiskTable() {
+            const tbody = document.getElementById('riskTableBody');
+            tbody.innerHTML = '';
+            riskData.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-3 px-3 text-slate-500 font-medium">${index + 1}</td>
+                    <td class="py-3 px-3">
+                        <input type="text" value="${row.risk}" oninput="updateRiskData(${index}, 'risk', this.value)" class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 focus:border-brand-500 bg-white">
+                    </td>
+                    <td class="py-3 px-3">
+                        <select onchange="updateRiskData(${index}, 'impact', this.value)" class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 focus:border-brand-500 bg-white">
+                            <option value="Rendah" ${row.impact === 'Rendah' ? 'selected' : ''}>Rendah</option>
+                            <option value="Sedang" ${row.impact === 'Sedang' ? 'selected' : ''}>Sedang</option>
+                            <option value="Tinggi" ${row.impact === 'Tinggi' ? 'selected' : ''}>Tinggi</option>
+                        </select>
+                    </td>
+                    <td class="py-3 px-3">
+                        <input type="text" value="${row.mitigation}" oninput="updateRiskData(${index}, 'mitigation', this.value)" class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 focus:border-brand-500 bg-white">
+                    </td>
+                    <td class="py-3 px-3 text-center no-print">
+                        <button type="button" onclick="removeRiskRow(${index})" class="text-red-400 hover:text-red-600 p-1.5"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateDashboardMetrics();
+        }
+
+        function addRiskRow() {
+            riskData.push({ id: Date.now(), risk: "", impact: "Sedang", mitigation: "" });
+            renderRiskTable();
+        }
+
+        function removeRiskRow(index) {
+            riskData.splice(index, 1);
+            renderRiskTable();
+        }
+
+        function updateRiskData(index, field, value) {
+            riskData[index][field] = value;
+        }
+
+        // --- METRICS & HELPERS ---
+        function updateDashboardMetrics() {
+            // Total steps
+            document.getElementById('statTotalSteps').innerText = wbsData.length;
+
+            // Total budget
+            let totalBudget = rabData.reduce((acc, curr) => acc + (curr.volume * curr.price), 0);
+            document.getElementById('statTotalBudget').innerText = 'Rp ' + formatRupiah(totalBudget);
+            document.getElementById('grandTotalDisplay').innerText = 'Rp ' + formatRupiah(totalBudget);
+
+            // Total risks
+            document.getElementById('statTotalRisks').innerText = riskData.length;
+
+            // Sum weight check
+            let totalWeight = wbsData.reduce((acc, curr) => acc + Number(curr.weight), 0);
+            document.getElementById('sumBobot').innerText = totalWeight;
+            const weightWarning = document.getElementById('totalBobotWarning');
+            if(totalWeight === 100) {
+                weightWarning.className = "font-medium text-emerald-600";
+            } else {
+                weightWarning.className = "font-medium text-amber-600";
+            }
+        }
+
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID').format(number);
+        }
+
+        // --- LOCAL STORAGE & NOTIFICATIONS ---
+        function saveToLocalStorage() {
+            const formData = collectFormData();
+            localStorage.setItem('rencana_kegiatan_draft', JSON.stringify(formData));
+            showAlert('Sukses Disimpan!', 'Draft rencana kegiatan berhasil disimpan ke memori lokal browser.', 'success');
+            document.getElementById('statSaveStatus').innerText = 'Tersimpan (Draft)';
+            document.getElementById('statSaveStatus').className = 'text-sm font-bold text-emerald-600 mt-1';
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('rencana_kegiatan_draft');
+            if(saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if(data.umum) {
+                        document.getElementById('namaKegiatan').value = data.umum.namaKegiatan || '';
+                        document.getElementById('kategori').value = data.umum.kategori || '';
+                        document.getElementById('penanggungJawab').value = data.umum.penanggungJawab || '';
+                        document.getElementById('tanggalMulai').value = data.umum.tanggalMulai || '';
+                        document.getElementById('tanggalSelesai').value = data.umum.tanggalSelesai || '';
+                        document.getElementById('lokasi').value = data.umum.lokasi || '';
+                    }
+                    if(data.dasar) {
+                        document.getElementById('dasarHukum').value = data.dasar.dasarHukum || '';
+                        document.getElementById('latarBelakang').value = data.umum.latarBelakang || data.dasar.latarBelakang || '';
+                    }
+                    if(data.smart) {
+                        document.getElementById('targetKinerja').value = data.smart.targetKinerja || '';
+                        document.getElementById('iku').value = data.smart.iku || '';
+                        document.getElementById('outputOutcome').value = data.smart.outputOutcome || '';
+                    }
+                    if(data.wbs && data.wbs.length > 0) wbsData = data.wbs;
+                    if(data.rab && data.rab.length > 0) rabData = data.rab;
+                    if(data.risks && data.risks.length > 0) riskData = data.risks;
+
+                    document.getElementById('statSaveStatus').innerText = 'Tersimpan (Draft)';
+                    document.getElementById('statSaveStatus').className = 'text-sm font-bold text-emerald-600 mt-1';
+                } catch(e) {
+                    console.error("Gagal memuat data tersimpan", e);
+                }
+            }
+        }
+
+        function collectFormData() {
+            return {
+                umum: {
+                    namaKegiatan: document.getElementById('namaKegiatan').value,
+                    kategori: document.getElementById('kategori').value,
+                    penanggungJawab: document.getElementById('penanggungJawab').value,
+                    tanggalMulai: document.getElementById('tanggalMulai').value,
+                    tanggalSelesai: document.getElementById('tanggalSelesai').value,
+                    lokasi: document.getElementById('lokasi').value,
+                },
+                dasar: {
+                    dasarHukum: document.getElementById('dasarHukum').value,
+                    latarBelakang: document.getElementById('latarBelakang').value,
+                },
+                smart: {
+                    targetKinerja: document.getElementById('targetKinerja').value,
+                    iku: document.getElementById('iku').value,
+                    outputOutcome: document.getElementById('outputOutcome').value,
+                },
+                wbs: wbsData,
+                rab: rabData,
+                risks: riskData
+            };
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            // Validasi bobot WBS
+            let totalWeight = wbsData.reduce((acc, curr) => acc + Number(curr.weight), 0);
+            if(totalWeight !== 100) {
+                showAlert('Validasi Gagal', `Total bobot tahapan WBS harus tepat 100%. Saat ini total bobot adalah ${totalWeight}%.`, 'error');
+                window.scrollTo({ top: document.getElementById('wbsTableBody').offsetTop - 200, behavior: 'smooth' });
+                return;
+            }
+
+            saveToLocalStorage();
+            showAlert('Validasi Berhasil!', 'Rencana kegiatan telah divalidasi dan siap untuk diajukan ke tingkat pengambil keputusan.', 'success');
+            document.getElementById('statSaveStatus').innerText = 'Tervalidasi & Final';
+            document.getElementById('statSaveStatus').className = 'text-sm font-bold text-indigo-600 mt-1';
+        }
+
+        function resetForm() {
+            if(confirm("Apakah Anda yakin ingin mereset seluruh form? Data yang belum tersimpan akan hilang.")) {
+                localStorage.removeItem('rencana_kegiatan_draft');
+                document.getElementById('activityForm').reset();
+                wbsData = [];
+                rabData = [];
+                riskData = [];
+                renderWbsTable();
+                renderRabTable();
+                renderRiskTable();
+                updateDashboardMetrics();
+                document.getElementById('statSaveStatus').innerText = 'Belum Disimpan';
+                document.getElementById('statSaveStatus').className = 'text-sm font-bold text-slate-500 mt-1';
+                showAlert('Form Direset', 'Semua isian formulir telah dibersihkan.', 'info');
+            }
+        }
+
+        function showAlert(title, message, type) {
+            const banner = document.getElementById('alertBanner');
+            const icon = document.getElementById('alertIcon');
+            const titleEl = document.getElementById('alertTitle');
+            const msgEl = document.getElementById('alertMessage');
+
+            banner.className = "mb-6 p-4 rounded-xl border flex items-center justify-between transition-all duration-300";
+            if(type === 'success') {
+                banner.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600"></i>';
+            } else if(type === 'error') {
+                banner.classList.add('bg-red-50', 'border-red-200', 'text-red-900');
+                icon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-red-600"></i>';
+            } else {
+                banner.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-900');
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-600"></i>';
+            }
+
+            titleEl.innerText = title;
+            msgEl.innerText = message;
+            banner.classList.remove('hidden');
+
+            setTimeout(() => {
+                hideAlert();
+            }, 6000);
+        }
+
+        function hideAlert() {
+            document.getElementById('alertBanner').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

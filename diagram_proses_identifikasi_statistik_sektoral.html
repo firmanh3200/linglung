@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagram Proses Identifikasi Kegiatan Statistik Sektoral</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Poppins & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-break {
+                page-break-inside: avoid;
+            }
+            .print-shadow {
+                box-shadow: none !important;
+                border: 1px solid #cbd5e1 !important;
+            }
+        }
+        .step-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .step-card:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="bg-gradient-to-r from-blue-800 via-indigo-800 to-slate-900 text-white shadow-xl sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 p-2.5 rounded-xl shadow-md">
+                    <i class="fa-solid fa-chart-line text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-heading font-bold text-lg sm:text-xl tracking-tight">Satu Data & Statistik Sektoral</h1>
+                    <p class="text-xs text-blue-200">Panduan & Alur Kerja Identifikasi Kegiatan Statistik</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="expandAll()" class="px-3.5 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 rounded-lg transition border border-white/10 flex items-center gap-2">
+                    <i class="fa-solid fa-angles-down"></i> Buka Semua Detail
+                </button>
+                <button onclick="collapseAll()" class="px-3.5 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 rounded-lg transition border border-white/10 flex items-center gap-2">
+                    <i class="fa-solid fa-angles-up"></i> Tutup Semua
+                </button>
+                <button onclick="exportToPDF()" class="px-4 py-2 text-xs font-semibold bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-lg transition flex items-center gap-2 border border-blue-400">
+                    <i class="fa-solid fa-file-pdf text-sm"></i> Ekspor ke PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+        
+        <!-- Title & Info Section -->
+        <div class="text-center mb-12 print-break">
+            <span class="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3">Dokumen Resmi Alur Kerja</span>
+            <h2 class="text-2xl sm:text-4xl font-heading font-extrabold text-slate-900 tracking-tight mb-4">
+                Diagram Proses Identifikasi Kegiatan Statistik Sektoral
+            </h2>
+            <p class="text-slate-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+                Panduan sistematis 5 tahapan untuk memetakan, menyaring, mengelompokkan, dan mengonfirmasi metadata serta kepatuhan standar kegiatan statistik di setiap Perangkat Daerah.
+            </p>
+        </div>
+
+        <!-- Interactive Diagram Flow container -->
+        <div class="relative space-y-6 before:absolute before:inset-0 before:left-7 sm:before:left-1/2 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-blue-600 before:via-indigo-500 before:to-slate-300">
+
+            <!-- STEP 1 -->
+            <div class="relative flex flex-col sm:flex-row items-center print-break group">
+                <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-heading font-bold text-xl shadow-lg z-10 shrink-0 mb-4 sm:mb-0 group-hover:scale-110 transition-transform">
+                    01
+                </div>
+                <div class="w-full sm:w-1/2 sm:pr-8 sm:text-right hidden sm:block">
+                    <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Tahap Pertama</span>
+                    <h3 class="text-lg font-bold font-heading text-slate-900">Penyusunan Daftar Data</h3>
+                </div>
+                <div class="w-full sm:w-1/2 sm:pl-8">
+                    <div id="card-1" class="step-card bg-white p-6 rounded-2xl shadow-md border border-slate-200 print-shadow">
+                        <div class="flex justify-between items-start cursor-pointer" onclick="toggleCard(1)">
+                            <div>
+                                <span class="sm:hidden text-xs font-bold text-blue-600 uppercase tracking-widest block mb-1">Tahap 1</span>
+                                <h3 class="text-base font-bold font-heading text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-database text-blue-600"></i> Menyusun Daftar Data/Indikator Perangkat Daerah
+                                </h3>
+                            </div>
+                            <button class="text-slate-400 hover:text-slate-600 transition p-1 no-print">
+                                <i id="icon-1" class="fa-solid fa-chevron-down transform transition-transform"></i>
+                            </button>
+                        </div>
+                        <p class="text-slate-600 text-sm mt-3 leading-relaxed">
+                            Inventarisasi seluruh data dan indikator yang dikelola oleh setiap perangkat daerah, bersumber langsung dari portal Open Data daerah maupun dokumen publikasi instansi.
+                        </p>
+                        <div id="detail-1" class="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-500 space-y-2">
+                            <p class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Mengumpulkan daftar tabel data dari portal Satu Data Indonesia / Open Data.</p>
+                            <p class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Melakukan koordinasi awal dengan walidata pendukung di tiap dinas/badan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="relative flex flex-col sm:flex-row items-center print-break group">
+                <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 text-white font-heading font-bold text-xl shadow-lg z-10 shrink-0 mb-4 sm:mb-0 group-hover:scale-110 transition-transform">
+                    02
+                </div>
+                <div class="w-full sm:w-1/2 sm:pr-8 sm:text-right order-last sm:order-none">
+                    <div id="card-2" class="step-card bg-white p-6 rounded-2xl shadow-md border border-slate-200 print-shadow text-left sm:text-right">
+                        <div class="flex justify-between sm:flex-row-reverse items-start cursor-pointer" onclick="toggleCard(2)">
+                            <div>
+                                <span class="sm:hidden text-xs font-bold text-indigo-600 uppercase tracking-widest block mb-1">Tahap 2</span>
+                                <h3 class="text-base font-bold font-heading text-slate-900 flex items-center gap-2 sm:justify-end">
+                                    Menyaring Daftar Data Hasil Kegiatan Statistik <i class="fa-solid fa-filter text-indigo-600"></i>
+                                </h3>
+                            </div>
+                            <button class="text-slate-400 hover:text-slate-600 transition p-1 no-print">
+                                <i id="icon-2" class="fa-solid fa-chevron-down transform transition-transform"></i>
+                            </button>
+                        </div>
+                        <p class="text-slate-600 text-sm mt-3 leading-relaxed">
+                            Memfilter daftar data yang terkumpul untuk memastikan hanya data yang diperoleh melalui proses/kegiatan statistik (sensus, survei, kompilasi produk administrasi) yang diloloskan.
+                        </p>
+                        <div id="detail-2" class="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-500 space-y-2 text-left sm:text-right">
+                            <p class="flex items-center gap-2 sm:justify-end"><i class="fa-solid fa-check text-emerald-500"></i> Memisahkan data murni hasil statistik dari dokumen non-statistik atau administrasi umum.</p>
+                            <p class="flex items-center gap-2 sm:justify-end"><i class="fa-solid fa-check text-emerald-500"></i> Memastikan karakteristik metodologi statistik terpenuhi.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full sm:w-1/2 sm:pl-8 hidden sm:block">
+                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Tahap Kedua</span>
+                    <h3 class="text-lg font-bold font-heading text-slate-900">Penyaringan Data Statistik</h3>
+                </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="relative flex flex-col sm:flex-row items-center print-break group">
+                <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-700 text-white font-heading font-bold text-xl shadow-lg z-10 shrink-0 mb-4 sm:mb-0 group-hover:scale-110 transition-transform">
+                    03
+                </div>
+                <div class="w-full sm:w-1/2 sm:pr-8 sm:text-right hidden sm:block">
+                    <span class="text-xs font-bold text-purple-600 uppercase tracking-widest">Tahap Ketiga</span>
+                    <h3 class="text-lg font-bold font-heading text-slate-900">Penyaringan Pelaksanaan Sendiri</h3>
+                </div>
+                <div class="w-full sm:w-1/2 sm:pl-8">
+                    <div id="card-3" class="step-card bg-white p-6 rounded-2xl shadow-md border border-slate-200 print-shadow">
+                        <div class="flex justify-between items-start cursor-pointer" onclick="toggleCard(3)">
+                            <div>
+                                <span class="sm:hidden text-xs font-bold text-purple-600 uppercase tracking-widest block mb-1">Tahap 3</span>
+                                <h3 class="text-base font-bold font-heading text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-user-gear text-purple-600"></i> Penyaringan Data Kegiatan Dilaksanakan Sendiri
+                                </h3>
+                            </div>
+                            <button class="text-slate-400 hover:text-slate-600 transition p-1 no-print">
+                                <i id="icon-3" class="fa-solid fa-chevron-down transform transition-transform"></i>
+                            </button>
+                        </div>
+                        <p class="text-slate-600 text-sm mt-3 leading-relaxed">
+                            Menyaring kembali daftar data hasil kegiatan statistik untuk memfokuskan pada kegiatan yang diselenggarakan atau dilaksanakan secara mandiri oleh instansi/perangkat daerah yang bersangkutan.
+                        </p>
+                        <div id="detail-3" class="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-500 space-y-2">
+                            <p class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Mengeliminasi kegiatan statistik yang sepenuhnya diselenggarakan oleh instansi eksternal/pusat.</p>
+                            <p class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Memvalidasi kepemilikan kewenangan produsen data.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="relative flex flex-col sm:flex-row items-center print-break group">
+                <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-600 to-rose-700 text-white font-heading font-bold text-xl shadow-lg z-10 shrink-0 mb-4 sm:mb-0 group-hover:scale-110 transition-transform">
+                    04
+                </div>
+                <div class="w-full sm:w-1/2 sm:pr-8 sm:text-right order-last sm:order-none">
+                    <div id="card-4" class="step-card bg-white p-6 rounded-2xl shadow-md border border-slate-200 print-shadow text-left sm:text-right">
+                        <div class="flex justify-between sm:flex-row-reverse items-start cursor-pointer" onclick="toggleCard(4)">
+                            <div>
+                                <span class="sm:hidden text-xs font-bold text-pink-600 uppercase tracking-widest block mb-1">Tahap 4</span>
+                                <h3 class="text-base font-bold font-heading text-slate-900 flex items-center gap-2 sm:justify-end">
+                                    Pengelompokkan Data ke Kegiatan Penghasil <i class="fa-solid fa-folder-tree text-pink-600"></i>
+                                </h3>
+                            </div>
+                            <button class="text-slate-400 hover:text-slate-600 transition p-1 no-print">
+                                <i id="icon-4" class="fa-solid fa-chevron-down transform transition-transform"></i>
+                            </button>
+                        </div>
+                        <p class="text-slate-600 text-sm mt-3 leading-relaxed">
+                            Mengelompokkan butir-butir data atau indikator yang tersebar ke dalam masing-masing kegiatan spesifik yang menjadi sumber atau penghasil utama data tersebut.
+                        </p>
+                        <div id="detail-4" class="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-500 space-y-2 text-left sm:text-right">
+                            <p class="flex items-center gap-2 sm:justify-end"><i class="fa-solid fa-check text-emerald-500"></i> Pemetaan relasi many-to-one antara indikator dengan kegiatan survei/kompilasi.</p>
+                            <p class="flex items-center gap-2 sm:justify-end"><i class="fa-solid fa-check text-emerald-500"></i> Menghindari duplikasi atau tumpang tindih penghasil data.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full sm:w-1/2 sm:pl-8 hidden sm:block">
+                    <span class="text-xs font-bold text-pink-600 uppercase tracking-widest">Tahap Keempat</span>
+                    <h3 class="text-lg font-bold font-heading text-slate-900">Pengelompokkan Data ke Kegiatan</h3>
+                </div>
+            </div>
+
+            <!-- STEP 5 -->
+            <div class="relative flex flex-col sm:flex-row items-center print-break group">
+                <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-600 to-amber-600 text-white font-heading font-bold text-xl shadow-lg z-10 shrink-0 mb-4 sm:mb-0 group-hover:scale-110 transition-transform">
+                    05
+                </div>
+                <div class="w-full sm:w-1/2 sm:pr-8 sm:text-right hidden sm:block">
+                    <span class="text-xs font-bold text-rose-600 uppercase tracking-widest">Tahap Kelima</span>
+                    <h3 class="text-lg font-bold font-heading text-slate-900">Konfirmasi Standar & Evaluasi</h3>
+                </div>
+                <div class="w-full sm:w-1/2 sm:pl-8">
+                    <div id="card-5" class="step-card bg-white p-6 rounded-2xl shadow-md border border-slate-200 print-shadow">
+                        <div class="flex justify-between items-start cursor-pointer" onclick="toggleCard(5)">
+                            <div>
+                                <span class="sm:hidden text-xs font-bold text-rose-600 uppercase tracking-widest block mb-1">Tahap 5</span>
+                                <h3 class="text-base font-bold font-heading text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-clipboard-check text-rose-600"></i> Konfirmasi Atribut & Kepatuhan Kegiatan
+                                </h3>
+                            </div>
+                            <button class="text-slate-400 hover:text-slate-600 transition p-1 no-print">
+                                <i id="icon-5" class="fa-solid fa-chevron-down transform transition-transform"></i>
+                            </button>
+                        </div>
+                        <p class="text-slate-600 text-sm mt-3 leading-relaxed">
+                            Melakukan audit dan konfirmasi menyeluruh terhadap setiap kegiatan penghasil data dengan 5 indikator kepatuhan utama:
+                        </p>
+                        
+                        <!-- Checklist Grid Items -->
+                        <div id="detail-5" class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-[10px]">1</div>
+                                <span class="font-medium text-slate-700">Sudah memiliki <strong>Rekomendasi</strong>?</span>
+                            </div>
+                            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-[10px]">2</div>
+                                <span class="font-medium text-slate-700">Sudah memiliki <strong>MS-Keg</strong>?</span>
+                            </div>
+                            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-[10px]">3</div>
+                                <span class="font-medium text-slate-700">Sudah memiliki <strong>MS-IND</strong>?</span>
+                            </div>
+                            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-[10px]">4</div>
+                                <span class="font-medium text-slate-700">Sudah memiliki <strong>MS-VAR</strong>?</span>
+                            </div>
+                            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex items-center gap-2 sm:col-span-2">
+                                <div class="w-6 h-6 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-[10px]">5</div>
+                                <span class="font-medium text-slate-700">Pernah menjadi sampel <strong>EPSS</strong> (Evaluasi Penyelenggaraan Statistik Sektoral)?</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Summary Legend Card -->
+        <div class="mt-16 bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-2xl p-6 sm:p-8 shadow-xl print-break">
+            <h3 class="font-heading font-bold text-lg mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-blue-400"></i> Keterangan Istilah Metadata
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs sm:text-sm text-blue-100 mt-4">
+                <div class="bg-white/10 p-3.5 rounded-xl backdrop-blur-sm border border-white/10">
+                    <strong class="text-white block mb-1">MS-Keg</strong>
+                    Metadata Statistik Kegiatan: Informasi terstruktur mengenai penyelenggaraan kegiatan statistik.
+                </div>
+                <div class="bg-white/10 p-3.5 rounded-xl backdrop-blur-sm border border-white/10">
+                    <strong class="text-white block mb-1">MS-IND</strong>
+                    Metadata Statistik Indikator: Keterangan mengenai konsep, definisi, dan interpretasi indikator statistik.
+                </div>
+                <div class="bg-white/10 p-3.5 rounded-xl backdrop-blur-sm border border-white/10">
+                    <strong class="text-white block mb-1">MS-VAR</strong>
+                    Metadata Statistik Variabel: Standarisasi variabel yang digunakan dalam pengumpulan data.
+                </div>
+                <div class="bg-white/10 p-3.5 rounded-xl backdrop-blur-sm border border-white/10">
+                    <strong class="text-white block mb-1">Rekomendasi Kegiatan</strong>
+                    Surat rekomendasi dari BPS bagi penyelenggara statistik sektoral agar sesuai standar nasional.
+                </div>
+                <div class="bg-white/10 p-3.5 rounded-xl backdrop-blur-sm border border-white/10 sm:col-span-2">
+                    <strong class="text-white block mb-1">EPSS</strong>
+                    Evaluasi Penyelenggaraan Statistik Sektoral: Penilaian mandiri dan objektif terhadap kualitas tata kelola statistik instansi.
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-16 py-6 text-center text-xs text-slate-500 no-print">
+        <p>&copy; 2026 Portal Satu Data & Statistik Sektoral. Dibuat interaktif untuk kemudahan analisis dan pelaporan.</p>
+    </footer>
+
+    <!-- JavaScript Interactive Logic -->
+    <script>
+        // Toggle individual card details
+        function toggleCard(id) {
+            const detail = document.getElementById(`detail-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            if (detail.style.display === 'none') {
+                detail.style.display = 'block';
+                if(icon) icon.style.transform = 'rotate(0deg)';
+            } else {
+                detail.style.display = 'none';
+                if(icon) icon.style.transform = 'rotate(-90deg)';
+            }
+        }
+
+        // Expand all card details
+        function expandAll() {
+            for (let i = 1; i <= 5; i++) {
+                const detail = document.getElementById(`detail-${i}`);
+                const icon = document.getElementById(`icon-${i}`);
+                if(detail) detail.style.display = 'block';
+                if(icon) icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Collapse all card details
+        function collapseAll() {
+            for (let i = 1; i <= 5; i++) {
+                const detail = document.getElementById(`detail-${i}`);
+                const icon = document.getElementById(`icon-${i}`);
+                if(detail) detail.style.display = 'none';
+                if(icon) icon.style.transform = 'rotate(-90deg)';
+            }
+        }
+
+        // PDF Export Function using window.print with optimized stylesheet state
+        function exportToPDF() {
+            expandAll();
+            window.print();
+        }
+
+        // Initial setup check
+        window.addEventListener('DOMContentLoaded', () => {
+            // Ensure cards are open initially for great immediate UX
+            expandAll();
+        });
+    </script>
+</body>
+</html>

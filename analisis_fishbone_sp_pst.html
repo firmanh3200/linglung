@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Fishbone Standar Pelayanan PST BPS Jabar 2026</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        bps: {
+                            50: '#eef8ff',
+                            100: '#d9f0ff',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            900: '#0c4a6e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter & Lucide Icons / FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .fishbone-container {
+            position: relative;
+            background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+        }
+        .dark .fishbone-container {
+            background: linear-gradient(135deg, #0f172a 100%, #1e293b 0%);
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300 flex flex-col">
+
+    <!-- Header / Navbar -->
+    <header class="bg-gradient-to-r from-bps-700 via-bps-600 to-indigo-700 text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 p-2.5 rounded-xl backdrop-blur-md border border-white/20 shadow-inner">
+                    <i class="fa-solid fa-chart-line text-2xl text-cyan-300"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Analisis Fishbone PST BPS Jabar</h1>
+                    <p class="text-xs sm:text-sm text-cyan-100 font-medium">Berdasarkan SK Kepala BPS Provinsi Jawa Barat Nomor 260 Tahun 2026</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button id="themeToggle" class="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition text-white border border-white/20 shadow-sm" title="Ubah Mode Tampilan">
+                    <i class="fa-solid fa-moon dark:hidden text-yellow-200"></i>
+                    <i class="fa-solid fa-sun hidden dark:block text-amber-300"></i>
+                </button>
+                <button onclick="window.print()" class="hidden sm:inline-flex items-center px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm transition shadow-md gap-2">
+                    <i class="fa-solid fa-print"></i> Cetak / Ekspor
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Intro Banner & Service Switcher -->
+        <section class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-200 dark:border-slate-700">
+            <div class="max-w-3xl mb-6">
+                <span class="inline-block px-3 py-1 rounded-full bg-cyan-100 dark:bg-cyan-900/60 text-cyan-700 dark:text-cyan-300 text-xs font-semibold mb-3 tracking-wide uppercase">Evaluasi Mutu Layanan Publik</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-2">Pilih Jenis Layanan Statistik Terpadu</h2>
+                <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Analisis Ishikawa (Tulang Ikan) ini membedah potensi kendala operasional, kesiapan komponen <i>Service Delivery</i> dan <i>Manufacturing</i> (sarana, SDM, prosedur, waktu, dll), serta solusi strategis peningkatan kualitas pelayanan berdasarkan standar resmi tahun 2026.
+                </p>
+            </div>
+
+            <!-- Tabs Navigasi Layanan -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="serviceTabs">
+                <!-- Diisi via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Dynamic Service Content Area -->
+        <div id="serviceDetailContainer" class="space-y-8">
+            <!-- Rendered dynamically -->
+        </div>
+
+    </main>
+
+    <!-- Modal Detail Kategori Fishbone -->
+    <div id="fishboneModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-700 transform transition-all scale-95 opacity-0" id="modalCard">
+            <div class="flex justify-between items-start pb-4 border-b border-slate-100 dark:border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <div id="modalIconBg" class="p-3 rounded-xl text-white">
+                        <i id="modalIcon" class="fa-solid fa-fish text-xl"></i>
+                    </div>
+                    <div>
+                        <span id="modalCategoryBadge" class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400"></span>
+                        <h3 id="modalTitle" class="text-xl font-bold text-slate-900 dark:text-white"></h3>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-lg transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="py-6 space-y-4">
+                <div>
+                    <h4 class="text-sm font-semibold uppercase text-slate-500 dark:text-slate-400 mb-2">Identifikasi Akar Kendala / Potensi Risiko:</h4>
+                    <p id="modalProblem" class="text-slate-700 dark:text-slate-200 bg-red-50 dark:bg-red-950/30 p-4 rounded-xl border border-red-100 dark:border-red-900/40 text-sm leading-relaxed"></p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold uppercase text-slate-500 dark:text-slate-400 mb-2">Rekomendasi Solusi & Peningkatan Mutu:</h4>
+                    <div id="modalSolutions" class="space-y-2">
+                        <!-- Solutions list -->
+                    </div>
+                </div>
+            </div>
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+                <button onclick="closeModal()" class="px-5 py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-medium rounded-xl text-sm transition">
+                    Tutup Detail
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+            <p class="text-sm font-medium text-slate-300">Badan Pusat Statistik Provinsi Jawa Barat - Pelayanan Statistik Terpadu (PST)</p>
+            <p class="text-xs">Referensi: Keputusan Kepala BPS Provinsi Jawa Barat Nomor 260 Tahun 2026 tentang Standar Pelayanan PST.</p>
+        </div>
+    </footer>
+
+    <!-- Application Logic Script -->
+    <script>
+        // Data Layanan PST BPS Jabar 2026
+        const servicesData = [
+            {
+                id: 'konsultasi',
+                title: 'Layanan Konsultasi Statistik',
+                icon: 'fa-comments',
+                color: 'from-blue-500 to-indigo-600',
+                badgeBg: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
+                overview: {
+                    persyaratan: 'Kunjungan langsung (isi buku tamu SAMBUT, email, no telepon aktif) atau Online (akun pst.bps.go.id, portal PST, WhatsApp 085179928832, e-mail pst3200@bps.go.id).',
+                    prosedur: 'Offline: Datang -> Buku tamu & Antrian -> Konsultasi & Terima Info -> Beri Rating. Online: Akses portal/WA -> Cari konsultasi sejenis atau ajukan baru -> Petugas melayani -> Selesai & Rating.',
+                    jangkaWaktu: 'Offline: Maksimal 10 menit sejak antrian sebelumnya. Online: Maksimal 1 hari kerja (otomatis tutup jika 3 hari tidak merespon).',
+                    tarif: 'Tidak dipungut biaya (Rp 0,-)',
+                    produk: 'Jasa konsultasi informasi (data / metadata / klasifikasi statistik).',
+                    pelaksana: 'Maksimal 3 orang (offline) dan 5 orang (online).'
+                },
+                fishboneEffect: 'Mutu Layanan & Kepuasan Konsultasi Statistik',
+                bones: [
+                    {
+                        category: 'Man (SDM)',
+                        title: 'Kompetensi & Kapasitas Pelaksana',
+                        icon: 'fa-user-tie',
+                        color: 'bg-blue-500',
+                        problem: 'Petugas kurang menguasai metodologi statistik sektoral yang spesifik atau kesulitan dalam kendala bahasa Inggris sederhana saat melayani peneliti asing.',
+                        solutions: [
+                            'Pelatihan berkala terkait pemahaman regulasi perundang-undangan & teknik komunikasi pelayanan publik.',
+                            'Peningkatan penguasaan materi statistik dan teknologi informasi bagi seluruh pelaksana.'
+                        ]
+                    },
+                    {
+                        category: 'Machine (Teknologi & Sistem)',
+                        title: 'Infrastruktur & Portal Layanan',
+                        icon: 'fa-desktop',
+                        color: 'bg-cyan-500',
+                        problem: 'Portal pst.bps.go.id atau aplikasi SAMBUT mengalami kendala teknis/server lambat saat lonjakan pengunjung, serta jaringan internet tidak stabil.',
+                        solutions: [
+                            'Optimalisasi bandwidth jaringan intranet/internet dan perawatan server secara rutin.',
+                            'Penyediaan pencarian riwayat konsultasi sebelumnya agar pengguna dapat menemukan topik serupa tanpa buat transaksi baru.'
+                        ]
+                    },
+                    {
+                        category: 'Method (Prosedur)',
+                        title: 'SOP & Mekanisme Alur Kerja',
+                        icon: 'fa-file-lines',
+                        color: 'bg-indigo-500',
+                        problem: 'Waktu tunggu online melebihi 1 hari kerja jika antrian pertanyaan menumpuk atau tidak ada eskalasi otomatis ke tim teknis.',
+                        solutions: [
+                            'Pemberlakuan penutupan otomatis konsultasi setelah 3 hari tanpa respons untuk efisiensi antrian.',
+                            'Standarisasi SOP tanggapan cepat pada saluran WhatsApp dan email PST.'
+                        ]
+                    },
+                    {
+                        category: 'Material (Informasi/Data)',
+                        title: 'Kelengkapan Metadata & Publikasi',
+                        icon: 'fa-folder-open',
+                        color: 'bg-violet-500',
+                        problem: 'Variabel metadata atau konsep definisi kegiatan statistik belum terpusat dengan jelas bagi pemahaman awam.',
+                        solutions: [
+                            'Penyediaan referensi FAQ dan basis pengetahuan (knowledge base) konsultasi terdahulu di portal.',
+                            'Penyusunan modul informasi kegiatan statistik dan ketersediaan data yang komprehensif.'
+                        ]
+                    },
+                    {
+                        category: 'Milieu (Lingkungan/Fasilitas)',
+                        title: 'Kenyamanan Unit PST Offline',
+                        icon: 'fa-building',
+                        color: 'bg-amber-500',
+                        problem: 'Keterbatasan kursi tunggu saat jam sibuk kunjungan langsung di Lantai 1 BPS Provinsi Jawa Barat.',
+                        solutions: [
+                            'Penyediaan fasilitas ruang tunggu yang representatif, mesin antrian digital, loker barang, serta ruang laktasi dan literasi anak.',
+                            'Pengaturan kapasitas pelaksana dan sistem antrian yang tertib.'
+                        ]
+                    },
+                    {
+                        category: 'Measurement (Evaluasi)',
+                        title: 'Pengawasan & Penilaian Mutu',
+                        icon: 'fa-chart-pie',
+                        color: 'bg-emerald-500',
+                        problem: 'Kurangnya pemantauan real-time terhadap kepuasan pengguna layanan online yang belum memberikan rating.',
+                        solutions: [
+                            'Pengawasan internal berjenjang oleh penanggung jawab pelayanan publik.',
+                            'Evaluasi laporan bulanan dan tahunan berbasis indeks kepuasan masyarakat (SKM).'
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'perpustakaan',
+                title: 'Layanan Perpustakaan',
+                icon: 'fa-book-open',
+                color: 'from-emerald-500 to-teal-700',
+                badgeBg: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
+                overview: {
+                    persyaratan: 'Offline: Berkunjung ke PST Lantai 1, isi buku tamu SAMBUT, email & no telp aktif, simpan tas di loker. Online: Registrasi dan punya akun di portal pst.bps.go.id.',
+                    prosedur: 'Offline: Kunjungan -> Buku tamu -> Simpan tas di loker -> Pilih baca tercetak (hardcopy) dengan pemindai mandiri atau digital softcopy -> Rating & Selesai. Online: Akses portal -> Registrasi -> Cari pustaka -> Baca online/unduh softcopy berwatermark -> Rating.',
+                    jangkaWaktu: 'Offline: Maksimal 5 menit setelah isi buku tamu. Online: Langsung mencari pustaka secara mandiri setelah registrasi.',
+                    tarif: 'Tidak dipungut biaya (Rp 0,-)',
+                    produk: 'Pustaka hardcopy dan softcopy berwatermark.',
+                    pelaksana: 'Minimal 2 orang.'
+                },
+                fishboneEffect: 'Ketersediaan & Aksesibilitas Pustaka Statistik',
+                bones: [
+                    {
+                        category: 'Man (SDM)',
+                        title: 'Keahlian Pengelola Perpustakaan',
+                        icon: 'fa-user-graduate',
+                        color: 'bg-blue-500',
+                        problem: 'Petugas kurang sigap dalam membantu pencarian literatur khusus atau publikasi lama yang belum terindeks digital.',
+                        solutions: [
+                            'Pelatihan standar nasional perpustakaan khusus bagi pengelola PST.',
+                            'Peningkatan keterampilan pelayanan ramah, sopan, dan pemahaman katalog pustaka.'
+                        ]
+                    },
+                    {
+                        category: 'Machine (Teknologi & Sistem)',
+                        title: 'Sistem Katalog & Alat Pemindai',
+                        icon: 'fa-print',
+                        color: 'bg-cyan-500',
+                        problem: 'Mesin scanner mandiri atau komputer perpustakaan digital terkadang mengalami gangguan operasional.',
+                        solutions: [
+                            'Pemeliharaan berkala perangkat keras (scanner, printer, komputer) dan server unduh softcopy.',
+                            'Penyediaan sistem watermark otomatis pada pustaka digital yang diunduh.'
+                        ]
+                    },
+                    {
+                        category: 'Method (Prosedur)',
+                        title: 'Prosedur Layanan Tercetak & Digital',
+                        icon: 'fa-list-check',
+                        color: 'bg-indigo-500',
+                        problem: 'Pengguna awam kebingungan dalam alur registrasi unduh softcopy atau aturan penitipan tas di loker.',
+                        solutions: [
+                            'Penyediaan infografis alur layanan perpustakaan yang jelas di ruang baca dan portal.',
+                            'Pendampingan langsung oleh petugas bagi pengunjung perpustakaan fisik.'
+                        ]
+                    },
+                    {
+                        category: 'Material (Informasi/Data)',
+                        title: 'Koleksi Pustaka & Publikasi Hardcopy',
+                        icon: 'fa-books',
+                        color: 'bg-violet-500',
+                        problem: 'Keterbatasan fisik buku cetak edisi terbatas atau publikasi lama yang mengalami kerusakan fisik.',
+                        solutions: [
+                            'Digitalisasi arsip publikasi cetak secara berkala ke dalam repositori digital pst.bps.go.id.',
+                            'Pembaruan berkala koleksi buku referensi statistik dan literatur pendukung.'
+                        ]
+                    },
+                    {
+                        category: 'Milieu (Lingkungan/Fasilitas)',
+                        title: 'Kenyamanan Ruang Baca & Literasi',
+                        icon: 'fa-couch',
+                        color: 'bg-amber-500',
+                        problem: 'Suasana ruang baca kurang kondusif atau fasilitas ruang literasi anak kurang optimal saat pengunjung membawa keluarga.',
+                        solutions: [
+                            'Penataan ruang baca perpustakaan tercetak yang bersih, tenang, ber-AC, dilengkapi ruang laktasi dan literasi anak.',
+                            'Penyediaan fasilitas loker aman untuk penyimpanan barang pengunjung.'
+                        ]
+                    },
+                    {
+                        category: 'Measurement (Evaluasi)',
+                        title: 'Evaluasi Koleksi & Layanan Pustaka',
+                        icon: 'fa-clipboard-check',
+                        color: 'bg-emerald-500',
+                        problem: 'Belum ada pencatatan statistik peminjaman/pembaca harian yang terintegrasi secara akurat.',
+                        solutions: [
+                            'Rekapitulasi rating dan ulasan pengunjung perpustakaan secara berkala setiap bulan.',
+                            'Laporan pertanggungjawaban pengelolaan perpustakaan kepada penanggung jawab PST.'
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'berbayar',
+                title: 'Layanan Produk Statistik Berbayar',
+                icon: 'fa-file-invoice-dollar',
+                color: 'from-amber-500 to-orange-600',
+                badgeBg: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
+                overview: {
+                    persyaratan: 'Offline: Kunjungan ke PST Lantai 1, isi buku tamu SAMBUT, setuju syarat PNBP, khusus data mikro/peta wilkerstat wajib serahkan abstraksi & Surat Perjanjian Penggunaan Data (SPPD). Online: Akun portal, NPWP aktif (swasta), ajukan via silastik.bps.go.id, upload abstraksi & SPPD.',
+                    prosedur: 'Pilih produk -> Lengkapi form/abstraksi -> Petugas verifikasi & buat invoice -> Pembayaran sesuai invoice / Verifikasi SPPD (atau proses Rp0 dengan surat permohonan) -> Kuitansi & Produk dikirim/diunduh via portal.',
+                    jangkaWaktu: 'Offline: Maksimal 10 menit antrian. Online: Maksimal 10 hari kerja setelah permintaan jelas dan persyaratan lengkap.',
+                    tarif: 'Berbayar sesuai PP Nomor 13 Tahun 2024 (PNBP) atau Layanan Rp0,- sesuai ketentuan BPS.',
+                    produk: 'Publikasi softcopy, data mikro lengkap/sebagian, peta digital wilkerstat (dilengkapi SPPD & Kuitansi).',
+                    pelaksana: 'Maksimal 5 orang (offline maupun online).'
+                },
+                fishboneEffect: 'Kecepatan & Akurasi Layanan Produk PNBP / Data Mikro',
+                bones: [
+                    {
+                        category: 'Man (SDM)',
+                        title: 'Ketelitian Verifikator Data & Bendahara',
+                        icon: 'fa-user-gear',
+                        color: 'bg-blue-500',
+                        problem: 'Keterlambatan verifikasi Surat Perjanjian Penggunaan Data (SPPD) atau validasi pembayaran PNBP oleh bendahara akibat tingginya volume permintaan.',
+                        solutions: [
+                            'Pelatihan khusus mekanisme verifikasi SPPD dan koordinasi intensif antara petugas layanan dan bendahara.',
+                            'Standarisasi waktu pemeriksaan dokumen abstraksi data mikro.'
+                        ]
+                    },
+                    {
+                        category: 'Machine (Teknologi & Sistem)',
+                        title: 'Integrasi Portal silastik & pst.bps.go.id',
+                        icon: 'fa-network-wired',
+                        color: 'bg-cyan-500',
+                        problem: 'Kesulitan teknis pengguna saat mengunggah ulang dokumen SPPD yang telah direvisi atau kendala notifikasi invoice.',
+                        solutions: [
+                            'Pengembangan antarmuka portal silastik/pst yang user-friendly dengan panduan unggah berkas yang jelas.',
+                            'Otomatisasi pengiriman notifikasi status pembayaran dan unduhan kuitansi.'
+                        ]
+                    },
+                    {
+                        category: 'Method (Prosedur)',
+                        title: 'Kompleksitas Alur PNBP & SPPD',
+                        icon: 'fa-diagram-project',
+                        color: 'bg-indigo-500',
+                        problem: 'Prosedur multi-langkah (pengisian abstraksi, penandatanganan SPPD fisik/elektronik, verifikasi bayar) memakan waktu hingga 10 hari kerja.',
+                        solutions: [
+                            'Sosialisasi panduan pengisian SPPD dan persyaratan tarif Rp 0,- kepada pemohon untuk meminimalisir penolakan dokumen.',
+                            'Penyederhanaan alur validasi dokumen secara digital.'
+                        ]
+                    },
+                    {
+                        category: 'Material (Informasi/Data)',
+                        title: 'Validitas Data Mikro & Abstraksi',
+                        icon: 'fa-database',
+                        color: 'bg-violet-500',
+                        problem: 'Ketidaksesuaian antara isian abstraksi penggunaan data dengan variabel data mikro yang diminta pemohon.',
+                        solutions: [
+                            'Penyediaan contoh data (sample data) dan panduan variabel data mikro yang transparan pada saat pengajuan.',
+                            'Pemeriksaan awal ketepatan format data sebelum dikirimkan ke pemohon.'
+                        ]
+                    },
+                    {
+                        category: 'Milieu (Lingkungan/Fasilitas)',
+                        title: 'Keamanan Data & Kerahasiaan SPPD',
+                        icon: 'fa-shield-halved',
+                        color: 'bg-amber-500',
+                        problem: 'Risiko kebocoran data mikro atau penyalahgunaan penggunaan data di luar perjanjian SPPD.',
+                        solutions: [
+                            'Pemberlakuan jaminan keamanan dan keselamatan pelayanan yang akuntabel, transparan, serta penegakan hukum klausul SPPD.',
+                            'Pengarsipan dokumen perjanjian secara aman dan rahasia.'
+                        ]
+                    },
+                    {
+                        category: 'Measurement (Evaluasi)',
+                        title: 'Monitoring Masa Berlaku Invoice',
+                        icon: 'fa-clock',
+                        color: 'bg-emerald-500',
+                        problem: 'Invoice kedaluwarsa (berlaku maksimal 1 bulan) sering dibiarkan tanpa konfirmasi ulang dari pemohon.',
+                        solutions: [
+                            'Sistem pengingat otomatis (auto-reminder) via email/WhatsApp sebelum masa berlaku invoice berakhir.',
+                            'Evaluasi bulanan realisasi PNBP dan kendala administrasi keuangan.'
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'rekomendasi',
+                title: 'Layanan Rekomendasi Kegiatan Statistik',
+                icon: 'fa-award',
+                color: 'from-purple-600 to-pink-600',
+                badgeBg: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
+                overview: {
+                    persyaratan: 'Kunjungan langsung atau online di portal pst.bps.go.id, memiliki email & no handphone aktif terhubung WhatsApp, mengisi buku tamu SAMBUT.',
+                    prosedur: 'Ajukan permohonan via portal -> Petugas berikan softcopy formulir rekomendasi sektoral & panduan -> Petugas dampingi & periksa rancangan kegiatan -> Evaluasi bersama tim terkait -> Penyusunan naskah surat -> Pengesahan oleh Kepala BPS Provinsi Jabar -> Pengiriman surat rekomendasi ke pemohon -> Selesai & Beri rating.',
+                    jangkaWaktu: 'Maksimal 14 (empat belas) hari kerja sejak berkas dinyatakan lengkap dan jelas di portal pst.bps.go.id.',
+                    tarif: 'Tidak dipungut biaya (Rp 0,-)',
+                    produk: 'Saran, masukan, pertimbangan, solusi, dan Surat Rekomendasi Kegiatan Statistik Sektoral.',
+                    pelaksana: 'Minimal 3 orang tim teknis.'
+                },
+                fishboneEffect: 'Kualitas Evaluasi & Ketepatan Waktu Rekomendasi Sektoral',
+                bones: [
+                    {
+                        category: 'Man (SDM)',
+                        title: 'Tim Evaluator & Tim Terkait BPS',
+                        icon: 'fa-users-gear',
+                        color: 'bg-blue-500',
+                        problem: 'Keterbatasan ketersediaan tim evaluator saat terjadi lonjakan pengajuan proposal survei/sensus sektoral secara bersamaan dari berbagai instansi.',
+                        solutions: [
+                            'Pembentukan tim penilai lintas fungsi yang solid dan terjadwal secara periodik.',
+                            'Pelatihan teknis regulasi Satu Data Indonesia dan standar metadata statistik sektoral.'
+                        ]
+                    },
+                    {
+                        category: 'Machine (Teknologi & Sistem)',
+                        title: 'Sistem Pengajuan Formulir Online',
+                        icon: 'fa-laptop-code',
+                        color: 'bg-cyan-500',
+                        problem: 'Kesulitan instansi pemerintah daerah dalam mengunggah rancangan kuesioner atau dokumen pendukung kegiatan statistik yang berukuran besar.',
+                        solutions: [
+                            'Optimalisasi kapasitas unggah file pada portal pst.bps.go.id dan validasi format dokumen otomatis.',
+                            'Penyediaan fitur notifikasi status progress evaluasi via WhatsApp secara real-time.'
+                        ]
+                    },
+                    {
+                        category: 'Method (Prosedur)',
+                        title: 'Standar Waktu Evaluasi 14 Hari Kerja',
+                        icon: 'fa-hourglass-half',
+                        color: 'bg-indigo-500',
+                        problem: 'Rancangan kuesioner dari instansi seringkali tidak lengkap atau tidak sesuai kaidah metodologi sehingga memperpanjang waktu revisi.',
+                        solutions: [
+                            'Penyediaan panduan pengisian formulir rekomendasi dan konsultasi awal (klinik data) sebelum pengajuan resmi.',
+                            'Standarisasi checklist pemeriksaan rancangan kegiatan statistik sektoral.'
+                        ]
+                    },
+                    {
+                        category: 'Material (Informasi/Data)',
+                        title: 'Kualitas Desain Sampel & Kuesioner',
+                        icon: 'fa-file-circle-check',
+                        color: 'bg-violet-500',
+                        problem: 'Rancangan metodologi (kerangka sampel, konsep definisi, metode pengumpulan) dari kementerian/dinas belum memenuhi prinsip Satu Data Indonesia.',
+                        solutions: [
+                            'Pemberian masukan, pertimbangan, dan solusi perbaikan metodologi statistik yang konstruktif oleh tim BPS.',
+                            'Penyediaan referensi kegiatan statistik yang sudah mendapat rekomendasi sebelumnya.'
+                        ]
+                    },
+                    {
+                        category: 'Milieu (Lingkungan/Fasilitas)',
+                        title: 'Koordinasi Lintasi Instansi Sektoral',
+                        icon: 'fa-handshake',
+                        color: 'bg-amber-500',
+                        problem: 'Kurangnya koordinasi tatap muka atau komunikasi intensif dengan walidata sektoral di daerah.',
+                        solutions: [
+                            'Pendampingan langsung secara offline di unit PST bagi instansi yang membutuhkan asistensi teknis pengisian.',
+                            'Penyelenggaraan forum konsultasi publik secara berkala.'
+                        ]
+                    },
+                    {
+                        category: 'Measurement (Evaluasi)',
+                        title: 'Pengesahan & Akuntabilitas Surat',
+                        icon: 'fa-stamp',
+                        color: 'bg-emerald-500',
+                        problem: 'Potensi hambatan administratif dalam penandatanganan pengesahan surat rekomendasi oleh Kepala BPS Provinsi Jabar.',
+                        solutions: [
+                            'Pemberlakuan Tanda Tangan Elektronik (TTE) tersertifikasi BSSN untuk mempercepat penerbitan surat rekomendasi.',
+                            'Pengawasan internal berjenjang dan pelaporan evaluasi kinerja pelaksana bulanan.'
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        let currentServiceId = 'konsultasi';
+
+        // Inisialisasi Halaman
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            renderTabs();
+            renderServiceContent(currentServiceId);
+        });
+
+        // Toggle Theme
+        function initTheme() {
+            const themeToggle = document.getElementById('themeToggle');
+            const html = document.documentElement;
+
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                html.classList.add('dark');
+            } else {
+                html.classList.remove('dark');
+            }
+
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                } else {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                }
+            });
+        }
+
+        // Render Tabs Navigasi
+        function renderTabs() {
+            const tabsContainer = document.getElementById('serviceTabs');
+            tabsContainer.innerHTML = servicesData.map(s => {
+                const isActive = s.id === currentServiceId;
+                return `
+                    <button onclick="switchService('${s.id}')" class="flex items-center space-x-3 p-4 rounded-xl border text-left transition-all duration-200 ${
+                        isActive 
+                            ? 'bg-bps-600 text-white border-bps-600 shadow-lg shadow-bps-600/25 scale-[1.02]' 
+                            : 'bg-white dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-bps-500 dark:hover:border-bps-400'
+                    }">
+                        <div class="p-2.5 rounded-lg ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-bps-600 dark:text-cyan-400'}">
+                            <i class="fa-solid ${s.icon} text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-semibold opacity-80 uppercase">Layanan ${s.id.toUpperCase()}</span>
+                            <span class="block font-bold text-sm leading-tight">${s.title}</span>
+                        </div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // Switch Service
+        function switchService(id) {
+            currentServiceId = id;
+            renderTabs();
+            renderServiceContent(id);
+        }
+
+        // Render Service Content (Fishbone + Overview Components)
+        function renderServiceContent(id) {
+            const service = servicesData.find(s => s.id === id);
+            const container = document.getElementById('serviceDetailContainer');
+
+            container.innerHTML = `
+                <!-- Service Title & Overview Card -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-200 dark:border-slate-700 space-y-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-slate-100 dark:border-slate-700">
+                        <div class="flex items-center space-x-4">
+                            <div class="p-4 rounded-2xl bg-gradient-to-br ${service.color} text-white shadow-lg">
+                                <i class="fa-solid ${service.icon} text-2xl"></i>
+                            </div>
+                            <div>
+                                <span class="px-3 py-1 rounded-full ${service.badgeBg} text-xs font-bold uppercase">Standar Pelayanan 2026</span>
+                                <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">${service.title}</h3>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg">
+                                <i class="fa-solid fa-clock text-bps-500 mr-1.5"></i> ${service.overview.jangkaWaktu.split('.')[0]}
+                            </span>
+                            <span class="text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                                <i class="fa-solid fa-tag text-emerald-500 mr-1.5"></i> ${service.overview.tarif}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Accordion / Grid Ringkasan Komponen -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-slate-50 dark:bg-slate-700/40 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <div class="flex items-center space-x-2 text-bps-600 dark:text-cyan-400 font-bold text-sm mb-2">
+                                <i class="fa-solid fa-list-check"></i>
+                                <span>Persyaratan Layanan</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${service.overview.persyaratan}</p>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-700/40 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <div class="flex items-center space-x-2 text-bps-600 dark:text-cyan-400 font-bold text-sm mb-2">
+                                <i class="fa-solid fa-diagram-project"></i>
+                                <span>Sistem & Prosedur</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${service.overview.prosedur}</p>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-700/40 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <div class="flex items-center space-x-2 text-bps-600 dark:text-cyan-400 font-bold text-sm mb-2">
+                                <i class="fa-solid fa-box-archive"></i>
+                                <span>Produk Pelayanan</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${service.overview.produk}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fishbone Diagram Section -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-200 dark:border-slate-700 space-y-6 fishbone-container">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-slate-200 dark:border-slate-700">
+                        <div>
+                            <h4 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-fish text-bps-600 dark:text-cyan-400"></i> Diagram Analisis Fishbone (Ishikawa)
+                            </h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Klik pada setiap tulang kategori (6M) di bawah ini untuk melihat detail akar kendala dan solusi peningkatan mutu.</p>
+                        </div>
+                        <div class="bg-bps-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md">
+                            Efek Utama: ${service.fishboneEffect}
+                        </div>
+                    </div>
+
+                    <!-- Fishbone Visual Layout -->
+                    <div class="relative py-8 px-2 overflow-x-auto">
+                        <!-- Main Spine Line -->
+                        <div class="hidden lg:block absolute top-1/2 left-10 right-16 h-2 bg-gradient-to-r from-bps-400 via-bps-600 to-indigo-700 rounded-full transform -translate-y-1/2 z-0"></div>
+                        
+                        <!-- Fish Head -->
+                        <div class="flex flex-col lg:flex-row gap-6 items-center justify-between">
+                            
+                            <!-- Top & Bottom Bones Grid -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full z-10">
+                                ${service.bones.map((bone, index) => {
+                                    const isTop = index % 2 === 0;
+                                    return `
+                                        <div onclick="openModal('${service.id}', ${index})" class="group cursor-pointer bg-white dark:bg-slate-900/90 rounded-2xl p-5 shadow-lg border border-slate-200 dark:border-slate-700 hover:border-bps-500 dark:hover:border-cyan-400 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between">
+                                            <div>
+                                                <div class="flex items-center justify-between mb-3">
+                                                    <span class="px-3 py-1 rounded-full text-xs font-bold text-white ${bone.color} shadow-sm">
+                                                        ${bone.category}
+                                                    </span>
+                                                    <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 group-hover:bg-bps-500 group-hover:text-white transition">
+                                                        <i class="fa-solid ${bone.icon} text-sm"></i>
+                                                    </div>
+                                                </div>
+                                                <h5 class="font-bold text-slate-900 dark:text-white text-base mb-2 group-hover:text-bps-600 dark:group-hover:text-cyan-400 transition">${bone.title}</h5>
+                                                <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">${bone.problem}</p>
+                                            </div>
+                                            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs font-semibold text-bps-600 dark:text-cyan-400">
+                                                <span>Lihat Solusi Mutu</span>
+                                                <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Fish Head Indicator -->
+                    <div class="mt-8 bg-gradient-to-r from-bps-700 to-indigo-800 rounded-2xl p-6 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-white/10 p-3 rounded-xl border border-white/20">
+                                <i class="fa-solid fa-bullseye text-2xl text-cyan-300"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-semibold uppercase text-cyan-200 tracking-wider">Kepala Tulang Ikan (Target Mutu)</span>
+                                <h4 class="text-lg font-bold">Optimalisasi Kualitas Layanan ${service.title}</h4>
+                            </div>
+                        </div>
+                        <div class="text-xs bg-white/10 px-4 py-2.5 rounded-xl border border-white/20 text-cyan-100 font-medium">
+                            <i class="fa-solid fa-check-circle mr-1.5 text-emerald-400"></i> Sesuai SK Kabadan BPS No. 260 Tahun 2026
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Modal Handler
+        function openModal(serviceId, boneIndex) {
+            const service = servicesData.find(s => s.id === serviceId);
+            const bone = service.bones[boneIndex];
+
+            document.getElementById('modalCategoryBadge').innerText = bone.category;
+            document.getElementById('modalTitle').innerText = bone.title;
+            document.getElementById('modalProblem').innerText = bone.problem;
+            
+            // Icon & color
+            const iconBg = document.getElementById('modalIconBg');
+            iconBg.className = `p-3 rounded-xl text-white ${bone.color}`;
+            document.getElementById('modalIcon').className = `fa-solid ${bone.icon} text-xl`;
+
+            // Render solutions
+            const solutionsContainer = document.getElementById('modalSolutions');
+            solutionsContainer.innerHTML = bone.solutions.map((sol, i) => `
+                <div class="flex items-start space-x-3 bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/80">
+                    <div class="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
+                        ${i + 1}
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed">${sol}</p>
+                </div>
+            `).join('');
+
+            const modal = document.getElementById('fishboneModal');
+            const modalCard = document.getElementById('modalCard');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalCard.classList.remove('scale-95', 'opacity-0');
+                modalCard.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('fishboneModal');
+            const modalCard = document.getElementById('modalCard');
+            modalCard.classList.remove('scale-100', 'opacity-100');
+            modalCard.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        // Tutup modal klik di luar
+        window.onclick = function(event) {
+            const modal = document.getElementById('fishboneModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
