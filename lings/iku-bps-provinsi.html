@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indikator Kinerja Utama (IKU) BPS Provinsi 2025-2029</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- DataTables CSS Bootstrap 5 Theme -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+
+    <style>
+        :root {
+            --primary-color: #0e4a85;
+            --secondary-color: #00a8cc;
+            --bg-light: #f4f7f6;
+            --text-dark: #2c3e50;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            padding-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-wrapper {
+            flex: 1 0 auto;
+        }
+
+        /* Sticky Header Styling */
+        .sticky-header-container {
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            background-color: rgba(244, 247, 246, 0.9);
+            backdrop-filter: blur(8px);
+            padding-top: 15px;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .header-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            border-radius: 16px;
+            padding: 20px 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .header-card h2 {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .header-card p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+
+        .table-container {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eef2f5;
+            margin-bottom: 30px;
+        }
+
+        table.dataTable {
+            border-collapse: separate !important;
+            border-spacing: 0;
+            width: 100% !important;
+        }
+
+        table.dataTable thead th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 14px 12px;
+        }
+
+        table.dataTable tbody td {
+            font-size: 0.9rem;
+            vertical-align: middle;
+            padding: 14px 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        table.dataTable tbody tr:hover {
+            background-color: #f8fafc !important;
+        }
+
+        .badge-code {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        .badge-unit {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+        }
+
+        .formula-box {
+            font-family: 'Courier New', Courier, monospace;
+            background: #fffbeb;
+            color: #b45309;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            border: 1px solid #fef3c7;
+            display: inline-block;
+        }
+
+        .clickable-title {
+            color: var(--primary-color);
+            cursor: pointer;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .clickable-title:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .btn-view-detail {
+            color: var(--secondary-color);
+            background-color: #e0f7fa;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .btn-view-detail:hover {
+            background-color: var(--secondary-color);
+            color: #ffffff;
+            transform: scale(1.08);
+        }
+
+        /* Styling Tabel Penilaian Kualitas & Pemanfaatan Data */
+        .reference-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eef2f5;
+            margin-bottom: 40px;
+        }
+
+        .reference-card h5 {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+        }
+
+        .table-reference {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table-reference th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 600;
+            font-size: 0.88rem;
+        }
+
+        .table-reference td {
+            font-size: 0.88rem;
+            vertical-align: middle;
+        }
+
+        .bg-kualitas {
+            background-color: #f0f9ff !important;
+            color: #0369a1;
+            font-weight: 600;
+            text-align: center;
+            width: 25%;
+        }
+
+        .bg-pemanfaatan {
+            background-color: #f0fdf4 !important;
+            color: #15803d;
+            font-weight: 600;
+            text-align: center;
+            width: 25%;
+        }
+
+        /* Custom Styling DataTable Elements */
+        .dataTables_wrapper .dataTables_filter input {
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            outline: none;
+        }
+        
+        .dataTables_wrapper .dataTables_filter input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(0, 168, 204, 0.15);
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            padding: 5px 10px;
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 8px;
+        }
+
+        .page-link {
+            border-radius: 8px;
+            margin: 0 2px;
+            color: var(--text-dark);
+        }
+
+        /* Footer Styling */
+        footer {
+            flex-shrink: 0;
+            background-color: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 16px 0;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.88rem;
+            font-weight: 500;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        footer strong {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <!-- Sticky Header Container -->
+    <div class="sticky-header-container px-md-5">
+        <div class="header-card d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+                <h2><i class="fa-solid fa-chart-line me-2"></i> Indikator Kinerja Utama (IKU)</h2>
+                <p>Badan Pusat Statistik (BPS) Provinsi — Periode Tahun 2025–2029</p>
+            </div>
+            <div class="mt-2 mt-md-0">
+                <span class="badge bg-light text-dark px-3 py-2 rounded-pill shadow-sm">
+                    <i class="fa-solid fa-building me-1"></i> Unit: BPS Provinsi
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container-fluid px-md-5">
+        <!-- Main DataTables Container -->
+        <div class="table-container">
+            <table id="ikuTable" class="table table-hover responsive nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>No / Kode</th>
+                        <th>Sasaran Kegiatan & Indikator</th>
+                        <th>Metode Penghitungan</th>
+                        <th>Satuan</th>
+                        <th>Frekuensi</th>
+                        <th>Unit Penyedia</th>
+                        <th class="text-center">Aksi / Detail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data Rows -->
+                    <tr>
+                        <td><span class="badge-code">SK: 1.1.1</span><br><strong class="text-primary">1.1.1.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="1">Persentase Publikasi/Laporan Statistik Kependudukan dan Ketenagakerjaan yang Berkualitas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penyediaan Data dan Insight Statistik Kependudukan dan Ketenagakerjaan yang Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Jumlah Berkualitas | N: Total Dihasilkan</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="1" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 1.1.3</span><br><strong class="text-primary">1.1.3.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="2">Persentase Publikasi/Laporan Statistik Kesejahteraan Rakyat yang Berkualitas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penyediaan Data dan Insight Statistik Kesejahteraan Rakyat yang Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Jumlah Berkualitas | N: Total Dihasilkan</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="2" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 1.1.5</span><br><strong class="text-primary">1.1.5.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="3">Persentase Publikasi/Laporan Statistik Ketahanan Sosial yang Berkualitas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penyediaan Data dan Insight Statistik Ketahanan Sosial yang Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Jumlah Berkualitas | N: Total Dihasilkan</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="3" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 1.2.1</span><br><strong class="text-primary">1.2.1.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="4">Persentase Publikasi/Laporan Statistik Tanaman Pangan, Hortikultura, dan Perkebunan yang Berkualitas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penyediaan Data dan Insight Statistik Tanaman Pangan, Hortikultura, dan Perkebunan yang Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Jumlah Berkualitas | N: Total Dihasilkan</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="4" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 1.2.2</span><br><strong class="text-primary">1.2.2.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="5">Persentase Publikasi/Laporan Statistik Peternakan, Perikanan, dan Kehutanan yang Berkualitas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penyediaan Data dan Insight Statistik Peternakan, Perikanan, dan Kehutanan yang Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Jumlah Berkualitas | N: Total Dihasilkan</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="5" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 1.2.3</span><br><strong class="text-primary">1.2.3.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="6">Persentase Publikasi/Laporan Statistik Industri yang Berkualitas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penyediaan Data dan Insight Statistik Industri yang Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Jumlah Berkualitas | N: Total Dihasilkan</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="6" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 1.3.1</span><br><strong class="text-primary">1.3.1.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="7">Persentase Publikasi/Laporan Statistik Distribusi yang Berkualitas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penyediaan Data dan Insight Statistik Distribusi yang Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Jumlah Berkualitas | N: Total Dihasilkan</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="7" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 1.3.3</span><br><strong class="text-primary">1.3.3.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="8">Persentase Publikasi/Laporan Statistik Harga yang Berkualitas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penyediaan Data dan Insight Statistik Harga yang Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Jumlah Berkualitas | N: Total Dihasilkan</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="8" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 1.3.5</span><br><strong class="text-primary">1.3.5.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="9">Persentase Publikasi/Laporan Statistik Keuangan, Teknologi Informasi, dan Pariwisata yang Berkualitas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penyediaan Data dan Insight Statistik Keuangan, TI, dan Pariwisata yang Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Jumlah Berkualitas | N: Total Dihasilkan</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="9" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 1.4.1</span><br><strong class="text-primary">1.4.1.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="10">Persentase Publikasi/Laporan Neraca Produksi yang Berkualitas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penyediaan Data dan Insight Statistik Lintas Sektor yang Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Jumlah Berkualitas | N: Total Dihasilkan</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="10" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 1.4.1</span><br><strong class="text-primary">1.4.1.2</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="11">Persentase Publikasi/Laporan Neraca Pengeluaran yang Berkualitas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penyediaan Data dan Insight Statistik Lintas Sektor yang Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Jumlah Berkualitas | N: Total Dihasilkan</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="11" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 1.4.1</span><br><strong class="text-primary">1.4.1.3</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="12">Persentase Publikasi/Laporan Analisis dan Pengembangan Statistik yang Berkualitas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penyediaan Data dan Insight Statistik Lintas Sektor yang Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Jumlah Berkualitas | N: Total Dihasilkan</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="12" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 2.1.4</span><br><strong class="text-primary">2.1.4.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="13">Persentase Kumulatif Desa yang Berpredikat Desa Cinta Statistik</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Kapasitas Tata Kelola Pemerintah Desa untuk menghasilkan Statistik Berkualitas.</p>
+                        </td>
+                        <td><span class="formula-box">y = (n / N) × 100%</span><div class="small text-muted mt-1">n: Desa Berpredikat Desa Cantik | N: Total Desa</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi & Kab/Kota</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="13" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 1.4.4</span><br><strong class="text-primary">1.4.4.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="14">Indeks Keberhasilan Penyediaan Indikator Sasaran Visi Indonesia Emas dan 45 Indikator Utama Pembangunan</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Tersedianya Data 5 Sasaran Visi Indonesia Emas dan 45 Indikator Utama Pembangunan.</p>
+                        </td>
+                        <td><span class="formula-box">y = (x1 + x2) / 2</span><div class="small text-muted mt-1">x1: % Indikator Resmi | x2: % Koordinasi Dinas</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="14" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 2.5.1</span><br><strong class="text-primary">2.5.1.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="15">Tingkat Penyelenggaraan Pembinaan Statistik Sektoral sesuai Standar</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Penguatan Penyelenggaraan Pembinaan Statistik Sektoral K/L/Pemda.</p>
+                        </td>
+                        <td><span class="formula-box">TPSS = Σ (wi × xi)</span><div class="small text-muted mt-1">wi: Bobot | xi: Nilai Indikator</div></td>
+                        <td>Persen</td>
+                        <td>Triwulanan</td>
+                        <td><span class="badge-unit">Direktorat Diseminasi Statistik</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="15" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 2.6.1</span><br><strong class="text-primary">2.6.1.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="16">Persentase Kegiatan Edukasi dan Promosi Statistik yang Terselenggara dengan Baik</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Layanan Edukasi dan Promosi Statistik yang Prima.</p>
+                        </td>
+                        <td><span class="formula-box">EPS = (n / N) × 100%</span><div class="small text-muted mt-1">n: Kegiatan Tepat Waktu/Sasaran | N: Rencana Awal</div></td>
+                        <td>Persen</td>
+                        <td>Triwulanan & Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="16" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 2.7.1</span><br><strong class="text-primary">2.7.1.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="17">Indeks Pelayanan Publik - Penilaian Mandiri (IPP-PM)</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Kemudahan Akses Data BPS.</p>
+                        </td>
+                        <td><span class="formula-box">IPP = (w0 × Σxi) + (w1 × Σyj)</span><div class="small text-muted mt-1">Instrumen Evaluasi PEKPPP Mandiri</div></td>
+                        <td>Poin</td>
+                        <td>Triwulanan & Tahunan</td>
+                        <td><span class="badge-unit">Direktorat Diseminasi Statistik</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="17" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 3.3.2</span><br><strong class="text-primary">3.3.2.4</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="18">Nilai SAKIP oleh Inspektorat</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Dukungan Manajemen pada BPS Provinsi dan Kab/Kota yang Efektif dan Efisien.</p>
+                        </td>
+                        <td><span class="formula-box">Metode Penilaian SAKIP</span><div class="small text-muted mt-1">Evaluasi Akuntabilitas Kinerja oleh Inspektorat</div></td>
+                        <td>Poin</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">Inspektorat Utama</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="18" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 3.3.2</span><br><strong class="text-primary">3.3.2.5</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="19">Indeks Implementasi BerAKHLAK</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Terwujudnya Dukungan Manajemen pada BPS Provinsi dan Kab/Kota yang Efektif dan Efisien.</p>
+                        </td>
+                        <td><span class="formula-box">Survei Budaya Organisasi</span><div class="small text-muted mt-1">Skor Implementasi Nilai BerAKHLAK Pegawai</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">Biro Perencanaan</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="19" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-code">SK: 3.2.5</span><br><strong class="text-primary">3.2.5.1</strong></td>
+                        <td>
+                            <strong class="clickable-title btn-detail-trigger" data-id="20">Tingkat Keberhasilan Pembangunan Zona Integritas</strong>
+                            <p class="text-muted small mb-0 mt-1"><em>Sasaran:</em> Peningkatan Pembangunan Zona Integritas.</p>
+                        </td>
+                        <td><span class="formula-box">n = (x / y) × 100</span><div class="small text-muted mt-1">x: Unit Raih WBK/WBBM | y: Unit Diusulkan ke TPI</div></td>
+                        <td>Persen</td>
+                        <td>Tahunan</td>
+                        <td><span class="badge-unit">BPS Provinsi</span></td>
+                        <td class="text-center">
+                            <button class="btn-view-detail btn-detail-trigger" data-id="20" title="Lihat Konsep & Definisi">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section Tabel Referensi Nilai & Indikator -->
+        <div class="reference-card">
+            <div class="d-flex align-items-center mb-3">
+                <i class="fa-solid fa-list-check me-2 fs-5 text-primary"></i>
+                <h5 class="mb-0">Matriks Indikator Penilaian Kualitas & Pemanfaatan Data (Kegiatan PSB)</h5>
+            </div>
+            <p class="text-muted small mb-3">
+                Tabel di bawah ini merupakan acuan tingkat kematangan untuk penilaian Penilaian Statistik Berkualitas (PSB) yang berlaku bagi seluruh IKU publikasi/laporan di atas.
+            </p>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-reference mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 25%;">Nilai (1)</th>
+                            <th class="text-center" style="width: 75%;">Indikator (2)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Kualitas Data -->
+                        <tr>
+                            <td rowspan="10" class="bg-kualitas align-middle">
+                                <i class="fa-solid fa-database d-block mb-1 fs-5"></i>
+                                Kualitas Data
+                            </td>
+                            <td>Tingkat Kematangan Relevansi Data Terhadap Pengguna</td>
+                        </tr>
+                        <tr><td>Tingkat Kematangan Proses Identifikasi Kebutuhan Data</td></tr>
+                        <tr><td>Tingkat Kematangan Penilaian Akurasi Data</td></tr>
+                        <tr><td>Tingkat Kematangan Penjaminan Aktualitas Data</td></tr>
+                        <tr><td>Tingkat Kematangan Pemantauan Ketepatan Waktu Diseminasi</td></tr>
+                        <tr><td>Tingkat Kematangan Ketersediaan Data untuk Pengguna Data</td></tr>
+                        <tr><td>Tingkat Kematangan Akses Media Penyebarluasan Data</td></tr>
+                        <tr><td>Tingkat Kematangan Penyediaan Format Data</td></tr>
+                        <tr><td>Tingkat Kematangan Keterbandingan Data</td></tr>
+                        <tr><td>Tingkat Kematangan Konsistensi Data</td></tr>
+                        
+                        <!-- Pemanfaatan Data -->
+                        <tr>
+                            <td rowspan="3" class="bg-pemanfaatan align-middle">
+                                <i class="fa-solid fa-chart-pie d-block mb-1 fs-5"></i>
+                                Pemanfaatan Data
+                            </td>
+                            <td>Tingkat Kematangan Penggunaan Data Statistik Dasar untuk Perencanaan, Monitoring, dan Evaluasi, dan atau Penyusunan Kebijakan</td>
+                        </tr>
+                        <tr><td>Tingkat Kematangan Penggunaan Data Statistik Sektoral untuk Perencanaan, Monitoring, dan Evaluasi, dan atau Penyusunan Kebijakan</td></tr>
+                        <tr><td>Tingkat Kematangan Sosialisasi dan Literasi Data Statistik</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Pop-up Konsep dan Definisi -->
+<div class="modal fade" id="konsepModal" tabindex="-1" aria-labelledby="konsepModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content style-modal" style="border-radius: 16px; border: none; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+            <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white;">
+                <h5 class="modal-header-title modal-title" id="konsepModalLabel" style="font-weight: 600; font-size: 1.1rem;">
+                    <i class="fa-solid fa-circle-info me-2"></i> Konsep dan Definisi
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" style="line-height: 1.6; font-size: 0.95rem; color: #334155;">
+                <div class="mb-3">
+                    <span class="badge bg-primary px-3 py-2" id="modalKode" style="border-radius: 6px; font-size: 0.85rem;">-</span>
+                    <h5 class="mt-2 text-dark" id="modalJudul" style="font-weight: 700;">-</h5>
+                </div>
+                <hr>
+                <div id="modalIsiKonsep">
+                    <!-- Text Konsep dan Definisi -->
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #f8fafc; border-top: 1px solid #e2e8f0;">
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal" style="border-radius: 8px;">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Halaman -->
+<footer>
+    <div class="container">
+        <i class="fa-solid fa-file-contract me-1 text-primary"></i> <strong>Peraturan Kepala BPS Nomor 163 Tahun 2025</strong> — Indikator Kinerja Utama BPS Provinsi 2025-2029
+    </div>
+</footer>
+
+<!-- Scripts: jQuery, Bootstrap 5, DataTables -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+
+<script>
+    // Database Konsep dan Definisi
+    const dataKonsep = {
+        1: {
+            kode: "Indikator 1.1.1.1",
+            judul: "Persentase Publikasi/Laporan Statistik Kependudukan dan Ketenagakerjaan yang Berkualitas",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah Publikasi/Laporan Statistik Kependudukan dan Ketenagakerjaan yang berkualitas dengan seluruh Publikasi/Laporan Statistik Kependudukan dan Ketenagakerjaan yang dihasilkan.</p>
+                <p><strong>Publikasi:</strong> Produk BPS yang memuat data hasil kegiatan statistik baik bentuk buku maupun nonbuku.</p>
+                <p><strong>Laporan:</strong> Penyampaian informasi tertulis untuk memberikan gambaran, evaluasi, atau rekomendasi statistik. Jika estimasi data tidak sampai level satker, output satker berupa laporan.</p>
+                <p><strong>Kriteria Berkualitas:</strong> Memiliki nilai <em>Kualitas Data</em> dan nilai <em>Pemanfaatan Data</em> minimal berkategori <strong>Baik</strong>.</p>
+            `
+        },
+        2: {
+            kode: "Indikator 1.1.3.1",
+            judul: "Persentase Publikasi/Laporan Statistik Kesejahteraan Rakyat yang Berkualitas",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah Publikasi/Laporan Statistik Kesejahteraan Rakyat yang berkualitas dengan seluruh Publikasi/Laporan Statistik Kesejahteraan Rakyat yang dihasilkan.</p>
+                <p><strong>Kriteria Berkualitas:</strong> Memiliki nilai Kualitas Data dan Pemanfaatan Data minimal berkategori Baik, memuat gambaran pelaksanaan kegiatan, kendala, solusi, dan rekomendasi kegiatan di masa mendatang.</p>
+            `
+        },
+        3: {
+            kode: "Indikator 1.1.5.1",
+            judul: "Persentase Publikasi/Laporan Statistik Ketahanan Sosial yang Berkualitas",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah Publikasi/Laporan Statistik Ketahanan Sosial yang berkualitas dengan seluruh Publikasi/Laporan Statistik Ketahanan Sosial yang dihasilkan.</p>
+                <p><strong>Kriteria Berkualitas:</strong> Dikoordinasikan oleh Direktorat Statistik Ketahanan Sosial dengan Kualitas Data & Pemanfaatan Data minimal berkategori Baik.</p>
+            `
+        },
+        4: {
+            kode: "Indikator 1.2.1.1",
+            judul: "Persentase Publikasi/Laporan Statistik Tanaman Pangan, Hortikultura, dan Perkebunan yang Berkualitas",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah Publikasi/Laporan Statistik Tanaman Pangan, Hortikultura, dan Perkebunan yang berkualitas dengan seluruhnya yang dihasilkan.</p>
+                <p><strong>Kriteria Berkualitas:</strong> Dikoordinasikan oleh Direktorat Statistik Tanaman Pangan, Hortikultura, dan Perkebunan dengan Kualitas Data & Pemanfaatan Data minimal berkategori Baik.</p>
+            `
+        },
+        5: {
+            kode: "Indikator 1.2.2.1",
+            judul: "Persentase Publikasi/Laporan Statistik Peternakan, Perikanan, dan Kehutanan yang Berkualitas",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah Publikasi/Laporan Statistik Peternakan, Perikanan, dan Kehutanan yang berkualitas dengan seluruhnya yang dihasilkan.</p>
+                <p><strong>Kriteria Berkualitas:</strong> Memiliki nilai Kualitas Data dan Pemanfaatan Data minimal berkategori Baik.</p>
+            `
+        },
+        6: {
+            kode: "Indikator 1.2.3.1",
+            judul: "Persentase Publikasi/Laporan Statistik Industri yang Berkualitas",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah Publikasi/Laporan Statistik Industri yang berkualitas dengan seluruh Publikasi/Laporan Statistik Industri yang dihasilkan.</p>
+                <p><strong>Kriteria Berkualitas:</strong> Dikoordinasikan oleh Direktorat Statistik Industri dengan Kualitas Data & Pemanfaatan Data minimal berkategori Baik.</p>
+            `
+        },
+        7: {
+            kode: "Indikator 1.3.1.1",
+            judul: "Persentase Publikasi/Laporan Statistik Distribusi yang Berkualitas",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah Publikasi/Laporan Statistik Distribusi yang berkualitas dengan seluruh Publikasi/Laporan Statistik Distribusi yang dihasilkan.</p>
+                <p><strong>Kriteria Berkualitas:</strong> Dikoordinasikan oleh Direktorat Statistik Distribusi dengan Kualitas Data & Pemanfaatan Data minimal berkategori Baik.</p>
+            `
+        },
+        8: {
+            kode: "Indikator 1.3.3.1",
+            judul: "Persentase Publikasi/Laporan Statistik Harga yang Berkualitas",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah Publikasi/Laporan Statistik Harga yang berkualitas dengan seluruh Publikasi/Laporan Statistik Harga yang dihasilkan.</p>
+                <p><strong>Kriteria Berkualitas:</strong> Dikoordinasikan oleh Direktorat Statistik Harga dengan Kualitas Data & Pemanfaatan Data minimal berkategori Baik.</p>
+            `
+        },
+        9: {
+            kode: "Indikator 1.3.5.1",
+            judul: "Persentase Publikasi/Laporan Statistik Keuangan, Teknologi Informasi, dan Pariwisata yang Berkualitas",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah Publikasi/Laporan Statistik Keuangan, Teknologi Informasi, dan Pariwisata yang berkualitas dengan seluruhnya yang dihasilkan.</p>
+                <p><strong>Kriteria Berkualitas:</strong> Memiliki nilai Kualitas Data dan Pemanfaatan Data minimal berkategori Baik.</p>
+            `
+        },
+        10: {
+            kode: "Indikator 1.4.1.1",
+            judul: "Persentase Publikasi/Laporan Neraca Produksi yang Berkualitas",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah Publikasi/Laporan Neraca Produksi yang berkualitas dengan seluruh Publikasi/Laporan Neraca Produksi yang dihasilkan.</p>
+                <p><strong>Kriteria Berkualitas:</strong> Dikoordinasikan oleh Direktorat Neraca Produksi dengan Kualitas Data & Pemanfaatan Data minimal berkategori Baik.</p>
+            `
+        },
+        11: {
+            kode: "Indikator 1.4.1.2",
+            judul: "Persentase Publikasi/Laporan Neraca Pengeluaran yang Berkualitas",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah Publikasi/Laporan Neraca Pengeluaran yang berkualitas dengan seluruh Publikasi/Laporan Neraca Pengeluaran yang dihasilkan.</p>
+                <p><strong>Kriteria Berkualitas:</strong> Dikoordinasikan oleh Direktorat Neraca Pengeluaran dengan Kualitas Data & Pemanfaatan Data minimal berkategori Baik.</p>
+            `
+        },
+        12: {
+            kode: "Indikator 1.4.1.3",
+            judul: "Persentase Publikasi/Laporan Analisis dan Pengembangan Statistik yang Berkualitas",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah Publikasi/Laporan Analisis dan Pengembangan Statistik yang berkualitas dengan seluruhnya yang dihasilkan.</p>
+                <p><strong>Kriteria Berkualitas:</strong> Dikoordinasikan oleh Direktorat Analisis dan Pengembangan Statistik dengan nilai Kualitas & Pemanfaatan Data minimal Baik.</p>
+            `
+        },
+        13: {
+            kode: "Indikator 2.1.4.1",
+            judul: "Persentase Kumulatif Desa yang Berpredikat Desa Cinta Statistik",
+            definisi: `
+                <p><strong>Definisi:</strong> Perbandingan jumlah kumulatif (termasuk tahun-tahun sebelumnya) dari desa/kelurahan/yang setara yang berpredikat Desa Cinta Statistik (Desa Cantik) terhadap total seluruh desa/kelurahan/yang setara.</p>
+            `
+        },
+        14: {
+            kode: "Indikator 1.4.4.1",
+            judul: "Indeks Keberhasilan Penyediaan Indikator Sasaran Visi Indonesia Emas dan 45 Indikator Utama Pembangunan",
+            definisi: `
+                <p><strong>Definisi:</strong> Skor komposit dari:</p>
+                <ol>
+                    <li>Persentase Indikator Sasaran Visi Indonesia Emas dan 45 Indikator Utama Pembangunan yang menjadi Statistik Resmi.</li>
+                    <li>Persentase K/L/Direktorat/Dinas yang telah berkoordinasi dengan Sekretariat Penyediaan Indikator Pusat/Provinsi.</li>
+                </ol>
+            `
+        },
+        15: {
+            kode: "Indikator 2.5.1.1",
+            judul: "Tingkat Penyelenggaraan Pembinaan Statistik Sektoral sesuai Standar",
+            definisi: `
+                <p><strong>Definisi:</strong> Indikator yang menggambarkan seberapa besar upaya pembinaan statistik sektoral yang telah diselenggarakan BPS kepada Kementerian/Lembaga/Pemerintah Daerah sesuai dengan petunjuk teknis pembinaan statistik sektoral.</p>
+            `
+        },
+        16: {
+            kode: "Indikator 2.6.1.1",
+            judul: "Persentase Kegiatan Edukasi dan Promosi Statistik yang Terselenggara dengan Baik",
+            definisi: `
+                <p><strong>Definisi:</strong> Indikator yang menggambarkan keberhasilan unit/satuan kerja dalam menyelenggarakan kegiatan edukasi dan promosi statistik secara baik sebagai bagian upaya peningkatan literasi statistik.</p>
+                <p><strong>Kriteria Baik:</strong> Terselenggara secara <em>tepat waktu</em> (sesuai jadwal awal tahun) dan <em>tepat sasaran</em> (penerima manfaat sesuai target).</p>
+            `
+        },
+        17: {
+            kode: "Indikator 2.7.1.1",
+            judul: "Indeks Pelayanan Publik - Penilaian Mandiri (IPP-PM)",
+            definisi: `
+                <p><strong>Definisi:</strong> Output dari kegiatan Pemantauan dan Evaluasi Kinerja Penyelenggaraan Pelayanan Publik (PEKPPP) yang digunakan untuk mengukur kualitas penyelenggaraan pelayanan publik di BPS secara mandiri.</p>
+            `
+        },
+        18: {
+            kode: "Indikator 3.3.2.4",
+            judul: "Nilai SAKIP oleh Inspektorat",
+            definisi: `
+                <p><strong>Definisi:</strong> Nilai hasil evaluasi atas Akuntabilitas Kinerja unit kerja dan satuan kerja pada lingkup Badan Pusat Statistik oleh Inspektorat Utama.</p>
+            `
+        },
+        19: {
+            kode: "Indikator 3.3.2.5",
+            judul: "Indeks Implementasi BerAKHLAK",
+            definisi: `
+                <p><strong>Definisi:</strong> Skor yang menggambarkan implementasi nilai-nilai BerAKHLAK oleh pegawai BPS pada masing-masing unit kerja dan satuan kerja berdasarkan Survei Budaya Organisasi.</p>
+            `
+        },
+        20: {
+            kode: "Indikator 3.2.5.1",
+            judul: "Tingkat Keberhasilan Pembangunan Zona Integritas",
+            definisi: `
+                <p><strong>Definisi:</strong> Ukuran yang mendukung sasaran strategis Badan Pusat Statistik dalam mewujudkan Kinerja BPS yang bersih, akuntabel, dan profesional melalui perolehan predikat WBK/WBBM.</p>
+            `
+        }
+    };
+
+    $(document).ready(function() {
+        // Inisialisasi DataTable
+        var table = $('#ikuTable').DataTable({
+            pageLength: 5,
+            lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "Semua"]],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Cari indikator, sasaran, atau unit...",
+                lengthMenu: "Tampilkan _MENU_ data",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ indikator",
+                infoEmpty: "Tidak ada data yang tersedia",
+                infoFiltered: "(difilter dari _MAX_ total data)",
+                paginate: {
+                    first: "Awal",
+                    last: "Akhir",
+                    next: "<i class='fa-solid fa-chevron-right'></i>",
+                    previous: "<i class='fa-solid fa-chevron-left'></i>"
+                },
+                zeroRecords: "Tidak ditemukan data yang sesuai"
+            },
+            dom: '<"row mb-3"<"col-md-6"l><"col-md-6"f>>rt<"row mt-3"<"col-md-6"i><"col-md-6"p>>'
+        });
+
+        // Event Listener Pop-up Detail
+        $('#ikuTable').on('click', '.btn-detail-trigger', function() {
+            var id = $(this).data('id');
+            var item = dataKonsep[id];
+            
+            if(item) {
+                $('#modalKode').text(item.kode);
+                $('#modalJudul').text(item.judul);
+                $('#modalIsiKonsep').html(item.definisi);
+                
+                var myModal = new bootstrap.Modal(document.getElementById('konsepModal'));
+                myModal.show();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
