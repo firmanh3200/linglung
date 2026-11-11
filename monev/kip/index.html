@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monev Rekap KIP — BPS Jawa Barat</title>
+<meta name="description" content="Aplikasi rekap hasil Monitoring dan Evaluasi Keterbukaan Informasi Publik. Membaca file JSON (kip3200.json - kip3279.json) langsung dari folder. Untuk tim Monev/monitoring.">
+<style>
+/* ==================== DESIGN TOKENS ==================== */
+:root {
+  --primary: #1e40af;
+  --primary-dark: #1e3a8a;
+  --primary-light: #3b82f6;
+  --primary-bg: #eff6ff;
+  --accent: #0891b2;
+  --accent-dark: #0e7490;
+  --accent-bg: #ecfeff;
+  --success: #16a34a;
+  --success-light: #22c55e;
+  --success-bg: #f0fdf4;
+  --warning: #d97706;
+  --warning-light: #f59e0b;
+  --warning-bg: #fffbeb;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --white: #ffffff;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --transition: all 0.2s ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--gray-100);
+  color: var(--gray-900);
+  line-height: 1.6;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==================== HEADER ==================== */
+.app-header {
+  background: linear-gradient(135deg, #0e7490 0%, var(--accent) 50%, var(--primary) 100%);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-lg);
+}
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-logo {
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(10px);
+}
+.brand-text h1 { font-size: 17px; font-weight: 700; margin: 0; line-height: 1.2; letter-spacing: -0.2px; }
+.brand-text p { font-size: 12px; opacity: 0.85; margin: 2px 0 0; font-weight: 400; }
+.role-badge {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ==================== LAYOUT ==================== */
+.container { max-width: 1280px; margin: 0 auto; padding: 24px; }
+
+/* ==================== ALERT ==================== */
+.alert {
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 13.5px;
+  border: 1px solid;
+  line-height: 1.55;
+}
+.alert-success { background: var(--success-bg); color: #15803d; border-color: #bbf7d0; }
+.alert-info { background: var(--primary-bg); color: var(--primary-dark); border-color: #bfdbfe; }
+.alert-warning { background: var(--warning-bg); color: var(--warning); border-color: #fde68a; }
+.alert-danger { background: var(--danger-bg); color: #b91c1c; border-color: #fecaca; }
+.alert .icon { flex-shrink: 0; font-size: 18px; }
+.alert strong { font-weight: 700; }
+.alert code {
+  background: rgba(0,0,0,0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 12.5px;
+}
+
+/* ==================== CARDS ==================== */
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+}
+.card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--gray-200);
+  background: var(--gray-50);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.card-header h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-900);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-header h2 .badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  background: var(--primary-bg);
+  color: var(--primary);
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+}
+.card-body { padding: 24px; }
+
+/* ==================== FORM CONTROLS ==================== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  align-items: flex-end;
+}
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-weight: 600; color: var(--gray-700); font-size: 13px; letter-spacing: 0.1px; }
+.form-control, select.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background: white;
+  color: var(--gray-900);
+  transition: var(--transition);
+}
+.form-control:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+  outline: none;
+}
+.form-hint { font-size: 12px; color: var(--gray-500); }
+
+/* ==================== BUTTONS ==================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn svg { width: 16px; height: 16px; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); box-shadow: var(--shadow-md); }
+.btn-success { background: var(--success); color: white; }
+.btn-success:hover { background: #15803d; box-shadow: var(--shadow-md); }
+.btn-accent { background: var(--accent); color: white; }
+.btn-accent:hover { background: var(--accent-dark); box-shadow: var(--shadow-md); }
+.btn-outline { background: white; color: var(--gray-700); border-color: var(--gray-300); }
+.btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
+.btn-danger { background: var(--danger); color: white; }
+.btn-danger:hover { background: #b91c1c; }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+.btn-lg { padding: 12px 24px; font-size: 15px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* ==================== SUMMARY CARDS ==================== */
+.monev-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+.summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: var(--transition);
+}
+.summary-card:hover { box-shadow: var(--shadow-md); }
+.summary-card .icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.summary-card .icon.total { background: var(--primary-bg); color: var(--primary); }
+.summary-card .icon.done { background: var(--success-bg); color: var(--success); }
+.summary-card .icon.pending { background: var(--warning-bg); color: var(--warning); }
+.summary-card .icon.avg { background: var(--accent-bg); color: var(--accent); }
+.summary-card .value { font-size: 24px; font-weight: 800; color: var(--gray-900); line-height: 1; }
+.summary-card .label { font-size: 12px; color: var(--gray-600); margin-top: 4px; }
+
+/* ==================== TABLE ==================== */
+.table-wrap {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+}
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  min-width: 800px;
+}
+.data-table thead { background: var(--gray-50); }
+.data-table th {
+  text-align: left;
+  padding: 12px 14px;
+  font-weight: 700;
+  color: var(--gray-700);
+  border-bottom: 2px solid var(--gray-200);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.data-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--gray-100);
+  vertical-align: middle;
+}
+.data-table tr:hover { background: var(--gray-50); }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table .bp-name { font-weight: 600; color: var(--gray-900); }
+.data-table .bp-code {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-bg);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.data-table .bp-type {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--gray-100);
+  color: var(--gray-600);
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 2px;
+}
+.data-table tr.not-evaluated { background: var(--warning-bg); }
+.data-table tr.not-evaluated td { color: var(--warning); font-style: italic; }
+.data-table tr.not-evaluated:hover { background: #fef3c7; }
+
+/* ==================== MINI PROGRESS ==================== */
+.mini-progress { display: flex; align-items: center; gap: 8px; }
+.mini-bar {
+  flex: 1;
+  min-width: 60px;
+  height: 6px;
+  background: var(--gray-200);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.mini-bar-fill {
+  height: 100%;
+  background: var(--success);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+.mini-bar-fill.low { background: var(--danger); }
+.mini-bar-fill.mid { background: var(--warning); }
+.mini-percentage { font-weight: 700; font-size: 12px; min-width: 38px; text-align: right; }
+
+/* ==================== ACTION ICONS ==================== */
+.action-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-500);
+  transition: var(--transition);
+}
+.action-btn:hover { background: var(--gray-100); color: var(--gray-900); }
+.action-btn.view:hover { background: var(--primary-bg); color: var(--primary); }
+.action-btn.delete:hover { background: var(--danger-bg); color: var(--danger); }
+.action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.action-btn svg { width: 16px; height: 16px; }
+
+/* ==================== STATUS BADGES ==================== */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+.status-badge.sudah { background: var(--success-bg); color: #15803d; border: 1px solid #bbf7d0; }
+.status-badge.belum { background: var(--danger-bg); color: #b91c1c; border: 1px solid #fecaca; }
+.status-badge.tidak-berlaku { background: var(--gray-100); color: var(--gray-600); border: 1px solid var(--gray-300); }
+.status-badge.pending { background: var(--warning-bg); color: var(--warning); border: 1px solid #fde68a; }
+.status-badge.evaluated { background: var(--success-bg); color: #15803d; border: 1px solid #bbf7d0; }
+.status-badge.not-evaluated { background: var(--warning-bg); color: var(--warning); border: 1px solid #fde68a; }
+
+/* ==================== DETAIL VIEW (inline) ==================== */
+.detail-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  background: var(--gray-50);
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+.detail-meta .meta-item .label { font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.3px; }
+.detail-meta .meta-item .value { font-size: 14px; color: var(--gray-900); font-weight: 600; }
+.detail-meta .meta-item .value a { color: var(--primary); text-decoration: none; }
+.detail-meta .meta-item .value a:hover { text-decoration: underline; }
+
+.progress-container {
+  background: white;
+  border-radius: 12px;
+  padding: 16px 20px;
+  border: 1px solid var(--gray-200);
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 18px;
+  align-items: center;
+}
+.progress-stat { text-align: center; }
+.progress-stat .stat-value { font-size: 26px; font-weight: 800; color: var(--primary); line-height: 1; }
+.progress-stat .stat-value.success { color: var(--success); }
+.progress-stat .stat-value.danger { color: var(--danger); }
+.progress-stat .stat-value.warning { color: var(--warning); }
+.progress-stat .stat-label { font-size: 12px; color: var(--gray-600); margin-top: 4px; font-weight: 500; }
+
+.detail-section { margin-bottom: 24px; }
+.detail-section h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--primary-bg);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.detail-item {
+  padding: 12px 14px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: white;
+}
+.detail-item .di-title { font-weight: 600; font-size: 13.5px; color: var(--gray-900); margin-bottom: 6px; display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.detail-item .di-meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--gray-600); }
+.detail-item .di-meta span { display: inline-flex; align-items: center; gap: 4px; }
+.detail-item .di-meta a { color: var(--primary); text-decoration: none; }
+
+/* ==================== EMPTY STATE ==================== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--gray-500);
+}
+.empty-state .icon { font-size: 56px; margin-bottom: 16px; opacity: 0.4; }
+.empty-state h3 { font-size: 18px; color: var(--gray-700); margin-bottom: 8px; }
+.empty-state p { font-size: 14px; margin-bottom: 20px; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+/* ==================== LOADING SPINNER ==================== */
+.loading-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--gray-500);
+}
+.loading-state .spinner-lg {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--gray-200);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+/* ==================== TOAST ==================== */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  background: var(--gray-900);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+  font-size: 13.5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastIn 0.3s ease;
+  min-width: 250px;
+  max-width: 380px;
+}
+.toast.success { background: var(--success); }
+.toast.error { background: var(--danger); }
+.toast.warning { background: var(--warning); }
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes toastOut { to { opacity: 0; transform: translateX(40px); } }
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .header-inner { flex-direction: column; align-items: flex-start; }
+  .container { padding: 16px; }
+  .card-body { padding: 16px; }
+  .brand-text h1 { font-size: 15px; }
+  .brand-text p { font-size: 11px; }
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+/* ==================== FOOTER ==================== */
+.app-footer {
+  background: var(--gray-900);
+  color: var(--gray-400);
+  text-align: center;
+  padding: 20px 24px;
+  font-size: 12.5px;
+  margin-top: 40px;
+}
+.app-footer strong { color: var(--gray-200); }
+.app-footer .legal-ref { margin-top: 6px; font-size: 11px; color: var(--gray-500); }
+
+/* ==================== UTILITIES ==================== */
+.text-success { color: var(--success); }
+.text-danger { color: var(--danger); }
+.text-warning { color: var(--warning); }
+.text-muted { color: var(--gray-500); }
+.text-sm { font-size: 12px; }
+.mb-0 { margin-bottom: 0; }
+.hidden { display: none !important; }
+
+@media print {
+  .app-header, .btn-row, .app-footer { display: none !important; }
+  body { background: white !important; }
+  .card { box-shadow: none !important; border: 1px solid #ccc !important; page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-logo">M</div>
+      <div class="brand-text">
+        <h1>Monev Rekap Keterbukaan Informasi Publik</h1>
+        <p>Rekap hasil ceklis 28 BPS di Jawa Barat — membaca file JSON langsung dari folder</p>
+      </div>
+    </div>
+    <div class="role-badge">📊 Tim Monev / Monitoring</div>
+  </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="container">
+
+  <!-- HTTP Warning (hidden if served via HTTP) -->
+  <div id="httpWarning" class="alert alert-warning hidden">
+    <span class="icon">⚠️</span>
+    <div>
+      <strong>Aplikasi sedang dibuka via protokol file://.</strong> Browser membatasi pembacaan file JSON dari protokol ini. Silakan jalankan aplikasi melalui HTTP server lokal:
+      <div style="margin-top:8px;background:rgba(0,0,0,0.06);padding:8px 12px;border-radius:6px;font-family:'Courier New',monospace;font-size:12.5px;">
+        cd folder_aplikasi<br>
+        python3 -m http.server 8000<br>
+        # Buka browser ke: http://localhost:8000/monev-rekap-kip.html
+      </div>
+    </div>
+  </div>
+
+  <!-- Selector Card -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Pilih Badan Publik untuk Dilihat Detailnya</h2>
+    </div>
+    <div class="card-body">
+      <div class="alert alert-info">
+        <span class="icon">ℹ️</span>
+        <div>
+          Aplikasi ini membaca file JSON langsung dari folder yang sama (dengan nama <code>kip3200.json</code> s/d <code>kip3279.json</code>). Pastikan file JSON hasil dari aplikasi <em>Form Entri KIP</em> sudah diletakkan di folder ini.
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="bpSelect">Badan Publik</label>
+          <select id="bpSelect" class="form-control" onchange="onBPSelect()">
+            <option value="">— Pilih Badan Publik —</option>
+          </select>
+          <div class="form-hint">Pilih untuk melihat detail hasil evaluasi</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">&nbsp;</label>
+          <button class="btn btn-accent btn-lg" onclick="loadAllData()" id="loadAllBtn" style="width:100%;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
+            Muat Semua Data (28 BPS)
+          </button>
+          <div class="form-hint">Memuat rekap seluruh badan publik sekaligus</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">&nbsp;</label>
+          <button class="btn btn-outline" onclick="exportSummaryCSV()" id="exportCsvBtn" style="width:100%;" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Ekspor Rekap CSV
+          </button>
+          <div class="form-hint">Unduh ringkasan untuk Excel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Card (single BPS view) -->
+  <div id="detailCard" class="card hidden">
+    <div class="card-header">
+      <h2 id="detailTitle">Detail Evaluasi</h2>
+      <div class="btn-row">
+        <button class="btn btn-outline btn-sm" onclick="downloadCurrentJSON()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Unduh JSON
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="printDetail()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Cetak
+        </button>
+      </div>
+    </div>
+    <div class="card-body" id="detailBody"></div>
+  </div>
+
+  <!-- Summary Card -->
+  <div id="summaryCard" class="card hidden">
+    <div class="card-header">
+      <h2>Ringkasan Monitoring &amp; Evaluasi</h2>
+      <button class="btn btn-ghost btn-sm" onclick="refreshAll()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        Muat Ulang
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="monev-summary" id="monevSummary"></div>
+    </div>
+  </div>
+
+  <!-- Table Card -->
+  <div id="tableCard" class="card hidden">
+    <div class="card-header">
+      <h2>Daftar Hasil Evaluasi per Badan Publik</h2>
+      <div class="form-group" style="margin:0; min-width:240px;">
+        <input type="text" id="monevSearch" class="form-control" placeholder="🔍 Cari badan publik..." oninput="filterMonevTable()">
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table" id="monevTable">
+        <thead>
+          <tr>
+            <th style="width:40px;">No</th>
+            <th>Kode</th>
+            <th>Badan Publik</th>
+            <th>Status</th>
+            <th>Tanggal Eval</th>
+            <th>Periode</th>
+            <th style="width:180px;">Tingkat Kepatuhan</th>
+            <th>Sudah</th>
+            <th>Belum</th>
+            <th>Tidak Berlaku</th>
+            <th style="width:80px;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="monevTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<!-- ============ TOAST ============ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="app-footer">
+  <div><strong>Monev Rekap KIP — BPS Jawa Barat</strong> · Membaca file JSON langsung dari folder (kip3200.json - kip3279.json)</div>
+  <div class="legal-ref">Dasar Hukum: UU No. 14 Tahun 2008 tentang KIP · Perki No. 1 Tahun 2018 tentang Pengelolaan dan Layanan Informasi di Badan Publik · <strong>Perki No. 1 Tahun 2021 tentang Standar Layanan Informasi Publik</strong> · Perki No. 1 Tahun 2017 tentang PPID · Perki No. 1 Tahun 2020 · UU Perlindungan Data Pribadi</div>
+</footer>
+
+<script>
+/* ============================================================
+   DATA: DAFTAR BADAN PUBLIK (28 BPS di Jawa Barat) dengan kode KIP
+   ============================================================ */
+const BADAN_PUBLIK_LIST = [
+  { id: 'bps-provinsi-jabar', code: 'kip3200', name: 'BPS Provinsi Jawa Barat', type: 'Provinsi' },
+  { id: 'bps-kab-bogor', code: 'kip3201', name: 'BPS Kabupaten Bogor', type: 'Kabupaten' },
+  { id: 'bps-kab-sukabumi', code: 'kip3202', name: 'BPS Kabupaten Sukabumi', type: 'Kabupaten' },
+  { id: 'bps-kab-cianjur', code: 'kip3203', name: 'BPS Kabupaten Cianjur', type: 'Kabupaten' },
+  { id: 'bps-kab-bandung', code: 'kip3204', name: 'BPS Kabupaten Bandung', type: 'Kabupaten' },
+  { id: 'bps-kab-garut', code: 'kip3205', name: 'BPS Kabupaten Garut', type: 'Kabupaten' },
+  { id: 'bps-kab-tasikmalaya', code: 'kip3206', name: 'BPS Kabupaten Tasikmalaya', type: 'Kabupaten' },
+  { id: 'bps-kab-ciamis', code: 'kip3207', name: 'BPS Kabupaten Ciamis', type: 'Kabupaten' },
+  { id: 'bps-kab-kuningan', code: 'kip3208', name: 'BPS Kabupaten Kuningan', type: 'Kabupaten' },
+  { id: 'bps-kab-cirebon', code: 'kip3209', name: 'BPS Kabupaten Cirebon', type: 'Kabupaten' },
+  { id: 'bps-kab-majalengka', code: 'kip3210', name: 'BPS Kabupaten Majalengka', type: 'Kabupaten' },
+  { id: 'bps-kab-sumedang', code: 'kip3211', name: 'BPS Kabupaten Sumedang', type: 'Kabupaten' },
+  { id: 'bps-kab-indramayu', code: 'kip3212', name: 'BPS Kabupaten Indramayu', type: 'Kabupaten' },
+  { id: 'bps-kab-subang', code: 'kip3213', name: 'BPS Kabupaten Subang', type: 'Kabupaten' },
+  { id: 'bps-kab-purwakarta', code: 'kip3214', name: 'BPS Kabupaten Purwakarta', type: 'Kabupaten' },
+  { id: 'bps-kab-karawang', code: 'kip3215', name: 'BPS Kabupaten Karawang', type: 'Kabupaten' },
+  { id: 'bps-kab-bekasi', code: 'kip3216', name: 'BPS Kabupaten Bekasi', type: 'Kabupaten' },
+  { id: 'bps-kab-bandung-barat', code: 'kip3217', name: 'BPS Kabupaten Bandung Barat', type: 'Kabupaten' },
+  { id: 'bps-kab-pangandaran', code: 'kip3218', name: 'BPS Kabupaten Pangandaran', type: 'Kabupaten' },
+  { id: 'bps-kota-bogor', code: 'kip3271', name: 'BPS Kota Bogor', type: 'Kota' },
+  { id: 'bps-kota-sukabumi', code: 'kip3272', name: 'BPS Kota Sukabumi', type: 'Kota' },
+  { id: 'bps-kota-bandung', code: 'kip3273', name: 'BPS Kota Bandung', type: 'Kota' },
+  { id: 'bps-kota-cirebon', code: 'kip3274', name: 'BPS Kota Cirebon', type: 'Kota' },
+  { id: 'bps-kota-bekasi', code: 'kip3275', name: 'BPS Kota Bekasi', type: 'Kota' },
+  { id: 'bps-kota-depok', code: 'kip3276', name: 'BPS Kota Depok', type: 'Kota' },
+  { id: 'bps-kota-cimahi', code: 'kip3277', name: 'BPS Kota Cimahi', type: 'Kota' },
+  { id: 'bps-kota-tasikmalaya', code: 'kip3278', name: 'BPS Kota Tasikmalaya', type: 'Kota' },
+  { id: 'bps-kota-banjar', code: 'kip3279', name: 'BPS Kota Banjar', type: 'Kota' }
+];
+
+/* ============================================================
+   DATA: CEKLIS INFORMASI PUBLIK (untuk detail view)
+   ============================================================ */
+const CHECKLIST = {
+  berkala: {
+    title: 'Informasi yang Wajib Diumumkan Secara Berkala',
+    items: [
+      { id: 'b01', name: 'Profil Badan Publik' },
+      { id: 'b02', name: 'Tugas Pokok dan Fungsi (Tupoksi)' },
+      { id: 'b03', name: 'Struktur Organisasi' },
+      { id: 'b04', name: 'Visi dan Misi' },
+      { id: 'b05', name: 'Rencana Strategis (Renstra)' },
+      { id: 'b06', name: 'Program dan Kegiatan' },
+      { id: 'b07', name: 'Laporan Kinerja Badan Publik' },
+      { id: 'b08', name: 'Laporan Keuangan Tahunan' },
+      { id: 'b09', name: 'Anggaran / DIPA' },
+      { id: 'b10', name: 'Standar Operasional Prosedur (SOP)' },
+      { id: 'b11', name: 'Maklumat Pelayanan (Pasal 47 Perki 1/2021)' },
+      { id: 'b12', name: 'Standar Pelayanan Publik' },
+      { id: 'b13', name: 'Peraturan dan Kebijakan' },
+      { id: 'b14', name: 'Ringkasan Eksekutif Laporan' },
+      { id: 'b15', name: 'Laporan Akses Informasi Publik (LAIP)' },
+      { id: 'b16', name: 'Proses Pengadaan Barang dan Jasa Pemerintah' },
+      { id: 'b17', name: 'Produk Hukum yang Dihasilkan' },
+      { id: 'b18', name: 'Rekapitulasi Permohonan & Keberatan Informasi' },
+      { id: 'b19', name: 'Penyesuaian SLIP dengan Satu Data Indonesia' },
+      { id: 'b20', name: 'Laporan Penyelesaian Sengketa Informasi' }
+    ]
+  },
+  sertamerta: {
+    title: 'Informasi yang Wajib Diumumkan Secara Serta Merta',
+    items: [
+      { id: 's01', name: 'Informasi Ancaman Keselamatan & Kesehatan Masyarakat' },
+      { id: 's02', name: 'Informasi Ancaman Ketertiban Umum' },
+      { id: 's03', name: 'Informasi yang Membahayakan Keamanan Negara' },
+      { id: 's04', name: 'Informasi Bencana Alam & Calon Bencana' },
+      { id: 's05', name: 'Kondisi Darurat' },
+      { id: 's06', name: 'Peringatan Dini kepada Masyarakat' },
+      { id: 's07', name: 'Kejadian Luar Biasa (KLB) / Status Kesehatan Masyarakat' },
+      { id: 's08', name: 'Kebijakan Berdampak Luas' },
+      { id: 's09', name: 'Publikasi Serta Merta via Media Elektronik & Sosial Media' }
+    ]
+  },
+  setiapsaat: {
+    title: 'Informasi yang Wajib Tersedia & Dapat Diakses Setiap Saat',
+    items: [
+      { id: 'st01', name: 'Daftar Informasi Publik (DIP) — Pasal 45 Perki 1/2021' },
+      { id: 'st02', name: 'Daftar Informasi yang Dikecualikan (DID)' },
+      { id: 'st03', name: 'Indikator Kinerja Utama (IKU)' },
+      { id: 'st04', name: 'Daftar Kelompok Satuan Kerja' },
+      { id: 'st05', name: 'Informasi Keputusan dan Kebijakan' },
+      { id: 'st06', name: 'Informasi Kegiatan Badan Publik' },
+      { id: 'st07', name: 'Salinan Putusan/Keputusan' },
+      { id: 'st08', name: 'Peraturan dan Kebijakan Berlaku' },
+      { id: 'st09', name: 'Berita Acara Rapat' },
+      { id: 'st10', name: 'SOP Layanan Informasi Publik (SLIP)' },
+      { id: 'st11', name: 'Formulir Permohonan Informasi' },
+      { id: 'st12', name: 'Mekanisme Pengajuan Keberatan' },
+      { id: 'st13', name: 'Tarif Biaya Salinan Informasi' },
+      { id: 'st14', name: 'Struktur Kelembagaan PPID Lengkap' },
+      { id: 'st15', name: 'SK Pengangkatan PPID & Tim Pertimbangan' },
+      { id: 'st16', name: 'Tata Tertib & Tugas Pokok PPID' },
+      { id: 'st17', name: 'Layanan Pengaduan Masyarakat' },
+      { id: 'st18', name: 'Jadwal & Jam Layanan Informasi' },
+      { id: 'st19', name: 'Aksesibilitas bagi Penyandang Disabilitas' },
+      { id: 'st20', name: 'Sistem Informasi PPID Berbasis IT' },
+      { id: 'st21', name: 'Perlindungan Data Pribadi' },
+      { id: 'st22', name: 'Mekanisme Bantuan Kedinasan / Bagi Pakai Informasi' },
+      { id: 'st23', name: 'Fasilitas & Sarana Layanan Informasi' },
+      { id: 'st24', name: 'Kontak & Helpdesk PPID yang Aktif' }
+    ]
+  },
+  dikecualikan: {
+    title: 'Informasi yang Dikecualikan',
+    items: [
+      { id: 'd01', name: 'Informasi Rahasia Negara' },
+      { id: 'd02', name: 'Informasi yang Mengganggu Hubungan Internasional' },
+      { id: 'd03', name: 'Informasi yang Membahayakan Keamanan & Ketertiban' },
+      { id: 'd04', name: 'Informasi yang Merugikan Kepentingan Ekonomi Nasional' },
+      { id: 'd05', name: 'Informasi Hak Pribadi / Data Pribadi' },
+      { id: 'd06', name: 'Informasi Sumber Daya Alam' },
+      { id: 'd07', name: 'Informasi Hasil Intelektual' },
+      { id: 'd08', name: 'Informasi Arsip Konsultasi' },
+      { id: 'd09', name: 'Informasi Persidangan Internal' },
+      { id: 'd10', name: 'Daftar Informasi Dikecualikan (DID) Tersedia' },
+      { id: 'd11', name: 'SK Penetapan Klasifikasi Informasi Dikecualikan' },
+      { id: 'd12', name: 'Uji Konsekuensi Dilakukan (Reformulasi Perki 1/2021)' },
+      { id: 'd13', name: 'Dokumen Uji Konsekuensi Tersedia' },
+      { id: 'd14', name: 'Dasar Pengecualian Tercantum' },
+      { id: 'd15', name: 'Jangka Waktu Pengecualian Ditentukan' },
+      { id: 'd16', name: 'Mekanisme Pengajuan Keberatan atas Pengecualikan' },
+      { id: 'd17', name: 'Publikasi DID tanpa Mengungkap Dasar Pengecualian' }
+    ]
+  }
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let allLoadedData = {}; // { badanPublikId: data } - cached after loadAllData
+let currentDetailData = null;
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init() {
+  checkProtocol();
+  populateBPDropdown();
+}
+
+function checkProtocol() {
+  if (window.location.protocol === 'file:') {
+    document.getElementById('httpWarning').classList.remove('hidden');
+  }
+}
+
+function populateBPDropdown() {
+  const select = document.getElementById('bpSelect');
+  const groups = { Provinsi: [], Kabupaten: [], Kota: [] };
+  BADAN_PUBLIK_LIST.forEach(bp => groups[bp.type].push(bp));
+  const order = ['Provinsi', 'Kabupaten', 'Kota'];
+  order.forEach(type => {
+    if (groups[type].length === 0) return;
+    const optgroup = document.createElement('optgroup');
+    optgroup.label = type === 'Provinsi' ? '— Provinsi —' : (type === 'Kabupaten' ? '— Kabupaten —' : '— Kota —');
+    groups[type].forEach(bp => {
+      const opt = document.createElement('option');
+      opt.value = bp.id;
+      opt.textContent = `${bp.code.toUpperCase()} — ${bp.name}`;
+      optgroup.appendChild(opt);
+    });
+    select.appendChild(optgroup);
+  });
+}
+
+/* ============================================================
+   FETCH JSON FILE
+   ============================================================ */
+async function fetchBPData(badanPublikId) {
+  const bp = BADAN_PUBLIK_LIST.find(b => b.id === badanPublikId);
+  if (!bp) return { data: null, error: 'BP tidak ditemukan' };
+  try {
+    const response = await fetch(`./${bp.code}.json`, { cache: 'no-cache' });
+    if (!response.ok) {
+      return { data: null, error: `HTTP ${response.status}`, bp };
+    }
+    const data = await response.json();
+    if (!data || !data.badanPublikId || !data.checklist) {
+      return { data: null, error: 'Format JSON tidak valid', bp };
+    }
+    return { data, error: null, bp };
+  } catch (err) {
+    return { data: null, error: err.message, bp };
+  }
+}
+
+/* ============================================================
+   ON BP SELECT — Load single BPS detail
+   ============================================================ */
+async function onBPSelect() {
+  const id = document.getElementById('bpSelect').value;
+  if (!id) {
+    document.getElementById('detailCard').classList.add('hidden');
+    return;
+  }
+  const bp = BADAN_PUBLIK_LIST.find(b => b.id === id);
+  document.getElementById('detailCard').classList.remove('hidden');
+  document.getElementById('detailTitle').textContent = 'Detail: ' + bp.name + ' (' + bp.code.toUpperCase() + ')';
+  document.getElementById('detailBody').innerHTML = `
+    <div class="loading-state">
+      <div class="spinner-lg"></div>
+      <p style="margin-top:8px;">Memuat <code>${bp.code}.json</code>...</p>
+    </div>
+  `;
+  document.getElementById('summaryCard').classList.add('hidden');
+  document.getElementById('tableCard').classList.add('hidden');
+  
+  const result = await fetchBPData(id);
+  if (result.data) {
+    currentDetailData = result.data;
+    displayDetail(result.data);
+  } else {
+    currentDetailData = null;
+    displayLoadError(result.bp, result.error);
+  }
+}
+
+function displayLoadError(bp, error) {
+  const is404 = error.includes('404') || error.includes('Failed to fetch');
+  const msg = is404 
+    ? `File <code>${bp.code}.json</code> belum tersedia di folder ini. Pastikan operator sudah mengisi ceklis di aplikasi Form Entri dan menyimpan file JSON dengan nama <code>${bp.code}.json</code> di folder yang sama dengan aplikasi Monev ini.`
+    : `Gagal memuat file <code>${bp.code}.json</code>. Error: ${escapeHtml(error)}`;
+  document.getElementById('detailBody').innerHTML = `
+    <div class="alert alert-warning">
+      <span class="icon">⚠️</span>
+      <div>${msg}</div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   DISPLAY DETAIL
+   ============================================================ */
+function displayDetail(data) {
+  const total = countTotalItems(data);
+  const sudah = countSudah(data);
+  const belum = countBelum(data);
+  const tidakBerlaku = countTidakBerlaku(data);
+  const pct = total > 0 ? Math.round((sudah / total) * 100) : 0;
+  const pctColor = pct >= 80 ? 'var(--success)' : pct >= 50 ? 'var(--warning)' : 'var(--danger)';
+
+  let html = `
+    <div class="detail-meta">
+      <div class="meta-item"><div class="label">Badan Publik</div><div class="value">${escapeHtml(data.badanPublikName)}</div></div>
+      <div class="meta-item"><div class="label">Jenis</div><div class="value">${escapeHtml(data.badanPublikType || '-')}</div></div>
+      <div class="meta-item"><div class="label">PPID</div><div class="value">${escapeHtml(data.metadata?.ppidName || '-')}</div></div>
+      <div class="meta-item"><div class="label">Petugas Monev</div><div class="value">${escapeHtml(data.metadata?.petugasMonev || '-')}</div></div>
+      <div class="meta-item"><div class="label">Tanggal Evaluasi</div><div class="value">${formatDate(data.metadata?.tanggalEvaluasi) || '-'}</div></div>
+      <div class="meta-item"><div class="label">Periode</div><div class="value">${escapeHtml(data.metadata?.periodeEvaluasi || '-')}</div></div>
+      <div class="meta-item"><div class="label">Website</div><div class="value">${data.metadata?.websiteUrl ? `<a href="${escapeHtml(data.metadata.websiteUrl)}" target="_blank">${escapeHtml(data.metadata.websiteUrl)}</a>` : '-'}</div></div>
+      <div class="meta-item"><div class="label">Tingkat Kepatuhan</div><div class="value" style="color:${pctColor};">${pct}%</div></div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-stat"><div class="stat-value success">${sudah}</div><div class="stat-label">Sudah</div></div>
+      <div class="progress-stat"><div class="stat-value danger">${belum}</div><div class="stat-label">Belum</div></div>
+      <div class="progress-stat"><div class="stat-value warning">${tidakBerlaku}</div><div class="stat-label">Tidak Berlaku</div></div>
+      <div class="progress-stat"><div class="stat-value">${total}</div><div class="stat-label">Total Item</div></div>
+    </div>
+  `;
+
+  if (data.metadata?.catatanUmum) {
+    html += `
+      <div class="detail-section">
+        <h4>📝 Catatan Umum / Rekomendasi</h4>
+        <div style="background:var(--gray-50);padding:12px 14px;border-radius:8px;font-size:13.5px;color:var(--gray-700);white-space:pre-wrap;">${escapeHtml(data.metadata.catatanUmum)}</div>
+      </div>
+    `;
+  }
+
+  Object.keys(CHECKLIST).forEach(cat => {
+    const catData = CHECKLIST[cat];
+    const titleBg = cat === 'berkala' ? 'var(--primary-dark)' : cat === 'sertamerta' ? 'var(--danger)' : cat === 'setiapsaat' ? 'var(--accent-dark)' : '#7c3aed';
+    html += `
+      <div class="detail-section">
+        <h4 style="color:${titleBg};border-bottom-color:${titleBg}33;">
+          ${catData.title}
+          <span class="text-muted text-sm" style="font-weight:400;">(${countSudahInCat(data, cat)}/${countTotalInCat(data, cat)})</span>
+        </h4>
+    `;
+    catData.items.forEach(item => {
+      const itemData = data.checklist?.[cat]?.[item.id];
+      if (!itemData) return;
+      const status = itemData.status || 'pending';
+      const statusBadge = status === 'sudah' ? '<span class="status-badge sudah">Sudah</span>' :
+                         status === 'belum' ? '<span class="status-badge belum">Belum</span>' :
+                         status === 'tidak-berlaku' ? '<span class="status-badge tidak-berlaku">Tidak Berlaku</span>' :
+                         '<span class="status-badge pending">Belum Dinilai</span>';
+      let metaParts = [];
+      if (itemData.lokasiPenayangan?.length > 0) metaParts.push(`📍 ${itemData.lokasiPenayangan.join(', ')}`);
+      if (itemData.tanggalPemutakhiran) metaParts.push(`📅 ${formatDate(itemData.tanggalPemutakhiran)}`);
+      html += `
+        <div class="detail-item">
+          <div class="di-title">
+            <span>${item.name}</span>
+            ${statusBadge}
+          </div>
+          ${metaParts.length > 0 ? `<div class="di-meta">${metaParts.map(m => `<span>${m}</span>`).join('')}</div>` : ''}
+          ${itemData.link ? `<div class="di-meta"><span>🔗 <a href="${escapeHtml(itemData.link)}" target="_blank">${escapeHtml(itemData.link)}</a></span></div>` : ''}
+          ${itemData.catatan ? `<div style="margin-top:6px;font-size:12.5px;color:var(--gray-600);font-style:italic;">💬 ${escapeHtml(itemData.catatan)}</div>` : ''}
+        </div>
+      `;
+    });
+    html += `</div>`;
+  });
+
+  document.getElementById('detailBody').innerHTML = html;
+}
+
+/* ============================================================
+   LOAD ALL DATA — Fetch all 28 in parallel
+   ============================================================ */
+async function loadAllData() {
+  const btn = document.getElementById('loadAllBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-spinner"></span> Memuat 28 file...';
+  
+  document.getElementById('summaryCard').classList.remove('hidden');
+  document.getElementById('tableCard').classList.remove('hidden');
+  document.getElementById('detailCard').classList.add('hidden');
+  document.getElementById('bpSelect').value = '';
+  
+  document.getElementById('monevSummary').innerHTML = `
+    <div class="loading-state" style="grid-column:1/-1;">
+      <div class="spinner-lg"></div>
+      <p style="margin-top:8px;">Memuat 28 file JSON...</p>
+    </div>
+  `;
+  document.getElementById('monevTableBody').innerHTML = `
+    <tr><td colspan="11" style="text-align:center;padding:30px;color:var(--gray-500);">Memuat data...</td></tr>
+  `;
+  
+  // Fetch all in parallel
+  const promises = BADAN_PUBLIK_LIST.map(bp => fetchBPData(bp.id));
+  const results = await Promise.all(promises);
+  
+  // Cache loaded data
+  allLoadedData = {};
+  results.forEach(r => {
+    if (r.data && r.bp) allLoadedData[r.bp.id] = r.data;
+  });
+  
+  renderMonevSummary(results);
+  renderMonevTable(results);
+  
+  document.getElementById('exportCsvBtn').disabled = false;
+  btn.disabled = false;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg> Muat Semua Data (28 BPS)';
+  
+  const successCount = results.filter(r => r.data).length;
+  if (successCount === 0) {
+    showToast('Tidak ada file JSON yang berhasil dimuat. Pastikan file JSON sudah ada di folder ini.', 'warning');
+  } else if (successCount < 28) {
+    showToast(`${successCount} dari 28 badan publik berhasil dimuat`, 'warning');
+  } else {
+    showToast('Semua 28 badan publik berhasil dimuat', 'success');
+  }
+}
+
+async function refreshAll() {
+  allLoadedData = {};
+  await loadAllData();
+}
+
+/* ============================================================
+   RENDER SUMMARY
+   ============================================================ */
+function renderMonevSummary(results) {
+  const container = document.getElementById('monevSummary');
+  const loaded = results.filter(r => r.data);
+  
+  if (loaded.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1;padding:30px 20px;">
+        <div class="icon">📭</div>
+        <h3>Belum Ada Data Tersimpan</h3>
+        <p>Belum ada file JSON yang ditemukan di folder ini. Pastikan operator sudah menyimpan file JSON hasil evaluasi dengan format nama <code>kip3200.json</code> s/d <code>kip3279.json</code> di folder yang sama dengan aplikasi ini.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  let totalItems = 0, totalSudah = 0, totalBelum = 0, totalTidakBerlaku = 0;
+  let complianceScores = [];
+  
+  loaded.forEach(({ data }) => {
+    Object.keys(data.checklist).forEach(cat => {
+      Object.keys(data.checklist[cat]).forEach(itemId => {
+        totalItems++;
+        const status = data.checklist[cat][itemId].status;
+        if (status === 'sudah') totalSudah++;
+        else if (status === 'belum') totalBelum++;
+        else if (status === 'tidak-berlaku') totalTidakBerlaku++;
+      });
+    });
+    const totalForBp = countTotalItems(data);
+    complianceScores.push(totalForBp > 0 ? Math.round((countSudah(data) / totalForBp) * 100) : 0);
+  });
+  
+  const avgCompliance = complianceScores.length > 0
+    ? Math.round(complianceScores.reduce((a,b) => a+b, 0) / complianceScores.length)
+    : 0;
+  const belumDievaluasi = 28 - loaded.length;
+  
+  container.innerHTML = `
+    <div class="summary-card">
+      <div class="icon total">🏛️</div>
+      <div>
+        <div class="value">${loaded.length}<span style="font-size:14px;color:var(--gray-400);">/28</span></div>
+        <div class="label">Badan Publik Dievaluasi</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="icon done">✓</div>
+      <div>
+        <div class="value">${totalSudah}</div>
+        <div class="label">Item Sudah Dipenuhi</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="icon pending">⚠</div>
+      <div>
+        <div class="value">${totalBelum}</div>
+        <div class="label">Item Belum Dipenuhi</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="icon avg">📊</div>
+      <div>
+        <div class="value">${avgCompliance}%</div>
+        <div class="label">Rata-rata Kepatuhan</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="icon pending">⏳</div>
+      <div>
+        <div class="value">${belumDievaluasi}</div>
+        <div class="label">Belum Dievaluasi</div>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   RENDER TABLE
+   ============================================================ */
+function renderMonevTable(results) {
+  const tbody = document.getElementById('monevTableBody');
+  let html = '';
+  
+  BADAN_PUBLIK_LIST.forEach((bp, idx) => {
+    const result = results.find(r => r.bp && r.bp.id === bp.id);
+    const data = result?.data;
+    
+    if (data) {
+      const total = countTotalItems(data);
+      const sudah = countSudah(data);
+      const belum = countBelum(data);
+      const tidakBerlaku = countTidakBerlaku(data);
+      const pct = total > 0 ? Math.round((sudah / total) * 100) : 0;
+      const pctClass = pct >= 80 ? '' : pct >= 50 ? 'mid' : 'low';
+      
+      html += `
+        <tr>
+          <td>${idx + 1}</td>
+          <td><span class="bp-code">${bp.code}</span></td>
+          <td>
+            <div class="bp-name">${escapeHtml(data.badanPublikName)}</div>
+            <span class="bp-type">${escapeHtml(data.badanPublikType || '')}</span>
+          </td>
+          <td><span class="status-badge evaluated">Sudah Dievaluasi</span></td>
+          <td>${formatDate(data.metadata?.tanggalEvaluasi) || (data.savedAt ? data.savedAt.slice(0,10) : '-')}</td>
+          <td>${escapeHtml(data.metadata?.periodeEvaluasi || '-')}</td>
+          <td>
+            <div class="mini-progress">
+              <div class="mini-bar"><div class="mini-bar-fill ${pctClass}" style="width:${pct}%;"></div></div>
+              <span class="mini-percentage">${pct}%</span>
+            </div>
+          </td>
+          <td><span class="status-badge sudah">${sudah}</span></td>
+          <td><span class="status-badge belum">${belum}</span></td>
+          <td><span class="status-badge tidak-berlaku">${tidakBerlaku}</span></td>
+          <td>
+            <button class="action-btn view" title="Lihat Detail" onclick="viewDetailFromTable('${bp.id}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </td>
+        </tr>
+      `;
+    } else {
+      html += `
+        <tr class="not-evaluated">
+          <td>${idx + 1}</td>
+          <td><span class="bp-code" style="background:var(--warning-bg);color:var(--warning);">${bp.code}</span></td>
+          <td>
+            <div class="bp-name">${escapeHtml(bp.name)}</div>
+            <span class="bp-type">${escapeHtml(bp.type)}</span>
+          </td>
+          <td><span class="status-badge not-evaluated">Belum Dievaluasi</span></td>
+          <td colspan="7" style="color:var(--warning);font-style:italic;font-size:13px;">File <code style="font-family:'Courier New',monospace;background:rgba(217,119,6,0.1);padding:2px 6px;border-radius:3px;">${bp.code}.json</code> belum tersedia</td>
+        </tr>
+      `;
+    }
+  });
+  
+  tbody.innerHTML = html;
+}
+
+function viewDetailFromTable(badanPublikId) {
+  document.getElementById('bpSelect').value = badanPublikId;
+  onBPSelect();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function filterMonevTable() {
+  const q = (document.getElementById('monevSearch').value || '').toLowerCase().trim();
+  const rows = document.querySelectorAll('#monevTableBody tr');
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = (q === '' || text.includes(q)) ? '' : 'none';
+  });
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function countTotalItems(data) {
+  let n = 0;
+  Object.keys(data.checklist).forEach(cat => { n += Object.keys(data.checklist[cat]).length; });
+  return n;
+}
+function countSudah(data) {
+  let n = 0;
+  Object.keys(data.checklist).forEach(cat => {
+    Object.keys(data.checklist[cat]).forEach(id => {
+      if (data.checklist[cat][id].status === 'sudah') n++;
+    });
+  });
+  return n;
+}
+function countBelum(data) {
+  let n = 0;
+  Object.keys(data.checklist).forEach(cat => {
+    Object.keys(data.checklist[cat]).forEach(id => {
+      if (data.checklist[cat][id].status === 'belum') n++;
+    });
+  });
+  return n;
+}
+function countTidakBerlaku(data) {
+  let n = 0;
+  Object.keys(data.checklist).forEach(cat => {
+    Object.keys(data.checklist[cat]).forEach(id => {
+      if (data.checklist[cat][id].status === 'tidak-berlaku') n++;
+    });
+  });
+  return n;
+}
+function countSudahInCat(data, cat) {
+  if (!data.checklist?.[cat]) return 0;
+  return Object.keys(data.checklist[cat]).filter(id => data.checklist[cat][id].status === 'sudah').length;
+}
+function countTotalInCat(data, cat) {
+  if (!data.checklist?.[cat]) return 0;
+  return Object.keys(data.checklist[cat]).length;
+}
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const parts = dateStr.split('-');
+  if (parts.length !== 3) return dateStr;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+/* ============================================================
+   DOWNLOAD / EXPORT
+   ============================================================ */
+function downloadCurrentJSON() {
+  if (!currentDetailData) {
+    showToast('Tidak ada data untuk diunduh', 'warning');
+    return;
+  }
+  const bp = BADAN_PUBLIK_LIST.find(b => b.id === currentDetailData.badanPublikId);
+  const filename = `${bp.code}.json`;
+  const blob = new Blob([JSON.stringify(currentDetailData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`JSON ${filename} diunduh`, 'success');
+}
+
+function exportSummaryCSV() {
+  const loaded = Object.keys(allLoadedData);
+  if (loaded.length === 0) {
+    showToast('Belum ada data tersimpan. Klik "Muat Semua Data" terlebih dahulu', 'warning');
+    return;
+  }
+  let csv = 'Kode,Badan Publik,Jenis,Status,Tanggal Evaluasi,Periode,PPID,Petugas Monev,Tingkat Kepatuhan (%),Sudah,Belum,Tidak Berlaku,Total Item\n';
+  BADAN_PUBLIK_LIST.forEach(bp => {
+    const data = allLoadedData[bp.id];
+    if (data) {
+      const total = countTotalItems(data);
+      const sudah = countSudah(data);
+      const belum = countBelum(data);
+      const tidakBerlaku = countTidakBerlaku(data);
+      const pct = total > 0 ? Math.round((sudah / total) * 100) : 0;
+      const row = [
+        bp.code,
+        `"${(data.badanPublikName||'').replace(/"/g,'""')}"`,
+        `"${(data.badanPublikType||'').replace(/"/g,'""')}"`,
+        'Sudah Dievaluasi',
+        data.metadata?.tanggalEvaluasi || '',
+        data.metadata?.periodeEvaluasi || '',
+        `"${(data.metadata?.ppidName||'').replace(/"/g,'""')}"`,
+        `"${(data.metadata?.petugasMonev||'').replace(/"/g,'""')}"`,
+        pct,
+        sudah,
+        belum,
+        tidakBerlaku,
+        total
+      ];
+      csv += row.join(',') + '\n';
+    } else {
+      csv += `${bp.code},"${bp.name.replace(/"/g,'""')}","${bp.type}",Belum Dievaluasi,,,,,0,0,0,0,0\n`;
+    }
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `monev-kip-bps-jabar-rekap-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Rekap CSV berhasil diunduh', 'success');
+}
+
+function printDetail() {
+  if (!currentDetailData) return;
+  window.print();
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : type === 'warning' ? '⚠' : 'ℹ';
+  toast.innerHTML = `<span style="font-size:16px;font-weight:700;">${icon}</span><span>${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'toastOut 0.3s ease forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+/* ============================================================
+   START
+   ============================================================ */
+init();
+</script>
+</body>
+</html>
