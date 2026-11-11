@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Panduan Kompetisi Inovasi Pelayanan Publik (KIPP)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        govNavy: '#0F172A',
+                        govBlue: '#1E3A8A',
+                        govTeal: '#0D9488',
+                        govEmerald: '#059669',
+                        govLightBg: '#F8FAFC',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94A3B8;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748B;
+        }
+        .tab-active {
+            border-bottom: 3px solid #0D9488;
+            color: #0D9488;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="bg-govLightBg text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-50 bg-govNavy text-white shadow-md border-b border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-emerald-500 p-2 rounded-lg text-govNavy font-bold">
+                        <i class="fa-solid fa-award text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-lg font-bold tracking-tight block leading-none text-white">Portal Edukasi dan Literasi</span>
+                        <span class="text-xs text-teal-300">Panduan Inovasi Pelayanan Publik</span>
+                    </div>
+                </div>
+                
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                    <a href="#overview" class="hover:text-teal-300 transition">Ikhtisar & Hukum</a>
+                    <a href="#tahapan" class="hover:text-teal-300 transition">Alur Seleksi</a>
+                    <a href="#proposal" class="hover:text-teal-300 transition">Struktur Proposal</a>
+                    <a href="#kalkulator" class="hover:text-teal-300 transition">Kalkulator Kesiapan</a>
+                    <a href="#checklist" class="hover:text-teal-300 transition">Checklist Dokumen</a>
+                    <a href="#inspirasi" class="hover:text-teal-300 transition">Best Practice</a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobileMenuBtn" class="text-gray-300 hover:text-white focus:outline-none p-2">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-slate-900 border-b border-slate-700 px-4 pt-2 pb-4 space-y-2 text-sm">
+            <a href="#overview" class="block py-2 text-gray-300 hover:text-white">Ikhtisar & Hukum</a>
+            <a href="#tahapan" class="block py-2 text-gray-300 hover:text-white">Alur Seleksi</a>
+            <a href="#proposal" class="block py-2 text-gray-300 hover:text-white">Struktur Proposal</a>
+            <a href="#kalkulator" class="block py-2 text-gray-300 hover:text-white">Kalkulator Kesiapan</a>
+            <a href="#checklist" class="block py-2 text-gray-300 hover:text-white">Checklist Dokumen</a>
+            <a href="#inspirasi" class="block py-2 text-gray-300 hover:text-white">Best Practice</a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow">
+        
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-r from-govNavy via-slate-900 to-govBlue text-white py-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+                <i class="fa-solid fa-building-columns text-[300px]"></i>
+            </div>
+            <div class="max-w-7xl mx-auto relative z-10">
+                <div class="max-w-3xl">
+                    <span class="inline-block bg-teal-500/20 text-teal-300 text-xs font-semibold px-3 py-1 rounded-full border border-teal-500/30 mb-4">
+                        <i class="fa-solid fa-lightbulb mr-1"></i> Panduan Resmi Instansi K/L/D
+                    </span>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-4">
+                        Kompetisi Inovasi Pelayanan Publik (KIPP)
+                    </h1>
+                    <p class="text-slate-300 text-base sm:text-lg mb-8 leading-relaxed">
+                        Acuan komprehensif bagi Kementerian, Lembaga, Pemerintah Daerah, BUMN, dan BUMD dalam menyusun, mereplikasi, serta mendaftarkan inovasi unggulan menuju penetapan Top Inovasi Terpilih.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#kalkulator" class="bg-teal-600 hover:bg-teal-500 text-white font-semibold px-5 py-3 rounded-xl shadow-lg transition flex items-center space-x-2">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>Cek Kesiapan Inovasi Anda</span>
+                        </a>
+                        <a href="#checklist" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 font-semibold px-5 py-3 rounded-xl transition flex items-center space-x-2">
+                            <i class="fa-solid fa-list-check text-emerald-400"></i>
+                            <span>Mandiri Checklist Dokumen</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 1: Overview & Landasan Hukum -->
+        <section id="overview" class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-scale-balanced text-teal-600"></i>
+                    Landasan Hukum & Kategori Utama
+                </h2>
+                <p class="text-slate-600 text-sm mt-1">Regulasi acuan dan kluster inovasi yang dipertandingkan dalam KIPP KemenPANRB.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Legal Card 1 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center mb-4 text-xl">
+                        <i class="fa-solid fa-gavel"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 mb-2">PermenPANRB No. 91/2021</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Pembinaan Inovasi Pelayanan Publik yang mengatur penciptaan, pengembagan, dan replikasi inovasi di lingkungan instansi pemerintah.
+                    </p>
+                </div>
+                <!-- Legal Card 2 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-teal-100 text-teal-700 rounded-xl flex items-center justify-center mb-4 text-xl">
+                        <i class="fa-solid fa-file-contract"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 mb-2">Pedoman KIPP Tahunan</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Keputusan Menteri PANRB tahunan terkait Petunjuk Pelaksanaan KIPP, kriteria khusus tahunan, serta jadwal periodik penyesuaian evaluasi.
+                    </p>
+                </div>
+                <!-- Legal Card 3 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center mb-4 text-xl">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 mb-2">Prinsip Inovasi (Minimum 2 Tahun)</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Inovasi wajib telah diimplementasikan minimal 2 (dua) tahun berturut-turut serta dibuktikan dengan data dampak yang kuantitatif.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Kategori Inovasi -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-govBlue"></i> Kategori Inovasi yang Dipertandingkan
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                        <span class="text-xs font-semibold text-teal-700 uppercase tracking-wider block mb-1">Kategori 1</span>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">Tata Kelola Pemerintahan</h4>
+                        <p class="text-xs text-slate-600">Efisiensi birokrasi, transparansi, digitalisasi administrasi internal, & integrasi data.</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                        <span class="text-xs font-semibold text-teal-700 uppercase tracking-wider block mb-1">Kategori 2</span>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">Pelayanan Publik Langsung</h4>
+                        <p class="text-xs text-slate-600">Kesehatan, pendidikan, perizinan, kependudukan, dan penanganan kemiskinan.</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                        <span class="text-xs font-semibold text-teal-700 uppercase tracking-wider block mb-1">Kategori 3</span>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">Inklusi & Kelompok Rentan</h4>
+                        <p class="text-xs text-slate-600">Ramah disabilitas, lansia, perempuan, anak, serta wilayah terdepan/terpencil (3T).</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                        <span class="text-xs font-semibold text-teal-700 uppercase tracking-wider block mb-1">Kategori 4</span>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">Ketahanan Ekonomi & Lingkungan</h4>
+                        <p class="text-xs text-slate-600">Pemberdayaan UMKM, energi terbarukan, pengelolaan sampah, & mitigasi bencana.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Timeline / Tahapan Seleksi -->
+        <section id="tahapan" class="py-12 bg-white border-y border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-10 text-center max-w-2xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-900">Alur & Tahapan Seleksi KIPP</h2>
+                    <p class="text-slate-600 text-sm mt-1">Klik setiap tahapan untuk melihat detail kelengkapan dan kiat sukses lolos verifikasi.</p>
+                </div>
+
+                <!-- Step Bar Nav -->
+                <div class="grid grid-cols-2 md:grid-cols-6 gap-2 mb-8" id="stepButtons">
+                    <!-- Dynamic Steps Generated via JS -->
+                </div>
+
+                <!-- Step Content Card -->
+                <div id="stepDetailContent" class="bg-slate-50 p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-inner">
+                    <!-- Dynamic details injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Struktur Proposal & Tips Lolos -->
+        <section id="proposal" class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-teal-600"></i>
+                    Struktur Proposal & Strategi Penulisan Sub-Indikator
+                </h2>
+                <p class="text-slate-600 text-sm mt-1">Panduan praktis mengisi proposal KIPP pada portal Sinovik/SINOPADIK agar meraih skor maksimal dari Tim Evaluator Independen (TEI).</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Proposal Components Accordion (Left 2 cols) -->
+                <div class="lg:col-span-2 space-y-4" id="proposalAccordion">
+                    <!-- Component 1 -->
+                    <div class="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-800 flex justify-between items-center hover:bg-slate-50 transition" onclick="toggleAccordion('acc1')">
+                            <span class="flex items-center gap-3">
+                                <span class="bg-blue-100 text-blue-700 w-7 h-7 rounded-full text-xs flex items-center justify-center font-extrabold">1</span>
+                                Ringkasan Eksekutif (Executive Summary)
+                            </span>
+                            <i id="acc1-icon" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                        </button>
+                        <div id="acc1" class="hidden px-6 pb-6 pt-2 border-t border-slate-100 text-sm text-slate-600 space-y-2">
+                            <p><strong>Fokus Utama:</strong> Gambaran menyeluruh mengenai latar belakang, tujuan, kebaruan, hasil, dan dampak utama inovasi dalam maksimall 200–300 kata.</p>
+                            <p class="text-xs bg-amber-50 text-amber-800 p-3 rounded-lg border border-amber-200">
+                                💡 <strong>Tips Penilai:</strong> Tuliskan variabel masalah utama dan angka perbaikan konkret langsung pada kalimat pertama. Hindari kalimat pembuka yang terlalu umum/normatif.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Component 2 -->
+                    <div class="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-800 flex justify-between items-center hover:bg-slate-50 transition" onclick="toggleAccordion('acc2')">
+                            <span class="flex items-center gap-3">
+                                <span class="bg-blue-100 text-blue-700 w-7 h-7 rounded-full text-xs flex items-center justify-center font-extrabold">2</span>
+                                Analisis Masalah & Kelayakan (Data Kuantitatif)
+                            </span>
+                            <i id="acc2-icon" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                        </button>
+                        <div id="acc2" class="hidden px-6 pb-6 pt-2 border-t border-slate-100 text-sm text-slate-600 space-y-2">
+                            <p><strong>Fokus Utama:</strong> Masalah spesifik yang dihadapi sebelum inovasi hadir, kelompok yang terdampak, serta keterkaitan dengan isu strategis daerah/nasional (SDGs/RPJMN).</p>
+                            <p class="text-xs bg-amber-50 text-amber-800 p-3 rounded-lg border border-amber-200">
+                                💡 <strong>Tips Penilai:</strong> Sajikan data baseline kuantitatif (contoh: waktu tunggu 120 menit, angka keluhan 45%). Sertakan sumber data ilmiah/resmi.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Component 3 -->
+                    <div class="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-800 flex justify-between items-center hover:bg-slate-50 transition" onclick="toggleAccordion('acc3')">
+                            <span class="flex items-center gap-3">
+                                <span class="bg-blue-100 text-blue-700 w-7 h-7 rounded-full text-xs flex items-center justify-center font-extrabold">3</span>
+                                Kebaruan & Keunggulan (Novelty)
+                            </span>
+                            <i id="acc3-icon" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                        </button>
+                        <div id="acc3" class="hidden px-6 pb-6 pt-2 border-t border-slate-100 text-sm text-slate-600 space-y-2">
+                            <p><strong>Fokus Utama:</strong> Keunikan gagasan, peningkat mutu dibanding metode konvensional, atau adaptasi kreatif dari inovasi tempat lain.</p>
+                            <p class="text-xs bg-amber-50 text-amber-800 p-3 rounded-lg border border-amber-200">
+                                💡 <strong>Tips Penilai:</strong> Jelaskan secara eksplisit perbedaan mendasar inovasi Anda dengan layanan sejenis di daerah lain.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Component 4 -->
+                    <div class="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-800 flex justify-between items-center hover:bg-slate-50 transition" onclick="toggleAccordion('acc4')">
+                            <span class="flex items-center gap-3">
+                                <span class="bg-blue-100 text-blue-700 w-7 h-7 rounded-full text-xs flex items-center justify-center font-extrabold">4</span>
+                                Dampak & Evaluasi (Sebelum vs Sesudah)
+                            </span>
+                            <i id="acc4-icon" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                        </button>
+                        <div id="acc4" class="hidden px-6 pb-6 pt-2 border-t border-slate-100 text-sm text-slate-600 space-y-2">
+                            <p><strong>Fokus Utama:</strong> Bukti kuantitatif perubahan kinerja, peningkatan Indeks Kepuasan Masyarakat (IKM), efisiensi biaya, serta testimoni penerima manfaat.</p>
+                            <p class="text-xs bg-amber-50 text-amber-800 p-3 rounded-lg border border-amber-200">
+                                💡 <strong>Tips Penilai:</strong> Gunakan tabel komparasi "Sebelum Inovasi" vs "Sesudah Inovasi". Masukkan hasil evaluasi eksternal atau survei independen.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Component 5 -->
+                    <div class="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-800 flex justify-between items-center hover:bg-slate-50 transition" onclick="toggleAccordion('acc5')">
+                            <span class="flex items-center gap-3">
+                                <span class="bg-blue-100 text-blue-700 w-7 h-7 rounded-full text-xs flex items-center justify-center font-extrabold">5</span>
+                                Keberlanjutan & Replikasi
+                            </span>
+                            <i id="acc5-icon" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                        </button>
+                        <div id="acc5" class="hidden px-6 pb-6 pt-2 border-t border-slate-100 text-sm text-slate-600 space-y-2">
+                            <p><strong>Fokus Utama:</strong> Dukungan regulasi (SK/Perda), kepastian alokasi APBD/APBN, kelembagaan SDM, serta kesiapan direplikasi oleh instansi lain.</p>
+                            <p class="text-xs bg-amber-50 text-amber-800 p-3 rounded-lg border border-amber-200">
+                                💡 <strong>Tips Penilai:</strong> Lampirkan bukti MoU/perjanjian replikasi jika ada instansi lain yang telah mengadopsi inovasi ini.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Quick Rules Box -->
+                <div class="bg-gradient-to-br from-govNavy to-govBlue text-white p-6 rounded-2xl shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 text-teal-400 mb-4">
+                            <i class="fa-solid fa-bullseye text-xl"></i>
+                            <h3 class="font-bold uppercase tracking-wider text-xs">Standard Evaluasi TEI</h3>
+                        </div>
+                        <h4 class="text-xl font-bold mb-3">Bobot Penilaian KIPP</h4>
+                        <ul class="space-y-3 text-sm text-slate-200">
+                            <li class="flex justify-between border-b border-slate-700 pb-2">
+                                <span>Dampak & Manfaat</span>
+                                <span class="font-bold text-emerald-400">30%</span>
+                            </li>
+                            <li class="flex justify-between border-b border-slate-700 pb-2">
+                                <span>Kebaruan (Novelty)</span>
+                                <span class="font-bold text-emerald-400">20%</span>
+                            </li>
+                            <li class="flex justify-between border-b border-slate-700 pb-2">
+                                <span>Keberlanjutan Strategis</span>
+                                <span class="font-bold text-emerald-400">20%</span>
+                            </li>
+                            <li class="flex justify-between border-b border-slate-700 pb-2">
+                                <span>Kesesuaian Masalah</span>
+                                <span class="font-bold text-emerald-400">15%</span>
+                            </li>
+                            <li class="flex justify-between border-b border-slate-700 pb-2">
+                                <span>Potensi Replikasi</span>
+                                <span class="font-bold text-emerald-400">15%</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-700">
+                        <p class="text-xs text-slate-300 italic">
+                            *Catatan: Pastikan narasi proposal terbebas dari kesalahan ketik dan konsisten antara data lampiran dan narasi teks.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Interactive Self-Assessment Calculator -->
+        <section id="kalkulator" class="py-12 bg-slate-100 border-y border-slate-200">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-8">
+                    <span class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Simulasi Evaluasi Mandiri</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-2">Kalkulator Kesiapan Inovasi (Self-Assessment Tool)</h2>
+                    <p class="text-slate-600 text-sm">Jawab 5 pertanyaan berikut untuk mengetahui potensi kelolosan inovasi Anda pada seleksi KIPP.</p>
+                </div>
+
+                <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <form id="readinessForm" class="space-y-6">
+                        <!-- Question 1 -->
+                        <div>
+                            <label class="block font-semibold text-slate-800 text-sm mb-2">
+                                1. Berapa lama inovasi ini telah diimplementasikan secara berkesinambungan?
+                            </label>
+                            <select id="q1" class="w-full bg-slate-50 border border-slate-300 text-slate-800 rounded-xl p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                <option value="0">Kurang dari 1 tahun</option>
+                                <option value="10">Antara 1 hingga 2 tahun</option>
+                                <option value="20" selected>Sudah berjalan minimal 2 tahun atau lebih (Syarat Mutlak KIPP)</option>
+                            </select>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div>
+                            <label class="block font-semibold text-slate-800 text-sm mb-2">
+                                2. Apakah inovasi didukung Regulasi/SK Penetapan dan alokasi anggaran tetap?
+                            </label>
+                            <select id="q2" class="w-full bg-slate-50 border border-slate-300 text-slate-800 rounded-xl p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                <option value="0">Belum ada regulasi formal / Anggaran tidak terikat</option>
+                                <option value="10">Ada Surat Keputusan Kepala Unit / SK Kadis</option>
+                                <option value="20" selected>Lengkap: Perbupati/Perwali/Permen & DIPA/APBD Rutin</option>
+                            </select>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div>
+                            <label class="block font-semibold text-slate-800 text-sm mb-2">
+                                3. Kelengkapan Data Dampak Kuantitatif (Sebelum vs Sesudah):
+                            </label>
+                            <select id="q3" class="w-full bg-slate-50 border border-slate-300 text-slate-800 rounded-xl p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                <option value="5">Hanya memiliki deskripsi kualitatif / klaim sepihak</option>
+                                <option value="15">Memiliki data internal sebelum & sesudah inovasi</option>
+                                <option value="25" selected>Lengkap: Data kuantitatif terverifikasi + Indeks Kepuasan Masyarakat (IKM)</option>
+                            </select>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div>
+                            <label class="block font-semibold text-slate-800 text-sm mb-2">
+                                4. Kesiapan Media Pendukung (Video & Dokumentasi Video 2–5 menit):
+                            </label>
+                            <select id="q4" class="w-full bg-slate-50 border border-slate-300 text-slate-800 rounded-xl p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                <option value="0">Belum memiliki video profil inovasi</option>
+                                <option value="10">Video berupa slide foto atau animasi tanpa testimoni penerima manfaat</option>
+                                <option value="20" selected>Video profesional memuat alur kerja, data dampak & testimoni langsung pengguna</option>
+                            </select>
+                        </div>
+
+                        <!-- Question 5 -->
+                        <div>
+                            <label class="block font-semibold text-slate-800 text-sm mb-2">
+                                5. Potensi dan Rekam Jejak Replikasi:
+                            </label>
+                            <select id="q5" class="w-full bg-slate-50 border border-slate-300 text-slate-800 rounded-xl p-3 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                <option value="0">Belum pernah direplikasi instansi lain</option>
+                                <option value="8">Siap direplikasi (tersedia SOP & panduan komprehensif)</option>
+                                <option value="15" selected>Telah direplikasi/diadopsi oleh instansi/daerah lain (disertai MoU/Dokumen Replikasi)</option>
+                            </select>
+                        </div>
+
+                        <button type="button" onclick="calculateReadiness()" class="w-full bg-govNavy hover:bg-govBlue text-white font-bold py-3.5 px-6 rounded-xl shadow transition flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-emerald-400"></i> Hitung Skor Kesiapan Inovasi
+                        </button>
+                    </form>
+
+                    <!-- Score Result Container -->
+                    <div id="resultBox" class="mt-6 hidden p-6 rounded-xl border">
+                        <!-- Result injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Interactive Document Checklist -->
+        <section id="checklist" class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-square-check text-emerald-600"></i>
+                            Checklist Kelengkapan Dokumen Admin & Submisi
+                        </h2>
+                        <p class="text-slate-600 text-sm mt-1">Centang dokumen yang telah siap. Progress tersimpan otomatis di peramban Anda.</p>
+                    </div>
+                    
+                    <!-- Progress Card -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm w-full md:w-64">
+                        <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                            <span>Kelengkapan Berkas</span>
+                            <span id="checklistPercent">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                            <div id="checklistProgressBar" class="bg-emerald-500 h-full transition-all duration-300 w-0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-6 space-y-4" id="checklistItems">
+                    <!-- Items generated via JS -->
+                </div>
+                <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-between items-center">
+                    <span class="text-xs text-slate-500">Gunakan checklist ini saat final check sebelum tombol submisi ditekan.</span>
+                    <button onclick="resetChecklist()" class="text-xs text-red-600 hover:text-red-800 font-semibold underline">
+                        Reset Checklist
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Searchable Best Practice Showcase -->
+        <section id="inspirasi" class="py-12 bg-white border-t border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-slate-900">Etalase Top Inovasi Inspiratif</h2>
+                    <p class="text-slate-600 text-sm mt-1">Contoh inovasi instansi pemerintah yang telah sukses meraih penghargaan Top KIPP.</p>
+                </div>
+
+                <!-- Filter & Search Bar -->
+                <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                    <div class="relative flex-grow">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
+                        <input type="text" id="searchInput" onkeyup="filterShowcase()" placeholder="Cari nama inovasi, instansi, atau kata kunci..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                    <select id="categoryFilter" onchange="filterShowcase()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <option value="ALL">Semua Kategori</option>
+                        <option value="Kesehatan">Kesehatan</option>
+                        <option value="Digitalisasi">Digitalisasi & Perizinan</option>
+                        <option value="Sosial">Inklusi Sosial / Lingkungan</option>
+                    </select>
+                </div>
+
+                <!-- Showcase Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="showcaseGrid">
+                    <!-- Cards Injected via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Download Center & Links -->
+        <section class="py-12 bg-slate-900 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-2">Pusat Unduhan & Akses Portal Resmi</h2>
+                        <p class="text-slate-400 text-sm mb-6">
+                            Pastikan Anda menggunakan template proposal resmi yang dikeluarkan oleh Kementerian PANRB dan mengakses portal pendaftaran akun instansi.
+                        </p>
+                        <div class="space-y-3">
+                            <a href="https://sinovik.menpan.go.id" target="_blank" class="flex items-center justify-between bg-slate-800 hover:bg-slate-700 p-4 rounded-xl border border-slate-700 transition group">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fa-solid fa-globe text-teal-400 text-xl"></i>
+                                    <div>
+                                        <div class="font-bold text-sm group-hover:text-teal-300 transition">Portal Resmi SINOVIK / KIPP KemenPANRB</div>
+                                        <div class="text-xs text-slate-400">sinovik.menpan.go.id</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-slate-400 group-hover:text-white transition"></i>
+                            </a>
+
+                            <div class="flex items-center justify-between bg-slate-800 p-4 rounded-xl border border-slate-700">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fa-solid fa-file-word text-blue-400 text-xl"></i>
+                                    <div>
+                                        <div class="font-bold text-sm">Format Sistematika Proposal KIPP</div>
+                                        <div class="text-xs text-slate-400">Standar Pengisian KIPP PANRB</div>
+                                    </div>
+                                </div>
+                                <button onclick="alertModal('Format Proposal KIPP dapat diunduh pada portal resmi SINOVIK saat periode pendaftaran dibuka oleh KemenPANRB.')" class="bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition">
+                                    Petunjuk Unduh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guidance Tip Card -->
+                    <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700">
+                        <h3 class="font-bold text-teal-300 text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-headset"></i> Layanan Pendampingan Instansi
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Setiap instansi pemerintah disarankan membentuk **Tim Evaluator Internal (Bappeda / Organisasi / Inspektorat)** untuk menyaring dan mengurasi proposal sebelum dikirim ke portal nasional.
+                        </p>
+                        <div class="bg-slate-900/60 p-4 rounded-xl text-xs space-y-2 border border-slate-700/50">
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-400">Admin Lembaga/Daerah:</span>
+                                <span class="text-white font-mono">Biro Organisasi / Bagian Organisasi</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-400">Batas Kuota Pengajuan:</span>
+                                <span class="text-white font-mono">Sesuai Ketentuan Pedoman KIPP Berjalan</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 text-xs py-6 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                &copy; Panduan Kompetisi Inovasi Pelayanan Publik - Disusun untuk Efisiensi Instansi Pemerintah.
+            </div>
+            <div class="flex space-x-4">
+                <span>Reformasi Birokrasi</span>
+                <span>•</span>
+                <span>Pelayanan Publik Prima</span>
+                <span>•</span>
+                <span>Akuntabilitas</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Universal Modal Alert -->
+    <div id="customModal" class="fixed inset-0 bg-slate-900/70 hidden items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200">
+            <div class="flex items-center space-x-3 text-teal-600 mb-4">
+                <i class="fa-solid fa-circle-info text-2xl"></i>
+                <h3 class="font-bold text-slate-900 text-lg" id="modalTitle">Informasi</h3>
+            </div>
+            <p class="text-slate-600 text-sm mb-6 leading-relaxed" id="modalMessage">Pesan informasi.</p>
+            <button onclick="closeModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-xl transition">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Modal Handler
+        function alertModal(msg, title = "Informasi Instansi") {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = msg;
+            const modal = document.getElementById('customModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('customModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // --- Step Timeline Data & Logic ---
+        const stepsData = [
+            {
+                id: 1,
+                title: "1. Pendaftaran Submisi",
+                subtitle: "Pengisian di Portal KIPP / SINOVIK",
+                desc: "Admin Instansi mendaftarkan judul inovasi, memilih kategori, serta mengunggah narasi proposal lengkap beserta lampiran SK Legalitas dan Surat Pernyataan Tanggung Jawab Mutlak (SPTJM).",
+                checklist: ["SK Penetapan Inovasi", "SPTJM ditandatangani Kepala Instansi", "Naskah Proposal Format KemenPANRB"]
+            },
+            {
+                id: 2,
+                title: "2. Seleksi Administrasi",
+                subtitle: "Verifikasi Berkas Sekretariat",
+                desc: "Tim Sekretariat KIPP melakukan verifikasi kesesuaian administrasi: kecukupan umur inovasi (minimal 2 tahun), kelengkapan dokumen pendukung, format file, dan kesesuaian kategori.",
+                checklist: ["Masa implementasi minimal 24 bulan", "Tidak pernah tercemar sanksi hukum/isu kejahatan", "Format dokumen sesuai ketentuan"]
+            },
+            {
+                id: 3,
+                title: "3. Penilaian Proposal (TEI)",
+                subtitle: "Evaluasi Independen Tanpa Tatap Muka",
+                desc: "Tim Evaluator Independen (TEI) menilai narasi proposal secara desk assessment berdasarkan aspek kebaruan, dampak, keberlanjutan, dan potensi replikasi.",
+                checklist: ["Pencapaian skor ambang batas", "Kejelasan data kuantitatif sebelum vs sesudah", "Validitas bukti pendukung & IKM"]
+            },
+            {
+                id: 4,
+                title: "4. Wawancara Top Inovasi",
+                subtitle: "Presentasi Kepala Daerah / Pimpinan K/L",
+                desc: "Pimpinan Tinggi Instansi (Gubernur, Bupati, Wali Kota, Menteri, atau Dirut BUMN) mempresentasikan inovasi secara langsung di hadapan Tim Panel Independen (TPI).",
+                checklist: ["Keterlibatan langsung pimpinan", "Kesesuaian paparan dengan proposal", "Kemampuan menjawab pertanyaan kritis TPI"]
+            },
+            {
+                id: 5,
+                title: "5. Verifikasi Lapangan",
+                subtitle: "Mystery Shopping & Fact Checking",
+                desc: "Tim Panel atau Evaluator meninjau lokasi fisik/sistem untuk mencocokkan klaim proposal dengan realita lapangan serta mewawancarai penerima manfaat langsung.",
+                checklist: ["Kesiapan sarana prasarana", "Wawancara acak pengguna layanan", "Kesesuaian SOP & sistem operasional"]
+            },
+            {
+                id: 6,
+                title: "6. Penetapan Top Terpilih",
+                subtitle: "Pemberian Anugerah Top KIPP",
+                desc: "Kementerian PANRB menetapkan Keputusan Menteri mengenai Top Inovasi Terpilih (Top 99, Top 45, atau Outstanding Achievement) yang berhak atas insentif/penghargaan.",
+                checklist: ["SK Menteri PANRB", "Penyerahan Piagam & Trophy Anugerah", "Pencatatan dalam Hub Inovasi Pelayanan Publik"]
+            }
+        ];
+
+        let activeStep = 1;
+
+        function renderStepButtons() {
+            const container = document.getElementById('stepButtons');
+            container.innerHTML = stepsData.map(step => `
+                <button onclick="setStep(${step.id})" class="p-3 text-left rounded-xl transition border text-xs font-semibold ${activeStep === step.id ? 'bg-teal-600 text-white border-teal-600 shadow' : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'}">
+                    ${step.title}
+                </button>
+            `).join('');
+        }
+
+        function renderStepDetail() {
+            const container = document.getElementById('stepDetailContent');
+            const data = stepsData.find(s => s.id === activeStep);
+            container.innerHTML = `
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 border-b border-slate-200 pb-4">
+                    <div>
+                        <span class="text-xs font-bold text-teal-700 uppercase tracking-wider">Tahap ${data.id} dari 6</span>
+                        <h3 class="text-xl font-bold text-slate-900">${data.title}</h3>
+                        <p class="text-xs text-slate-500 font-medium">${data.subtitle}</p>
+                    </div>
+                    <span class="px-3 py-1 bg-teal-100 text-teal-800 text-xs font-bold rounded-full w-fit">
+                        Status: Tahapan Krusial
+                    </span>
+                </div>
+                <p class="text-slate-700 text-sm leading-relaxed mb-6">${data.desc}</p>
+                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-600"></i> Fokus Kelengkapan & Kunci Lolos Tahap Ini:
+                    </h4>
+                    <ul class="space-y-2 text-xs text-slate-600">
+                        ${data.checklist.map(item => `
+                            <li class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                                <span>${item}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        function setStep(id) {
+            activeStep = id;
+            renderStepButtons();
+            renderStepDetail();
+        }
+
+        // --- Accordion Logic ---
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(`${id}-icon`);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        // --- Self Assessment Calculator Logic ---
+        function calculateReadiness() {
+            const q1 = parseInt(document.getElementById('q1').value);
+            const q2 = parseInt(document.getElementById('q2').value);
+            const q3 = parseInt(document.getElementById('q3').value);
+            const q4 = parseInt(document.getElementById('q4').value);
+            const q5 = parseInt(document.getElementById('q5').value);
+
+            const totalScore = q1 + q2 + q3 + q4 + q5;
+            const resultBox = document.getElementById('resultBox');
+            resultBox.classList.remove('hidden');
+
+            let category = '';
+            let colorClass = '';
+            let recommendations = '';
+
+            if (totalScore >= 80) {
+                category = 'Sangat Siap (Potensi Unggulan Top KIPP)';
+                colorClass = 'bg-emerald-50 border-emerald-300 text-emerald-900';
+                recommendations = 'Inovasi Anda memiliki kematangan data dan legalitas yang sangat kokoh. Fokuskan energi pada penajaman narasi kebaruan dan estetika video pendukung.';
+            } else if (totalScore >= 55) {
+                category = 'Cukup Siap (Memerlukan Pembenahan Data)';
+                colorClass = 'bg-amber-50 border-amber-300 text-amber-900';
+                recommendations = 'Inovasi Anda potensial, namun masih memerlukan penguatan data kuantitatif dampak (sebelum vs sesudah) serta bukti testimoni langsung penerima manfaat.';
+            } else {
+                category = 'Belum Belum Siap (Perlu Pembinaan Internal)';
+                colorClass = 'bg-rose-50 border-rose-300 text-rose-900';
+                recommendations = 'Syarat utama seperti umur operasional 2 tahun atau data dampak kuantitatif belum terpenuhi secara substansial. Disarankan melakukan pematangan inovasi untuk KIPP periode berikutnya.';
+            }
+
+            resultBox.className = `mt-6 p-6 rounded-xl border ${colorClass}`;
+            resultBox.innerHTML = `
+                <div class="flex items-center justify-between mb-3">
+                    <span class="font-bold text-sm uppercase tracking-wider">Hasil Analisis Kesiapan</span>
+                    <span class="text-2xl font-extrabold">${totalScore} / 100</span>
+                </div>
+                <h4 class="text-lg font-bold mb-2">${category}</h4>
+                <p class="text-xs leading-relaxed opacity-90 mb-4">${recommendations}</p>
+                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div class="bg-slate-800 h-full" style="width: ${totalScore}%"></div>
+                </div>
+            `;
+        }
+
+        // --- Interactive Document Checklist Logic ---
+        const defaultChecklistData = [
+            { id: 'c1', title: 'Surat Keputusan (SK) Penetapan Inovasi dari Kepala Daerah / Pimpinan K/L', tag: 'Administrasi Mandatory' },
+            { id: 'c2', title: 'Surat Pernyataan Tanggung Jawab Mutlak (SPTJM) bermaterai', tag: 'Administrasi Mandatory' },
+            { id: 'c3', title: 'Naskah Proposal lengkap sesuai batasan jumlah kata per indikator', tag: 'Substansi' },
+            { id: 'c4', title: 'Tabel Komparasi Data Dampak Kuantitatif (Sebelum vs Sesudah Inovasi)', tag: 'Substansi' },
+            { id: 'c5', title: 'Laporan Hasil Indeks Kepuasan Masyarakat (IKM) 2 Tahun Terakhir', tag: 'Substansi' },
+            { id: 'c6', title: 'Video Profil Inovasi durasi 2-5 menit (HD Quality, Tautan Youtube)', tag: 'Media Pendukung' },
+            { id: 'c7', title: 'Dokumentasi Foto Resolusi Tinggi kegiatan sebelum & sesudah', tag: 'Media Pendukung' },
+            { id: 'c8', title: 'Bukti Replikasi / Surat Pernyataan Minat Replikasi dari Instansi Lain (jika ada)', tag: 'Keberlanjutan' }
+        ];
+
+        let checklistState = JSON.parse(localStorage.getItem('kipp_checklist_state')) || {};
+
+        function renderChecklist() {
+            const container = document.getElementById('checklistItems');
+            container.innerHTML = defaultChecklistData.map(item => {
+                const isChecked = checklistState[item.id] || false;
+                return `
+                    <label class="flex items-start space-x-3 p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-slate-100">
+                        <input type="checkbox" id="${item.id}" ${isChecked ? 'checked' : ''} onchange="toggleCheckItem('${item.id}')" class="mt-1 w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500">
+                        <div class="flex-grow">
+                            <span class="text-sm font-semibold ${isChecked ? 'line-through text-slate-400' : 'text-slate-800'}">${item.title}</span>
+                            <span class="block text-[10px] uppercase tracking-wider font-bold text-teal-600 mt-0.5">${item.tag}</span>
+                        </div>
+                    </label>
+                `;
+            }).join('');
+            updateChecklistProgress();
+        }
+
+        function toggleCheckItem(id) {
+            checklistState[id] = !checklistState[id];
+            localStorage.setItem('kipp_checklist_state', JSON.stringify(checklistState));
+            renderChecklist();
+        }
+
+        function updateChecklistProgress() {
+            const total = defaultChecklistData.length;
+            const checkedCount = Object.keys(checklistState).filter(k => checklistState[k]).length;
+            const percentage = Math.round((checkedCount / total) * 100);
+
+            document.getElementById('checklistPercent').innerText = `${percentage}%`;
+            document.getElementById('checklistProgressBar').style.width = `${percentage}%`;
+        }
+
+        function resetChecklist() {
+            checklistState = {};
+            localStorage.removeItem('kipp_checklist_state');
+            renderChecklist();
+        }
+
+        // --- Best Practice Showcase Logic ---
+        const showcaseData = [
+            {
+                title: "Si-Vokasi Kesehatan Mandiri",
+                instansi: "Dinas Kesehatan Kab. Trenggalek",
+                category: "Kesehatan",
+                desc: "Integrasi pelayanan kesehatan ibu dan anak berbasis komunitas yang menurunkan angka kematian ibu hingga 60%.",
+                tags: ["Top 45", "Kesehatan"]
+            },
+            {
+                title: "Portal Perizinan Kilat (Satu Pintu)",
+                instansi: "DPMPTSP Kota Surabaya",
+                category: "Digitalisasi",
+                desc: "Sistem penerbitan izin usaha otomatis berbasis AI yang memangkas waktu pemrosesan dari 7 hari menjadi 15 menit.",
+                tags: ["Outstanding Achievement", "Digitalisasi"]
+            },
+            {
+                title: "Ramah Disabilitas Inklusif",
+                instansi: "Kementerian Hukum dan HAM",
+                category: "Sosial",
+                desc: "Penyediaan loket dan sarana pendukung berbasis aksara Braille & Audio Visual untuk seluruh kantor imigrasi.",
+                tags: ["Top 99", "Inklusi"]
+            },
+            {
+                title: "E-Bencana Response Rapid",
+                instansi: "BPBD Provinsi Jawa Barat",
+                category: "Digitalisasi",
+                desc: "Aplikasi peringatan dini dan evakuasi bencana terpadu yang terhubung langsung dengan partisipasi masyarakat lokal.",
+                tags: ["Top 45", "Bencana"]
+            }
+        ];
+
+        function renderShowcase(items) {
+            const container = document.getElementById('showcaseGrid');
+            if (items.length === 0) {
+                container.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-500 text-sm">Tidak ditemukan inovasi yang sesuai kata kunci.</div>`;
+                return;
+            }
+            container.innerHTML = items.map(item => `
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 flex flex-col justify-between hover:shadow-md transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-teal-100 text-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">${item.category}</span>
+                            <span class="text-xs font-bold text-emerald-600"><i class="fa-solid fa-trophy mr-1"></i>${item.tags[0]}</span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base mb-1">${item.title}</h3>
+                        <p class="text-xs text-slate-500 mb-3">${item.instansi}</p>
+                        <p class="text-slate-600 text-xs leading-relaxed mb-4">${item.desc}</p>
+                    </div>
+                    <button onclick="alertModal('Struktur sukses utama inovasi ini: 1) Dukungan regulasi kuat, 2) Data dampak terukur jelas, 3) Pembagian peran SDM yang transparan.')" class="w-full py-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 text-xs font-semibold rounded-xl transition">
+                        Lihat Kunci Sukses
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function filterShowcase() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+
+            const filtered = showcaseData.filter(item => {
+                const matchesSearch = item.title.toLowerCase().includes(query) || 
+                                      item.instansi.toLowerCase().includes(query) ||
+                                      item.desc.toLowerCase().includes(query);
+                const matchesCategory = category === 'ALL' || item.category === category;
+                return matchesSearch && matchesCategory;
+            });
+
+            renderShowcase(filtered);
+        }
+
+        // Initialize Page Features
+        window.onload = function() {
+            renderStepButtons();
+            renderStepDetail();
+            renderChecklist();
+            renderShowcase(showcaseData);
+        };
+    </script>
+</body>
+</html>
