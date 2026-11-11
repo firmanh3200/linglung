@@ -1,0 +1,547 @@
+{
+  "badanPublikId": "bps-provinsi-jabar",
+  "badanPublikName": "BPS Provinsi Jawa Barat",
+  "badanPublikType": "Provinsi",
+  "version": "1.0",
+  "metadata": {
+    "ppidName": "Supriatin, S.ST., MM",
+    "petugasMonev": "Firman Hadian",
+    "websiteUrl": "https://ppid.bps.go.id/?mfd=3200",
+    "tanggalEvaluasi": "2026-11-11",
+    "periodeEvaluasi": "Q4",
+    "catatanUmum": ""
+  },
+  "checklist": {
+    "berkala": {
+      "b01": {
+        "status": "sudah",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/Profil-BPS.html",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "b02": {
+        "status": "tidak-berlaku",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Profil-BPS.html#pills-3",
+        "tanggalPemutakhiran": "2024-12-11",
+        "catatan": "perbaharui sesuai peraturan perundangan yang berlaku"
+      },
+      "b03": {
+        "status": "tidak-berlaku",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Profil-BPS.html#pills-2",
+        "tanggalPemutakhiran": "2024-12-11",
+        "catatan": "perbaharui sesuai peraturan perundangan yang berlaku"
+      },
+      "b04": {
+        "status": "sudah",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Profil-BPS.html#pills-1",
+        "tanggalPemutakhiran": "2026-06-11",
+        "catatan": ""
+      },
+      "b05": {
+        "status": "tidak-berlaku",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Rencana-Strategis-BPS.html",
+        "tanggalPemutakhiran": "2025-12-11",
+        "catatan": "perbaharui sesuai peraturan perundangan yang berlaku"
+      },
+      "b06": {
+        "status": "sudah",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Program-Kerja.html",
+        "tanggalPemutakhiran": "2026-07-10",
+        "catatan": ""
+      },
+      "b07": {
+        "status": "sudah",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Laporan-Kinerja.html#pills-0",
+        "tanggalPemutakhiran": "2026-04-01",
+        "catatan": ""
+      },
+      "b08": {
+        "status": "sudah",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Laporan-Keuangan.html",
+        "tanggalPemutakhiran": "2026-09-11",
+        "catatan": ""
+      },
+      "b09": {
+        "status": "sudah",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Laporan-Keuangan.html#pills-1",
+        "tanggalPemutakhiran": "2026-03-11",
+        "catatan": ""
+      },
+      "b10": {
+        "status": "sudah",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Standar-Layanan-Informasi-Publik.html",
+        "tanggalPemutakhiran": "2026-05-11",
+        "catatan": ""
+      },
+      "b11": {
+        "status": "sudah",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Standar-Layanan-Informasi-Publik.html",
+        "tanggalPemutakhiran": "2026-05-11",
+        "catatan": ""
+      },
+      "b12": {
+        "status": "sudah",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Standar-Layanan-Informasi-Publik.html",
+        "tanggalPemutakhiran": "2026-05-11",
+        "catatan": ""
+      },
+      "b13": {
+        "status": "sudah",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Peraturan.html#pills-2",
+        "tanggalPemutakhiran": "2026-11-02",
+        "catatan": ""
+      },
+      "b14": {
+        "status": "belum",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "b15": {
+        "status": "belum",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "b16": {
+        "status": "sudah",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Pengadaan.html",
+        "tanggalPemutakhiran": "2026-09-11",
+        "catatan": ""
+      },
+      "b17": {
+        "status": "sudah",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Regulasi-KIP.html",
+        "tanggalPemutakhiran": "2026-06-11",
+        "catatan": ""
+      },
+      "b18": {
+        "status": "tidak-berlaku",
+        "lokasiPenayangan": [
+          "Website Resmi"
+        ],
+        "link": "https://ppid.bps.go.id/app/konten/3200/Laporan-PPID.html",
+        "tanggalPemutakhiran": "2024-12-11",
+        "catatan": ""
+      },
+      "b19": {
+        "status": "belum",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "b20": {
+        "status": "belum",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      }
+    },
+    "sertamerta": {
+      "s01": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "s02": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "s03": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "s04": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "s05": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "s06": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "s07": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "s08": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "s09": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      }
+    },
+    "setiapsaat": {
+      "st01": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st02": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st03": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st04": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st05": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st06": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st07": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st08": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st09": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st10": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st11": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st12": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st13": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st14": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st15": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st16": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st17": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st18": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st19": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st20": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st21": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st22": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st23": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "st24": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      }
+    },
+    "dikecualikan": {
+      "d01": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d02": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d03": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d04": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d05": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d06": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d07": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d08": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d09": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d10": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d11": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d12": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d13": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d14": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d15": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d16": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      },
+      "d17": {
+        "status": "",
+        "lokasiPenayangan": [],
+        "link": "",
+        "tanggalPemutakhiran": "",
+        "catatan": ""
+      }
+    }
+  },
+  "savedAt": "2026-11-11T01:15:24.458Z"
+}

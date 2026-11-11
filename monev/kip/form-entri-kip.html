@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form Entri Ceklis KIP — BPS Jawa Barat</title>
+<meta name="description" content="Form pengisian ceklis daftar informasi publik yang wajib ditayangkan oleh badan publik. Hasil disimpan dalam file JSON. Untuk operator pengisi Monitoring dan Evaluasi Keterbukaan Informasi Publik.">
+<style>
+/* ==================== DESIGN TOKENS ==================== */
+:root {
+  --primary: #1e40af;
+  --primary-dark: #1e3a8a;
+  --primary-light: #3b82f6;
+  --primary-bg: #eff6ff;
+  --accent: #0891b2;
+  --accent-dark: #0e7490;
+  --accent-bg: #ecfeff;
+  --success: #16a34a;
+  --success-light: #22c55e;
+  --success-bg: #f0fdf4;
+  --warning: #d97706;
+  --warning-light: #f59e0b;
+  --warning-bg: #fffbeb;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --white: #ffffff;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --transition: all 0.2s ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--gray-100);
+  color: var(--gray-900);
+  line-height: 1.6;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==================== HEADER ==================== */
+.app-header {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, var(--accent) 100%);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-lg);
+}
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-logo {
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(10px);
+}
+.brand-text h1 { font-size: 17px; font-weight: 700; margin: 0; line-height: 1.2; letter-spacing: -0.2px; }
+.brand-text p { font-size: 12px; opacity: 0.85; margin: 2px 0 0; font-weight: 400; }
+.role-badge {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ==================== LAYOUT ==================== */
+.container { max-width: 1280px; margin: 0 auto; padding: 24px; }
+
+/* ==================== ALERT ==================== */
+.alert {
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 13.5px;
+  border: 1px solid;
+  line-height: 1.55;
+}
+.alert-success { background: var(--success-bg); color: #15803d; border-color: #bbf7d0; }
+.alert-info { background: var(--primary-bg); color: var(--primary-dark); border-color: #bfdbfe; }
+.alert-warning { background: var(--warning-bg); color: var(--warning); border-color: #fde68a; }
+.alert .icon { flex-shrink: 0; font-size: 18px; }
+.alert strong { font-weight: 700; }
+
+/* ==================== CARDS ==================== */
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+}
+.card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--gray-200);
+  background: var(--gray-50);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.card-header h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-900);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-header h2 .badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  background: var(--primary-bg);
+  color: var(--primary);
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+}
+.card-body { padding: 24px; }
+
+/* ==================== FORM CONTROLS ==================== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-label { font-weight: 600; color: var(--gray-700); font-size: 13px; letter-spacing: 0.1px; }
+.form-label .req { color: var(--danger); }
+.form-control, select.form-control, textarea.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background: white;
+  color: var(--gray-900);
+  transition: var(--transition);
+}
+.form-control:focus, select.form-control:focus, textarea.form-control:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+  outline: none;
+}
+textarea.form-control { resize: vertical; min-height: 60px; }
+.form-hint { font-size: 12px; color: var(--gray-500); }
+
+/* ==================== BUTTONS ==================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn svg { width: 16px; height: 16px; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); box-shadow: var(--shadow-md); }
+.btn-success { background: var(--success); color: white; }
+.btn-success:hover { background: #15803d; box-shadow: var(--shadow-md); }
+.btn-warning { background: var(--warning-light); color: white; }
+.btn-warning:hover { background: var(--warning); }
+.btn-outline { background: white; color: var(--gray-700); border-color: var(--gray-300); }
+.btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
+.btn-ghost { background: transparent; color: var(--gray-600); }
+.btn-ghost:hover { background: var(--gray-100); }
+.btn-danger { background: var(--danger); color: white; }
+.btn-danger:hover { background: #b91c1c; }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+.btn-lg { padding: 12px 24px; font-size: 15px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ==================== SELECTOR BADAN PUBLIK ==================== */
+.selector-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.selector-row .form-group { flex: 1; min-width: 220px; }
+
+/* ==================== TABS CHECKLIST ==================== */
+.category-tabs {
+  display: flex;
+  gap: 4px;
+  background: white;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid var(--gray-200);
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+.cat-tab {
+  flex: 1;
+  min-width: 140px;
+  background: transparent;
+  border: none;
+  color: var(--gray-600);
+  padding: 12px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  white-space: nowrap;
+}
+.cat-tab:hover { background: var(--gray-100); }
+.cat-tab.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+.cat-tab .cat-count { font-size: 11px; opacity: 0.8; font-weight: 500; }
+.cat-tab.active .cat-count { opacity: 0.9; }
+.cat-tab.berkala.active { background: #1e40af; }
+.cat-tab.sertamerta.active { background: #dc2626; }
+.cat-tab.setiapsaat.active { background: #0891b2; }
+.cat-tab.dikecualikan.active { background: #7c3aed; }
+
+/* ==================== CHECKLIST ITEM ==================== */
+.checklist-item {
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 14px;
+  background: white;
+  transition: var(--transition);
+}
+.checklist-item:hover { box-shadow: var(--shadow-md); border-color: var(--gray-300); }
+.checklist-item.status-sudah { border-left: 4px solid var(--success); background: linear-gradient(to right, var(--success-bg) 0%, white 30%); }
+.checklist-item.status-belum { border-left: 4px solid var(--danger); background: linear-gradient(to right, var(--danger-bg) 0%, white 30%); }
+.checklist-item.status-tidak-berlaku { border-left: 4px solid var(--gray-400); background: var(--gray-50); }
+.checklist-item.status-default { border-left: 4px solid var(--gray-300); }
+
+.item-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.item-number {
+  background: var(--gray-100);
+  color: var(--gray-600);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.item-title { flex: 1; min-width: 200px; }
+.item-title h4 { font-size: 15px; font-weight: 700; color: var(--gray-900); margin: 0 0 4px; line-height: 1.3; }
+.item-title .item-desc { font-size: 12.5px; color: var(--gray-500); line-height: 1.5; }
+.item-status-select { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.status-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-300);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: white;
+  min-width: 130px;
+}
+.status-select option { padding: 6px; }
+
+.item-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--gray-200);
+}
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--gray-600);
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+.field input, .field select, .field textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--gray-300);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  transition: var(--transition);
+  width: 100%;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.15);
+  outline: none;
+}
+.field textarea { resize: vertical; min-height: 38px; }
+
+.checkbox-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.checkbox-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+}
+.checkbox-chip:hover { background: var(--gray-200); }
+.checkbox-chip input { margin: 0; width: 12px; height: 12px; accent-color: var(--primary); }
+.checkbox-chip.checked { background: var(--primary-bg); border-color: var(--primary-light); color: var(--primary-dark); }
+
+/* ==================== PROGRESS BAR ==================== */
+.progress-container {
+  background: white;
+  border-radius: 12px;
+  padding: 16px 20px;
+  border: 1px solid var(--gray-200);
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 18px;
+  align-items: center;
+}
+.progress-stat { text-align: center; }
+.progress-stat .stat-value { font-size: 26px; font-weight: 800; color: var(--primary); line-height: 1; }
+.progress-stat .stat-value.success { color: var(--success); }
+.progress-stat .stat-value.danger { color: var(--danger); }
+.progress-stat .stat-value.warning { color: var(--warning); }
+.progress-stat .stat-label { font-size: 12px; color: var(--gray-600); margin-top: 4px; font-weight: 500; }
+.progress-bar-wrap { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; }
+.progress-bar {
+  flex: 1;
+  height: 12px;
+  background: var(--gray-200);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--success-light), var(--success));
+  border-radius: 6px;
+  transition: width 0.5s ease;
+  position: relative;
+}
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.progress-percentage {
+  font-weight: 700;
+  color: var(--gray-900);
+  font-size: 14px;
+  min-width: 48px;
+  text-align: right;
+}
+
+/* ==================== LEGAL BASIS ==================== */
+.legal-basis-card {
+  background: linear-gradient(135deg, var(--primary-bg), var(--accent-bg));
+  border: 1px solid var(--primary-light);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.legal-basis-card .icon {
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+.legal-basis-card .content { flex: 1; }
+.legal-basis-card .title { font-weight: 700; color: var(--primary-dark); font-size: 14px; margin-bottom: 2px; }
+.legal-basis-card .text { font-size: 12.5px; color: var(--gray-700); line-height: 1.5; }
+
+/* ==================== EMPTY STATE ==================== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--gray-500);
+}
+.empty-state .icon { font-size: 56px; margin-bottom: 16px; opacity: 0.4; }
+.empty-state h3 { font-size: 18px; color: var(--gray-700); margin-bottom: 8px; }
+.empty-state p { font-size: 14px; margin-bottom: 20px; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+/* ==================== STATUS BADGE ==================== */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+/* ==================== TOAST ==================== */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  background: var(--gray-900);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+  font-size: 13.5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastIn 0.3s ease;
+  min-width: 250px;
+  max-width: 380px;
+}
+.toast.success { background: var(--success); }
+.toast.error { background: var(--danger); }
+.toast.warning { background: var(--warning); }
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes toastOut {
+  to { opacity: 0; transform: translateX(40px); }
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .header-inner { flex-direction: column; align-items: flex-start; }
+  .container { padding: 16px; }
+  .card-body { padding: 16px; }
+  .item-fields { grid-template-columns: 1fr; }
+  .category-tabs { flex-wrap: nowrap; }
+  .cat-tab { font-size: 12px; min-width: 110px; }
+  .brand-text h1 { font-size: 15px; }
+  .brand-text p { font-size: 11px; }
+}
+
+/* ==================== FOOTER ==================== */
+.app-footer {
+  background: var(--gray-900);
+  color: var(--gray-400);
+  text-align: center;
+  padding: 20px 24px;
+  font-size: 12.5px;
+  margin-top: 40px;
+}
+.app-footer strong { color: var(--gray-200); }
+.app-footer .legal-ref { margin-top: 6px; font-size: 11px; color: var(--gray-500); }
+
+/* ==================== UTILITIES ==================== */
+.text-success { color: var(--success); }
+.text-danger { color: var(--danger); }
+.text-warning { color: var(--warning); }
+.text-muted { color: var(--gray-500); }
+.text-sm { font-size: 12px; }
+.mb-4 { margin-bottom: 16px; }
+
+@media print {
+  .app-header, .btn-row, .app-footer { display: none !important; }
+  body { background: white !important; }
+  .card { box-shadow: none !important; border: 1px solid #ccc !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-logo">KIP</div>
+      <div class="brand-text">
+        <h1>Form Entri Ceklis Keterbukaan Informasi Publik</h1>
+        <p>BPS Provinsi Jawa Barat &amp; 27 BPS Kabupaten/Kota se-Jawa Barat</p>
+      </div>
+    </div>
+    <div class="role-badge">📝 Operator Pengisi Ceklis</div>
+  </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="container">
+
+  <div class="alert alert-info">
+    <span class="icon">ℹ️</span>
+    <div>
+      <strong>Alur Kerja:</strong> Pilih badan publik → isi ceklis 4 kategori → klik <strong>Simpan &amp; Unduh JSON</strong>. File JSON otomatis bernama sesuai kode KIP (contoh: <code>kip3200.json</code> untuk BPS Provinsi Jawa Barat). Letakkan file JSON di folder yang sama dengan aplikasi <em>Monev Rekap</em> agar dapat langsung dibaca.
+    </div>
+  </div>
+
+  <!-- Badan Publik Selector -->
+  <div class="card">
+    <div class="card-header">
+      <h2>1. Pilih Badan Publik yang Akan Dievaluasi</h2>
+    </div>
+    <div class="card-body">
+      <div class="selector-row">
+        <div class="form-group">
+          <label class="form-label" for="badanPublikSelect">Badan Publik <span class="req">*</span></label>
+          <select id="badanPublikSelect" class="form-control" onchange="onBadanPublikChange()">
+            <option value="">— Pilih Badan Publik —</option>
+          </select>
+          <div class="form-hint">28 BPS di Jawa Barat (1 Provinsi + 27 Kabupaten/Kota)</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Periode Evaluasi</label>
+          <select id="periodeEvaluasi" class="form-control">
+            <option value="">— Pilih Periode —</option>
+            <option value="Q1">Triwulan I (Q1)</option>
+            <option value="Q2">Triwulan II (Q2)</option>
+            <option value="Q3">Triwulan III (Q3)</option>
+            <option value="Q4">Triwulan IV (Q4)</option>
+            <option value="Semester 1">Semester I</option>
+            <option value="Semester 2">Semester II</option>
+            <option value="Tahunan">Tahunan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tanggal Evaluasi</label>
+          <input type="date" id="tanggalEvaluasi" class="form-control">
+        </div>
+      </div>
+
+      <div id="formContent" style="display:none;">
+        <div id="fileIndicator" style="background:var(--primary-bg);border:1px solid var(--primary-light);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:13.5px;">
+          <span style="font-size:18px;">📄</span>
+          <div>
+            <div style="font-weight:600;color:var(--primary-dark);">File JSON akan disimpan sebagai:</div>
+            <div style="font-family:'Courier New',monospace;font-weight:700;color:var(--primary);font-size:14px;" id="fileIndicatorName">—</div>
+          </div>
+        </div>
+        <div class="form-grid" style="border-top:1px dashed var(--gray-200); padding-top:16px; margin-top:8px;">
+          <div class="form-group">
+            <label class="form-label">Pejabat Pengelola Informasi &amp; Dokumentasi (PPID)</label>
+            <input type="text" id="ppidName" class="form-control" placeholder="Nama PPID / Asisten PPID">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Petugas Monev / Evaluator</label>
+            <input type="text" id="petugasMonev" class="form-control" placeholder="Nama petugas yang melakukan evaluasi">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Website Resmi</label>
+            <input type="url" id="websiteUrl" class="form-control" placeholder="https://jabar.bps.go.id">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Catatan Umum / Rekomendasi</label>
+            <textarea id="catatanUmum" class="form-control" placeholder="Catatan umum hasil evaluasi, rekomendasi perbaikan, atau hal-hal yang perlu ditindaklanjuti..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div id="progressSection" style="display:none;">
+    <div class="progress-container">
+      <div class="progress-stat">
+        <div class="stat-value success" id="statSudah">0</div>
+        <div class="stat-label">Sudah Dipenuhi</div>
+      </div>
+      <div class="progress-stat">
+        <div class="stat-value danger" id="statBelum">0</div>
+        <div class="stat-label">Belum Dipenuhi</div>
+      </div>
+      <div class="progress-stat">
+        <div class="stat-value warning" id="statTidakBerlaku">0</div>
+        <div class="stat-label">Tidak Berlaku</div>
+      </div>
+      <div class="progress-stat">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">Total Item</div>
+      </div>
+      <div class="progress-bar-wrap">
+        <span class="text-sm text-muted">Tingkat Kepatuhan:</span>
+        <div class="progress-bar"><div class="progress-bar-fill" id="progressFill" style="width:0%;"></div></div>
+        <span class="progress-percentage" id="progressPct">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div id="actionButtons" style="display:none;" class="btn-row mb-4">
+    <button class="btn btn-success btn-lg" onclick="saveData(true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Simpan &amp; Unduh JSON
+    </button>
+    <button class="btn btn-primary" onclick="saveData(false)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>
+      Simpan ke Browser
+    </button>
+    <button class="btn btn-outline" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Cetak / PDF
+    </button>
+    <button class="btn btn-outline" onclick="resetForm()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+      Reset Form
+    </button>
+  </div>
+
+  <!-- Checklist Content -->
+  <div id="checklistContent" style="display:none;">
+
+    <div class="category-tabs">
+      <button class="cat-tab berkala active" data-cat="berkala" onclick="switchCategory('berkala')">
+        <span>Informasi Berkala</span>
+        <span class="cat-count" id="count-berkala"></span>
+      </button>
+      <button class="cat-tab sertamerta" data-cat="sertamerta" onclick="switchCategory('sertamerta')">
+        <span>Informasi Serta Merta</span>
+        <span class="cat-count" id="count-sertamerta"></span>
+      </button>
+      <button class="cat-tab setiapsaat" data-cat="setiapsaat" onclick="switchCategory('setiapsaat')">
+        <span>Informasi Setiap Saat</span>
+        <span class="cat-count" id="count-setiapsaat"></span>
+      </button>
+      <button class="cat-tab dikecualikan" data-cat="dikecualikan" onclick="switchCategory('dikecualikan')">
+        <span>Informasi Dikecualikan</span>
+        <span class="cat-count" id="count-dikecualikan"></span>
+      </button>
+    </div>
+
+    <div id="categoryContent"></div>
+  </div>
+
+  <!-- Empty state -->
+  <div id="formEmptyState" class="card">
+    <div class="empty-state">
+      <div class="icon">📋</div>
+      <h3>Pilih Badan Publik untuk Memulai Evaluasi</h3>
+      <p>Silakan pilih salah satu dari 28 BPS di Provinsi Jawa Barat pada dropdown di atas untuk memulai pengisian ceklis Monitoring dan Evaluasi Keterbukaan Informasi Publik.</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- ============ TOAST ============ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="app-footer">
+  <div><strong>Form Entri Ceklis KIP — BPS Jawa Barat</strong> · Aplikasi untuk operator pengisi ceklis daftar informasi publik</div>
+  <div class="legal-ref">Dasar Hukum: UU No. 14 Tahun 2008 tentang KIP · Perki No. 1 Tahun 2018 tentang Pengelolaan dan Layanan Informasi di Badan Publik · <strong>Perki No. 1 Tahun 2021 tentang Standar Layanan Informasi Publik</strong> · Perki No. 1 Tahun 2017 tentang PPID · Perki No. 1 Tahun 2020 · UU Perlindungan Data Pribadi</div>
+</footer>
+
+<script>
+/* ============================================================
+   DATA: DAFTAR BADAN PUBLIK (28 BPS di Jawa Barat)
+   ============================================================ */
+const BADAN_PUBLIK_LIST = [
+  { id: 'bps-provinsi-jabar', code: 'kip3200', name: 'BPS Provinsi Jawa Barat', type: 'Provinsi' },
+  { id: 'bps-kab-bogor', code: 'kip3201', name: 'BPS Kabupaten Bogor', type: 'Kabupaten' },
+  { id: 'bps-kab-sukabumi', code: 'kip3202', name: 'BPS Kabupaten Sukabumi', type: 'Kabupaten' },
+  { id: 'bps-kab-cianjur', code: 'kip3203', name: 'BPS Kabupaten Cianjur', type: 'Kabupaten' },
+  { id: 'bps-kab-bandung', code: 'kip3204', name: 'BPS Kabupaten Bandung', type: 'Kabupaten' },
+  { id: 'bps-kab-garut', code: 'kip3205', name: 'BPS Kabupaten Garut', type: 'Kabupaten' },
+  { id: 'bps-kab-tasikmalaya', code: 'kip3206', name: 'BPS Kabupaten Tasikmalaya', type: 'Kabupaten' },
+  { id: 'bps-kab-ciamis', code: 'kip3207', name: 'BPS Kabupaten Ciamis', type: 'Kabupaten' },
+  { id: 'bps-kab-kuningan', code: 'kip3208', name: 'BPS Kabupaten Kuningan', type: 'Kabupaten' },
+  { id: 'bps-kab-cirebon', code: 'kip3209', name: 'BPS Kabupaten Cirebon', type: 'Kabupaten' },
+  { id: 'bps-kab-majalengka', code: 'kip3210', name: 'BPS Kabupaten Majalengka', type: 'Kabupaten' },
+  { id: 'bps-kab-sumedang', code: 'kip3211', name: 'BPS Kabupaten Sumedang', type: 'Kabupaten' },
+  { id: 'bps-kab-indramayu', code: 'kip3212', name: 'BPS Kabupaten Indramayu', type: 'Kabupaten' },
+  { id: 'bps-kab-subang', code: 'kip3213', name: 'BPS Kabupaten Subang', type: 'Kabupaten' },
+  { id: 'bps-kab-purwakarta', code: 'kip3214', name: 'BPS Kabupaten Purwakarta', type: 'Kabupaten' },
+  { id: 'bps-kab-karawang', code: 'kip3215', name: 'BPS Kabupaten Karawang', type: 'Kabupaten' },
+  { id: 'bps-kab-bekasi', code: 'kip3216', name: 'BPS Kabupaten Bekasi', type: 'Kabupaten' },
+  { id: 'bps-kab-bandung-barat', code: 'kip3217', name: 'BPS Kabupaten Bandung Barat', type: 'Kabupaten' },
+  { id: 'bps-kab-pangandaran', code: 'kip3218', name: 'BPS Kabupaten Pangandaran', type: 'Kabupaten' },
+  { id: 'bps-kota-bogor', code: 'kip3271', name: 'BPS Kota Bogor', type: 'Kota' },
+  { id: 'bps-kota-sukabumi', code: 'kip3272', name: 'BPS Kota Sukabumi', type: 'Kota' },
+  { id: 'bps-kota-bandung', code: 'kip3273', name: 'BPS Kota Bandung', type: 'Kota' },
+  { id: 'bps-kota-cirebon', code: 'kip3274', name: 'BPS Kota Cirebon', type: 'Kota' },
+  { id: 'bps-kota-bekasi', code: 'kip3275', name: 'BPS Kota Bekasi', type: 'Kota' },
+  { id: 'bps-kota-depok', code: 'kip3276', name: 'BPS Kota Depok', type: 'Kota' },
+  { id: 'bps-kota-cimahi', code: 'kip3277', name: 'BPS Kota Cimahi', type: 'Kota' },
+  { id: 'bps-kota-tasikmalaya', code: 'kip3278', name: 'BPS Kota Tasikmalaya', type: 'Kota' },
+  { id: 'bps-kota-banjar', code: 'kip3279', name: 'BPS Kota Banjar', type: 'Kota' }
+];
+
+/* ============================================================
+   DATA: CEKLIS INFORMASI PUBLIK
+   Berdasarkan UU No. 14/2008 & Perki No. 1/2018
+   ============================================================ */
+const CHECKLIST = {
+  berkala: {
+    title: 'Informasi yang Wajib Diumumkan Secara Berkala',
+    legal_basis: 'Pasal 9 ayat (1) & (2) UU No. 14/2008 · Pasal 3-5 Perki No. 1/2018 · Bab IV Perki No. 1/2021',
+    description: 'Informasi yang wajib diumumkan oleh badan publik secara berkala (paling sedikit 1 kali dalam 6 bulan atau sesuai jadwal pemutakhiran).',
+    items: [
+      { id: 'b01', name: 'Profil Badan Publik', desc: 'Profil institusi yang memuat gambaran umum, sejarah, dan tugas pokok badan publik.' },
+      { id: 'b02', name: 'Tugas Pokok dan Fungsi (Tupoksi)', desc: 'Uraian tugas pokok dan fungsi badan publik beserta unit-unit kerja di bawahnya.' },
+      { id: 'b03', name: 'Struktur Organisasi', desc: 'Bagan struktur organisasi badan publik hingga level unit kerja/eselon.' },
+      { id: 'b04', name: 'Visi dan Misi', desc: 'Pernyataan visi dan misi badan publik.' },
+      { id: 'b05', name: 'Rencana Strategis (Renstra)', desc: 'Dokumen rencana strategis badan publik untuk periode 5 tahun.' },
+      { id: 'b06', name: 'Program dan Kegiatan', desc: 'Daftar program dan kegiatan badan publik beserta penanggung jawab.' },
+      { id: 'b07', name: 'Laporan Kinerja Badan Publik', desc: 'Laporan kinerja yang memuat capaian sasaran, target, dan realisasi.' },
+      { id: 'b08', name: 'Laporan Keuangan Tahunan', desc: 'Laporan keuangan tahunan yang telah diaudit (jika ada) atau laporan pertanggungjawaban.' },
+      { id: 'b09', name: 'Anggaran / DIPA', desc: 'Daftar Isian Pelaksanaan Anggaran (DIPA) atau dokumen anggaran tahun berjalan.' },
+      { id: 'b10', name: 'Standar Operasional Prosedur (SOP)', desc: 'SOP pelayanan publik dan kegiatan utama badan publik.' },
+      { id: 'b11', name: 'Maklumat Pelayanan', desc: 'Maklumat pelayanan publik yang berisi janji dan komitmen pelayanan sesuai Pasal 47 Perki 1/2021.' },
+      { id: 'b12', name: 'Standar Pelayanan Publik', desc: 'Standar pelayanan publik (SPP) dan standar biaya pelayanan (SBP).' },
+      { id: 'b13', name: 'Peraturan dan Kebijakan', desc: 'Peraturan, keputusan, dan kebijakan internal badan publik yang telah diundangkan.' },
+      { id: 'b14', name: 'Ringkasan Eksekutif Laporan', desc: 'Ringkasan eksekutif dari laporan kinerja, keuangan, dan kegiatan tahunan.' },
+      { id: 'b15', name: 'Laporan Akses Informasi Publik (LAIP)', desc: 'Laporan tahunan tentang pelaksanaan akses informasi publik yang disampaikan ke Komisi Informasi.' },
+      { id: 'b16', name: 'Proses Pengadaan Barang dan Jasa Pemerintah', desc: 'Informasi rencana umum pengadaan (RUP), realisasi pengadaan, dan transparansi pengadaan barang/jasa sesuai Bab khusus Perki 1/2021.' },
+      { id: 'b17', name: 'Produk Hukum yang Dihasilkan', desc: 'Produk hukum (Peraturan Kepala BPS, Surat Edaran, dll.) yang dihasilkan badan publik.' },
+      { id: 'b18', name: 'Rekapitulasi Permohonan & Keberatan Informasi', desc: 'Rekap jumlah permohonan informasi dan pengajuan keberatan yang diterima dalam periode tersebut.' },
+      { id: 'b19', name: 'Penyesuaian SLIP dengan Satu Data Indonesia', desc: 'Komitmen dan implementasi prinsip Satu Data Indonesia dalam pengelolaan data statistik sesuai Perki 1/2021 (isu perubahan #6).' },
+      { id: 'b20', name: 'Laporan Penyelesaian Sengketa Informasi', desc: 'Laporan penyelesaian sengketa informasi yang ditangani PPID dalam periode pelaporan.' }
+    ]
+  },
+  sertamerta: {
+    title: 'Informasi yang Wajib Diumumkan Secara Serta Merta',
+    legal_basis: 'Pasal 10 UU No. 14/2008 · Pasal 6 Perki No. 1/2018 · Bab V Perki No. 1/2021',
+    description: 'Informasi yang dapat mengancam hajat hidup orang banyak dan ketertiban umum yang wajib diumumkan secara serta-merta (segera setelah informasi tersedia).',
+    items: [
+      { id: 's01', name: 'Informasi Ancaman Keselamatan & Kesehatan Masyarakat', desc: 'Informasi yang berkaitan dengan ancaman terhadap keselamatan dan kesehatan masyarakat.' },
+      { id: 's02', name: 'Informasi Ancaman Ketertiban Umum', desc: 'Informasi yang dapat mengancam ketertiban umum dan stabilitas wilayah.' },
+      { id: 's03', name: 'Informasi yang Membahayakan Keamanan Negara', desc: 'Informasi yang dapat membahayakan keamanan dan kedaulatan negara.' },
+      { id: 's04', name: 'Informasi Bencana Alam & Calon Bencana', desc: 'Informasi tentang bencana alam, calon bencana, mitigasi, dan tindakan darurat.' },
+      { id: 's05', name: 'Kondisi Darurat', desc: 'Informasi tentang kondisi darurat dan status keadaan darurat yang ditetapkan.' },
+      { id: 's06', name: 'Peringatan Dini kepada Masyarakat', desc: 'Informasi peringatan dini (early warning) untuk masyarakat terkait risiko tertentu.' },
+      { id: 's07', name: 'Kejadian Luar Biasa (KLB) / Status Kesehatan Masyarakat', desc: 'Informasi KLB, wabah, atau status kesehatan masyarakat yang membutuhkan perhatian publik.' },
+      { id: 's08', name: 'Kebijakan Berdampak Luas', desc: 'Informasi tentang kebijakan badan publik yang berdampak luas pada masyarakat.' },
+      { id: 's09', name: 'Publikasi Serta Merta via Media Elektronik & Sosial Media', desc: 'Mekanisme penyebaran informasi serta merta melalui kanal elektronik sesuai penyesuaian SLIP dengan teknologi informasi (Perki 1/2021 isu #5).' }
+    ]
+  },
+  setiapsaat: {
+    title: 'Informasi yang Wajib Tersedia & Dapat Diakses Setiap Saat',
+    legal_basis: 'Pasal 11 UU No. 14/2008 · Pasal 7-9 Perki No. 1/2018 · Bab VI-VIII Perki No. 1/2021',
+    description: 'Informasi yang wajib disediakan dan dapat diakses oleh setiap pemohon informasi setiap saat, baik melalui website, ruang baca, maupun media lain.',
+    items: [
+      { id: 'st01', name: 'Daftar Informasi Publik (DIP)', desc: 'Daftar informasi publik yang dimiliki, dihasilkan, dan/atau dikuasai badan publik sesuai Pasal 45 Perki 1/2021.' },
+      { id: 'st02', name: 'Daftar Informasi yang Dikecualikan (DID)', desc: 'Daftar informasi yang dikecualikan dari akses publik beserta dasar pengecualian.' },
+      { id: 'st03', name: 'Indikator Kinerja Utama (IKU)', desc: 'Indikator kinerja utama badan publik yang menggambarkan capaian kinerja.' },
+      { id: 'st04', name: 'Daftar Kelompok Satuan Kerja', desc: 'Daftar kelompok satuan kerja/unit kerja beserta tugas dan fungsi masing-masing.' },
+      { id: 'st05', name: 'Informasi Keputusan dan Kebijakan', desc: 'Informasi tentang keputusan dan kebijakan badan publik beserta dasar hukumnya.' },
+      { id: 'st06', name: 'Informasi Kegiatan Badan Publik', desc: 'Daftar kegiatan badan publik yang sedang dan akan dilaksanakan.' },
+      { id: 'st07', name: 'Salinan Putusan/Keputusan', desc: 'Salinan putusan dan keputusan badan publik yang dapat diakses pemohon informasi.' },
+      { id: 'st08', name: 'Peraturan dan Kebijakan Berlaku', desc: 'Peraturan dan kebijakan yang berlaku pada badan publik.' },
+      { id: 'st09', name: 'Berita Acara Rapat', desc: 'Berita acara rapat badan publik yang dapat dipublikasikan (bukan rapat internal tertutup).' },
+      { id: 'st10', name: 'SOP Layanan Informasi Publik (SLIP)', desc: 'SOP pelayanan informasi publik yang memuat mekanisme permohonan, penyelesaian, dan keberatan sesuai standar prosedur operasional SLIP Perki 1/2021 (isu #7).' },
+      { id: 'st11', name: 'Formulir Permohonan Informasi', desc: 'Formulir permohonan informasi publik yang dapat diunduh dan diakses pemohon.' },
+      { id: 'st12', name: 'Mekanisme Pengajuan Keberatan', desc: 'Prosedur pengajuan keberatan atas keputusan PPID, termasuk formulir dan alur penyelesaian.' },
+      { id: 'st13', name: 'Tarif Biaya Salinan Informasi', desc: 'Daftar tarif biaya pengadaan salinan informasi publik sesuai standar biaya Perki 1/2021.' },
+      { id: 'st14', name: 'Struktur Kelembagaan PPID Lengkap', desc: 'Struktur PPID lengkap: Atasan PPID, PPID, PPID Pelaksana, Tim Pertimbangan, dan Petugas Pelayanan Informasi Publik sesuai Perki 1/2021 (isu #2).' },
+      { id: 'st15', name: 'SK Pengangkatan PPID & Tim Pertimbangan', desc: 'SK pengangkatan Atasan PPID, PPID, PPID Pelaksana, dan Tim Pertimbangan beserta Petugas Pelayanan.' },
+      { id: 'st16', name: 'Tata Tertib & Tugas Pokok PPID', desc: 'Tata tertib dan tugas pokok masing-masing unsur kelembagaan PPID (Atasan, PPID, Pelaksana, Tim Pertimbangan, Petugas Pelayanan).' },
+      { id: 'st17', name: 'Layanan Pengaduan Masyarakat', desc: 'Kanal pengaduan masyarakat atas pelayanan informasi publik yang diselenggarakan badan publik.' },
+      { id: 'st18', name: 'Jadwal & Jam Layanan Informasi', desc: 'Jadwal dan jam layanan informasi publik (ruang baca, helpdesk, dll.).' },
+      { id: 'st19', name: 'Aksesibilitas bagi Penyandang Disabilitas', desc: 'Ketersediaan fasilitas layanan informasi yang ramah bagi penyandang disabilitas sesuai akomodasi Perki 1/2021 (isu #10).' },
+      { id: 'st20', name: 'Sistem Informasi PPID Berbasis IT', desc: 'Sistem informasi PPID berbasis teknologi informasi (website, portal layanan, e-PPID) sesuai penyesuaian SLIP dengan teknologi (Perki 1/2021 isu #5).' },
+      { id: 'st21', name: 'Perlindungan Data Pribadi', desc: 'Mekanisme perlindungan data pribadi dalam pengelolaan informasi publik sesuai akomodasi Perki 1/2021 (isu #9) dan UU PDP.' },
+      { id: 'st22', name: 'Mekanisme Bantuan Kedinasan / Bagi Pakai Informasi', desc: 'Mekanisme bantuan kedinasan dan bagi pakai informasi antar badan publik sesuai Perki 1/2021 (isu #8).' },
+      { id: 'st23', name: 'Fasilitas & Sarana Layanan Informasi', desc: 'Ketersediaan fasilitas fisik dan sarana layanan informasi publik: ruang baca, komputer, printer, dll.' },
+      { id: 'st24', name: 'Kontak & Helpdesk PPID yang Aktif', desc: 'Kontak PPID (telepon, email, social media) yang aktif dan dapat dihubungi pemohon informasi.' }
+    ]
+  },
+  dikecualikan: {
+    title: 'Informasi yang Dikecualikan',
+    legal_basis: 'Pasal 17-21 UU No. 14/2008 · Pasal 10-14 Perki No. 1/2018 · Bab IX Perki No. 1/2021 (Reformulasi Uji Konsekuensi)',
+    description: 'Informasi yang dapat dikecualikan dari akses publik berdasarkan kriteria tertentu. Wajib dilakukan uji konsekuensi (reformulasi sesuai Perki 1/2021) dan didokumentasikan dalam Daftar Informasi Dikecualikan (DID).',
+    items: [
+      { id: 'd01', name: 'Informasi Rahasia Negara', desc: 'Informasi yang berdasarkan undang-undang dinyatakan sebagai rahasia negara.' },
+      { id: 'd02', name: 'Informasi yang Mengganggu Hubungan Internasional', desc: 'Informasi yang pengungkapannya dapat mengganggu kepentingan hubungan internasional.' },
+      { id: 'd03', name: 'Informasi yang Membahayakan Keamanan & Ketertiban', desc: 'Informasi yang dapat membahayakan keamanan dan ketertiban umum.' },
+      { id: 'd04', name: 'Informasi yang Merugikan Kepentingan Ekonomi Nasional', desc: 'Informasi yang pengungkapannya dapat merugikan kepentingan ekonomi nasional.' },
+      { id: 'd05', name: 'Informasi Hak Pribadi / Data Pribadi', desc: 'Informasi yang berkaitan dengan hak privasi pribadi dan data pribadi sesuai perlindungan data pribadi (Perki 1/2021 isu #9).' },
+      { id: 'd06', name: 'Informasi Sumber Daya Alam', desc: 'Informasi tentang sumber daya alam yang pengungkapannya dapat membahayakan kelestarian.' },
+      { id: 'd07', name: 'Informasi Hasil Intelektual', desc: 'Informasi hasil karya intelektual yang dilindungi hak cipta/kekayaan intelektual.' },
+      { id: 'd08', name: 'Informasi Arsip Konsultasi', desc: 'Informasi yang berkaitan dengan arsip konsultasi internal badan publik.' },
+      { id: 'd09', name: 'Informasi Persidangan Internal', desc: 'Informasi persidangan, seminar, atau rapat internal badan publik.' },
+      { id: 'd10', name: 'Daftar Informasi Dikecualikan (DID) Tersedia', desc: 'Apakah badan publik telah memiliki Daftar Informasi Dikecualikan (DID) yang terdokumentasi?' },
+      { id: 'd11', name: 'SK Penetapan Klasifikasi Informasi Dikecualikan', desc: 'SK PPID tentang Klasifikasi Informasi yang Dikecualikan sesuai standar Perki 1/2021.' },
+      { id: 'd12', name: 'Uji Konsekuensi Dilakukan (Reformulasi)', desc: 'Apakah setiap pengecualian informasi telah melalui uji konsekuensi dengan reformulasi mekanisme sesuai Perki 1/2021 (isu #4)?' },
+      { id: 'd13', name: 'Dokumen Uji Konsekuensi Tersedia', desc: 'Apakah dokumen/form uji konsekuensi tersedia dan dapat ditunjukkan saat audit?' },
+      { id: 'd14', name: 'Dasar Pengecualian Tercantum', desc: 'Apakah setiap informasi yang dikecualikan mencantumkan dasar hukum pengecualian?' },
+      { id: 'd15', name: 'Jangka Waktu Pengecualikan Ditentukan', desc: 'Apakah jangka waktu berlakunya pengecualian telah ditentukan dan dievaluasi secara berkala?' },
+      { id: 'd16', name: 'Mekanisme Pengajuan Keberatan atas Pengecualikan', desc: 'Apakah tersedia mekanisme pengajuan keberatan bagi pemohon yang informasinya dikecualikan?' },
+      { id: 'd17', name: 'Publikasi DID tanpa Mengungkap Dasar Pengecualian', desc: 'Publikasi DID kepada publik tanpa mengungkapkan dasar/keterangan pengecualian sesuai Perki 1/2021.' }
+    ]
+  }
+};
+
+/* ============================================================
+   STATE MANAGEMENT
+   ============================================================ */
+const STORAGE_KEY = 'monev_kip_bps_jabar_form';
+const CURRENT_VERSION = '1.0';
+let state = {
+  currentBadanPublikId: null,
+  currentCategory: 'berkala',
+  formData: null
+};
+
+/* ============================================================
+   INITIALIZATION
+   ============================================================ */
+function init() {
+  populateBadanPublikDropdown();
+  updateCategoryCounts();
+  setDefaultDate();
+}
+
+function populateBadanPublikDropdown() {
+  const select = document.getElementById('badanPublikSelect');
+  const groups = { Provinsi: [], Kabupaten: [], Kota: [] };
+  BADAN_PUBLIK_LIST.forEach(bp => groups[bp.type].push(bp));
+  const order = ['Provinsi', 'Kabupaten', 'Kota'];
+  order.forEach(type => {
+    if (groups[type].length === 0) return;
+    const optgroup = document.createElement('optgroup');
+    optgroup.label = type === 'Provinsi' ? '— Provinsi —' : (type === 'Kabupaten' ? '— Kabupaten —' : '— Kota —');
+    groups[type].forEach(bp => {
+      const opt = document.createElement('option');
+      opt.value = bp.id;
+      opt.textContent = `${bp.code.toUpperCase()} — ${bp.name}`;
+      optgroup.appendChild(opt);
+    });
+    select.appendChild(optgroup);
+  });
+}
+
+function setDefaultDate() {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  document.getElementById('tanggalEvaluasi').value = `${yyyy}-${mm}-${dd}`;
+}
+
+function updateCategoryCounts() {
+  Object.keys(CHECKLIST).forEach(cat => {
+    const el = document.getElementById('count-' + cat);
+    if (el) el.textContent = CHECKLIST[cat].items.length + ' item';
+  });
+}
+
+/* ============================================================
+   BADAN PUBLIK SELECTION
+   ============================================================ */
+function onBadanPublikChange() {
+  const select = document.getElementById('badanPublikSelect');
+  const id = select.value;
+  if (!id) { showEmptyState(); return; }
+  state.currentBadanPublikId = id;
+  // Update file indicator
+  const bp = BADAN_PUBLIK_LIST.find(b => b.id === id);
+  if (bp) {
+    document.getElementById('fileIndicatorName').textContent = `${bp.code}.json`;
+  }
+  const existing = loadFromStorage(id);
+  if (existing) {
+    state.formData = existing;
+    populateMetadataForm(existing);
+    showToast('Data tersimpan sebelumnya dimuat untuk ' + existing.badanPublikName, 'info');
+  } else {
+    state.formData = createEmptyFormData(id);
+    clearMetadataForm();
+  }
+  document.getElementById('formEmptyState').style.display = 'none';
+  document.getElementById('formContent').style.display = 'block';
+  document.getElementById('progressSection').style.display = 'block';
+  document.getElementById('actionButtons').style.display = 'flex';
+  document.getElementById('checklistContent').style.display = 'block';
+  state.currentCategory = 'berkala';
+  switchCategory('berkala');
+  updateProgress();
+}
+
+function createEmptyFormData(badanPublikId) {
+  const bp = BADAN_PUBLIK_LIST.find(b => b.id === badanPublikId);
+  const data = {
+    badanPublikId: badanPublikId,
+    badanPublikName: bp.name,
+    badanPublikType: bp.type,
+    version: CURRENT_VERSION,
+    metadata: {
+      ppidName: '', petugasMonev: '', websiteUrl: '',
+      tanggalEvaluasi: document.getElementById('tanggalEvaluasi').value,
+      periodeEvaluasi: '', catatanUmum: ''
+    },
+    checklist: {}
+  };
+  Object.keys(CHECKLIST).forEach(cat => {
+    data.checklist[cat] = {};
+    CHECKLIST[cat].items.forEach(item => {
+      data.checklist[cat][item.id] = {
+        status: '', lokasiPenayangan: [], link: '', tanggalPemutakhiran: '', catatan: ''
+      };
+    });
+  });
+  return data;
+}
+
+function populateMetadataForm(data) {
+  document.getElementById('ppidName').value = data.metadata.ppidName || '';
+  document.getElementById('petugasMonev').value = data.metadata.petugasMonev || '';
+  document.getElementById('websiteUrl').value = data.metadata.websiteUrl || '';
+  document.getElementById('tanggalEvaluasi').value = data.metadata.tanggalEvaluasi || '';
+  document.getElementById('periodeEvaluasi').value = data.metadata.periodeEvaluasi || '';
+  document.getElementById('catatanUmum').value = data.metadata.catatanUmum || '';
+}
+
+function clearMetadataForm() {
+  document.getElementById('ppidName').value = '';
+  document.getElementById('petugasMonev').value = '';
+  document.getElementById('websiteUrl').value = '';
+  document.getElementById('catatanUmum').value = '';
+  setDefaultDate();
+}
+
+function showEmptyState() {
+  document.getElementById('formEmptyState').style.display = 'block';
+  document.getElementById('formContent').style.display = 'none';
+  document.getElementById('progressSection').style.display = 'none';
+  document.getElementById('actionButtons').style.display = 'none';
+  document.getElementById('checklistContent').style.display = 'none';
+  state.currentBadanPublikId = null;
+  state.formData = null;
+}
+
+/* ============================================================
+   METADATA UPDATE
+   ============================================================ */
+function updateMetadata() {
+  if (!state.formData) return;
+  state.formData.metadata.ppidName = document.getElementById('ppidName').value;
+  state.formData.metadata.petugasMonev = document.getElementById('petugasMonev').value;
+  state.formData.metadata.websiteUrl = document.getElementById('websiteUrl').value;
+  state.formData.metadata.tanggalEvaluasi = document.getElementById('tanggalEvaluasi').value;
+  state.formData.metadata.periodeEvaluasi = document.getElementById('periodeEvaluasi').value;
+  state.formData.metadata.catatanUmum = document.getElementById('catatanUmum').value;
+}
+
+/* ============================================================
+   CATEGORY SWITCHING
+   ============================================================ */
+function switchCategory(cat) {
+  state.currentCategory = cat;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
+  renderChecklist();
+}
+
+/* ============================================================
+   CHECKLIST RENDERING
+   ============================================================ */
+function renderChecklist() {
+  const cat = state.currentCategory;
+  const data = CHECKLIST[cat];
+  const container = document.getElementById('categoryContent');
+  updateMetadata();
+  let html = `
+    <div class="legal-basis-card">
+      <div class="icon">§</div>
+      <div class="content">
+        <div class="title">${data.title}</div>
+        <div class="text"><strong>Dasar Hukum:</strong> ${data.legal_basis}<br>${data.description}</div>
+      </div>
+    </div>
+  `;
+  data.items.forEach((item, idx) => {
+    const itemData = state.formData.checklist[cat][item.id] || { status: '', lokasiPenayangan: [], link: '', tanggalPemutakhiran: '', catatan: '' };
+    const statusClass = itemData.status === 'sudah' ? 'status-sudah' :
+                       itemData.status === 'belum' ? 'status-belum' :
+                       itemData.status === 'tidak-berlaku' ? 'status-tidak-berlaku' : 'status-default';
+    html += `
+      <div class="checklist-item ${statusClass}" id="item-${item.id}">
+        <div class="item-header">
+          <div class="item-number">${idx + 1}</div>
+          <div class="item-title">
+            <h4>${item.name}</h4>
+            <div class="item-desc">${item.desc}</div>
+          </div>
+          <div class="item-status-select">
+            <select class="status-select" onchange="updateItem('${item.id}', 'status', this.value)">
+              <option value="" ${itemData.status === '' ? 'selected' : ''}>— Pilih Status —</option>
+              <option value="sudah" ${itemData.status === 'sudah' ? 'selected' : ''}>✓ Sudah Dipenuhi</option>
+              <option value="belum" ${itemData.status === 'belum' ? 'selected' : ''}>✗ Belum Dipenuhi</option>
+              <option value="tidak-berlaku" ${itemData.status === 'tidak-berlaku' ? 'selected' : ''}>○ Tidak Berlaku</option>
+            </select>
+          </div>
+        </div>
+        <div class="item-fields">
+          <div class="field" style="grid-column: 1 / -1;">
+            <label class="field-label">Lokasi Penayangan</label>
+            <div class="checkbox-group">
+              ${['Website Resmi','Papan Pengumuman','Media Sosial','Ruang Baca/Bacaan','Layanan Langsung','Lainnya'].map(loc => {
+                const checked = itemData.lokasiPenayangan.includes(loc);
+                return `<label class="checkbox-chip ${checked ? 'checked' : ''}" data-loc="${loc}">
+                  <input type="checkbox" value="${loc}" ${checked ? 'checked' : ''} onchange="toggleLokasi('${item.id}', '${loc}', this.checked)">
+                  ${loc}
+                </label>`;
+              }).join('')}
+            </div>
+          </div>
+          <div class="field" style="grid-column: span 2;">
+            <label class="field-label">Tautan / Link Bukti</label>
+            <input type="url" placeholder="https://..." value="${escapeHtml(itemData.link)}" onchange="updateItem('${item.id}', 'link', this.value)">
+          </div>
+          <div class="field">
+            <label class="field-label">Tanggal Pemutakhiran</label>
+            <input type="date" value="${itemData.tanggalPemutakhiran || ''}" onchange="updateItem('${item.id}', 'tanggalPemutakhiran', this.value)">
+          </div>
+          <div class="field" style="grid-column: 1 / -1;">
+            <label class="field-label">Catatan / Keterangan</label>
+            <textarea placeholder="Catatan tambahan, kendala, rekomendasi..." onchange="updateItem('${item.id}', 'catatan', this.value)">${escapeHtml(itemData.catatan)}</textarea>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+  updateProgress();
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ============================================================
+   ITEM UPDATE
+   ============================================================ */
+function updateItem(itemId, field, value) {
+  if (!state.formData) return;
+  const cat = state.currentCategory;
+  if (!state.formData.checklist[cat][itemId]) {
+    state.formData.checklist[cat][itemId] = { status: '', lokasiPenayangan: [], link: '', tanggalPemutakhiran: '', catatan: '' };
+  }
+  state.formData.checklist[cat][itemId][field] = value;
+  if (field === 'status') {
+    const itemEl = document.getElementById('item-' + itemId);
+    itemEl.classList.remove('status-sudah', 'status-belum', 'status-tidak-berlaku', 'status-default');
+    if (value === 'sudah') itemEl.classList.add('status-sudah');
+    else if (value === 'belum') itemEl.classList.add('status-belum');
+    else if (value === 'tidak-berlaku') itemEl.classList.add('status-tidak-berlaku');
+    else itemEl.classList.add('status-default');
+  }
+  updateProgress();
+}
+
+function toggleLokasi(itemId, loc, checked) {
+  if (!state.formData) return;
+  const cat = state.currentCategory;
+  if (!state.formData.checklist[cat][itemId]) {
+    state.formData.checklist[cat][itemId] = { status: '', lokasiPenayangan: [], link: '', tanggalPemutakhiran: '', catatan: '' };
+  }
+  const arr = state.formData.checklist[cat][itemId].lokasiPenayangan;
+  if (checked) { if (!arr.includes(loc)) arr.push(loc); }
+  else { state.formData.checklist[cat][itemId].lokasiPenayangan = arr.filter(l => l !== loc); }
+  const chip = document.querySelector(`#item-${itemId} .checkbox-chip[data-loc="${loc}"]`);
+  if (chip) chip.classList.toggle('checked', checked);
+}
+
+/* ============================================================
+   PROGRESS CALCULATION
+   ============================================================ */
+function updateProgress() {
+  if (!state.formData) return;
+  let total = 0, sudah = 0, belum = 0, tidakBerlaku = 0;
+  Object.keys(state.formData.checklist).forEach(cat => {
+    Object.keys(state.formData.checklist[cat]).forEach(itemId => {
+      total++;
+      const status = state.formData.checklist[cat][itemId].status;
+      if (status === 'sudah') sudah++;
+      else if (status === 'belum') belum++;
+      else if (status === 'tidak-berlaku') tidakBerlaku++;
+    });
+  });
+  const compliancePct = total > 0 ? Math.round((sudah / total) * 100) : 0;
+  document.getElementById('statSudah').textContent = sudah;
+  document.getElementById('statBelum').textContent = belum;
+  document.getElementById('statTidakBerlaku').textContent = tidakBerlaku;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('progressFill').style.width = compliancePct + '%';
+  document.getElementById('progressPct').textContent = compliancePct + '%';
+}
+
+/* ============================================================
+   STORAGE (localStorage)
+   ============================================================ */
+function loadFromStorage(badanPublikId) {
+  const all = getAllFromStorage();
+  return all[badanPublikId] || null;
+}
+function getAllFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) { return {}; }
+}
+function saveToStorage(data) {
+  const all = getAllFromStorage();
+  all[data.badanPublikId] = data;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+}
+
+/* ============================================================
+   SAVE & DOWNLOAD
+   ============================================================ */
+function saveData(download) {
+  updateMetadata();
+  if (!state.formData) {
+    showToast('Pilih badan publik terlebih dahulu', 'warning');
+    return;
+  }
+  state.formData.savedAt = new Date().toISOString();
+  state.formData.version = CURRENT_VERSION;
+  saveToStorage(state.formData);
+  if (download) downloadJSONFile(state.formData);
+  showToast(`Data ${state.formData.badanPublikName} berhasil disimpan${download ? ' & diunduh' : ''}. Kirim file JSON ke tim Monev.`, 'success');
+}
+
+function downloadJSONFile(data) {
+  const filename = generateFilename(data.badanPublikId);
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function generateFilename(badanPublikId) {
+  const bp = BADAN_PUBLIK_LIST.find(b => b.id === badanPublikId);
+  if (!bp) return 'kip-data.json';
+  return `${bp.code}.json`;
+}
+
+/* ============================================================
+   RESET FORM
+   ============================================================ */
+function resetForm() {
+  if (!state.currentBadanPublikId) return;
+  if (!confirm('Reset semua isian untuk badan publik ini? Data yang tersimpan di browser tidak akan terhapus sampai Anda menekan tombol Simpan.')) return;
+  state.formData = createEmptyFormData(state.currentBadanPublikId);
+  clearMetadataForm();
+  switchCategory(state.currentCategory);
+  updateProgress();
+  showToast('Form telah direset', 'info');
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : type === 'warning' ? '⚠' : 'ℹ';
+  toast.innerHTML = `<span style="font-size:16px;font-weight:700;">${icon}</span><span>${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'toastOut 0.3s ease forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+/* ============================================================
+   AUTO-SAVE METADATA ON INPUT
+   ============================================================ */
+['ppidName', 'petugasMonev', 'websiteUrl', 'tanggalEvaluasi', 'periodeEvaluasi', 'catatanUmum'].forEach(id => {
+  document.addEventListener('input', function(e) {
+    if (e.target.id === id && state.formData) updateMetadata();
+  });
+});
+
+/* ============================================================
+   START APP
+   ============================================================ */
+init();
+</script>
+</body>
+</html>
