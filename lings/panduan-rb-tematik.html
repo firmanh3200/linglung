@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Panduan Ringkas RB Tematik 2025 — BPS</title>
+<meta name="description" content="Panduan Ringkas Reformasi Birokrasi Tematik 2025 — Sekretariat RB BPS. Enam tema prioritas untuk penyusunan Rencana Aksi RB BPS." />
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['"Plus Jakarta Sans"', 'sans-serif'],
+          body: ['"Inter"', 'sans-serif'],
+        },
+        colors: {
+          bps: {
+            50:  '#eff6ff',
+            100: '#dbeafe',
+            200: '#bfdbfe',
+            300: '#93c5fd',
+            400: '#60a5fa',
+            500: '#3b82f6',
+            600: '#2563eb',
+            700: '#1d4ed8',
+            800: '#1e3a8a',
+            900: '#172554',
+          },
+          ink: {
+            900: '#0b1220',
+            800: '#111a2e',
+            700: '#1c2842',
+            600: '#334155',
+            500: '#475569',
+            400: '#64748b',
+            300: '#94a3b8',
+            200: '#cbd5e1',
+            100: '#e2e8f0',
+            50:  '#f1f5f9',
+          }
+        },
+        boxShadow: {
+          'soft': '0 4px 24px -8px rgba(15, 23, 42, 0.10)',
+          'card': '0 8px 32px -12px rgba(15, 23, 42, 0.15)',
+          'glow': '0 0 40px -8px rgba(37, 99, 235, 0.45)',
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  :root{
+    --bps-red: #DC2626;
+    --bps-gold: #F59E0B;
+  }
+  *{ -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  html{ scroll-behavior: smooth; scroll-padding-top: 92px; }
+  body{ font-family: 'Inter', sans-serif; background:#f8fafc; color:#0b1220; overflow-x:hidden; }
+
+  h1,h2,h3,h4,h5,.font-display{ font-family:'Plus Jakarta Sans', sans-serif; }
+
+  /* Scroll progress */
+  #progressBar{
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: linear-gradient(90deg, #2563eb 0%, #DC2626 100%);
+    z-index: 100; transition: width .1s linear;
+  }
+
+  /* Navbar */
+  #navbar{
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    background: rgba(255,255,255,0.78);
+    border-bottom: 1px solid rgba(15,23,42,0.06);
+  }
+  #navbar.scrolled{
+    background: rgba(255,255,255,0.92);
+    box-shadow: 0 6px 24px -16px rgba(15,23,42,0.25);
+  }
+  .nav-link{
+    position: relative; transition: color .2s ease;
+  }
+  .nav-link::after{
+    content:''; position: absolute; left: 50%; bottom: -6px;
+    width: 0; height: 2px; background: #2563eb; transition: all .25s ease;
+    transform: translateX(-50%);
+  }
+  .nav-link:hover::after, .nav-link.active::after{ width: 100%; }
+  .nav-link.active{ color:#1d4ed8; }
+
+  /* Hero background */
+  .hero-bg{
+    background:
+      radial-gradient(1200px 600px at 10% -10%, rgba(37, 99, 235, 0.35), transparent 60%),
+      radial-gradient(900px 500px at 90% 10%, rgba(220, 38, 38, 0.25), transparent 60%),
+      radial-gradient(700px 500px at 50% 110%, rgba(245, 158, 11, 0.18), transparent 60%),
+      linear-gradient(180deg, #0b1220 0%, #111a2e 100%);
+  }
+  .hero-grid{
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 75%);
+  }
+  .float-card{
+    animation: floaty 6s ease-in-out infinite;
+  }
+  .float-card.delay-1{ animation-delay: -2s; }
+  .float-card.delay-2{ animation-delay: -4s; }
+  @keyframes floaty{
+    0%,100%{ transform: translateY(0px); }
+    50%{ transform: translateY(-14px); }
+  }
+
+  /* Reveal on scroll */
+  .reveal{
+    opacity: 0; transform: translateY(28px);
+    transition: opacity .7s cubic-bezier(.2,.7,.3,1), transform .7s cubic-bezier(.2,.7,.3,1);
+  }
+  .reveal.in{ opacity: 1; transform: translateY(0); }
+  .reveal-delay-1{ transition-delay: .08s; }
+  .reveal-delay-2{ transition-delay: .16s; }
+  .reveal-delay-3{ transition-delay: .24s; }
+
+  /* Card hover */
+  .theme-card{
+    transition: transform .35s cubic-bezier(.2,.7,.3,1), box-shadow .35s ease, border-color .3s ease;
+  }
+  .theme-card:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px -20px rgba(15,23,42,0.25);
+  }
+  .theme-card .arrow{
+    transition: transform .3s ease;
+  }
+  .theme-card:hover .arrow{ transform: translateX(6px); }
+
+  /* Tab buttons */
+  .tab-btn{
+    position: relative; transition: all .25s ease;
+    border: 1px solid transparent;
+  }
+  .tab-btn.active{
+    background: #fff; color:#1d4ed8; border-color:#dbeafe;
+    box-shadow: 0 8px 20px -12px rgba(37,99,235,0.45);
+  }
+  .tab-btn:not(.active):hover{ background: rgba(255,255,255,0.6); }
+
+  /* Accordion */
+  .acc-item .acc-body{
+    max-height: 0; overflow: hidden;
+    transition: max-height .4s ease;
+  }
+  .acc-item.open .acc-body{ max-height: 600px; }
+  .acc-item .acc-icon{ transition: transform .3s ease; }
+  .acc-item.open .acc-icon{ transform: rotate(180deg); }
+
+  /* Mobile menu */
+  #mobileMenu{
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.2,.7,.3,1);
+  }
+  #mobileMenu.open{ transform: translateX(0); }
+
+  /* Back to top */
+  #backTop{
+    opacity: 0; pointer-events: none; transform: translateY(20px);
+    transition: all .3s ease;
+  }
+  #backTop.show{ opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+  /* Theme section icons */
+  .theme-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width: 56px; height: 56px; border-radius: 16px;
+    background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+    color: #fff; box-shadow: 0 12px 28px -10px rgba(37,99,235,0.5);
+  }
+  .theme-badge.red{ background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); box-shadow: 0 12px 28px -10px rgba(220,38,38,0.5); }
+  .theme-badge.amber{ background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); box-shadow: 0 12px 28px -10px rgba(245,158,11,0.5); }
+  .theme-badge.green{ background: linear-gradient(135deg, #10b981 0%, #047857 100%); box-shadow: 0 12px 28px -10px rgba(16,185,129,0.5); }
+  .theme-badge.teal{ background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); box-shadow: 0 12px 28px -10px rgba(20,184,166,0.5); }
+  .theme-badge.violet{ background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); box-shadow: 0 12px 28px -10px rgba(139,92,246,0.5); }
+  .theme-badge.rose{ background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%); box-shadow: 0 12px 28px -10px rgba(244,63,94,0.5); }
+
+  /* Decorative section divider */
+  .section-tag{
+    display:inline-flex; align-items:center; gap:.5rem;
+    padding: .35rem .85rem; border-radius: 999px;
+    background: #eff6ff; color:#1d4ed8;
+    font-weight:600; font-size:.78rem; letter-spacing:.02em;
+    border:1px solid #dbeafe;
+  }
+
+  /* Numbered list */
+  .num-list{ counter-reset: num; }
+  .num-list .num-item{
+    position: relative; padding-left: 2.85rem;
+    counter-increment: num;
+  }
+  .num-list .num-item::before{
+    content: counter(num, decimal-leading-zero);
+    position: absolute; left: 0; top: -2px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight:800; font-size:1.05rem;
+    color:#1d4ed8;
+    background:#eff6ff; border:1px solid #dbeafe;
+    width: 2.1rem; height: 2.1rem; border-radius: 10px;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* Smooth marquee for footer logos */
+  .pill-chip{
+    display:inline-flex; align-items:center; gap:.4rem;
+    padding:.3rem .75rem; border-radius:999px;
+    background:#fff; border:1px solid #e2e8f0;
+    font-size:.78rem; font-weight:500; color:#334155;
+  }
+
+  /* Custom scrollbar (webkit) */
+  ::-webkit-scrollbar{ width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track{ background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb{ background: #cbd5e1; border-radius: 8px; border:2px solid #f1f5f9; }
+  ::-webkit-scrollbar-thumb:hover{ background: #94a3b8; }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+    .reveal{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body class="font-body text-ink-900">
+
+<!-- Scroll progress -->
+<div id="progressBar"></div>
+
+<!-- ============ NAVBAR ============ -->
+<header id="navbar" class="fixed top-0 inset-x-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 lg:h-[72px]">
+      <!-- Logo -->
+      <a href="#hero" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-bps-700 to-bps-900 flex items-center justify-center text-white shadow-soft">
+          <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+        </div>
+        <div class="leading-tight">
+          <div class="font-display font-extrabold text-ink-900 text-[15px]">RB Tematik 2025</div>
+          <div class="text-[11px] text-ink-400 font-medium">Sekretariat RB · BPS</div>
+        </div>
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden lg:flex items-center gap-7 text-[14px] font-semibold text-ink-600">
+        <a href="#dasar-hukum" class="nav-link">Dasar Hukum</a>
+        <a href="#tema" class="nav-link">6 Tema RB</a>
+        <a href="#kemiskinan" class="nav-link">Kemiskinan</a>
+        <a href="#investasi" class="nav-link">Investasi</a>
+        <a href="#hilirisasi" class="nav-link">Hilirisasi</a>
+        <a href="#pangan" class="nav-link">Pangan</a>
+        <a href="#kesehatan" class="nav-link">Kesehatan</a>
+        <a href="#pendidikan" class="nav-link">Pendidikan</a>
+      </nav>
+
+      <div class="hidden lg:flex items-center gap-3">
+        <a href="#tema" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-ink-900 text-white text-sm font-semibold hover:bg-ink-800 transition">
+          Mulai Membaca
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- Mobile button -->
+      <button id="menuBtn" aria-label="Buka menu" class="lg:hidden inline-flex items-center justify-center w-11 h-11 rounded-xl bg-ink-900 text-white">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<div id="mobileMenu" class="fixed inset-0 z-[60] lg:hidden">
+  <div id="mobileOverlay" class="absolute inset-0 bg-ink-900/50 backdrop-blur-sm"></div>
+  <aside class="absolute right-0 top-0 h-full w-[78%] max-w-sm bg-white shadow-2xl flex flex-col">
+    <div class="flex items-center justify-between p-5 border-b border-ink-100">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-bps-700 to-bps-900 flex items-center justify-center text-white">
+          <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+        </div>
+        <span class="font-display font-bold">Menu</span>
+      </div>
+      <button id="closeMenu" aria-label="Tutup menu" class="w-10 h-10 rounded-lg hover:bg-ink-50 flex items-center justify-center">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <nav class="flex-1 overflow-y-auto p-5 space-y-1 text-[15px] font-semibold text-ink-700">
+      <a href="#dasar-hukum" class="mobile-link block px-4 py-3 rounded-xl hover:bg-ink-50">Dasar Hukum</a>
+      <a href="#tema" class="mobile-link block px-4 py-3 rounded-xl hover:bg-ink-50">6 Tema RB</a>
+      <a href="#kemiskinan" class="mobile-link block px-4 py-3 rounded-xl hover:bg-ink-50">RB Pengentasan Kemiskinan</a>
+      <a href="#investasi" class="mobile-link block px-4 py-3 rounded-xl hover:bg-ink-50">RB Peningkatan Investasi</a>
+      <a href="#hilirisasi" class="mobile-link block px-4 py-3 rounded-xl hover:bg-ink-50">RB Mendorong Hilirisasi</a>
+      <a href="#pangan" class="mobile-link block px-4 py-3 rounded-xl hover:bg-ink-50">RB Ketahanan Pangan</a>
+      <a href="#kesehatan" class="mobile-link block px-4 py-3 rounded-xl hover:bg-ink-50">RB Layanan Kesehatan</a>
+      <a href="#pendidikan" class="mobile-link block px-4 py-3 rounded-xl hover:bg-ink-50">RB Layanan Pendidikan</a>
+    </nav>
+    <div class="p-5 border-t border-ink-100">
+      <a href="#hero" class="mobile-link block text-center px-4 py-3 rounded-xl bg-ink-900 text-white font-semibold">Kembali ke Atas</a>
+    </div>
+  </aside>
+</div>
+
+<!-- ============ HERO ============ -->
+<section id="hero" class="relative hero-bg text-white overflow-hidden">
+  <div class="absolute inset-0 hero-grid"></div>
+
+  <!-- Floating cards (only on very wide screens to avoid overlap) -->
+  <div class="hidden xl:block absolute top-28 right-[4%] float-card z-10">
+    <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 w-48 shadow-glow">
+      <div class="flex items-center gap-2 text-amber-300 text-xs font-semibold mb-2">
+        <i data-lucide="trending-up" class="w-4 h-4"></i> INPRES 4/2025
+      </div>
+      <div class="text-sm font-medium leading-snug">Data Tunggal Sosial &amp; Ekonomi Nasional</div>
+    </div>
+  </div>
+  <div class="hidden xl:block absolute top-[55%] right-[6%] float-card delay-2 z-10">
+    <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-xl px-3 py-2 text-xs font-semibold text-rose-300">
+      <i data-lucide="calendar" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i>September 2025
+    </div>
+  </div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 lg:pt-36 lg:pb-28">
+    <div class="max-w-3xl">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur text-xs font-semibold tracking-wide mb-6">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        SEKRETARIAT RB · BADAN PUSAT STATISTIK
+      </div>
+
+      <h1 class="font-display font-extrabold tracking-tight text-4xl sm:text-5xl lg:text-6xl leading-[1.07]">
+        Panduan Ringkas<br/>
+        <span class="bg-gradient-to-r from-bps-300 via-white to-amber-200 bg-clip-text text-transparent">Reformasi Birokrasi</span><br/>
+        Tematik 2025
+      </h1>
+
+      <p class="mt-6 text-base sm:text-lg text-white/80 max-w-2xl leading-relaxed">
+        Enam tema prioritas Reformasi Birokrasi BPS untuk penyusunan Rencana Aksi tahun 2025 —
+        dari pengentasan kemiskinan hingga peningkatan mutu layanan pendidikan, dalam satu panduan ringkas yang interaktif dan informatif.
+      </p>
+
+      <div class="mt-9 flex flex-wrap items-center gap-3">
+        <a href="#tema" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white text-ink-900 font-semibold text-sm hover:bg-ink-50 transition shadow-card">
+          Jelajahi 6 Tema
+          <i data-lucide="arrow-down" class="w-4 h-4"></i>
+        </a>
+        <a href="#dasar-hukum" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 border border-white/20 text-white font-semibold text-sm hover:bg-white/15 transition backdrop-blur">
+          <i data-lucide="scale" class="w-4 h-4"></i>
+          Dasar Hukum
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl">
+        <div class="border-l-2 border-bps-400/60 pl-4">
+          <div class="font-display font-extrabold text-3xl">6</div>
+          <div class="text-xs text-white/70 mt-1">Tema RB Prioritas</div>
+        </div>
+        <div class="border-l-2 border-rose-400/60 pl-4">
+          <div class="font-display font-extrabold text-3xl">7</div>
+          <div class="text-xs text-white/70 mt-1">Dasar Hukum Utama</div>
+        </div>
+        <div class="border-l-2 border-amber-400/60 pl-4">
+          <div class="font-display font-extrabold text-3xl">6</div>
+          <div class="text-xs text-white/70 mt-1">Inpres 2025 Pendukung</div>
+        </div>
+        <div class="border-l-2 border-emerald-400/60 pl-4">
+          <div class="font-display font-extrabold text-3xl">2025</div>
+          <div class="text-xs text-white/70 mt-1">Tahun Penyusunan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wave divider -->
+  <div class="absolute bottom-0 inset-x-0 leading-none">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none" class="w-full h-[60px] sm:h-[90px]">
+      <path fill="#f8fafc" d="M0,40 C360,90 1080,0 1440,40 L1440,80 L0,80 Z"></path>
+    </svg>
+  </div>
+</section>
+
+<!-- ============ DASAR HUKUM ============ -->
+<section id="dasar-hukum" class="py-20 lg:py-28 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-12 gap-12 items-start">
+      <div class="lg:col-span-5 lg:sticky lg:top-28 reveal">
+        <span class="section-tag"><i data-lucide="scale" class="w-3.5 h-3.5"></i> LANDASAN REGULASI</span>
+        <h2 class="mt-4 font-display font-extrabold text-3xl sm:text-4xl lg:text-[42px] leading-tight">
+          Dasar Hukum<br/>
+          <span class="text-bps-700">RB Tematik 2025</span>
+        </h2>
+        <p class="mt-5 text-ink-500 leading-relaxed">
+          Penyusunan Rencana Aksi RB Tematik BPS Tahun 2025 berlandaskan pada peraturan perundang-undangan dan kebijakan strategis berikut.
+          Klik setiap item untuk membaca ringkasan singkatnya.
+        </p>
+
+        <div class="mt-8 p-5 rounded-2xl bg-bps-50 border border-bps-100">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-xl bg-bps-600 text-white flex items-center justify-center shrink-0">
+              <i data-lucide="info" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div class="font-semibold text-ink-900 text-sm">Catatan</div>
+              <p class="text-ink-500 text-sm mt-1 leading-relaxed">
+                Selain dasar hukum utama, terdapat sejumlah Inpres 2025 yang menjadi rujukan tematik pada masing-masing tema RB.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 space-y-3 reveal reveal-delay-1">
+        <!-- Accordion items -->
+        <div class="acc-item open bg-white rounded-2xl border border-ink-100 shadow-soft overflow-hidden">
+          <button class="acc-head w-full flex items-center gap-4 p-5 text-left">
+            <span class="w-9 h-9 rounded-lg bg-bps-50 text-bps-700 flex items-center justify-center font-bold text-sm font-display">01</span>
+            <span class="flex-1 font-display font-semibold text-ink-900 text-[15px]">Undang-Undang Nomor 59 Tahun 2024</span>
+            <i data-lucide="chevron-down" class="acc-icon w-5 h-5 text-ink-400"></i>
+          </button>
+          <div class="acc-body">
+            <div class="px-5 pb-5 pt-1 text-ink-600 text-sm leading-relaxed pl-[3.85rem]">
+              Tentang Rencana Pembangunan Jangka Panjang Nasional Tahun 2025–2045.
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item bg-white rounded-2xl border border-ink-100 shadow-soft overflow-hidden">
+          <button class="acc-head w-full flex items-center gap-4 p-5 text-left">
+            <span class="w-9 h-9 rounded-lg bg-bps-50 text-bps-700 flex items-center justify-center font-bold text-sm font-display">02</span>
+            <span class="flex-1 font-display font-semibold text-ink-900 text-[15px]">Peraturan Presiden Nomor 81 Tahun 2010</span>
+            <i data-lucide="chevron-down" class="acc-icon w-5 h-5 text-ink-400"></i>
+          </button>
+          <div class="acc-body">
+            <div class="px-5 pb-5 pt-1 text-ink-600 text-sm leading-relaxed pl-[3.85rem]">
+              Tentang Grand Design Reformasi Birokrasi 2010–2025.
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item bg-white rounded-2xl border border-ink-100 shadow-soft overflow-hidden">
+          <button class="acc-head w-full flex items-center gap-4 p-5 text-left">
+            <span class="w-9 h-9 rounded-lg bg-bps-50 text-bps-700 flex items-center justify-center font-bold text-sm font-display">03</span>
+            <span class="flex-1 font-display font-semibold text-ink-900 text-[15px]">Peraturan Presiden Nomor 12 Tahun 2025</span>
+            <i data-lucide="chevron-down" class="acc-icon w-5 h-5 text-ink-400"></i>
+          </button>
+          <div class="acc-body">
+            <div class="px-5 pb-5 pt-1 text-ink-600 text-sm leading-relaxed pl-[3.85rem]">
+              Tentang Rencana Pembangunan Jangka Menengah Nasional Tahun 2025–2029.
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item bg-white rounded-2xl border border-ink-100 shadow-soft overflow-hidden">
+          <button class="acc-head w-full flex items-center gap-4 p-5 text-left">
+            <span class="w-9 h-9 rounded-lg bg-bps-50 text-bps-700 flex items-center justify-center font-bold text-sm font-display">04</span>
+            <span class="flex-1 font-display font-semibold text-ink-900 text-[15px]">PermenPANRB Nomor 9 Tahun 2023</span>
+            <i data-lucide="chevron-down" class="acc-icon w-5 h-5 text-ink-400"></i>
+          </button>
+          <div class="acc-body">
+            <div class="px-5 pb-5 pt-1 text-ink-600 text-sm leading-relaxed pl-[3.85rem]">
+              Tentang Evaluasi Reformasi Birokrasi.
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item bg-white rounded-2xl border border-ink-100 shadow-soft overflow-hidden">
+          <button class="acc-head w-full flex items-center gap-4 p-5 text-left">
+            <span class="w-9 h-9 rounded-lg bg-bps-50 text-bps-700 flex items-center justify-center font-bold text-sm font-display">05</span>
+            <span class="flex-1 font-display font-semibold text-ink-900 text-[15px]">SE MenPAN RB Nomor 6 Tahun 2025</span>
+            <i data-lucide="chevron-down" class="acc-icon w-5 h-5 text-ink-400"></i>
+          </button>
+          <div class="acc-body">
+            <div class="px-5 pb-5 pt-1 text-ink-600 text-sm leading-relaxed pl-[3.85rem]">
+              Surat Edaran Menteri Pendayagunaan Aparatur Negara dan Reformasi Birokrasi RB No 6 Tahun 2025 — menjadi rujukan utama bentuk intervensi pada setiap tema RB.
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item bg-white rounded-2xl border border-ink-100 shadow-soft overflow-hidden">
+          <button class="acc-head w-full flex items-center gap-4 p-5 text-left">
+            <span class="w-9 h-9 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-sm font-display">06</span>
+            <span class="flex-1 font-display font-semibold text-ink-900 text-[15px]">Inpres-inpres Tahun 2025 (Pendukung Tematik)</span>
+            <i data-lucide="chevron-down" class="acc-icon w-5 h-5 text-ink-400"></i>
+          </button>
+          <div class="acc-body">
+            <div class="px-5 pb-5 pt-1 text-ink-600 text-sm leading-relaxed pl-[3.85rem] space-y-1.5">
+              <div>• <b>Inpres No 3/2025</b> — Pendayagunaan Penyuluh Pertanian untuk Swasembada Pangan.</div>
+              <div>• <b>Inpres No 4/2025</b> — Data Tunggal Sosial dan Ekonomi Nasional.</div>
+              <div>• <b>Inpres No 5/2025</b> — Percepatan Peningkatan Kesehatan Masyarakat.</div>
+              <div>• <b>Inpres No 6/2025</b> — Pengadaan & Pengelolaan Gabah/Beras.</div>
+              <div>• <b>Inpres No 7/2025</b> — Peningkatan Layanan Pendidikan.</div>
+              <div>• <b>Inpres No 8/2025</b> — Pengentasan Kemiskinan Ekstrem.</div>
+              <div>• <b>Keppres No 1/2025</b> — mendukung tema Investasi & Hilirisasi.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6 TEMA OVERVIEW ============ -->
+<section id="tema" class="py-20 lg:py-28 bg-ink-50/60">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto reveal">
+      <span class="section-tag"><i data-lucide="layers" class="w-3.5 h-3.5"></i> ENAM TEMA PRIORITAS</span>
+      <h2 class="mt-4 font-display font-extrabold text-3xl sm:text-4xl lg:text-[42px] leading-tight">
+        Tema Reformasi Birokrasi <span class="text-bps-700">BPS 2025</span>
+      </h2>
+      <p class="mt-5 text-ink-500 leading-relaxed">
+        Klik setiap kartu untuk menjelajahi detail tema — mulai dari peran BPS, bentuk intervensi, hingga contoh aktivitas yang mendukung.
+      </p>
+    </div>
+
+    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- Card 1 -->
+      <a href="#kemiskinan" class="theme-card group bg-white rounded-3xl p-7 border border-ink-100 shadow-soft reveal">
+        <div class="flex items-start justify-between">
+          <div class="theme-badge red"><i data-lucide="heart-handshake" class="w-7 h-7"></i></div>
+          <span class="text-[11px] font-bold tracking-wider text-ink-300">01</span>
+        </div>
+        <h3 class="mt-5 font-display font-bold text-xl text-ink-900 leading-snug">RB Pengentasan Kemiskinan</h3>
+        <p class="mt-2 text-sm text-ink-500 leading-relaxed">Mempercepat penurunan kemiskinan melalui sinergi lintas instansi & integrasi data DTSEN.</p>
+        <div class="mt-5 flex items-center justify-between">
+          <span class="pill-chip"><i data-lucide="file-text" class="w-3.5 h-3.5 text-rose-500"></i> Inpres 4 & 8/2025</span>
+          <span class="arrow inline-flex items-center gap-1 text-rose-600 font-semibold text-sm">Baca<i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+        </div>
+      </a>
+
+      <!-- Card 2 -->
+      <a href="#investasi" class="theme-card group bg-white rounded-3xl p-7 border border-ink-100 shadow-soft reveal reveal-delay-1">
+        <div class="flex items-start justify-between">
+          <div class="theme-badge"><i data-lucide="trending-up" class="w-7 h-7"></i></div>
+          <span class="text-[11px] font-bold tracking-wider text-ink-300">02</span>
+        </div>
+        <h3 class="mt-5 font-display font-bold text-xl text-ink-900 leading-snug">RB Peningkatan Investasi</h3>
+        <p class="mt-2 text-sm text-ink-500 leading-relaxed">Memperbaiki tata kelola investasi dan menciptakan iklim usaha yang ramah & kompetitif.</p>
+        <div class="mt-5 flex items-center justify-between">
+          <span class="pill-chip"><i data-lucide="file-text" class="w-3.5 h-3.5 text-bps-600"></i> Keppres 1/2025</span>
+          <span class="arrow inline-flex items-center gap-1 text-bps-700 font-semibold text-sm">Baca<i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+        </div>
+      </a>
+
+      <!-- Card 3 -->
+      <a href="#hilirisasi" class="theme-card group bg-white rounded-3xl p-7 border border-ink-100 shadow-soft reveal reveal-delay-2">
+        <div class="flex items-start justify-between">
+          <div class="theme-badge amber"><i data-lucide="factory" class="w-7 h-7"></i></div>
+          <span class="text-[11px] font-bold tracking-wider text-ink-300">03</span>
+        </div>
+        <h3 class="mt-5 font-display font-bold text-xl text-ink-900 leading-snug">RB Mendorong Hilirisasi</h3>
+        <p class="mt-2 text-sm text-ink-500 leading-relaxed">Transformasi ekonomi melalui peningkatan nilai tambah komoditas strategis dalam negeri.</p>
+        <div class="mt-5 flex items-center justify-between">
+          <span class="pill-chip"><i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-600"></i> Keppres 1/2025</span>
+          <span class="arrow inline-flex items-center gap-1 text-amber-700 font-semibold text-sm">Baca<i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+        </div>
+      </a>
+
+      <!-- Card 4 -->
+      <a href="#pangan" class="theme-card group bg-white rounded-3xl p-7 border border-ink-100 shadow-soft reveal">
+        <div class="flex items-start justify-between">
+          <div class="theme-badge green"><i data-lucide="wheat" class="w-7 h-7"></i></div>
+          <span class="text-[11px] font-bold tracking-wider text-ink-300">04</span>
+        </div>
+        <h3 class="mt-5 font-display font-bold text-xl text-ink-900 leading-snug">RB Mendukung Ketahanan Pangan</h3>
+        <p class="mt-2 text-sm text-ink-500 leading-relaxed">Mewujudkan swasembada pangan melalui transformasi pertanian modern & data yang akurat.</p>
+        <div class="mt-5 flex items-center justify-between">
+          <span class="pill-chip"><i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-600"></i> Inpres 3 & 6/2025</span>
+          <span class="arrow inline-flex items-center gap-1 text-emerald-700 font-semibold text-sm">Baca<i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+        </div>
+      </a>
+
+      <!-- Card 5 -->
+      <a href="#kesehatan" class="theme-card group bg-white rounded-3xl p-7 border border-ink-100 shadow-soft reveal reveal-delay-1">
+        <div class="flex items-start justify-between">
+          <div class="theme-badge teal"><i data-lucide="stethoscope" class="w-7 h-7"></i></div>
+          <span class="text-[11px] font-bold tracking-wider text-ink-300">05</span>
+        </div>
+        <h3 class="mt-5 font-display font-bold text-xl text-ink-900 leading-snug">RB Layanan Kesehatan</h3>
+        <p class="mt-2 text-sm text-ink-500 leading-relaxed">Percepatan akses & mutu pelayanan kesehatan primer dan lanjutan secara merata.</p>
+        <div class="mt-5 flex items-center justify-between">
+          <span class="pill-chip"><i data-lucide="file-text" class="w-3.5 h-3.5 text-teal-600"></i> Inpres 5/2025</span>
+          <span class="arrow inline-flex items-center gap-1 text-teal-700 font-semibold text-sm">Baca<i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+        </div>
+      </a>
+
+      <!-- Card 6 -->
+      <a href="#pendidikan" class="theme-card group bg-white rounded-3xl p-7 border border-ink-100 shadow-soft reveal reveal-delay-2">
+        <div class="flex items-start justify-between">
+          <div class="theme-badge violet"><i data-lucide="graduation-cap" class="w-7 h-7"></i></div>
+          <span class="text-[11px] font-bold tracking-wider text-ink-300">06</span>
+        </div>
+        <h3 class="mt-5 font-display font-bold text-xl text-ink-900 leading-snug">RB Layanan Pendidikan</h3>
+        <p class="mt-2 text-sm text-ink-500 leading-relaxed">Membangun generasi emas 2045 melalui peningkatan akses, kualitas, dan digitalisasi pendidikan.</p>
+        <div class="mt-5 flex items-center justify-between">
+          <span class="pill-chip"><i data-lucide="file-text" class="w-3.5 h-3.5 text-violet-600"></i> Inpres 7/2025</span>
+          <span class="arrow inline-flex items-center gap-1 text-violet-700 font-semibold text-sm">Baca<i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEMA 1: KEMISKINAN ============ -->
+<section id="kemiskinan" class="py-20 lg:py-28 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 reveal">
+      <div class="flex items-start gap-5">
+        <div class="theme-badge red shrink-0"><i data-lucide="heart-handshake" class="w-7 h-7"></i></div>
+        <div>
+          <div class="text-xs font-bold tracking-widest text-rose-500">TEMA 01</div>
+          <h2 class="mt-1 font-display font-extrabold text-3xl sm:text-4xl leading-tight">RB Pengentasan Kemiskinan</h2>
+          <p class="mt-3 text-ink-500 max-w-2xl leading-relaxed">
+            Diarahkan pada perbaikan tata kelola dengan berfokus pada kolaborasi lintas instansi dalam menyelesaikan akar masalah pengelolaan program kemiskinan.
+          </p>
+        </div>
+      </div>
+      <span class="pill-chip shrink-0"><i data-lucide="gavel" class="w-3.5 h-3.5 text-rose-500"></i> Inpres 4 & 8 Tahun 2025</span>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex flex-wrap gap-2 p-1.5 bg-ink-100/70 rounded-2xl mb-8 reveal" role="tablist" data-tabgroup="t1">
+      <button class="tab-btn active px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t1-about"><i data-lucide="info" class="w-4 h-4"></i>Tentang</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t1-peran"><i data-lucide="users" class="w-4 h-4"></i>Peran BPS</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t1-intervensi"><i data-lucide="zap" class="w-4 h-4"></i>Intervensi</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t1-aktivitas"><i data-lucide="activity" class="w-4 h-4"></i>Aktivitas BPS</button>
+    </div>
+
+    <div class="reveal">
+      <!-- About -->
+      <div data-panel="t1-about" class="tab-panel">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="p-7 rounded-3xl bg-gradient-to-br from-rose-50 to-white border border-rose-100">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="target" class="w-5 h-5 text-rose-600"></i>Tujuan</h3>
+            <p class="mt-3 text-ink-600 leading-relaxed text-[15px]">
+              Mempercepat penurunan tingkat kemiskinan melalui peningkatan efektivitas program, sinergi lintas instansi, dan penguatan pemberdayaan masyarakat yang berdampak pada tingkat kemiskinan.
+            </p>
+            <div class="mt-5 grid grid-cols-3 gap-3">
+              <div class="text-center p-3 rounded-xl bg-white border border-rose-100">
+                <i data-lucide="trending-down" class="w-5 h-5 mx-auto text-rose-600"></i>
+                <div class="text-[11px] mt-1.5 text-ink-500 font-medium">Menurunkan Beban</div>
+              </div>
+              <div class="text-center p-3 rounded-xl bg-white border border-rose-100">
+                <i data-lucide="wallet" class="w-5 h-5 mx-auto text-rose-600"></i>
+                <div class="text-[11px] mt-1.5 text-ink-500 font-medium">Naikkan Pendapatan</div>
+              </div>
+              <div class="text-center p-3 rounded-xl bg-white border border-rose-100">
+                <i data-lucide="map-pin" class="w-5 h-5 mx-auto text-rose-600"></i>
+                <div class="text-[11px] mt-1.5 text-ink-500 font-medium">Kurangi Kantong</div>
+              </div>
+            </div>
+          </div>
+          <div class="p-7 rounded-3xl border border-ink-100 shadow-soft">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-rose-600"></i>Inpres No 8 Tahun 2025</h3>
+            <p class="mt-3 text-ink-600 leading-relaxed text-[15px]">
+              Birokrasi berperan penting dalam mendukung optimalisasi pengentasan kemiskinan dan kemiskinan ekstrem — memastikan ketepatan sasaran, integrasi, kolaborasi, dan sinkronisasi program antar K/L.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Peran BPS -->
+      <div data-panel="t1-peran" class="tab-panel hidden">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="p-7 rounded-3xl bg-ink-900 text-white">
+            <div class="flex items-center gap-2 text-rose-300 text-xs font-bold tracking-wider">INPRES NO 4 TAHUN 2025</div>
+            <h3 class="mt-2 font-display font-bold text-xl">Peran BPS dalam Data Tunggal Sosial & Ekonomi Nasional (DTSEN)</h3>
+            <p class="mt-3 text-white/75 text-[15px] leading-relaxed">
+              Birokrasi mendukung DTSEN dengan memastikan ketersediaan, validitas, dan pembaruan data yang terintegrasi, serta menyediakan platform kolaborasi bagi K/L dan pihak terkait.
+            </p>
+            <div class="mt-6 flex flex-wrap gap-2">
+              <span class="pill-chip !bg-white/10 !border-white/15 !text-white">Integrasi data DTSEN</span>
+              <span class="pill-chip !bg-white/10 !border-white/15 !text-white">Rencana aksi tematik</span>
+            </div>
+          </div>
+          <div class="p-7 rounded-3xl border border-ink-100 shadow-soft">
+            <h3 class="font-display font-bold text-lg mb-4">Tugas BPS menurut Inpres 4/2025</h3>
+            <div class="num-list space-y-3.5 text-[15px] text-ink-700">
+              <div class="num-item">Menetapkan sumber, jenis, dan pedoman integrasi data tunggal sosial dan ekonomi nasional.</div>
+              <div class="num-item">Menerima data <i>"by name by address"</i> dari K/L untuk diintegrasikan secara nasional sebagai rujukan utama.</div>
+              <div class="num-item">Menyusun dan mengelola data tunggal yang akurat, terkini, dan terintegrasi — termasuk pemutakhiran dan pengamanan data.</div>
+              <div class="num-item">Menyerahkan pemanfaatan data kepada Menko Pemberdayaan Masyarakat, Men PPN, dan Mensos.</div>
+              <div class="num-item">Melaporkan pelaksanaan integrasi data secara berkala atau sewaktu-waktu kepada Presiden.</div>
+            </div>
+            <div class="mt-5 p-3.5 rounded-xl bg-rose-50 border border-rose-100 text-sm text-ink-600">
+              <b class="text-rose-700">Surat Plt. Sestama No B-251/02000/TS.240/2025</b> — Integrasi data DTSEN masuk dalam rencana aksi tematik pengentasan kemiskinan sebagai komitmen BPS.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Intervensi -->
+      <div data-panel="t1-intervensi" class="tab-panel hidden">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft">
+            <i data-lucide="handshake" class="w-6 h-6 text-rose-600"></i>
+            <h4 class="mt-3 font-display font-semibold">Penguatan Koordinasi</h4>
+            <p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penguatan koordinasi lintas K/L/D dalam penanggulangan kemiskinan.</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft">
+            <i data-lucide="shield-check" class="w-6 h-6 text-rose-600"></i>
+            <h4 class="mt-3 font-display font-semibold">Integrasi Perlindungan Sosial</h4>
+            <p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Integrasi program perlindungan sosial dan pemberdayaan masyarakat miskin.</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft">
+            <i data-lucide="smartphone" class="w-6 h-6 text-rose-600"></i>
+            <h4 class="mt-3 font-display font-semibold">Digitalisasi Bantuan</h4>
+            <p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penyederhanaan proses penyaluran bansos melalui sistem digital terintegrasi.</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft">
+            <i data-lucide="database" class="w-6 h-6 text-rose-600"></i>
+            <h4 class="mt-3 font-display font-semibold">Akurasi Data</h4>
+            <p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Peningkatan akurasi data kemiskinan dan penguatan pemanfaatannya.</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft">
+            <i data-lucide="store" class="w-6 h-6 text-rose-600"></i>
+            <h4 class="mt-3 font-display font-semibold">Pemberdayaan UMKM</h4>
+            <p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penguatan program pemberdayaan ekonomi berbasis komunitas dan UMKM.</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft">
+            <i data-lucide="lightbulb" class="w-6 h-6 text-rose-600"></i>
+            <h4 class="mt-3 font-display font-semibold">Inovasi Lokal</h4>
+            <p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Inovasi model intervensi berbasis lokal untuk pengentasan kemiskinan ekstrem.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aktivitas -->
+      <div data-panel="t1-aktivitas" class="tab-panel hidden">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="p-7 rounded-3xl border border-ink-100 shadow-soft">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5 text-rose-600"></i>Contoh Aktivitas BPS</h3>
+            <ul class="mt-4 space-y-3 text-[15px] text-ink-700">
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span>Pelaksanaan pengumpulan dan analisis data Susenas September dan Maret.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span>Identifikasi kebutuhan, perancangan & implementasi aplikasi pengolahan data Susenas berbasis desktop (client-server), termasuk dashboard dan monitoring.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span>Identifikasi ketersediaan data Statistik Kependudukan & Ketenagakerjaan untuk pemadanan data DTSEN.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span>Penghitungan kriteria Masyarakat Berpenghasilan Rendah dengan data Susenas.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span>Diseminasi data kemiskinan pada website BPS sesuai jadwal rilis yang ditetapkan.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span>Dan lain sebagainya.</span></li>
+            </ul>
+          </div>
+          <div class="p-7 rounded-3xl bg-rose-50 border border-rose-100">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-rose-600"></i>Selain itu, diharapkan juga mendukung</h3>
+            <p class="mt-2 text-sm text-ink-500">Sesuai SE MenPAN RB No 6 Tahun 2025:</p>
+            <ul class="mt-4 space-y-3 text-[15px] text-ink-700">
+              <li class="flex gap-3"><i data-lucide="wheat" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span><b>Ketahanan pangan</b> — keterjangkauan pangan dengan menurunkan beban RT miskin.</span></li>
+              <li class="flex gap-3"><i data-lucide="zap" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span><b>Ketahanan energi</b> — akses energi terjangkau untuk masyarakat miskin.</span></li>
+              <li class="flex gap-3"><i data-lucide="droplets" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span><b>Swasembada air</b> — kemudahan akses air bersih (kesejahteraan dasar).</span></li>
+              <li class="flex gap-3"><i data-lucide="utensils" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span><b>Perluasan MBG</b> — bantuan nutrisi bagi keluarga miskin & rawan stunting.</span></li>
+              <li class="flex gap-3"><i data-lucide="heart-pulse" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span><b>Akses pelayanan kesehatan</b> — kemudahan layanan dasar bagi penduduk miskin.</span></li>
+              <li class="flex gap-3"><i data-lucide="building-2" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span><b>Desa/Koperasi/UMKM</b> berbasis ekonomi rakyat.</span></li>
+              <li class="flex gap-3"><i data-lucide="briefcase" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i><span><b>Percepatan investasi & perdagangan</b> — penciptaan lapangan kerja bagi warga rentan.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEMA 2: INVESTASI ============ -->
+<section id="investasi" class="py-20 lg:py-28 bg-ink-50/60">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 reveal">
+      <div class="flex items-start gap-5">
+        <div class="theme-badge shrink-0"><i data-lucide="trending-up" class="w-7 h-7"></i></div>
+        <div>
+          <div class="text-xs font-bold tracking-widest text-bps-600">TEMA 02</div>
+          <h2 class="mt-1 font-display font-extrabold text-3xl sm:text-4xl leading-tight">RB Peningkatan Investasi</h2>
+          <p class="mt-3 text-ink-500 max-w-2xl leading-relaxed">
+            Memperbaiki tata kelola investasi guna meningkatkan realisasi investasi dan menciptakan iklim usaha yang ramah dan kompetitif.
+          </p>
+        </div>
+      </div>
+      <span class="pill-chip shrink-0"><i data-lucide="gavel" class="w-3.5 h-3.5 text-bps-600"></i> Keppres 1 Tahun 2025</span>
+    </div>
+
+    <div class="flex flex-wrap gap-2 p-1.5 bg-ink-100/70 rounded-2xl mb-8 reveal" data-tabgroup="t2">
+      <button class="tab-btn active px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t2-about"><i data-lucide="info" class="w-4 h-4"></i>Tentang</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t2-intervensi"><i data-lucide="zap" class="w-4 h-4"></i>Intervensi</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t2-aktivitas"><i data-lucide="activity" class="w-4 h-4"></i>Aktivitas BPS</button>
+    </div>
+
+    <div class="reveal">
+      <div data-panel="t2-about" class="tab-panel">
+        <div class="grid lg:grid-cols-3 gap-5">
+          <div class="lg:col-span-2 p-7 rounded-3xl bg-gradient-to-br from-bps-50 to-white border border-bps-100">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="target" class="w-5 h-5 text-bps-700"></i>Tujuan & Fokus</h3>
+            <p class="mt-3 text-ink-600 leading-relaxed text-[15px]">
+              Tema RB Peningkatan Investasi bertujuan memperbaiki tata kelola sebagai dukungan terhadap kemudahan investasi. Upaya mencakup penyederhanaan proses bisnis dan regulasi, percepatan proses perizinan, peningkatan koordinasi antar-instansi, serta pemanfaatan teknologi digital dalam pelayanan publik.
+            </p>
+            <div class="mt-5 grid sm:grid-cols-2 gap-3">
+              <div class="p-4 rounded-xl bg-white border border-bps-100 flex items-start gap-3">
+                <i data-lucide="line-chart" class="w-5 h-5 text-bps-600 mt-0.5"></i>
+                <div>
+                  <div class="font-semibold text-sm">Realisasi Investasi</div>
+                  <div class="text-xs text-ink-500 mt-0.5">PMA & PMDN sebagai indikator dampak</div>
+                </div>
+              </div>
+              <div class="p-4 rounded-xl bg-white border border-bps-100 flex items-start gap-3">
+                <i data-lucide="user-plus" class="w-5 h-5 text-bps-600 mt-0.5"></i>
+                <div>
+                  <div class="font-semibold text-sm">Pelaku Usaha Baru</div>
+                  <div class="text-xs text-ink-500 mt-0.5">Jumlah pelaku usaha baru sebagai indikator</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-7 rounded-3xl bg-ink-900 text-white">
+            <div class="text-xs font-bold tracking-wider text-bps-300">PERAN BIROKRASI</div>
+            <p class="mt-3 text-[15px] leading-relaxed text-white/85">
+              Birokrasi mampu menciptakan iklim investasi yang baik melalui penyederhanaan proses bisnis & regulasi, mempercepat dan mempermudah proses perizinan, meningkatkan koordinasi antar-instansi, serta memanfaatkan teknologi digital dalam pelayanan publik.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div data-panel="t2-intervensi" class="tab-panel hidden">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="file-edit" class="w-6 h-6 text-bps-600"></i><h4 class="mt-3 font-display font-semibold">Penyederhanaan Perizinan</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penyederhanaan proses perizinan investasi pusat dan daerah.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="monitor-smartphone" class="w-6 h-6 text-bps-600"></i><h4 class="mt-3 font-display font-semibold">Digitalisasi Pelayanan</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penguatan pelayanan publik melalui pengembangan digitalisasi pelayanan terpadu.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="eye" class="w-6 h-6 text-bps-600"></i><h4 class="mt-3 font-display font-semibold">Transparansi & Pengawasan</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Peningkatan transparansi, akuntabilitas, dan pengawasan proses perizinan.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="life-buoy" class="w-6 h-6 text-bps-600"></i><h4 class="mt-3 font-display font-semibold">Pendampingan Investor</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Inovasi penyediaan layanan pendampingan bagi investor.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="gift" class="w-6 h-6 text-bps-600"></i><h4 class="mt-3 font-display font-semibold">Insentif Sektor Prioritas</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Pemberian insentif yang mendorong peningkatan investasi di sektor prioritas.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="users-cog" class="w-6 h-6 text-bps-600"></i><h4 class="mt-3 font-display font-semibold">Penguatan SDM</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penguatan SDM pelayanan perizinan dan pengawasan investasi.</p></div>
+        </div>
+      </div>
+
+      <div data-panel="t2-aktivitas" class="tab-panel hidden">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="p-7 rounded-3xl border border-ink-100 shadow-soft bg-white">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5 text-bps-700"></i>Contoh Aktivitas BPS</h3>
+            <ul class="mt-4 space-y-3 text-[15px] text-ink-700">
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-bps-500 shrink-0 mt-0.5"></i><span>Pembinaan klasifikasi kepada masyarakat maupun K/L/D/I dalam implementasi KBLI untuk perizinan usaha.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-bps-500 shrink-0 mt-0.5"></i><span>Pelaksanaan Geladi Bersih Pendataan Lengkap Sensus Ekonomi 2026 dan Uji Coba SE2026.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-bps-500 shrink-0 mt-0.5"></i><span>Audiensi dan koordinasi dengan BKPM terkait pertukaran dan pemanfaatan data/informasi investasi & hilirisasi.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-bps-500 shrink-0 mt-0.5"></i><span>Penyusunan publikasi PDB Indonesia triwulanan 2021–2025.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-bps-500 shrink-0 mt-0.5"></i><span>Penyusunan PDRB provinsi-provinsi di Indonesia menurut lapangan usaha.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-bps-500 shrink-0 mt-0.5"></i><span>Dan lain sebagainya.</span></li>
+            </ul>
+          </div>
+          <div class="p-7 rounded-3xl bg-bps-50 border border-bps-100">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-bps-700"></i>Selain itu, diharapkan juga mendukung</h3>
+            <p class="mt-2 text-sm text-ink-500">Iklim investasi & kemudahan berusaha pada sektor pendukung prioritas nasional:</p>
+            <div class="mt-4 space-y-3 text-[15px] text-ink-700">
+              <div class="p-4 rounded-xl bg-white border border-bps-100 flex items-start gap-3">
+                <i data-lucide="battery-charging" class="w-5 h-5 text-bps-600 shrink-0 mt-0.5"></i>
+                <span><b>Ketahanan energi, air, dan pangan</b> — kemudahan berusaha & investasi pada sektor yang menunjang (industri penghasil energi, industri berbasis agro & SDA).</span>
+              </div>
+              <div class="p-4 rounded-xl bg-white border border-bps-100 flex items-start gap-3">
+                <i data-lucide="map" class="w-5 h-5 text-bps-600 shrink-0 mt-0.5"></i>
+                <span><b>Berbasis lokal</b> — pembangunan & pengembangan desa, koperasi, dan UMKM.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEMA 3: HILIRISASI ============ -->
+<section id="hilirisasi" class="py-20 lg:py-28 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 reveal">
+      <div class="flex items-start gap-5">
+        <div class="theme-badge amber shrink-0"><i data-lucide="factory" class="w-7 h-7"></i></div>
+        <div>
+          <div class="text-xs font-bold tracking-widest text-amber-600">TEMA 03</div>
+          <h2 class="mt-1 font-display font-extrabold text-3xl sm:text-4xl leading-tight">RB Mendorong Hilirisasi</h2>
+          <p class="mt-3 text-ink-500 max-w-2xl leading-relaxed">
+            Mendorong transformasi ekonomi melalui peningkatan nilai tambah komoditas strategis dalam negeri.
+          </p>
+        </div>
+      </div>
+      <span class="pill-chip shrink-0"><i data-lucide="gavel" class="w-3.5 h-3.5 text-amber-600"></i> Keppres 1 Tahun 2025</span>
+    </div>
+
+    <div class="flex flex-wrap gap-2 p-1.5 bg-ink-100/70 rounded-2xl mb-8 reveal" data-tabgroup="t3">
+      <button class="tab-btn active px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t3-about"><i data-lucide="info" class="w-4 h-4"></i>Tentang</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t3-intervensi"><i data-lucide="zap" class="w-4 h-4"></i>Intervensi</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t3-aktivitas"><i data-lucide="activity" class="w-4 h-4"></i>Aktivitas BPS</button>
+    </div>
+
+    <div class="reveal">
+      <div data-panel="t3-about" class="tab-panel">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="p-7 rounded-3xl bg-gradient-to-br from-amber-50 to-white border border-amber-100">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="target" class="w-5 h-5 text-amber-700"></i>Arah Tema</h3>
+            <p class="mt-3 text-ink-600 leading-relaxed text-[15px]">
+              Diarahkan pada penguatan tata kelola dan kolaborasi antar-lembaga dan daerah dalam mendukung transformasi ekonomi untuk meningkatkan nilai tambah ekonomi dari produk dalam negeri. Birokrasi diharapkan berperan sebagai katalisator utama — menciptakan nilai tambah ekonomi, membuka lapangan kerja, dan meningkatkan daya saing produk dalam negeri di pasar global.
+            </p>
+          </div>
+          <div class="p-7 rounded-3xl border border-ink-100 shadow-soft">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-amber-700"></i>Indikator Dampak</h3>
+            <ul class="mt-4 space-y-3 text-[15px] text-ink-700">
+              <li class="flex gap-3"><i data-lucide="circle-dot" class="w-4 h-4 text-amber-600 shrink-0 mt-1"></i><span>Rasio ekspor produk olahan terhadap bahan mentah.</span></li>
+              <li class="flex gap-3"><i data-lucide="circle-dot" class="w-4 h-4 text-amber-600 shrink-0 mt-1"></i><span>Kontribusi PDB sektor industri pengolahan.</span></li>
+              <li class="flex gap-3"><i data-lucide="circle-dot" class="w-4 h-4 text-amber-600 shrink-0 mt-1"></i><span>Penyerapan tenaga kerja di sektor hilir.</span></li>
+              <li class="flex gap-3"><i data-lucide="circle-dot" class="w-4 h-4 text-amber-600 shrink-0 mt-1"></i><span>Realisasi investasi hilirisasi.</span></li>
+            </ul>
+            <div class="mt-5 p-4 rounded-xl bg-amber-50 border border-amber-100 text-sm text-ink-600">
+              <b class="text-amber-700">Peran birokrasi:</b> mendukung percepatan hilirisasi SDA dan mewujudkan kemandirian & ketahanan energi melalui penyelerasan kebijakan, penyediaan lahan, kemudahan izin berusaha, dan penyelesaian hambatan melalui kolaborasi lintas kewenangan antar K/L/PD.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div data-panel="t3-intervensi" class="tab-panel hidden">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="file-edit" class="w-6 h-6 text-amber-600"></i><h4 class="mt-3 font-display font-semibold">Penyederhanaan Perizinan</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penyederhanaan perizinan di sektor hilirisasi.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="percent" class="w-6 h-6 text-amber-600"></i><h4 class="mt-3 font-display font-semibold">Insentif Fiskal & Non-Fiskal</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Insentif fiskal dan non-fiskal untuk industri pengolahan.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="link" class="w-6 h-6 text-amber-600"></i><h4 class="mt-3 font-display font-semibold">Kolaborasi Regulasi</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penguatan kolaborasi regulasi antar instansi pemerintah.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="flask-conical" class="w-6 h-6 text-amber-600"></i><h4 class="mt-3 font-display font-semibold">Riset & Inovasi</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Pengembangan riset dan inovasi teknologi hilirisasi.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="truck" class="w-6 h-6 text-amber-600"></i><h4 class="mt-3 font-display font-semibold">Efisiensi Logistik</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Peningkatan efisiensi logistik dan infrastruktur pendukung hilirisasi.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="sparkles" class="w-6 h-6 text-amber-600"></i><h4 class="mt-3 font-display font-semibold">Lainnya</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Berbagai bentuk intervensi pendukung lainnya.</p></div>
+        </div>
+      </div>
+
+      <div data-panel="t3-aktivitas" class="tab-panel hidden">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="p-7 rounded-3xl border border-ink-100 shadow-soft bg-white">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5 text-amber-700"></i>Contoh Aktivitas BPS</h3>
+            <ul class="mt-4 space-y-3 text-[15px] text-ink-700">
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i><span>Rilis data ekspor komoditas seperti nikel dan turunannya.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i><span>MoU dan Perjanjian Kerja Sama BPS dengan Kemen-Invest/BKPM — meningkatkan penyediaan, penggunaan, dan pengembangan data/informasi statistik terkait investasi dan hilirisasi.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i><span>Penyempurnaan Klasifikasi Baku Lapangan Usaha Indonesia (KBLI) sesuai ISIC rev. 5 agar pemetaan dan pemantauan kegiatan hilirisasi lebih akurat.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i><span>Dan lain sebagainya.</span></li>
+            </ul>
+          </div>
+          <div class="p-7 rounded-3xl bg-amber-50 border border-amber-100">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-amber-700"></i>Selain itu, diharapkan juga mendukung</h3>
+            <div class="mt-4 space-y-3 text-[15px] text-ink-700">
+              <div class="p-4 rounded-xl bg-white border border-amber-100 flex items-start gap-3">
+                <i data-lucide="sprout" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
+                <span><b>Kawasan sentra produksi pertanian terpadu</b> berbasis komoditas lokal (jagung, padi, kedelai, singkong) — menyerap tenaga kerja lokal & meningkatkan diversifikasi pangan.</span>
+              </div>
+              <div class="p-4 rounded-xl bg-white border border-amber-100 flex items-start gap-3">
+                <i data-lucide="percent" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
+                <span><b>Insentif fiskal</b> bagi investor industri pengolahan pangan lokal — meningkatkan nilai investasi.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEMA 4: KETAHANAN PANGAN ============ -->
+<section id="pangan" class="py-20 lg:py-28 bg-ink-50/60">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 reveal">
+      <div class="flex items-start gap-5">
+        <div class="theme-badge green shrink-0"><i data-lucide="wheat" class="w-7 h-7"></i></div>
+        <div>
+          <div class="text-xs font-bold tracking-widest text-emerald-600">TEMA 04</div>
+          <h2 class="mt-1 font-display font-extrabold text-3xl sm:text-4xl leading-tight">RB Mendukung Ketahanan Pangan Nasional</h2>
+          <p class="mt-3 text-ink-500 max-w-2xl leading-relaxed">
+            Meningkatkan ketahanan pangan nasional melalui penguatan produksi, distribusi, diversifikasi, dan stabilitas pangan.
+          </p>
+        </div>
+      </div>
+      <span class="pill-chip shrink-0"><i data-lucide="gavel" class="w-3.5 h-3.5 text-emerald-600"></i> Inpres 3 & 6 Tahun 2025</span>
+    </div>
+
+    <div class="flex flex-wrap gap-2 p-1.5 bg-ink-100/70 rounded-2xl mb-8 reveal" data-tabgroup="t4">
+      <button class="tab-btn active px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t4-about"><i data-lucide="info" class="w-4 h-4"></i>Tentang</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t4-peran"><i data-lucide="users" class="w-4 h-4"></i>Peran BPS</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t4-intervensi"><i data-lucide="zap" class="w-4 h-4"></i>Intervensi</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t4-aktivitas"><i data-lucide="activity" class="w-4 h-4"></i>Aktivitas BPS</button>
+    </div>
+
+    <div class="reveal">
+      <div data-panel="t4-about" class="tab-panel">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="p-7 rounded-3xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="target" class="w-5 h-5 text-emerald-700"></i>Arah Tema</h3>
+            <p class="mt-3 text-ink-600 leading-relaxed text-[15px]">
+              Mendukung prioritas aktual Presiden dalam mewujudkan swasembada pangan dan mengurangi tingkat kerawanan pangan di daerah. Birokrasi diarahkan melaksanakan perbaikan tata kelola dalam upaya mewujudkan transformasi pengelolaan pertanian dari tradisional menjadi pertanian modern.
+            </p>
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <div class="p-3 rounded-xl bg-white border border-emerald-100 text-center">
+                <i data-lucide="gauge" class="w-5 h-5 mx-auto text-emerald-600"></i>
+                <div class="text-[11px] mt-1.5 text-ink-500 font-medium">Indeks Ketahanan Pangan</div>
+              </div>
+              <div class="p-3 rounded-xl bg-white border border-emerald-100 text-center">
+                <i data-lucide="package-x" class="w-5 h-5 mx-auto text-emerald-600"></i>
+                <div class="text-[11px] mt-1.5 text-ink-500 font-medium">Penurunan Ketergantungan Impor</div>
+              </div>
+            </div>
+          </div>
+          <div class="p-7 rounded-3xl border border-ink-100 shadow-soft">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="tractor" class="w-5 h-5 text-emerald-700"></i>Transformasi Pertanian</h3>
+            <p class="mt-3 text-ink-600 leading-relaxed text-[15px]">
+              Birokrasi mendukung swasembada pangan melalui transformasi pengelolaan pertanian tradisional menjadi pertanian modern — mendorong peningkatan produksi pangan, peningkatan kualitas penyuluh pertanian, efisiensi distribusi, dukungan kepada petani, hingga pemanfaatan teknologi pertanian.
+            </p>
+            <div class="mt-5">
+              <div class="text-xs font-semibold text-ink-400 mb-2">KEGIATAN BPS YANG TERKAIT</div>
+              <div class="flex flex-wrap gap-2">
+                <span class="pill-chip"><i data-lucide="map" class="w-3.5 h-3.5 text-emerald-500"></i>Survei Kerangka Sampel Area</span>
+                <span class="pill-chip"><i data-lucide="sprout" class="w-3.5 h-3.5 text-emerald-500"></i>Survei Pertanian Tanaman Pangan</span>
+                <span class="pill-chip"><i data-lucide="wheat" class="w-3.5 h-3.5 text-emerald-500"></i>Survei Konversi Gabah ke Beras</span>
+                <span class="pill-chip"><i data-lucide="more-horizontal" class="w-3.5 h-3.5 text-emerald-500"></i>dan lain sebagainya</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div data-panel="t4-peran" class="tab-panel hidden">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="p-7 rounded-3xl bg-emerald-900 text-white">
+            <div class="text-xs font-bold tracking-wider text-emerald-300">PERAN BPS MENURUT INPRES</div>
+            <h3 class="mt-2 font-display font-bold text-xl">Pengendalian Ketersediaan & Harga Pangan</h3>
+            <p class="mt-3 text-white/85 text-[15px] leading-relaxed">
+              Birokrasi mendukung pengendalian ketersediaan dan harga pangan dengan memastikan data produksi padi dan harga gabah/beras per wilayah yang akurat dan terbarukan, serta menyediakan data tersebut kepada pihak terkait untuk menjaga stok dan stabilitas harga.
+            </p>
+          </div>
+          <div class="p-7 rounded-3xl border border-ink-100 shadow-soft">
+            <h3 class="font-display font-bold text-lg mb-4">Tugas BPS menurut Inpres</h3>
+            <div class="num-list space-y-3.5 text-[15px] text-ink-700">
+              <div class="num-item">Menyediakan data produksi padi sesuai dengan Kerangka Sampel Area kepada Perum BULOG secara bulanan.</div>
+              <div class="num-item">Menyediakan data harga gabah/beras per wilayah kepada Perum BULOG secara bulanan.</div>
+            </div>
+            <div class="mt-5 grid sm:grid-cols-2 gap-3">
+              <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+                <div class="text-[11px] font-bold tracking-wider text-emerald-600">INPRES NO 3/2025</div>
+                <div class="text-sm mt-1 text-ink-700">Pendayagunaan Penyuluh Pertanian dalam Rangka Percepatan Swasembada Pangan.</div>
+              </div>
+              <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+                <div class="text-[11px] font-bold tracking-wider text-emerald-600">INPRES NO 6/2025</div>
+                <div class="text-sm mt-1 text-ink-700">Pengadaan & Pengelolaan Gabah/Beras Dalam Negeri serta Penyaluran Cadangan Beras Pemerintah.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div data-panel="t4-intervensi" class="tab-panel hidden">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="cpu" class="w-6 h-6 text-emerald-600"></i><h4 class="mt-3 font-display font-semibold">Produksi Berbasis Teknologi</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Peningkatan produksi pangan nasional berbasis teknologi dan inovasi pertanian.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="truck" class="w-6 h-6 text-emerald-600"></i><h4 class="mt-3 font-display font-semibold">Distribusi & Logistik</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penguatan tata kelola distribusi dan logistik pangan.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="shuffle" class="w-6 h-6 text-emerald-600"></i><h4 class="mt-3 font-display font-semibold">Diversifikasi Pangan</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Diversifikasi pangan sesuai potensi lokal.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="recycle" class="w-6 h-6 text-emerald-600"></i><h4 class="mt-3 font-display font-semibold">Kurangi Food Loss & Waste</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Pengurangan food loss and waste di seluruh rantai pasok pangan.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="wallet" class="w-6 h-6 text-emerald-600"></i><h4 class="mt-3 font-display font-semibold">Keterjangkauan Pangan</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Peningkatan keterjangkauan pangan bagi masyarakat miskin dan rentan.</p></div>
+          <div class="p-6 rounded-2xl bg-emerald-50 border border-emerald-100"><i data-lucide="sparkles" class="w-6 h-6 text-emerald-600"></i><h4 class="mt-3 font-display font-semibold">Dukungan Lainnya</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Perluasan MBG, swasembada air untuk irigasi, dan pengembangan industri pengolahan hasil pertanian via BUMDes, koperasi, UMKM.</p></div>
+        </div>
+      </div>
+
+      <div data-panel="t4-aktivitas" class="tab-panel hidden">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="p-7 rounded-3xl border border-ink-100 shadow-soft bg-white">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5 text-emerald-700"></i>Contoh Aktivitas BPS</h3>
+            <ul class="mt-4 space-y-3 text-[15px] text-ink-700">
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"></i><span>Pelaksanaan Survei Monitoring & Evaluasi Program Makan Bergizi Gratis (MBG) — mengukur dampak program terhadap aspek kesehatan, pendidikan, ekonomi, dan kemiskinan.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"></i><span>Pendataan Survei Bahan Pokok Rumah Tangga untuk menghasilkan data konsumsi bahan pokok di rumah tangga.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"></i><span>Pelaksanaan Survei Konversi Gabah ke Beras (SKGB) 2025 — menyediakan data konversi yang akurat dalam produksi beras untuk pencapaian swasembada pangan nasional.</span></li>
+              <li class="flex gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"></i><span>Dan lain sebagainya.</span></li>
+            </ul>
+          </div>
+          <div class="p-7 rounded-3xl bg-emerald-50 border border-emerald-100">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-emerald-700"></i>Selain itu, diharapkan juga mendukung</h3>
+            <div class="mt-4 space-y-3 text-[15px] text-ink-700">
+              <div class="p-4 rounded-xl bg-white border border-emerald-100 flex items-start gap-3">
+                <i data-lucide="utensils" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+                <span><b>Perluasan MBG</b> — meningkatkan pemerataan akses makanan sehat dan bergizi.</span>
+              </div>
+              <div class="p-4 rounded-xl bg-white border border-emerald-100 flex items-start gap-3">
+                <i data-lucide="droplets" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+                <span><b>Swasembada air</b> — kebijakan pelaksanaan untuk irigasi pertanian.</span>
+              </div>
+              <div class="p-4 rounded-xl bg-white border border-emerald-100 flex items-start gap-3">
+                <i data-lucide="building-2" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+                <span><b>Industri pengolahan hasil pertanian</b> melalui BUMDes, koperasi, dan UMKM.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEMA 5: KESEHATAN ============ -->
+<section id="kesehatan" class="py-20 lg:py-28 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 reveal">
+      <div class="flex items-start gap-5">
+        <div class="theme-badge teal shrink-0"><i data-lucide="stethoscope" class="w-7 h-7"></i></div>
+        <div>
+          <div class="text-xs font-bold tracking-widest text-teal-600">TEMA 05</div>
+          <h2 class="mt-1 font-display font-extrabold text-3xl sm:text-4xl leading-tight">RB Peningkatan Kualitas & Akses Layanan Kesehatan</h2>
+          <p class="mt-3 text-ink-500 max-w-2xl leading-relaxed">
+            Mendorong percepatan peningkatan akses dan mutu pelayanan kesehatan primer dan lanjutan secara merata.
+          </p>
+        </div>
+      </div>
+      <span class="pill-chip shrink-0"><i data-lucide="gavel" class="w-3.5 h-3.5 text-teal-600"></i> Inpres 5 Tahun 2025</span>
+    </div>
+
+    <div class="flex flex-wrap gap-2 p-1.5 bg-ink-100/70 rounded-2xl mb-8 reveal" data-tabgroup="t5">
+      <button class="tab-btn active px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t5-about"><i data-lucide="info" class="w-4 h-4"></i>Tentang</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t5-intervensi"><i data-lucide="zap" class="w-4 h-4"></i>Intervensi</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t5-aktivitas"><i data-lucide="activity" class="w-4 h-4"></i>Aktivitas BPS</button>
+    </div>
+
+    <div class="reveal">
+      <div data-panel="t5-about" class="tab-panel">
+        <div class="grid lg:grid-cols-3 gap-5">
+          <div class="lg:col-span-2 p-7 rounded-3xl bg-gradient-to-br from-teal-50 to-white border border-teal-100">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="target" class="w-5 h-5 text-teal-700"></i>Arah Tema</h3>
+            <p class="mt-3 text-ink-600 leading-relaxed text-[15px]">
+              Mendorong instansi pemerintah untuk melaksanakan percepatan peningkatan akses dan mutu pelayanan kesehatan baik primer maupun lanjutan. Birokrasi diarahkan agar dapat menyelenggarakan pelayanan kesehatan yang merata, aman, dan bermutu kepada setiap masyarakat di seluruh wilayah Indonesia.
+            </p>
+            <p class="mt-4 p-4 rounded-xl bg-white border border-teal-100 text-sm text-ink-600">
+              <b class="text-teal-700">Peran birokrasi:</b> mendorong percepatan transformasi digital dalam layanan dan tata kelola kesehatan publik untuk percepatan peningkatan akses dan mutu pelayanan kesehatan primer dan pelayanan kesehatan lanjutan.
+            </p>
+          </div>
+          <div class="p-7 rounded-3xl bg-ink-900 text-white">
+            <div class="text-xs font-bold tracking-wider text-teal-300">INDIKATOR DAMPAK</div>
+            <h3 class="mt-2 font-display font-bold text-xl">Yang Diharapkan</h3>
+            <ul class="mt-4 space-y-3 text-[15px] text-white/85">
+              <li class="flex gap-3"><i data-lucide="activity" class="w-5 h-5 text-teal-300 shrink-0 mt-0.5"></i><span>Indeks Kesehatan</span></li>
+              <li class="flex gap-3"><i data-lucide="smile" class="w-5 h-5 text-teal-300 shrink-0 mt-0.5"></i><span>Indeks Kepuasan Masyarakat terhadap pelayanan kesehatan</span></li>
+              <li class="flex gap-3"><i data-lucide="smartphone" class="w-5 h-5 text-teal-300 shrink-0 mt-0.5"></i><span>Tingkat Adopsi Layanan Berbasis Digital</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div data-panel="t5-intervensi" class="tab-panel hidden">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="cpu" class="w-6 h-6 text-teal-600"></i><h4 class="mt-3 font-display font-semibold">Teknologi Digital Layanan</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penerapan teknologi digital dalam proses bisnis layanan kesehatan — pendaftaran, rekam medis, antrian, hingga konsultasi daring.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="share-2" class="w-6 h-6 text-teal-600"></i><h4 class="mt-3 font-display font-semibold">Interoperabilitas Data</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penguatan interoperabilitas data kesehatan antar unit layanan dan antar tingkatan pemerintahan.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="users-cog" class="w-6 h-6 text-teal-600"></i><h4 class="mt-3 font-display font-semibold">Kapasitas SDM</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Peningkatan kapasitas SDM layanan kesehatan dalam pemanfaatan teknologi digital.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="smartphone" class="w-6 h-6 text-teal-600"></i><h4 class="mt-3 font-display font-semibold">Layanan Berbasis Masyarakat</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penyediaan layanan kesehatan berbasis masyarakat dengan dukungan platform digital.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="bar-chart-2" class="w-6 h-6 text-teal-600"></i><h4 class="mt-3 font-display font-semibold">Keputusan Berbasis Data</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penguatan pengambilan keputusan berbasis data untuk peningkatan mutu layanan.</p></div>
+          <div class="p-6 rounded-2xl bg-teal-50 border border-teal-100"><i data-lucide="sparkles" class="w-6 h-6 text-teal-600"></i><h4 class="mt-3 font-display font-semibold">Dukungan Lainnya</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Pemerataan akses fasilitas kesehatan, penyediaan air bersih & sanitasi, serta pemberian pangan sehat untuk mencegah stunting.</p></div>
+        </div>
+      </div>
+
+      <div data-panel="t5-aktivitas" class="tab-panel hidden">
+        <div class="p-7 rounded-3xl border border-ink-100 shadow-soft bg-white">
+          <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5 text-teal-700"></i>Contoh Aktivitas BPS</h3>
+          <div class="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="p-5 rounded-xl bg-teal-50 border border-teal-100">
+              <i data-lucide="clipboard-list" class="w-6 h-6 text-teal-600"></i>
+              <h4 class="mt-2 font-display font-semibold text-[15px]">Pengumpulan & Analisis Susenas</h4>
+              <p class="mt-1 text-sm text-ink-500 leading-relaxed">Pelaksanaan pengumpulan dan analisis data Susenas September dan Maret.</p>
+            </div>
+            <div class="p-5 rounded-xl bg-teal-50 border border-teal-100">
+              <i data-lucide="database" class="w-6 h-6 text-teal-600"></i>
+              <h4 class="mt-2 font-display font-semibold text-[15px]">Pemadanan Data DTSEN</h4>
+              <p class="mt-1 text-sm text-ink-500 leading-relaxed">Identifikasi ketersediaan data statistik kesehatan (gizi & disabilitas) untuk pemadanan data DTSEN.</p>
+            </div>
+            <div class="p-5 rounded-xl bg-teal-50 border border-teal-100">
+              <i data-lucide="map-pin" class="w-6 h-6 text-teal-600"></i>
+              <h4 class="mt-2 font-display font-semibold text-[15px]">Pendataan PODES</h4>
+              <p class="mt-1 text-sm text-ink-500 leading-relaxed">Pendataan fasilitas kesehatan dan posyandu melalui PODES.</p>
+            </div>
+            <div class="p-5 rounded-xl bg-ink-50 border border-ink-100 col-span-full">
+              <i data-lucide="more-horizontal" class="w-6 h-6 text-ink-400"></i>
+              <h4 class="mt-2 font-display font-semibold text-[15px]">Dan lain sebagainya.</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEMA 6: PENDIDIKAN ============ -->
+<section id="pendidikan" class="py-20 lg:py-28 bg-ink-50/60">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 reveal">
+      <div class="flex items-start gap-5">
+        <div class="theme-badge violet shrink-0"><i data-lucide="graduation-cap" class="w-7 h-7"></i></div>
+        <div>
+          <div class="text-xs font-bold tracking-widest text-violet-600">TEMA 06</div>
+          <h2 class="mt-1 font-display font-extrabold text-3xl sm:text-4xl leading-tight">RB Peningkatan Akses, Kualitas & Mutu Layanan Pendidikan</h2>
+          <p class="mt-3 text-ink-500 max-w-2xl leading-relaxed">
+            Mempercepat peningkatan kualitas dan daya saing SDM Indonesia guna membangun generasi emas Indonesia 2045.
+          </p>
+        </div>
+      </div>
+      <span class="pill-chip shrink-0"><i data-lucide="gavel" class="w-3.5 h-3.5 text-violet-600"></i> Inpres 7 Tahun 2025</span>
+    </div>
+
+    <div class="flex flex-wrap gap-2 p-1.5 bg-ink-100/70 rounded-2xl mb-8 reveal" data-tabgroup="t6">
+      <button class="tab-btn active px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t6-about"><i data-lucide="info" class="w-4 h-4"></i>Tentang</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t6-intervensi"><i data-lucide="zap" class="w-4 h-4"></i>Intervensi</button>
+      <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2" data-tab="t6-aktivitas"><i data-lucide="activity" class="w-4 h-4"></i>Aktivitas BPS</button>
+    </div>
+
+    <div class="reveal">
+      <div data-panel="t6-about" class="tab-panel">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="p-7 rounded-3xl bg-gradient-to-br from-violet-50 to-white border border-violet-100">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="target" class="w-5 h-5 text-violet-700"></i>Arah Tema</h3>
+            <p class="mt-3 text-ink-600 leading-relaxed text-[15px]">
+              Diarahkan untuk mempercepat peningkatan kualitas dan daya saing SDM Indonesia guna membangun generasi emas Indonesia 2045. Dilakukan melalui perbaikan tata kelola layanan pendidikan secara menyeluruh — mulai dari PAUD, pendidikan dasar, pendidikan menengah, hingga pembangunan dan pengelolaan Sekolah Menengah Atas Unggul Garuda.
+            </p>
+            <div class="mt-5 p-4 rounded-xl bg-white border border-violet-100 text-sm text-ink-600">
+              <b class="text-violet-700">Fokus utama:</b> peningkatan akses yang setara, peningkatan kualitas pembelajaran, penguatan kapasitas tenaga pendidik, serta integrasi teknologi dan digitalisasi untuk memperluas jangkauan dan efektivitas pendidikan.
+            </div>
+          </div>
+          <div class="p-7 rounded-3xl border border-ink-100 shadow-soft">
+            <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-violet-700"></i>Peran Birokrasi</h3>
+            <p class="mt-3 text-ink-600 leading-relaxed text-[15px]">
+              Birokrasi mendorong percepatan peningkatan kualitas dan daya saing SDM Indonesia guna membangun generasi emas Indonesia 2045 melalui perbaikan tata kelola layanan Pendidikan secara menyyeluruh.
+            </p>
+            <div class="mt-5">
+              <div class="text-xs font-semibold text-ink-400 mb-2">RB DAPAT MENDORONG PENINGKATAN KUALITAS PENDIDIKAN DENGAN BERFOKUS PADA:</div>
+              <div class="grid grid-cols-2 gap-2 mt-2">
+                <div class="p-3 rounded-lg bg-violet-50 text-sm font-medium text-ink-700 flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-violet-600"></i>Akses yang setara</div>
+                <div class="p-3 rounded-lg bg-violet-50 text-sm font-medium text-ink-700 flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-violet-600"></i>Kualitas pembelajaran</div>
+                <div class="p-3 rounded-lg bg-violet-50 text-sm font-medium text-ink-700 flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-violet-600"></i>Kapasitas pendidik</div>
+                <div class="p-3 rounded-lg bg-violet-50 text-sm font-medium text-ink-700 flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-violet-600"></i>Integrasi teknologi</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div data-panel="t6-intervensi" class="tab-panel hidden">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="building" class="w-6 h-6 text-violet-600"></i><h4 class="mt-3 font-display font-semibold">Infrastruktur Pendidikan</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Pembangunan dan revitalisasi infrastruktur satuan pendidikan.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="users-cog" class="w-6 h-6 text-violet-600"></i><h4 class="mt-3 font-display font-semibold">Kapasitas Guru</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penguatan kapasitas dan kualitas guru dan tenaga kependidikan.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="monitor" class="w-6 h-6 text-violet-600"></i><h4 class="mt-3 font-display font-semibold">Transformasi Digital</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Transformasi digital pembelajaran dan literasi digital.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="heart-handshake" class="w-6 h-6 text-violet-600"></i><h4 class="mt-3 font-display font-semibold">Intervensi Kelompok Rentan</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Intervensi khusus untuk kelompok rentan.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="book-open" class="w-6 h-6 text-violet-600"></i><h4 class="mt-3 font-display font-semibold">Mutu & Kurikulum</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penguatan mutu layanan, kurikulum, dan sistem pembelajaran.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="wrench" class="w-6 h-6 text-violet-600"></i><h4 class="mt-3 font-display font-semibold">Pendidikan Vokasi</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Transformasi pendidikan vokasi yang adaptif dan produktif.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="baby" class="w-6 h-6 text-violet-600"></i><h4 class="mt-3 font-display font-semibold">PAUD & Transisi</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penguatan layanan PAUD dan transisi PAUD ke Sekolah Dasar.</p></div>
+          <div class="p-6 rounded-2xl bg-white border border-ink-100 shadow-soft"><i data-lucide="award" class="w-6 h-6 text-violet-600"></i><h4 class="mt-3 font-display font-semibold">Pendidikan Karakter</h4><p class="mt-1.5 text-sm text-ink-500 leading-relaxed">Penguatan pendidikan karakter dan manajemen talenta.</p></div>
+        </div>
+      </div>
+
+      <div data-panel="t6-aktivitas" class="tab-panel hidden">
+        <div class="p-7 rounded-3xl border border-ink-100 shadow-soft bg-white">
+          <h3 class="font-display font-bold text-lg flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5 text-violet-700"></i>Contoh Aktivitas BPS</h3>
+          <div class="mt-5 grid sm:grid-cols-2 gap-4">
+            <div class="p-5 rounded-xl bg-violet-50 border border-violet-100">
+              <i data-lucide="database" class="w-6 h-6 text-violet-600"></i>
+              <h4 class="mt-2 font-display font-semibold text-[15px]">Pemadanan Data Calon Peserta Didik</h4>
+              <p class="mt-1 text-sm text-ink-500 leading-relaxed">Pemadanan data calon peserta didik dengan DTSEN dan informasi peringkat kesejahteraan.</p>
+            </div>
+            <div class="p-5 rounded-xl bg-violet-50 border border-violet-100">
+              <i data-lucide="clipboard-list" class="w-6 h-6 text-violet-600"></i>
+              <h4 class="mt-2 font-display font-semibold text-[15px]">Pengumpulan & Analisis Susenas</h4>
+              <p class="mt-1 text-sm text-ink-500 leading-relaxed">Pelaksanaan pengumpulan dan analisis data Susenas September dan Maret.</p>
+            </div>
+            <div class="p-5 rounded-xl bg-violet-50 border border-violet-100">
+              <i data-lucide="map-pin" class="w-6 h-6 text-violet-600"></i>
+              <h4 class="mt-2 font-display font-semibold text-[15px]">Pendataan PODES</h4>
+              <p class="mt-1 text-sm text-ink-500 leading-relaxed">Pendataan fasilitas pendidikan melalui PODES.</p>
+            </div>
+            <div class="p-5 rounded-xl bg-violet-50 border border-violet-100">
+              <i data-lucide="school" class="w-6 h-6 text-violet-600"></i>
+              <h4 class="mt-2 font-display font-semibold text-[15px]">Program Sekolah Rakyat</h4>
+              <p class="mt-1 text-sm text-ink-500 leading-relaxed">Keterlibatan BPS dalam Program Sekolah Rakyat.</p>
+            </div>
+            <div class="p-5 rounded-xl bg-ink-50 border border-ink-100 col-span-full">
+              <i data-lucide="more-horizontal" class="w-6 h-6 text-ink-400"></i>
+              <h4 class="mt-2 font-display font-semibold text-[15px]">Dan lain sebagainya.</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA / FOOTER ============ -->
+<section class="py-20 lg:py-24 bg-ink-900 text-white relative overflow-hidden">
+  <div class="absolute inset-0 hero-grid opacity-50"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-3 gap-10 items-start">
+      <div class="lg:col-span-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold mb-5">
+          <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> DATA MENCERDASKAN BANGSA
+        </div>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl leading-tight">
+          Reformasi Birokrasi Tematik 2025<br/>
+          <span class="bg-gradient-to-r from-bps-300 to-amber-200 bg-clip-text text-transparent">untuk Indonesia yang lebih baik.</span>
+        </h2>
+        <p class="mt-5 text-white/75 max-w-2xl leading-relaxed">
+          Panduan ini disusun oleh Sekretariat RB BPS untuk penyusunan Rencana Aksi RB Tematik BPS Tahun 2025. Untuk informasi lebih lanjut, kunjungi situs resmi BPS.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="https://www.bps.go.id" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-ink-900 font-semibold text-sm hover:bg-ink-50 transition">
+            <i data-lucide="external-link" class="w-4 h-4"></i> bps.go.id
+          </a>
+          <a href="#hero" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white font-semibold text-sm hover:bg-white/15 transition">
+            <i data-lucide="arrow-up" class="w-4 h-4"></i> Kembali ke Atas
+          </a>
+        </div>
+      </div>
+
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur">
+        <div class="text-xs font-bold tracking-wider text-white/60">KONTAK BPS</div>
+        <h3 class="mt-2 font-display font-bold text-lg">Badan Pusat Statistik</h3>
+        <div class="mt-4 space-y-3 text-sm text-white/80">
+          <div class="flex gap-3"><i data-lucide="map-pin" class="w-4 h-4 mt-0.5 shrink-0 text-bps-300"></i><span>Jl. dr. Sutomo No. 6-8, Jakarta 10710</span></div>
+          <div class="flex gap-3"><i data-lucide="phone" class="w-4 h-4 mt-0.5 shrink-0 text-bps-300"></i><span>(021) 3841195, 3842508, 3810291-4<br/>Fax: (021) 3857046</span></div>
+          <div class="flex gap-3"><i data-lucide="mail" class="w-4 h-4 mt-0.5 shrink-0 text-bps-300"></i><span>bpshq@bps.go.id</span></div>
+          <div class="flex gap-3"><i data-lucide="globe" class="w-4 h-4 mt-0.5 shrink-0 text-bps-300"></i><span>www.bps.go.id</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-14 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/55">
+      <div>© 2025 Badan Pusat Statistik · Sekretariat RB BPS. Disusun September 2025.</div>
+      <div class="flex items-center gap-3">
+        <span>Dibuat sebagai panduan interaktif</span>
+        <span class="w-1 h-1 rounded-full bg-white/30"></span>
+        <span>RB Tematik 2025</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Back to top -->
+<button id="backTop" aria-label="Kembali ke atas" class="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-ink-900 text-white shadow-card flex items-center justify-center hover:bg-ink-800 transition">
+  <i data-lucide="arrow-up" class="w-5 h-5"></i>
+</button>
+
+<!-- ============ SCRIPTS ============ -->
+<script>
+  // Initialize lucide icons
+  lucide.createIcons();
+
+  // ---- Progress bar
+  const progressBar = document.getElementById('progressBar');
+  const navbar = document.getElementById('navbar');
+  const backTop = document.getElementById('backTop');
+  function onScroll(){
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const pct = height > 0 ? (scrollTop / height) * 100 : 0;
+    progressBar.style.width = pct + '%';
+    if (scrollTop > 30) navbar.classList.add('scrolled'); else navbar.classList.remove('scrolled');
+    if (scrollTop > 600) backTop.classList.add('show'); else backTop.classList.remove('show');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ---- Mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const closeMenu = document.getElementById('closeMenu');
+  const mobileOverlay = document.getElementById('mobileOverlay');
+  const mobileMenu = document.getElementById('mobileMenu');
+  function openMobile(){ mobileMenu.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeMobile(){ mobileMenu.classList.remove('open'); document.body.style.overflow = ''; }
+  menuBtn.addEventListener('click', openMobile);
+  closeMenu.addEventListener('click', closeMobile);
+  mobileOverlay.addEventListener('click', closeMobile);
+  document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', closeMobile));
+
+  // ---- Accordion
+  document.querySelectorAll('.acc-item').forEach(item => {
+    const head = item.querySelector('.acc-head');
+    head.addEventListener('click', () => {
+      // close others
+      document.querySelectorAll('.acc-item').forEach(i => { if (i !== item) i.classList.remove('open'); });
+      item.classList.toggle('open');
+    });
+  });
+
+  // ---- Tabs (multiple groups)
+  document.querySelectorAll('[data-tabgroup]').forEach(group => {
+    const buttons = group.querySelectorAll('.tab-btn');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // find panels in the same section
+        const section = group.closest('section');
+        section.querySelectorAll('.tab-panel').forEach(p => {
+          if (p.dataset.panel === target) p.classList.remove('hidden');
+          else p.classList.add('hidden');
+        });
+        // re-init icons in case
+        lucide.createIcons();
+      });
+    });
+  });
+
+  // ---- Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(r => io.observe(r));
+
+  // ---- Active nav link on scroll
+  const sections = ['dasar-hukum','tema','kemiskinan','investasi','hilirisasi','pangan','kesehatan','pendidikan'];
+  const navLinks = document.querySelectorAll('.nav-link');
+  function updateActive(){
+    let current = '';
+    const scrollPos = window.scrollY + 120;
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= scrollPos) current = id;
+    });
+    navLinks.forEach(l => {
+      const href = l.getAttribute('href').replace('#','');
+      l.classList.toggle('active', href === current);
+    });
+  }
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+</script>
+</body>
+</html>
