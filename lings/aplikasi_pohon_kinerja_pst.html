@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Pohon Kinerja PST</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- DataTables CSS Bootstrap 5 Theme -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <!-- SheetJS (xlsx) untuk Export ke Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #0e4a85;
+            --primary-dark: #09325c;
+            --secondary-color: #00a8cc;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-purple: #7c3aed;
+            --bg-light: #f1f5f9;
+            --text-dark: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-wrapper {
+            flex: 1 0 auto;
+            width: 100%;
+        }
+
+        /* Sticky Header */
+        .sticky-header-container {
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            background-color: rgba(241, 245, 249, 0.94);
+            backdrop-filter: blur(10px);
+            padding-top: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .header-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            border-radius: 16px;
+            padding: 16px 26px;
+            box-shadow: 0 8px 20px rgba(14, 74, 133, 0.15);
+        }
+
+        .header-card h2 {
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 2px;
+        }
+
+        .header-card p {
+            font-size: 0.82rem;
+            opacity: 0.94;
+            margin-bottom: 0;
+        }
+
+        /* Nav Pills Custom */
+        .nav-pills-custom {
+            background: #ffffff;
+            padding: 8px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+        }
+
+        .nav-pills-custom .nav-link {
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.87rem;
+            border-radius: 10px;
+            padding: 9px 16px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-pills-custom .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), #1d63ab);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(14, 74, 133, 0.25);
+        }
+
+        .card-panel {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 22px;
+            width: 100%;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        /* Form Section Grouping */
+        .form-section-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px;
+            height: 100%;
+        }
+
+        .form-section-heading {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary-color);
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+        }
+
+        /* Visual Pohon Kinerja (Tree Hierarchy) */
+        .tree-node {
+            position: relative;
+            border-left: 3px solid #cbd5e1;
+            padding-left: 22px;
+            margin-left: 14px;
+            margin-bottom: 16px;
+        }
+
+        .tree-node.level-1 { border-left-color: var(--primary-color); }
+        .tree-node.level-2 { border-left-color: var(--secondary-color); }
+        .tree-node.level-3 { border-left-color: var(--accent-purple); }
+        .tree-node.level-4 { border-left-color: var(--accent-emerald); }
+
+        .node-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px 20px;
+            transition: all 0.2s ease;
+        }
+
+        .node-card:hover {
+            border-color: #94a3b8;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .node-card.root-card {
+            background: linear-gradient(to right, #eff6ff, #f0f9ff);
+            border: 1.5px solid #bae6fd;
+        }
+
+        .badge-level {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .badge-l1 { background: #dbeafe; color: #1e40af; }
+        .badge-l2 { background: #cffafe; color: #0e7490; }
+        .badge-l3 { background: #ede9fe; color: #5b21b6; }
+        .badge-l4 { background: #d1fae5; color: #065f46; }
+
+        .badge-layanan {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 6px;
+            background: #fff1f2;
+            color: #be123c;
+            border: 1px solid #fecdd3;
+        }
+
+        /* SMART & PDCA Badges */
+        .smart-pill {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            color: #475569;
+            margin-right: 3px;
+        }
+        .smart-pill.valid {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .pdca-badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 6px;
+        }
+        .pdca-P { background: #dbeafe; color: #1d4ed8; }
+        .pdca-D { background: #fef3c7; color: #b45309; }
+        .pdca-C { background: #f3e8ff; color: #7e22ce; }
+        .pdca-A { background: #dcfce7; color: #15803d; }
+
+        /* Matriks Peran Hasil Styling */
+        .mph-table th {
+            background-color: var(--primary-color) !important;
+            color: #ffffff !important;
+            font-size: 0.81rem;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .mph-table td {
+            font-size: 0.83rem;
+            vertical-align: top;
+        }
+
+        /* GANTT CHART STYLING */
+        .gantt-wrapper {
+            overflow-x: auto;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            background: #fff;
+        }
+        .gantt-table {
+            width: 100%;
+            min-width: 1220px;
+            border-collapse: collapse;
+            font-size: 0.81rem;
+        }
+        .gantt-table th {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 10px 6px;
+            text-align: center;
+            border: 1px solid #334155;
+            font-weight: 600;
+        }
+        .gantt-table th.sticky-col, .gantt-table td.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 5;
+            background-color: #ffffff;
+            border-right: 2px solid #cbd5e1;
+        }
+        .gantt-table th.sticky-col {
+            background-color: #0e4a85;
+            z-index: 6;
+        }
+        .gantt-table td {
+            border: 1px solid #e2e8f0;
+            padding: 7px 6px;
+            vertical-align: middle;
+        }
+        .gantt-table tr:hover td {
+            background-color: #f8fafc;
+        }
+        .gantt-month-cell {
+            width: 44px;
+            min-width: 44px;
+            padding: 4px 2px !important;
+            text-align: center;
+            position: relative;
+        }
+        .gantt-bar {
+            height: 22px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 700;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+            transition: transform 0.15s ease;
+        }
+        .gantt-bar:hover {
+            transform: scaleY(1.12);
+        }
+        .gantt-bar-P { background: linear-gradient(90deg, #2563eb, #3b82f6); }
+        .gantt-bar-D { background: linear-gradient(90deg, #d97706, #f59e0b); }
+        .gantt-bar-C { background: linear-gradient(90deg, #7c3aed, #8b5cf6); }
+        .gantt-bar-A { background: linear-gradient(90deg, #059669, #10b981); }
+
+        /* MATRIKS RACI STYLING */
+        .raci-table th {
+            background-color: var(--primary-color) !important;
+            color: #ffffff !important;
+            font-size: 0.8rem;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .raci-table td {
+            font-size: 0.82rem;
+            vertical-align: middle;
+        }
+        .raci-select {
+            font-weight: 700;
+            text-align: center;
+            border-radius: 8px;
+            padding: 4px 6px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .raci-R { background-color: #fee2e2 !important; color: #b91c1c !important; border-color: #fca5a5 !important; }
+        .raci-A { background-color: #fef3c7 !important; color: #b45309 !important; border-color: #fcd34d !important; }
+        .raci-C { background-color: #dbeafe !important; color: #1d4ed8 !important; border-color: #93c5fd !important; }
+        .raci-I { background-color: #dcfce7 !important; color: #15803d !important; border-color: #86efac !important; }
+        .raci-NONE { background-color: #f8fafc !important; color: #94a3b8 !important; border-color: #e2e8f0 !important; }
+
+        .raci-pill {
+            display: inline-block;
+            min-width: 28px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 0.78rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .badge-code {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+        }
+
+        .formula-box {
+            font-family: 'Courier New', Courier, monospace;
+            background: #fffbeb;
+            color: #b45309;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            border: 1px solid #fef3c7;
+        }
+
+        footer {
+            flex-shrink: 0;
+            background-color: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 14px 0;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.84rem;
+        }
+
+        @media print {
+            .sticky-header-container, .nav-pills-custom, .no-print, footer { display: none !important; }
+            .card-panel { box-shadow: none; border: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <!-- Sticky Header -->
+    <div class="sticky-header-container px-md-4 px-2">
+        <div class="header-card d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h2><i class="fa-solid fa-sitemap me-2"></i> Pohon Kinerja (Cascading) & Matriks Peran Hasil</h2>
+                <p>IKU 2.7.1.1 IPP-PM — <strong>Pelayanan Statistik Terpadu</strong></p>
+            </div>
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+                <button class="btn btn-light btn-sm fw-semibold text-primary shadow-sm" onclick="bukaFormTambahBaru()">
+                    <i class="fa-solid fa-plus me-1"></i> Input Cascading
+                </button>
+                <button class="btn btn-success btn-sm fw-semibold shadow-sm" onclick="exportToExcel()">
+                    <i class="fa-solid fa-file-excel me-1"></i> Export Excel
+                </button>
+            </div>
+            <div>
+                <!-- Navigation Tabs (5 Halaman Terpisah) -->
+                <ul class="nav nav-pills nav-pills-custom mb-4 gap-2 flex-wrap" id="mainTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tab-referensi" data-bs-toggle="pill" data-bs-target="#pane-referensi" type="button" role="tab">
+                            <i class="fa-solid fa-database me-1"></i> 1. Katalog IKU
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tab-form-cascading" data-bs-toggle="pill" data-bs-target="#pane-form-cascading" type="button" role="tab">
+                            <i class="fa-solid fa-pen-to-square me-1"></i> 2. Form Input
+                            <span class="badge bg-info text-dark ms-1" id="badgeFormMode" style="display: none;">Mode Edit</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="tab-pohon-kinerja" data-bs-toggle="pill" data-bs-target="#pane-pohon-kinerja" type="button" role="tab">
+                            <i class="fa-solid fa-diagram-project me-1"></i> 3. Pohon Kinerja
+                            <span class="badge bg-warning text-dark ms-1" id="badgeCountNode">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tab-mph" data-bs-toggle="pill" data-bs-target="#pane-mph" type="button" role="tab" onclick="renderMPH()">
+                            <i class="fa-solid fa-table-cells me-1"></i> 4. Matriks Peran Hasil (MPH)
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tab-gantt" data-bs-toggle="pill" data-bs-target="#pane-gantt" type="button" role="tab" onclick="renderGanttChart()">
+                            <i class="fa-solid fa-bars-staggered me-1"></i> 5. Timeline
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tab-raci" data-bs-toggle="pill" data-bs-target="#pane-raci" type="button" role="tab" onclick="renderRaciMatrix()">
+                            <i class="fa-solid fa-users-gear me-1"></i> 6. Matriks RACI
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="container-fluid px-md-4 px-2 mt-3">
+
+        <div class="tab-content w-100" id="mainTabContent">
+            <!-- TAB 1: KATALOG SASARAN & IKU + REFERENSI 3 LAYANAN PST -->
+            <div class="tab-pane fade" id="pane-referensi" role="tabpanel">
+                <!-- Referensi 3 Layanan Utama PST terhadap IKU 2.7.1.1 IPP-PM -->
+                <div class="card-panel">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                        <div>
+                            <h5 class="section-title"><i class="fa-solid fa-layer-group me-2"></i>Keterkaitan 3 Layanan Utama PST BPS dengan IKU 2.7.1.1 IPP-PM (PEKPPP)</h5>
+                            <p class="text-muted small mb-0">Berdasarkan Standar Pelayanan Pelayanan Statistik Terpadu (PST) BPS dan Instrumen Evaluasi PEKPPP (PermenPANRB No. 4 Tahun 2023), kualitas penyelenggaraan ketiga layanan inti berikut secara langsung menentukan nilai <strong>IPP-PM</strong>:</p>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">Standar Pelayanan PST BPS</span>
+                    </div>
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-3 border bg-light h-100">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-primary"><i class="fa-solid fa-book me-1"></i> Layanan 1</span>
+                                    <span class="small fw-bold text-primary">SLA: Real-time / Maks. 1 Hari</span>
+                                </div>
+                                <h6 class="fw-bold text-dark">Layanan Perpustakaan (Cetak & Digital)</h6>
+                                <p class="small text-muted mb-2">Penyediaan akses baca di tempat (<em>reading room</em>) maupun unduhan mandiri publikasi statistik (PDF/Excel) melalui website BPS Kab/Kota dan Perpustakaan Digital.</p>
+                                <div class="small bg-white p-2 rounded border">
+                                    <strong>Kontribusi ke IPP-PM:</strong><br>
+                                    • Aspek 1: Standar Pelayanan & Maklumat Perpustakaan.<br>
+                                    • Aspek 3: Sarpras ruang baca, komputer pengunjung, & fasilitas rentan.<br>
+                                    • Aspek 4: Ketersediaan katalog & unduhan pada Website/SIPPN.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-3 border bg-light h-100">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-warning text-dark"><i class="fa-solid fa-comments me-1"></i> Layanan 2</span>
+                                    <span class="small fw-bold text-warning-emphasis">SLA: Maks. 1–3 Hari Kerja</span>
+                                </div>
+                                <h6 class="fw-bold text-dark">Layanan Konsultasi Statistik</h6>
+                                <p class="small text-muted mb-2">Konsultasi terkait data statistik, metadata indikator, metodologi survei/sensus, maupun interpretasi hasil statistik secara tatap muka di PST maupun daring (Silastik / WhatsApp PST / Zoom).</p>
+                                <div class="small bg-white p-2 rounded border">
+                                    <strong>Kontribusi ke IPP-PM:</strong><br>
+                                    • Aspek 2: Profesionalisme & jadwal piket petugas konsultasi.<br>
+                                    • Aspek 5: Konsultasi & Pengaduan (tiket Silastik & tindak lanjut).<br>
+                                    • F-03: Survei Kepuasan Masyarakat (SKM) pengguna konsultasi.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-3 border bg-light h-100">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-success"><i class="fa-solid fa-stamp me-1"></i> Layanan 3</span>
+                                    <span class="small fw-bold text-success">SLA: Maks. 5–14 Hari Kerja</span>
+                                </div>
+                                <h6 class="fw-bold text-dark">Layanan Rekomendasi Statistik (Romantik)</h6>
+                                <p class="small text-muted mb-2">Penelaahan rancangan penyelenggaraan kegiatan statistik sektoral (survei/kompilasi produk administrasi) yang diajukan oleh OPD/Pemda melalui aplikasi <strong>Romantik Online</strong> sesuai Perpres 39/2019 (SDI).</p>
+                                <div class="small bg-white p-2 rounded border">
+                                    <strong>Kontribusi ke IPP-PM:</strong><br>
+                                    • Aspek 1 & 4: SOP & sistem elektronik terintegrasi (Romantik).<br>
+                                    • Aspek 6: Inovasi pendampingan desk Romantik bagi Walidata OPD.<br>
+                                    • Sinergi dengan IKU 2.5.1.1 (Pembinaan Statistik Sektoral).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Katalog IKU -->
+                <div class="card-panel">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                        <div>
+                            <h5 class="section-title"><i class="fa-solid fa-bullseye me-2"></i>Katalog Sasaran Kegiatan & IKU BPS Kabupaten/Kota 2025–2029</h5>
+                            <p class="text-muted small mb-0">Peraturan Kepala BPS Nomor 163 Tahun 2025.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="ikuTable" class="table table-hover align-middle" style="width:100%">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Kode SK / IKU</th>
+                                    <th>Sasaran Kegiatan & Indikator Kinerja Utama</th>
+                                    <th>Metode Penghitungan</th>
+                                    <th>Satuan / Frekuensi</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ikuTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: FORM INPUT CASCADING LAYANAN PST (FULL WIDTH) -->
+            <div class="tab-pane fade" id="pane-form-cascading" role="tabpanel">
+                <div class="card-panel w-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 pb-3 border-bottom">
+                        <div>
+                            <h5 class="section-title mb-1">
+                                <i class="fa-solid fa-pen-to-square me-2"></i><span id="formHeaderTitle">Form Input Cascading Layanan PST</span>
+                            </h5>
+                            <p class="text-muted small mb-0">Susun penjenjangan kinerja dari Sasaran & IKU Kepala BPS Kab/Kota hingga rencana aksi harian pegawai sesuai standar layanan PST.</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-primary btn-sm fw-semibold" onclick="lihatPohonKinerja()">
+                                <i class="fa-solid fa-diagram-project me-1"></i> Lihat Pohon Kinerja
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" onclick="resetForm()">
+                                <i class="fa-solid fa-rotate-left me-1"></i> Reset Form
+                            </button>
+                        </div>
+                    </div>
+
+                    <form id="cascadingForm" onsubmit="simpanNode(event)">
+                        <input type="hidden" id="editNodeId" value="">
+
+                        <div class="row g-4">
+                            <!-- Bagian 1: Struktur Penjenjangan & Pelaksana -->
+                            <div class="col-lg-6">
+                                <div class="form-section-box">
+                                    <div class="form-section-heading">
+                                        <i class="fa-solid fa-sitemap me-1"></i> Bagian A — Struktur Penjenjangan & Pelaksana (PIC)
+                                    </div>
+
+                                    <!-- Pilih Sasaran / IKU Induk (Level 1) -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold small mb-1">1. Sasaran & IKU Kepala BPS Kab/Kota (Level 1)</label>
+                                        <select class="form-select" id="selectIkuInduk" required onchange="onIkuIndukChange()">
+                                            <option value="">-- Pilih Sasaran & IKU Induk --</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Pilih Level Penjenjangan -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold small mb-1">2. Level Penjenjangan Kinerja (Cascading)</label>
+                                        <select class="form-select" id="selectLevel" required onchange="updateParentOptions()">
+                                            <option value="2">Level 2 — Intermediate Outcome (Ketua Tim Kerja / Jenis Layanan PST)</option>
+                                            <option value="3">Level 3 — Output / RHK Individu (Penanggung Jawab / Petugas Layanan)</option>
+                                            <option value="4">Level 4 — Pelaksanaan Pekerjaan Harian (Rencana Aksi Harian SMART-PDCA)</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Induk langsung jika Level 3 atau Level 4 -->
+                                    <div class="mb-3" id="parentNodeGroup" style="display: none;">
+                                        <label class="form-label fw-semibold small mb-1" id="labelParentNode">3. Induk Penjenjangan Langsung</label>
+                                        <select class="form-select" id="selectParentNode">
+                                            <option value="">-- Pilih Induk Penjenjangan --</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Jenis Layanan PST / Tahapan -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold small mb-1">Jenis Layanan PST / Tahapan Proses</label>
+                                        <select class="form-select" id="selectLayanan" required>
+                                            <option value="Layanan Perpustakaan">1. Layanan Perpustakaan (Cetak & Digital)</option>
+                                            <option value="Layanan Konsultasi Statistik">2. Layanan Konsultasi Statistik (Tatap Muka & Daring)</option>
+                                            <option value="Layanan Rekomendasi Statistik">3. Layanan Rekomendasi Statistik (Romantik)</option>
+                                            <option value="Manajemen & Evaluasi PST (PEKPPP)">4. Manajemen Standar Pelayanan & Evaluasi PST (PEKPPP)</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Peran / Jabatan / Nama Pelaksana -->
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold small mb-1">Jabatan / Peran Tim</label>
+                                            <input type="text" class="form-control" id="inputJabatan" placeholder="Contoh: Ketua Tim Diseminasi & PST" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold small mb-1">Nama Pegawai / PIC</label>
+                                            <input type="text" class="form-control" id="inputNamaPegawai" placeholder="Contoh: Rina Marlina, SST" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bagian 2: Rumusan Hasil, Indikator SMART, Target & Jadwal PDCA -->
+                            <div class="col-lg-6">
+                                <div class="form-section-box">
+                                    <div class="form-section-heading">
+                                        <i class="fa-solid fa-bullseye me-1"></i> Bagian B — Rumusan Hasil, Indikator SMART & Jadwal PDCA
+                                    </div>
+
+                                    <!-- Pernyataan Hasil / Rencana Kinerja -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold small mb-1">Rencana Hasil Kerja / Output / Aktivitas Harian</label>
+                                        <textarea class="form-control" id="inputHasilKerja" rows="3" placeholder="Rumuskan hasil/output yang dicapai sesuai standar layanan PST..." required></textarea>
+                                    </div>
+
+                                    <!-- Indikator Kinerja Individu (IKI) -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold small mb-1">Indikator Kinerja / Ukuran Keberhasilan (SMART)</label>
+                                        <input type="text" class="form-control" id="inputIndikator" placeholder="Contoh: Persentase layanan konsultasi selesai sesuai SLA (< 3 hari)" required>
+                                    </div>
+
+                                    <!-- Target, Satuan, Siklus PDCA -->
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-3 col-6">
+                                            <label class="form-label fw-semibold small mb-1">Target</label>
+                                            <input type="text" class="form-control" id="inputTarget" placeholder="100" required>
+                                        </div>
+                                        <div class="col-md-4 col-6">
+                                            <label class="form-label fw-semibold small mb-1">Satuan</label>
+                                            <input type="text" class="form-control" id="inputSatuan" placeholder="Persen / Tiket" required>
+                                        </div>
+                                        <div class="col-md-5 col-12">
+                                            <label class="form-label fw-semibold small mb-1">Siklus PDCA</label>
+                                            <select class="form-select" id="selectPdca" required>
+                                                <option value="P">P — Plan (Perencanaan)</option>
+                                                <option value="D">D — Do (Pelaksanaan)</option>
+                                                <option value="C">C — Check (Evaluasi/Verifikasi)</option>
+                                                <option value="A">A — Act (Tindak Lanjut)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- RENTANG WAKTU UNTUK GANTT CHART -->
+                                    <div class="p-3 rounded-3 bg-primary-subtle border border-primary-subtle mb-3">
+                                        <div class="small fw-bold text-primary mb-2"><i class="fa-solid fa-calendar-days me-1"></i>Jadwal Pelaksanaan (Otomatis ke Gantt Chart):</div>
+                                        <div class="row g-2">
+                                            <div class="col-md-4">
+                                                <label class="form-label small fw-semibold mb-1">Bulan Mulai</label>
+                                                <select class="form-select form-select-sm" id="inputStartMonth" required>
+                                                    <option value="1">Januari</option>
+                                                    <option value="2">Februari</option>
+                                                    <option value="3">Maret</option>
+                                                    <option value="4">April</option>
+                                                    <option value="5">Mei</option>
+                                                    <option value="6">Juni</option>
+                                                    <option value="7">Juli</option>
+                                                    <option value="8">Agustus</option>
+                                                    <option value="9">September</option>
+                                                    <option value="10">Oktober</option>
+                                                    <option value="11">November</option>
+                                                    <option value="12">Desember</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label small fw-semibold mb-1">Bulan Selesai</label>
+                                                <select class="form-select form-select-sm" id="inputEndMonth" required>
+                                                    <option value="1">Januari</option>
+                                                    <option value="2">Februari</option>
+                                                    <option value="3">Maret</option>
+                                                    <option value="4">April</option>
+                                                    <option value="5">Mei</option>
+                                                    <option value="6">Juni</option>
+                                                    <option value="7">Juli</option>
+                                                    <option value="8">Agustus</option>
+                                                    <option value="9">September</option>
+                                                    <option value="10">Oktober</option>
+                                                    <option value="11">November</option>
+                                                    <option value="12" selected>Desember</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label small fw-semibold mb-1">Frekuensi / SLA</label>
+                                                <input type="text" class="form-control form-control-sm" id="inputDeadline" placeholder="Harian / SLA 3 Hari" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Checklist Validasi Kaidah SMART -->
+                                    <div class="p-3 rounded-3 bg-white border">
+                                        <div class="small fw-bold text-dark mb-2"><i class="fa-solid fa-check-double me-1 text-success"></i>Validasi Kaidah SMART:</div>
+                                        <div class="d-flex flex-wrap gap-3 small">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="chkS" checked>
+                                                <label class="form-check-label" for="chkS"><strong>S</strong>pecific</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="chkM" checked>
+                                                <label class="form-check-label" for="chkM"><strong>M</strong>easurable</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="chkA" checked>
+                                                <label class="form-check-label" for="chkA"><strong>A</strong>chievable</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="chkR" checked>
+                                                <label class="form-check-label" for="chkR"><strong>R</strong>elevant</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="chkT" checked>
+                                                <label class="form-check-label" for="chkT"><strong>T</strong>ime-bound</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Footer Form -->
+                        <div class="d-flex justify-content-end align-items-center gap-2 mt-4 pt-3 border-top flex-wrap">
+                            <button type="button" class="btn btn-light border px-4 fw-semibold" onclick="resetForm()">
+                                <i class="fa-solid fa-xmark me-1"></i> Batal / Reset
+                            </button>
+                            <button type="submit" class="btn btn-primary px-5 fw-semibold shadow-sm" id="btnSubmitForm">
+                                <i class="fa-solid fa-plus-circle me-1"></i> Simpan ke Pohon Kinerja & Gantt Chart
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- TAB 3: VISUALISASI POHON KINERJA (FULL WIDTH) -->
+            <div class="tab-pane fade show active" id="pane-pohon-kinerja" role="tabpanel">
+                <div class="card-panel w-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-3 border-bottom">
+                        <div>
+                            <h5 class="section-title mb-1"><i class="fa-solid fa-network-wired me-2"></i>Pohon Kinerja (Cascading) — IKU 2.7.1.1 IPP-PM</h5>
+                            <p class="text-muted small mb-0">Penjenjangan kegiatan <strong>Layanan Perpustakaan</strong>, <strong>Konsultasi Statistik</strong>, dan <strong>Rekomendasi Statistik</strong> sampai aktivitas harian.</p>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap align-items-center">
+                            <button type="button" class="btn btn-primary btn-sm fw-semibold shadow-sm" onclick="bukaFormTambahBaru()">
+                                <i class="fa-solid fa-plus-circle me-1"></i> Tambah Cascading Baru
+                            </button>
+                            <select class="form-select form-select-sm" id="filterTreeLayanan" onchange="renderTree()" style="min-width: 245px;">
+                                <option value="ALL">Semua Jenis Layanan PST</option>
+                                <option value="Layanan Perpustakaan">1. Layanan Perpustakaan</option>
+                                <option value="Layanan Konsultasi Statistik">2. Layanan Konsultasi Statistik</option>
+                                <option value="Layanan Rekomendasi Statistik">3. Layanan Rekomendasi Statistik</option>
+                                <option value="Manajemen & Evaluasi PST (PEKPPP)">4. Manajemen & Evaluasi PST</option>
+                            </select>
+                            <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" onclick="muatTemplateLayananPst(false)" title="Muat Ulang Template 3 Layanan PST">
+                                <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Template Default
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="hapusSemuaData()" title="Kosongkan Data">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="treeContainer" class="w-100"></div>
+                </div>
+            </div>
+
+            <!-- TAB 4: MATRIKS PERAN HASIL (MPH) -->
+            <div class="tab-pane fade" id="pane-mph" role="tabpanel">
+                <div class="card-panel w-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <h5 class="section-title mb-0"><i class="fa-solid fa-table-list me-2"></i>Matriks Peran Hasil (MPH) — Layanan Perpustakaan, Konsultasi & Rekomendasi Statistik</h5>
+                            <p class="text-muted small mb-0">Menghubungkan kontribusi ketiga layanan utama PST terhadap IKU <strong>2.7.1.1 IPP-PM</strong> mulai dari Kepala BPS Kab/Kota, Ketua Tim, Pelaksana/Petugas PST, hingga Pekerjaan Harian.</p>
+                        </div>
+                        <button class="btn btn-success fw-semibold" onclick="exportToExcel()">
+                            <i class="fa-solid fa-file-excel me-1"></i> Unduh Excel (MPH + Gantt Chart)
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered mph-table align-middle" id="mphTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 14%;">Sasaran & IKU Kepala BPS<br>(Level 1)</th>
+                                    <th style="width: 13%;">Jabatan & Nama Pegawai</th>
+                                    <th style="width: 13%;">Level & Jenis Layanan PST</th>
+                                    <th style="width: 24%;">Intervensi / Rencana Hasil Kerja (Output)</th>
+                                    <th style="width: 18%;">Indikator Kinerja & Target (SMART)</th>
+                                    <th style="width: 10%;">Siklus PDCA</th>
+                                    <th style="width: 8%;">Jadwal & SLA</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mphTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: TIMELINE / GANTT CHART -->
+            <div class="tab-pane fade" id="pane-gantt" role="tabpanel">
+                <div class="card-panel w-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <h5 class="section-title mb-0"><i class="fa-solid fa-bars-staggered me-2"></i>Timeline / Gantt Chart Layanan Perpustakaan, Konsultasi & Rekomendasi Statistik</h5>
+                            <p class="text-muted small mb-0">Jadwal operasional penyelenggaraan standar pelayanan PST sepanjang tahun (Januari – Desember) dalam kerangka PDCA & PEKPPP.</p>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap no-print">
+                            <select class="form-select form-select-sm" id="filterGanttLevel" onchange="renderGanttChart()" style="width: auto;">
+                                <option value="ALL">Semua Level (Level 2 – 4)</option>
+                                <option value="2">Level 2 (Layanan / Ketua Tim)</option>
+                                <option value="3">Level 3 (Output Individu / Petugas)</option>
+                                <option value="4">Level 4 (Aktivitas Harian)</option>
+                            </select>
+                            <button class="btn btn-outline-primary btn-sm fw-semibold" onclick="window.print()">
+                                <i class="fa-solid fa-print me-1"></i> Cetak / PDF
+                            </button>
+                            <button class="btn btn-success btn-sm fw-semibold" onclick="exportToExcel()">
+                                <i class="fa-solid fa-file-excel me-1"></i> Export Excel (Gantt Visual)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Legenda PDCA -->
+                    <div class="d-flex flex-wrap gap-3 align-items-center mb-3 p-2 rounded-3 bg-light border small">
+                        <span class="fw-bold text-dark">Legenda Siklus PDCA:</span>
+                        <span><span class="badge bg-primary me-1">&nbsp;&nbsp;</span> <strong>P</strong>lan (Penetapan SP, Jadwal Piket & Instrumen)</span>
+                        <span><span class="badge bg-warning text-dark me-1">&nbsp;&nbsp;</span> <strong>D</strong>o (Operasional Harian Perpustakaan, Konsultasi & Romantik)</span>
+                        <span><span class="badge me-1" style="background:#7c3aed;">&nbsp;&nbsp;</span> <strong>C</strong>heck (Monitoring SLA, Audit Eviden PEKPPP & SKM F-03)</span>
+                        <span><span class="badge bg-success me-1">&nbsp;&nbsp;</span> <strong>A</strong>ct (Tindak Lanjut Pengaduan, RTL & Inovasi Layanan)</span>
+                    </div>
+
+                    <div class="gantt-wrapper" id="ganttContainer"></div>
+                </div>
+            </div>
+
+            <!-- TAB 6: MATRIKS RACI -->
+            <div class="tab-pane fade" id="pane-raci" role="tabpanel">
+                <div class="card-panel w-100">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <h5 class="section-title mb-1"><i class="fa-solid fa-users-gear me-2"></i>Matriks RACI — Pembagian Peran & Tanggung Jawab Layanan PST (IKU 2.7.1.1 IPP-PM)</h5>
+                            <p class="text-muted small mb-0">Pemetaan peran <strong>Responsible (R)</strong>, <strong>Accountable (A)</strong>, <strong>Consulted (C)</strong>, dan <strong>Informed (I)</strong> pada setiap rencana hasil kerja & aktivitas layanan PST. Klik dropdown pada sel untuk menyesuaikan peran.</p>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap no-print">
+                            <select class="form-select form-select-sm" id="filterRaciLayanan" onchange="renderRaciMatrix()" style="width: auto;">
+                                <option value="ALL">Semua Jenis Layanan PST</option>
+                                <option value="Layanan Perpustakaan">1. Layanan Perpustakaan</option>
+                                <option value="Layanan Konsultasi Statistik">2. Layanan Konsultasi Statistik</option>
+                                <option value="Layanan Rekomendasi Statistik">3. Layanan Rekomendasi Statistik</option>
+                                <option value="Manajemen & Evaluasi PST (PEKPPP)">4. Manajemen & Evaluasi PST</option>
+                            </select>
+                            <select class="form-select form-select-sm" id="filterRaciLevel" onchange="renderRaciMatrix()" style="width: auto;">
+                                <option value="ALL">Semua Level (Level 2 – 4)</option>
+                                <option value="2">Level 2 (Layanan / Ketua Tim)</option>
+                                <option value="3">Level 3 (Output Individu / Petugas)</option>
+                                <option value="4">Level 4 (Aktivitas Harian)</option>
+                            </select>
+                            <button class="btn btn-outline-secondary btn-sm fw-semibold" onclick="resetRaciDefaults()" title="Atur ulang RACI sesuai aturan standar layanan PST">
+                                <i class="fa-solid fa-rotate me-1"></i> Reset Otomatis RACI
+                            </button>
+                            <button class="btn btn-success btn-sm fw-semibold" onclick="exportToExcel()">
+                                <i class="fa-solid fa-file-excel me-1"></i> Export Excel (Termasuk RACI)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Legenda RACI -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="p-2 rounded-3 border bg-light h-100 d-flex align-items-start gap-2">
+                                <span class="raci-pill raci-R mt-1">R</span>
+                                <div class="small">
+                                    <strong class="text-danger">Responsible (Pelaksana)</strong><br>
+                                    <span class="text-muted">Pihak yang mengerjakan langsung aktivitas/output.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-2 rounded-3 border bg-light h-100 d-flex align-items-start gap-2">
+                                <span class="raci-pill raci-A mt-1">A</span>
+                                <div class="small">
+                                    <strong class="text-warning-emphasis">Accountable (Penanggung Jawab)</strong><br>
+                                    <span class="text-muted">Pengambil keputusan akhir & pengesah hasil (1 per aktivitas).</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-2 rounded-3 border bg-light h-100 d-flex align-items-start gap-2">
+                                <span class="raci-pill raci-C mt-1">C</span>
+                                <div class="small">
+                                    <strong class="text-primary">Consulted (Dikonsultasikan)</strong><br>
+                                    <span class="text-muted">Narasumber teknis/ahli yang dimintai masukan dua arah.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-2 rounded-3 border bg-light h-100 d-flex align-items-start gap-2">
+                                <span class="raci-pill raci-I mt-1">I</span>
+                                <div class="small">
+                                    <strong class="text-success">Informed (Diinformasikan)</strong><br>
+                                    <span class="text-muted">Pihak yang menerima laporan progres/hasil akhir (satu arah).</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered raci-table align-middle" id="raciTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">No</th>
+                                    <th style="width: 14%;">Level & Layanan PST</th>
+                                    <th style="width: 31%; text-align: left; padding-left: 12px;">Rencana Hasil Kerja / Output / Aktivitas</th>
+                                    <th style="width: 10%;">Kepala BPS Kab/Kota<br><span class="fw-normal small">(Pembina & Pengesah)</span></th>
+                                    <th style="width: 10%;">Ketua Tim Diseminasi & PST<br><span class="fw-normal small">(Koordinator PST)</span></th>
+                                    <th style="width: 10%;">Pustakawan / Petugas Perpustakaan</th>
+                                    <th style="width: 10%;">Statistisi / Petugas Konsultasi & Romantik</th>
+                                    <th style="width: 10%;">Pranata Komputer / PIC SIPPN & PEKPPP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="raciTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container-fluid px-4">
+        <i class="fa-solid fa-file-contract me-1 text-primary"></i> <strong>Perka BPS No. 163 Tahun 2025</strong> • <strong>Standar Pelayanan PST BPS</strong> • <strong>PermenPANRB No. 4/2023 (PEKPPP)</strong>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    const namaBulan = ["", "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+    const namaBulanFull = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+    // 1. MASTER DATA SASARAN & IKU BPS KABUPATEN/KOTA
+    const masterIKU = [
+        { id: 17, sk: "SK: 2.7.1", kode: "2.7.1.1", sasaran: "Terwujudnya Kemudahan Akses Data BPS.", indikator: "Indeks Pelayanan Publik - Penilaian Mandiri (IPP-PM)", rumus: "IPP = (w0 × Σxi) + (w1 × Σyj)", ketRumus: "Instrumen Evaluasi PEKPPP Mandiri (6 Aspek)", satuan: "Poin", frekuensi: "Triwulanan & Tahunan", unit: "Direktorat Diseminasi Statistik", definisi: "Output dari kegiatan Pemantauan dan Evaluasi Kinerja Penyelenggaraan Pelayanan Publik (PEKPPP) Mandiri yang mengukur kualitas penyelenggaraan pelayanan publik di BPS pada unit layanan PST (Perpustakaan, Konsultasi Statistik, Penjualan Produk, dan Rekomendasi Statistik)." },
+        { id: 15, sk: "SK: 2.5.1", kode: "2.5.1.1", sasaran: "Terwujudnya Penguatan Penyelenggaraan Pembinaan Statistik Sektoral K/L/Pemda.", indikator: "Tingkat Penyelenggaraan Pembinaan Statistik Sektoral sesuai Standar", rumus: "TPSS = Σ (wi × xi)", ketRumus: "wi: Bobot | xi: Nilai Indikator", satuan: "Persen", frekuensi: "Triwulanan", unit: "Direktorat Diseminasi Statistik", definisi: "Menggambarkan seberapa besar upaya pembinaan statistik sektoral yang telah diselenggarakan BPS kepada Pemda/OPD sesuai petunjuk teknis, termasuk fasilitasi Rekomendasi Statistik (Romantik)." },
+        { id: 13, sk: "SK: 2.1.4", kode: "2.1.4.1", sasaran: "Terwujudnya Kapasitas Tata Kelola Pemerintah Desa untuk menghasilkan Statistik Berkualitas.", indikator: "Persentase Kumulatif Desa yang Berpredikat Desa Cinta Statistik", rumus: "y = (n / N) × 100%", ketRumus: "n: Desa Berpredikat Desa Cantik | N: Total Desa", satuan: "Persen", frekuensi: "Tahunan", unit: "BPS Provinsi & Kab/Kota", definisi: "Perbandingan jumlah kumulatif desa/kelurahan yang berpredikat Desa Cinta Statistik (Desa Cantik) terhadap total seluruh desa/kelurahan." },
+        { id: 1, sk: "SK: 1.1.1", kode: "1.1.1.1", sasaran: "Terwujudnya Penyediaan Data dan Insight Statistik Kependudukan dan Ketenagakerjaan yang Berkualitas.", indikator: "Persentase Publikasi/Laporan Statistik Kependudukan dan Ketenagakerjaan yang Berkualitas", rumus: "y = (n / N) × 100%", ketRumus: "n: Jumlah Berkualitas | N: Total Dihasilkan", satuan: "Persen", frekuensi: "Tahunan", unit: "BPS Provinsi & Kab/Kota", definisi: "Perbandingan jumlah Publikasi/Laporan Statistik Kependudukan dan Ketenagakerjaan yang berkualitas dengan seluruh yang dihasilkan." },
+        { id: 10, sk: "SK: 1.4.1", kode: "1.4.1.1", sasaran: "Terwujudnya Penyediaan Data dan Insight Statistik Lintas Sektor yang Berkualitas.", indikator: "Persentase Publikasi/Laporan Neraca Produksi yang Berkualitas", rumus: "y = (n / N) × 100%", ketRumus: "n: Jumlah Berkualitas | N: Total Dihasilkan", satuan: "Persen", frekuensi: "Tahunan", unit: "BPS Provinsi & Kab/Kota", definisi: "Perbandingan jumlah Publikasi/Laporan Neraca Produksi yang berkualitas dengan seluruhnya yang dihasilkan." },
+        { id: 18, sk: "SK: 3.3.2", kode: "3.3.2.4", sasaran: "Terwujudnya Dukungan Manajemen pada BPS Provinsi dan Kab/Kota yang Efektif dan Efisien.", indikator: "Nilai SAKIP oleh Inspektorat", rumus: "Metode Penilaian SAKIP", ketRumus: "Evaluasi Akuntabilitas Kinerja", satuan: "Poin", frekuensi: "Tahunan", unit: "Inspektorat Utama", definisi: "Nilai hasil evaluasi atas Akuntabilitas Kinerja unit kerja dan satuan kerja pada lingkup BPS oleh Inspektorat Utama." },
+        { id: 19, sk: "SK: 3.3.2", kode: "3.3.2.5", sasaran: "Terwujudnya Dukungan Manajemen pada BPS Provinsi dan Kab/Kota yang Efektif dan Efisien.", indikator: "Indeks Implementasi BerAKHLAK", rumus: "Survei Budaya Organisasi", ketRumus: "Skor Implementasi Nilai BerAKHLAK", satuan: "Persen", frekuensi: "Tahunan", unit: "Biro Perencanaan", definisi: "Skor yang menggambarkan implementasi nilai-nilai BerAKHLAK oleh pegawai BPS berdasarkan Survei Budaya Organisasi." }
+    ];
+
+    // State Penyimpanan Pohon Kinerja
+    let cascadingNodes = JSON.parse(localStorage.getItem('bps_cascading_pst_3layanan_v4')) || [];
+
+    // Definisi Peran Aktor Matriks RACI BPS Kab/Kota
+    const raciRoles = [
+        { key: 'kepala', label: 'Kepala BPS Kab/Kota' },
+        { key: 'ketuaTim', label: 'Ketua Tim Diseminasi & PST' },
+        { key: 'pustakawan', label: 'Pustakawan / Petugas Perpustakaan' },
+        { key: 'statistisi', label: 'Statistisi / Petugas Konsultasi & Romantik' },
+        { key: 'prakom', label: 'Pranata Komputer / PIC SIPPN & PEKPPP' }
+    ];
+
+    function getDefaultRaciForNode(n) {
+        const lay = (n.layanan || '').toLowerCase();
+        const jab = (n.jabatan || '').toLowerCase();
+
+        // Level 2: Outcome Layanan oleh Ketua Tim
+        if (n.level === 2) {
+            if (lay.includes('perpustakaan')) {
+                return { kepala: 'A', ketuaTim: 'R', pustakawan: 'C', statistisi: 'I', prakom: 'C' };
+            }
+            if (lay.includes('konsultasi')) {
+                return { kepala: 'A', ketuaTim: 'R', pustakawan: 'I', statistisi: 'C', prakom: 'I' };
+            }
+            if (lay.includes('rekomendasi')) {
+                return { kepala: 'A', ketuaTim: 'R', pustakawan: 'I', statistisi: 'C', prakom: 'I' };
+            }
+            return { kepala: 'A', ketuaTim: 'R', pustakawan: 'C', statistisi: 'C', prakom: 'C' };
+        }
+
+        // Level 3 & 4: Output Petugas / Aktivitas Harian
+        if (lay.includes('perpustakaan') || jab.includes('pustakawan')) {
+            return { kepala: 'I', ketuaTim: 'A', pustakawan: 'R', statistisi: 'I', prakom: 'C' };
+        }
+        if (lay.includes('konsultasi') || lay.includes('rekomendasi') || jab.includes('statistisi')) {
+            return { kepala: n.level === 3 && lay.includes('rekomendasi') ? 'A' : 'I', ketuaTim: n.level === 3 && lay.includes('rekomendasi') ? 'C' : 'A', pustakawan: 'I', statistisi: 'R', prakom: 'I' };
+        }
+        if (lay.includes('manajemen') || jab.includes('pranata komputer')) {
+            return { kepala: 'I', ketuaTim: 'A', pustakawan: 'C', statistisi: 'C', prakom: 'R' };
+        }
+
+        return { kepala: 'I', ketuaTim: 'A', pustakawan: 'I', statistisi: 'R', prakom: 'I' };
+    }
+
+    function ensureNodeRaci(n) {
+        if (!n.raci) {
+            n.raci = getDefaultRaciForNode(n);
+        }
+        return n.raci;
+    }
+
+    // Helper Modal Notifikasi & Konfirmasi (Menggantikan alert & confirm bawaan browser)
+    function showNotice(title, message, isError = false) {
+        const header = document.getElementById('customDialogHeader');
+        header.style.background = isError
+            ? 'linear-gradient(135deg, #b91c1c, #ef4444)'
+            : 'linear-gradient(135deg, var(--primary-color), var(--secondary-color))';
+        document.getElementById('customDialogTitle').innerHTML = `<i class="fa-solid ${isError ? 'fa-circle-exclamation' : 'fa-circle-info'} me-2"></i>${title}`;
+        document.getElementById('customDialogBody').innerHTML = `<p class="mb-0">${message}</p>`;
+        document.getElementById('customDialogFooter').innerHTML = `<button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>`;
+        new bootstrap.Modal(document.getElementById('customDialogModal')).show();
+    }
+
+    function showConfirmDialog(title, message, onConfirmCallback) {
+        const header = document.getElementById('customDialogHeader');
+        header.style.background = 'linear-gradient(135deg, #b45309, #f59e0b)';
+        document.getElementById('customDialogTitle').innerHTML = `<i class="fa-solid fa-triangle-exclamation me-2"></i>${title}`;
+        document.getElementById('customDialogBody').innerHTML = `<p class="mb-0">${message}</p>`;
+        document.getElementById('customDialogFooter').innerHTML = `
+            <button type="button" class="btn btn-light border px-3" data-bs-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-danger px-4 fw-semibold" id="btnConfirmProceed">Ya, Lanjutkan</button>
+        `;
+        const modalEl = document.getElementById('customDialogModal');
+        const modalInstance = new bootstrap.Modal(modalEl);
+        document.getElementById('btnConfirmProceed').onclick = function() {
+            modalInstance.hide();
+            onConfirmCallback();
+        };
+        modalInstance.show();
+    }
+
+    function saveToStorage() {
+        localStorage.setItem('bps_cascading_pst_3layanan_v4', JSON.stringify(cascadingNodes));
+        document.getElementById('badgeCountNode').textContent = cascadingNodes.length;
+    }
+
+    $(document).ready(function() {
+        renderMasterIkuTable();
+        populateIkuDropdowns();
+        
+        if (cascadingNodes.length === 0) {
+            muatTemplateLayananPst(true);
+        } else {
+            cascadingNodes.forEach(n => ensureNodeRaci(n));
+            saveToStorage();
+            renderTree();
+            renderMPH();
+            renderGanttChart();
+            renderRaciMatrix();
+        }
+        document.getElementById('selectIkuInduk').value = 17;
+        updateParentOptions();
+    });
+
+    // Navigasi Cepat Antar Halaman
+    function bukaFormTambahBaru() {
+        resetForm(true);
+        const tabTrigger = new bootstrap.Tab(document.getElementById('tab-form-cascading'));
+        tabTrigger.show();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function lihatPohonKinerja() {
+        const tabTrigger = new bootstrap.Tab(document.getElementById('tab-pohon-kinerja'));
+        tabTrigger.show();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderMasterIkuTable() {
+        const tbody = document.getElementById('ikuTableBody');
+        tbody.innerHTML = '';
+        masterIKU.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><span class="badge-code">${item.sk}</span><br><strong class="text-primary">${item.kode}</strong></td>
+                <td>
+                    <strong class="text-dark" style="cursor:pointer;" onclick="bukaModalKonsep(${item.id})">${item.indikator}</strong>
+                    <div class="small text-muted mt-1"><em>Sasaran:</em> ${item.sasaran}</div>
+                </td>
+                <td><span class="formula-box">${item.rumus}</span><div class="small text-muted mt-1">${item.ketRumus}</div></td>
+                <td><span class="badge bg-light text-dark border">${item.satuan}</span><br><small class="text-muted">${item.frekuensi}</small></td>
+                <td class="text-center">
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-info" onclick="bukaModalKonsep(${item.id})" title="Konsep & Definisi"><i class="fa-solid fa-eye"></i></button>
+                        <button class="btn btn-primary fw-semibold" onclick="mulaiCascade(${item.id})"><i class="fa-solid fa-sitemap me-1"></i> Cascade</button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        $('#ikuTable').DataTable({
+            pageLength: 5,
+            lengthMenu: [[5, 10, -1], [5, 10, "Semua"]],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Cari kode, sasaran, atau IKU...",
+                lengthMenu: "Tampilkan _MENU_",
+                info: "Menampilkan _START_–_END_ dari _TOTAL_ IKU"
+            }
+        });
+    }
+
+    function bukaModalKonsep(id) {
+        const item = masterIKU.find(x => x.id === id);
+        if (!item) return;
+        document.getElementById('modalJudul').textContent = `[${item.kode}] ${item.indikator}`;
+        document.getElementById('modalIsiKonsep').innerHTML = `
+            <p><strong>Sasaran Kegiatan:</strong> ${item.sasaran}</p>
+            <p><strong>Definisi Operasional:</strong> ${item.definisi}</p>
+            <p><strong>Formula:</strong> <code>${item.rumus}</code> (${item.ketRumus})</p>
+            <p class="mb-0"><strong>Unit Penyedia:</strong> ${item.unit} | <strong>Frekuensi:</strong> ${item.frekuensi}</p>
+        `;
+        document.getElementById('btnModalCascade').onclick = function() {
+            bootstrap.Modal.getInstance(document.getElementById('konsepModal')).hide();
+            mulaiCascade(id);
+        };
+        new bootstrap.Modal(document.getElementById('konsepModal')).show();
+    }
+
+    function populateIkuDropdowns() {
+        const sel = document.getElementById('selectIkuInduk');
+        sel.innerHTML = '<option value="">-- Pilih Sasaran & IKU Induk --</option>';
+        masterIKU.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.id;
+            opt.textContent = `[${item.kode}] ${item.indikator}`;
+            sel.appendChild(opt);
+        });
+    }
+
+    function mulaiCascade(ikuId) {
+        resetForm(false);
+        const tabTrigger = new bootstrap.Tab(document.getElementById('tab-form-cascading'));
+        tabTrigger.show();
+        document.getElementById('selectIkuInduk').value = ikuId;
+        onIkuIndukChange();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function onIkuIndukChange() {
+        updateParentOptions();
+    }
+
+    function updateParentOptions() {
+        const ikuId = parseInt(document.getElementById('selectIkuInduk').value);
+        const level = parseInt(document.getElementById('selectLevel').value);
+        const parentGroup = document.getElementById('parentNodeGroup');
+        const selParent = document.getElementById('selectParentNode');
+        const labelParent = document.getElementById('labelParentNode');
+
+        if (level === 2) {
+            parentGroup.style.display = 'none';
+            selParent.required = false;
+            selParent.value = '';
+        } else {
+            parentGroup.style.display = 'block';
+            selParent.required = true;
+            const targetParentLevel = level - 1;
+            labelParent.textContent = targetParentLevel === 2 
+                ? '3. Induk Penjenjangan (Pilih Jenis Layanan / Ketua Tim - Level 2)' 
+                : '3. Induk Penjenjangan (Pilih Output Individu / Petugas - Level 3)';
+
+            selParent.innerHTML = '<option value="">-- Pilih Induk Penjenjangan --</option>';
+            const candidates = cascadingNodes.filter(n => n.ikuId === ikuId && n.level === targetParentLevel);
+            candidates.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = `[${c.layanan || ''} | ${c.jabatan}] ${c.hasilKerja}`;
+                selParent.appendChild(opt);
+            });
+        }
+    }
+
+    function simpanNode(e) {
+        e.preventDefault();
+        const editId = document.getElementById('editNodeId').value;
+        const ikuId = parseInt(document.getElementById('selectIkuInduk').value);
+        const level = parseInt(document.getElementById('selectLevel').value);
+        const parentId = level === 2 ? null : document.getElementById('selectParentNode').value;
+        const startMonth = parseInt(document.getElementById('inputStartMonth').value);
+        const endMonth = parseInt(document.getElementById('inputEndMonth').value);
+
+        if (level > 2 && !parentId) {
+            showNotice('Validasi Form', 'Silakan pilih Induk Penjenjangan pada Level sebelumnya terlebih dahulu!', true);
+            return;
+        }
+        const existingNode = editId ? cascadingNodes.find(n => n.id === editId) : null;
+
+        const nodeObj = {
+            id: editId ? editId : 'node_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+            ikuId: ikuId,
+            level: level,
+            parentId: parentId,
+            layanan: document.getElementById('selectLayanan').value,
+            jabatan: document.getElementById('inputJabatan').value.trim(),
+            namaPegawai: document.getElementById('inputNamaPegawai').value.trim(),
+            hasilKerja: document.getElementById('inputHasilKerja').value.trim(),
+            indikator: document.getElementById('inputIndikator').value.trim(),
+            target: document.getElementById('inputTarget').value.trim(),
+            satuan: document.getElementById('inputSatuan').value.trim(),
+            startMonth: startMonth,
+            endMonth: endMonth,
+            deadline: document.getElementById('inputDeadline').value.trim(),
+            pdca: document.getElementById('selectPdca').value,
+            raci: existingNode && existingNode.raci ? existingNode.raci : null,
+            smart: {
+                S: document.getElementById('chkS').checked,
+                M: document.getElementById('chkM').checked,
+                A: document.getElementById('chkA').checked,
+                R: document.getElementById('chkR').checked,
+                T: document.getElementById('chkT').checked
+            }
+        };
+        ensureNodeRaci(nodeObj);
+
+        if (editId) {
+            const idx = cascadingNodes.findIndex(n => n.id === editId);
+            if (idx !== -1) cascadingNodes[idx] = nodeObj;
+        } else {
+            cascadingNodes.push(nodeObj);
+        }
+
+        saveToStorage();
+        renderTree();
+        renderMPH();
+        renderGanttChart();
+        renderRaciMatrix();
+        resetForm(true);
+
+        // Otomatis pindah ke halaman Pohon Kinerja (Cascading) agar hasil langsung terlihat penuh
+        lihatPohonKinerja();
+    }
+
+    function resetForm(keepIku = false) {
+        const currentIku = document.getElementById('selectIkuInduk').value || 17;
+        document.getElementById('cascadingForm').reset();
+        document.getElementById('editNodeId').value = '';
+        document.getElementById('formHeaderTitle').textContent = 'Form Input Cascading Layanan PST';
+        document.getElementById('btnSubmitForm').innerHTML = '<i class="fa-solid fa-plus-circle me-1"></i> Simpan ke Pohon Kinerja & Gantt Chart';
+        document.getElementById('badgeFormMode').style.display = 'none';
+        document.getElementById('inputEndMonth').value = 12;
+        if (keepIku) document.getElementById('selectIkuInduk').value = currentIku;
+        updateParentOptions();
+    }
+
+    function editNode(id) {
+        const n = cascadingNodes.find(x => x.id === id);
+        if (!n) return;
+        document.getElementById('editNodeId').value = n.id;
+        document.getElementById('selectIkuInduk').value = n.ikuId;
+        document.getElementById('selectLevel').value = n.level;
+        updateParentOptions();
+        if (n.parentId) document.getElementById('selectParentNode').value = n.parentId;
+        if (n.layanan) document.getElementById('selectLayanan').value = n.layanan;
+        document.getElementById('inputJabatan').value = n.jabatan;
+        document.getElementById('inputNamaPegawai').value = n.namaPegawai;
+        document.getElementById('inputHasilKerja').value = n.hasilKerja;
+        document.getElementById('inputIndikator').value = n.indikator;
+        document.getElementById('inputTarget').value = n.target;
+        document.getElementById('inputSatuan').value = n.satuan;
+        document.getElementById('inputStartMonth').value = n.startMonth || 1;
+        document.getElementById('inputEndMonth').value = n.endMonth || 12;
+        document.getElementById('inputDeadline').value = n.deadline;
+        document.getElementById('selectPdca').value = n.pdca;
+        document.getElementById('chkS').checked = n.smart.S;
+        document.getElementById('chkM').checked = n.smart.M;
+        document.getElementById('chkA').checked = n.smart.A;
+        document.getElementById('chkR').checked = n.smart.R;
+        document.getElementById('chkT').checked = n.smart.T;
+
+        // Ubah indikator form ke Mode Edit dan pindah ke tab Form Input Cascading
+        document.getElementById('formHeaderTitle').textContent = 'Edit Item Cascading Layanan PST';
+        document.getElementById('btnSubmitForm').innerHTML = '<i class="fa-solid fa-floppy-disk me-1"></i> Simpan Perubahan Cascading';
+        document.getElementById('badgeFormMode').style.display = 'inline-block';
+
+        const tabTrigger = new bootstrap.Tab(document.getElementById('tab-form-cascading'));
+        tabTrigger.show();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hapusNode(id) {
+        showConfirmDialog(
+            'Hapus Item Cascading',
+            'Hapus item ini beserta seluruh sub-cascading di bawahnya?',
+            function() {
+                const toDelete = new Set([id]);
+                let added = true;
+                while (added) {
+                    added = false;
+                    cascadingNodes.forEach(n => {
+                        if (n.parentId && toDelete.has(n.parentId) && !toDelete.has(n.id)) {
+                            toDelete.add(n.id);
+                            added = true;
+                        }
+                    });
+                }
+                cascadingNodes = cascadingNodes.filter(n => !toDelete.has(n.id));
+                saveToStorage();
+                renderTree();
+                renderMPH();
+                renderGanttChart();
+                renderRaciMatrix();
+            }
+        );
+    }
+
+    function hapusSemuaData() {
+        showConfirmDialog(
+            'Kosongkan Data Pohon Kinerja',
+            'Apakah Anda yakin ingin mengosongkan seluruh data Pohon Kinerja yang tersimpan?',
+            function() {
+                cascadingNodes = [];
+                saveToStorage();
+                renderTree();
+                renderMPH();
+                renderGanttChart();
+                renderRaciMatrix();
+            }
+        );
+    }
+
+    function hapusSemuaData() {
+        showConfirmDialog(
+            'Kosongkan Data Pohon Kinerja',
+            'Apakah Anda yakin ingin mengosongkan seluruh data Pohon Kinerja yang tersimpan?',
+            function() {
+                cascadingNodes = [];
+                saveToStorage();
+                renderTree();
+                renderMPH();
+                renderGanttChart();
+            }
+        );
+    }
+
+    function getPdcaLabel(code) {
+        const map = {
+            'P': 'PLAN (Perencanaan)',
+            'D': 'DO (Pelaksanaan)',
+            'C': 'CHECK (Evaluasi/Verifikasi)',
+            'A': 'ACT (Tindak Lanjut)'
+        };
+        return map[code] || code;
+    }
+
+    function getMonthRangeText(s, e) {
+        if (!s || !e) return '-';
+        return s === e ? `${namaBulan[s]} 2026` : `${namaBulan[s]} – ${namaBulan[e]} 2026`;
+    }
+
+    function renderSmartBadges(smart) {
+        return ['S','M','A','R','T'].map(k => 
+            `<span class="smart-pill ${smart[k] ? 'valid' : ''}">${k}</span>`
+        ).join('');
+    }
+
+    // RENDER POHON KINERJA HIERARKIS (FULL WIDTH)
+    function renderTree() {
+        const container = document.getElementById('treeContainer');
+        const filterLayanan = document.getElementById('filterTreeLayanan').value;
+        const activeIkuIds = [...new Set(cascadingNodes.map(n => n.ikuId))];
+
+        if (activeIkuIds.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-5 text-muted">
+                    <i class="fa-solid fa-seedling fs-1 mb-3 text-secondary opacity-50"></i>
+                    <h6>Belum ada Pohon Kinerja yang disusun</h6>
+                    <p class="small mb-3">Klik tombol <strong>"Tambah Cascading Baru"</strong> untuk mengisi form atau muat ulang <strong>"Template Default"</strong>.</p>
+                    <button class="btn btn-primary btn-sm fw-semibold me-2" onclick="bukaFormTambahBaru()">
+                        <i class="fa-solid fa-plus-circle me-1"></i> Tambah Cascading Baru
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm fw-semibold" onclick="muatTemplateLayananPst(true)">
+                        <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Muat Template 3 Layanan PST
+                    </button>
+                </div>`;
+            return;
+        }
+
+        let html = '';
+        activeIkuIds.forEach(ikuId => {
+            const iku = masterIKU.find(x => x.id === ikuId);
+            if (!iku) return;
+
+            let l2Nodes = cascadingNodes.filter(n => n.ikuId === ikuId && n.level === 2);
+            if (filterLayanan !== 'ALL') {
+                l2Nodes = l2Nodes.filter(n => n.layanan === filterLayanan);
+            }
+
+            html += `
+                <div class="mb-4">
+                    <div class="node-card root-card mb-3">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                            <div>
+                                <span class="badge-level badge-l1 me-2">Level 1 • Ultimate Outcome (Kepala BPS Kab/Kota)</span>
+                                <span class="badge-code">${iku.sk} | IKU ${iku.kode}</span>
+                            </div>
+                            <span class="badge bg-primary">Target IPP-PM: ≥ 4,51 (Kategori A / Prima)</span>
+                        </div>
+                        <h6 class="fw-bold text-dark mt-2 mb-1">${iku.sasaran}</h6>
+                        <div class="small text-primary fw-semibold"><i class="fa-solid fa-chart-line me-1"></i>IKU: ${iku.indikator} — Layanan Inti PST: <u>Perpustakaan, Konsultasi Statistik & Rekomendasi Statistik</u></div>
+                    </div>
+
+                    <div class="tree-node level-2">
+                        ${l2Nodes.length > 0 ? l2Nodes.map(l2 => renderNodeBlock(l2, ikuId)).join('') : '<div class="text-muted small p-3">Tidak ada node pada filter layanan ini.</div>'}
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function renderNodeBlock(node, ikuId) {
+        const children = cascadingNodes.filter(n => n.ikuId === ikuId && n.parentId === node.id);
+        const levelBadgeClass = node.level === 2 ? 'badge-l2' : (node.level === 3 ? 'badge-l3' : 'badge-l4');
+        const levelTitle = node.level === 2 
+            ? 'Level 2 • Layanan PST (Ketua Tim)' 
+            : (node.level === 3 ? 'Level 3 • Output Petugas / PIC' : 'Level 4 • Pelaksanaan Pekerjaan Harian');
+        const nextTreeClass = node.level === 2 ? 'level-3' : 'level-4';
+
+        return `
+            <div class="node-card mb-3">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+                    <div class="d-flex flex-wrap align-items-center gap-1">
+                        <span class="badge-level ${levelBadgeClass}">${levelTitle}</span>
+                        ${node.layanan ? `<span class="badge-layanan"><i class="fa-solid fa-tag me-1"></i>${node.layanan}</span>` : ''}
+                        <span class="pdca-badge pdca-${node.pdca}">${getPdcaLabel(node.pdca)}</span>
+                    </div>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-light border py-1 px-2" onclick="editNode('${node.id}')" title="Edit di Halaman Form">
+                            <i class="fa-solid fa-pen text-primary me-1"></i><span class="small fw-semibold text-primary">Edit</span>
+                        </button>
+                        <button class="btn btn-light border py-1 px-2" onclick="hapusNode('${node.id}')" title="Hapus">
+                            <i class="fa-solid fa-trash text-danger"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="small fw-bold text-secondary mb-1">
+                    <i class="fa-solid fa-user-tie me-1"></i>${node.jabatan} — <span class="text-dark">${node.namaPegawai}</span>
+                </div>
+                <div class="fw-semibold text-dark mb-2">${node.hasilKerja}</div>
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2 border-top small">
+                    <div class="text-muted">
+                        <i class="fa-solid fa-gauge-high me-1 text-primary"></i><strong>Indikator:</strong> ${node.indikator} 
+                        <span class="badge bg-secondary-subtle text-dark ms-1">Target: ${node.target} ${node.satuan}</span>
+                        <span class="badge bg-info-subtle text-dark ms-1"><i class="fa-regular fa-calendar me-1"></i>${getMonthRangeText(node.startMonth, node.endMonth)} (${node.deadline})</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="small text-muted me-2">Kaidah SMART:</span>
+                        ${renderSmartBadges(node.smart)}
+                    </div>
+                </div>
+            </div>
+            ${children.length > 0 ? `<div class="tree-node ${nextTreeClass}">${children.map(ch => renderNodeBlock(ch, ikuId)).join('')}</div>` : ''}
+        `;
+    }
+
+    // RENDER MATRIKS PERAN HASIL (MPH)
+    function renderMPH() {
+        const tbody = document.getElementById('mphTableBody');
+        tbody.innerHTML = '';
+
+        if (cascadingNodes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">Belum ada data cascading.</td></tr>';
+            return;
+        }
+
+        const ordered = getHierarchicalOrder();
+
+        ordered.forEach(n => {
+            const iku = masterIKU.find(x => x.id === n.ikuId);
+            const levelText = n.level === 2 ? 'Ketua Tim (Level 2)' : (n.level === 3 ? 'Petugas / PIC Layanan (Level 3)' : 'Pelaksanaan Harian (Level 4)');
+            const indent = n.level === 2 ? '' : (n.level === 3 ? '↳ ' : '↳↳ ');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <span class="badge-code">${iku ? iku.kode : '-'}</span>
+                    <div class="fw-semibold small mt-1">${iku ? iku.sasaran : '-'}</div>
+                    <div class="text-primary small mt-1">IKU: ${iku ? iku.indikator : '-'}</div>
+                </td>
+                <td>
+                    <div class="fw-bold text-dark">${n.namaPegawai}</div>
+                    <div class="small text-muted">${n.jabatan}</div>
+                </td>
+                <td>
+                    <span class="badge ${n.level===2?'bg-info text-dark':(n.level===3?'bg-primary':'bg-success')} d-block mb-1">${levelText}</span>
+                    ${n.layanan ? `<span class="badge-layanan d-inline-block">${n.layanan}</span>` : ''}
+                </td>
+                <td><strong>${indent}</strong>${n.hasilKerja}</td>
+                <td>
+                    <div>${n.indikator}</div>
+                    <strong class="text-primary">Target: ${n.target} ${n.satuan}</strong>
+                </td>
+                <td class="text-center"><span class="pdca-badge pdca-${n.pdca}">${getPdcaLabel(n.pdca)}</span></td>
+                <td class="text-center small fw-semibold">${getMonthRangeText(n.startMonth, n.endMonth)}<br><span class="text-muted fw-normal">(${n.deadline})</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function getHierarchicalOrder() {
+        const result = [];
+        const activeIkuIds = [...new Set(cascadingNodes.map(n => n.ikuId))];
+        activeIkuIds.forEach(ikuId => {
+            const l2s = cascadingNodes.filter(n => n.ikuId === ikuId && n.level === 2);
+            l2s.forEach(l2 => {
+                result.push(l2);
+                const l3s = cascadingNodes.filter(n => n.parentId === l2.id);
+                l3s.forEach(l3 => {
+                    result.push(l3);
+                    const l4s = cascadingNodes.filter(n => n.parentId === l3.id);
+                    l4s.forEach(l4 => result.push(l4));
+                });
+            });
+        });
+        return result;
+    }
+
+    // RENDER GANTT CHART TIMELINE
+    function renderGanttChart() {
+        const container = document.getElementById('ganttContainer');
+        const filterLvl = document.getElementById('filterGanttLevel').value;
+        let items = getHierarchicalOrder();
+
+        if (filterLvl !== 'ALL') {
+            items = items.filter(x => x.level === parseInt(filterLvl));
+        }
+
+        if (items.length === 0) {
+            container.innerHTML = '<div class="p-4 text-center text-muted">Belum ada jadwal aktivitas untuk ditampilkan pada Gantt Chart.</div>';
+            return;
+        }
+
+        let html = `
+            <table class="gantt-table">
+                <thead>
+                    <tr>
+                        <th class="sticky-col" rowspan="2" style="min-width: 340px; text-align: left; padding-left: 12px;">Jenis Layanan PST / Rencana Hasil Kerja / Aktivitas Harian</th>
+                        <th rowspan="2" style="min-width: 145px;">PIC / Petugas</th>
+                        <th rowspan="2" style="min-width: 85px;">PDCA</th>
+                        <th colspan="3" style="background:#1e3a8a;">Triwulan I</th>
+                        <th colspan="3" style="background:#0f766e;">Triwulan II</th>
+                        <th colspan="3" style="background:#6d28d9;">Triwulan III</th>
+                        <th colspan="3" style="background:#b45309;">Triwulan IV</th>
+                    </tr>
+                    <tr>
+                        ${[1,2,3,4,5,6,7,8,9,10,11,12].map(m => `<th class="gantt-month-cell">${namaBulan[m]}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        items.forEach(n => {
+            const s = n.startMonth || 1;
+            const e = n.endMonth || 12;
+            const indent = n.level === 2 ? '' : (n.level === 3 ? 'ps-3' : 'ps-4');
+            const badgeLvl = n.level === 2 ? '<span class="badge bg-info text-dark me-1">L2</span>' : (n.level === 3 ? '<span class="badge bg-primary me-1">L3</span>' : '<span class="badge bg-success me-1">L4</span>');
+
+            let monthCells = '';
+            for (let m = 1; m <= 12; m++) {
+                if (m >= s && m <= e) {
+                    const isStart = m === s;
+                    const labelBar = isStart ? `${n.pdca}` : '';
+                    monthCells += `
+                        <td class="gantt-month-cell">
+                            <div class="gantt-bar gantt-bar-${n.pdca}" title="${n.hasilKerja} (${namaBulanFull[s]} - ${namaBulanFull[e]})">${labelBar}</div>
+                        </td>`;
+                } else {
+                    monthCells += `<td class="gantt-month-cell"></td>`;
+                }
+            }
+
+            html += `
+                <tr>
+                    <td class="sticky-col ${indent}">
+                        ${badgeLvl}${n.layanan ? `<span class="badge-layanan me-1">${n.layanan}</span>` : ''}
+                        <span class="${n.level===2?'fw-bold text-dark':'text-dark'}">${n.hasilKerja}</span>
+                        <div class="small text-muted mt-1"><i class="fa-regular fa-clock me-1"></i>${n.deadline} • Target: ${n.target} ${n.satuan}</div>
+                    </td>
+                    <td>
+                        <div class="fw-semibold text-dark">${n.namaPegawai}</div>
+                        <div class="small text-muted">${n.jabatan}</div>
+                    </td>
+                    <td class="text-center"><span class="pdca-badge pdca-${n.pdca}">${n.pdca}</span></td>
+                    ${monthCells}
+                </tr>
+            `;
+        });
+
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    }
+
+    // RENDER MATRIKS RACI (TAB 6)
+    function renderRaciMatrix() {
+        const tbody = document.getElementById('raciTableBody');
+        if (!tbody) return;
+
+        const filterLay = document.getElementById('filterRaciLayanan').value;
+        const filterLvl = document.getElementById('filterRaciLevel').value;
+        let items = getHierarchicalOrder();
+
+        if (filterLay !== 'ALL') {
+            items = items.filter(x => x.layanan === filterLay);
+        }
+        if (filterLvl !== 'ALL') {
+            items = items.filter(x => x.level === parseInt(filterLvl));
+        }
+
+        if (items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Belum ada data aktivitas untuk ditampilkan pada Matriks RACI.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = '';
+        items.forEach((n, idx) => {
+            const raci = ensureNodeRaci(n);
+            const lvlBadge = n.level === 2
+                ? '<span class="badge bg-info text-dark d-block mb-1">Level 2 (Layanan)</span>'
+                : (n.level === 3
+                    ? '<span class="badge bg-primary d-block mb-1">Level 3 (Output)</span>'
+                    : '<span class="badge bg-success d-block mb-1">Level 4 (Harian)</span>');
+            const indent = n.level === 2 ? '' : (n.level === 3 ? '↳ ' : '↳↳ ');
+
+            const roleCells = raciRoles.map(role => {
+                const val = raci[role.key] || '-';
+                const cls = ['R','A','C','I'].includes(val) ? `raci-${val}` : 'raci-NONE';
+                return `
+                    <td class="text-center">
+                        <select class="form-select form-select-sm raci-select ${cls}" onchange="updateRaciCell('${n.id}', '${role.key}', this)">
+                            <option value="-" ${val === '-' ? 'selected' : ''}>-</option>
+                            <option value="R" ${val === 'R' ? 'selected' : ''}>R</option>
+                            <option value="A" ${val === 'A' ? 'selected' : ''}>A</option>
+                            <option value="C" ${val === 'C' ? 'selected' : ''}>C</option>
+                            <option value="I" ${val === 'I' ? 'selected' : ''}>I</option>
+                        </select>
+                    </td>
+                `;
+            }).join('');
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="text-center fw-semibold">${idx + 1}</td>
+                <td>
+                    ${lvlBadge}
+                    ${n.layanan ? `<span class="badge-layanan d-inline-block">${n.layanan}</span>` : ''}
+                </td>
+                <td>
+                    <div class="${n.level === 2 ? 'fw-bold text-dark' : 'text-dark'}"><strong>${indent}</strong>${n.hasilKerja}</div>
+                    <div class="small text-muted mt-1"><i class="fa-solid fa-user-tie me-1"></i>PIC Utama: <strong>${n.namaPegawai}</strong> (${n.jabatan})</div>
+                </td>
+                ${roleCells}
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function updateRaciCell(nodeId, roleKey, selectEl) {
+        const node = cascadingNodes.find(x => x.id === nodeId);
+        if (!node) return;
+        ensureNodeRaci(node);
+        const newVal = selectEl.value;
+        node.raci[roleKey] = newVal;
+
+        selectEl.classList.remove('raci-R', 'raci-A', 'raci-C', 'raci-I', 'raci-NONE');
+        selectEl.classList.add(['R','A','C','I'].includes(newVal) ? `raci-${newVal}` : 'raci-NONE');
+        saveToStorage();
+    }
+
+    function resetRaciDefaults() {
+        showConfirmDialog(
+            'Reset Otomatis Matriks RACI',
+            'Atur ulang seluruh pemetaan peran R, A, C, I ke konfigurasi standar Layanan PST BPS?',
+            function() {
+                cascadingNodes.forEach(n => {
+                    n.raci = getDefaultRaciForNode(n);
+                });
+                saveToStorage();
+                renderRaciMatrix();
+            }
+        );
+    }
+
+    // EXPORT KE EXCEL (.XLSX) DENGAN 4 WORKSHEET TERSTRUKTUR
+    function exportToExcel() {
+        if (cascadingNodes.length === 0) {
+            showNotice('Export Excel', 'Data Pohon Kinerja masih kosong.', true);
+            return;
+        }
+
+        const wb = XLSX.utils.book_new();
+        const ordered = getHierarchicalOrder();
+
+        // SHEET 1: MATRIKS PERAN HASIL (MPH)
+        const mphRows = [
+            ["MATRIKS PERAN HASIL (MPH) & PENJENJANGAN KINERJA HARIAN (SMART - PDCA)"],
+            ["UNIT KERJA: BPS KABUPATEN/KOTA — IKU 2.7.1.1 IPP-PM (LAYANAN PERPUSTAKAAN, KONSULTASI STATISTIK & REKOMENDASI STATISTIK)"],
+            [],
+            [
+                "No", "Kode SK", "Kode IKU", "Sasaran Kegiatan (Level 1)", "Indikator Kinerja Utama (IKU Kepala BPS)",
+                "Level Penjenjangan", "Jenis Layanan PST", "Jabatan / Peran", "Nama Pegawai (PIC)", "Induk Penjenjangan Langsung",
+                "Rencana Hasil Kerja / Output / Aktivitas Harian", "Indikator Kinerja Individu / Ukuran Keberhasilan",
+                "Target", "Satuan", "Bulan Mulai", "Bulan Selesai", "Frekuensi / SLA", "Siklus PDCA", "Validasi SMART"
+            ]
+        ];
+
+        ordered.forEach((n, idx) => {
+            const iku = masterIKU.find(x => x.id === n.ikuId);
+            const parentObj = n.parentId ? cascadingNodes.find(p => p.id === n.parentId) : null;
+            const indukText = parentObj ? `[${parentObj.jabatan}] ${parentObj.hasilKerja}` : (iku ? `[Kepala BPS] ${iku.sasaran}` : '-');
+            const levelLabel = n.level === 2 ? 'Level 2 - Layanan PST (Ketua Tim)' : (n.level === 3 ? 'Level 3 - Output Petugas (SKP)' : 'Level 4 - Pelaksanaan Pekerjaan Harian');
+            const smartStr = ['S','M','A','R','T'].filter(k => n.smart[k]).join('-');
+
+            mphRows.push([
+                idx + 1,
+                iku ? iku.sk : '-',
+                iku ? iku.kode : '-',
+                iku ? iku.sasaran : '-',
+                iku ? iku.indikator : '-',
+                levelLabel,
+                n.layanan || '-',
+                n.jabatan,
+                n.namaPegawai,
+                indukText,
+                n.hasilKerja,
+                n.indikator,
+                n.target,
+                n.satuan,
+                namaBulanFull[n.startMonth || 1],
+                namaBulanFull[n.endMonth || 12],
+                n.deadline,
+                getPdcaLabel(n.pdca),
+                smartStr
+            ]);
+        });
+
+        const wsMPH = XLSX.utils.aoa_to_sheet(mphRows);
+        wsMPH['!cols'] = [
+            { wch: 5 }, { wch: 10 }, { wch: 10 }, { wch: 30 }, { wch: 35 },
+            { wch: 28 }, { wch: 28 }, { wch: 24 }, { wch: 22 }, { wch: 35 },
+            { wch: 48 }, { wch: 38 }, { wch: 10 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 18 }, { wch: 22 }, { wch: 14 }
+        ];
+        XLSX.utils.book_append_sheet(wb, wsMPH, "Matriks Peran Hasil (MPH)");
+
+        // SHEET 2: TIMELINE / GANTT CHART PELAKSANAAN
+        const ganttRows = [
+            ["TIMELINE / GANTT CHART LAYANAN PERPUSTAKAAN, KONSULTASI & REKOMENDASI STATISTIK — IKU 2.7.1.1 IPP-PM"],
+            ["Keterangan: Blok terisi kode siklus PDCA (P = Plan, D = Do, C = Check, A = Act) pada bulan pelaksanaan"],
+            [],
+            ["Level", "Jenis Layanan PST", "Rencana Hasil Kerja / Aktivitas Harian", "Jabatan / Peran", "PIC / Pegawai", "Target & Satuan", "Siklus PDCA",
+             "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
+        ];
+
+        ordered.forEach(n => {
+            const lvl = n.level === 2 ? 'Level 2 (Layanan PST)' : (n.level === 3 ? 'Level 3 (Output SKP)' : 'Level 4 (Harian)');
+            const prefix = n.level === 2 ? '' : (n.level === 3 ? '   ↳ ' : '      ↳ ');
+            const row = [
+                lvl,
+                n.layanan || '-',
+                prefix + n.hasilKerja,
+                n.jabatan,
+                n.namaPegawai,
+                `${n.target} ${n.satuan}`,
+                getPdcaLabel(n.pdca)
+            ];
+            for (let m = 1; m <= 12; m++) {
+                row.push((m >= (n.startMonth || 1) && m <= (n.endMonth || 12)) ? `█ ${n.pdca}` : "");
+            }
+            ganttRows.push(row);
+        });
+
+        const wsGantt = XLSX.utils.aoa_to_sheet(ganttRows);
+        wsGantt['!cols'] = [
+            { wch: 22 }, { wch: 28 }, { wch: 50 }, { wch: 24 }, { wch: 20 }, { wch: 18 }, { wch: 20 },
+            { wch: 7 }, { wch: 7 }, { wch: 7 }, { wch: 7 }, { wch: 7 }, { wch: 7 },
+            { wch: 7 }, { wch: 7 }, { wch: 7 }, { wch: 7 }, { wch: 7 }, { wch: 7 }
+        ];
+        XLSX.utils.book_append_sheet(wb, wsGantt, "Timeline Gantt Chart PST");
+
+        // SHEET 3: POHON KINERJA HIERARKIS
+        const treeRows = [
+            ["STRUKTUR POHON KINERJA (CASCADING) BPS KABUPATEN/KOTA — 3 LAYANAN INTI PST (IPP-PM)"],
+            [],
+            ["Level", "Jenis Layanan PST", "Jabatan / Peran", "Nama Pegawai", "Pernyataan Hasil / Aktivitas", "Indikator & Target", "Siklus PDCA", "Jadwal & SLA"]
+        ];
+
+        const activeIkuIds = [...new Set(cascadingNodes.map(n => n.ikuId))];
+        activeIkuIds.forEach(ikuId => {
+            const iku = masterIKU.find(x => x.id === ikuId);
+            if (!iku) return;
+            treeRows.push(["LEVEL 1 (ULTIMATE OUTCOME)", "Seluruh Layanan PST", "Kepala BPS Kab/Kota", "Kepala Kantor", `${iku.sasaran} | IKU: ${iku.indikator}`, "≥ 4,51 Poin (Kategori A)", "P-D-C-A", iku.frekuensi]);
+
+            const l2s = cascadingNodes.filter(n => n.ikuId === ikuId && n.level === 2);
+            l2s.forEach(l2 => {
+                treeRows.push(["   └── LEVEL 2 (KETUA TIM)", l2.layanan || '-', l2.jabatan, l2.namaPegawai, l2.hasilKerja, `${l2.indikator} (${l2.target} ${l2.satuan})`, getPdcaLabel(l2.pdca), `${getMonthRangeText(l2.startMonth, l2.endMonth)} (${l2.deadline})`]);
+                const l3s = cascadingNodes.filter(n => n.parentId === l2.id);
+                l3s.forEach(l3 => {
+                    treeRows.push(["       └── LEVEL 3 (OUTPUT SKP)", l3.layanan || '-', l3.jabatan, l3.namaPegawai, l3.hasilKerja, `${l3.indikator} (${l3.target} ${l3.satuan})`, getPdcaLabel(l3.pdca), `${getMonthRangeText(l3.startMonth, l3.endMonth)} (${l3.deadline})`]);
+                    const l4s = cascadingNodes.filter(n => n.parentId === l3.id);
+                    l4s.forEach(l4 => {
+                        treeRows.push(["           └── LEVEL 4 (HARIAN)", l4.layanan || '-', l4.jabatan, l4.namaPegawai, l4.hasilKerja, `${l4.indikator} (${l4.target} ${l4.satuan})`, getPdcaLabel(l4.pdca), `${getMonthRangeText(l4.startMonth, l4.endMonth)} (${l4.deadline})`]);
+                    });
+                });
+            });
+            treeRows.push([]);
+        });
+
+        const wsTree = XLSX.utils.aoa_to_sheet(treeRows);
+        wsTree['!cols'] = [{ wch: 30 }, { wch: 28 }, { wch: 25 }, { wch: 22 }, { wch: 50 }, { wch: 36 }, { wch: 22 }, { wch: 24 }];
+        XLSX.utils.book_append_sheet(wb, wsTree, "Pohon Kinerja Hierarkis");
+
+        // SHEET 4: MATRIKS RACI LAYANAN PST
+        const raciRows = [
+            ["MATRIKS RACI (RESPONSIBLE, ACCOUNTABLE, CONSULTED, INFORMED) — LAYANAN PST BPS KAB/KOTA"],
+            ["Keterangan: R = Responsible (Pelaksana) | A = Accountable (Penanggung Jawab Akhir) | C = Consulted (Dikonsultasikan) | I = Informed (Diinformasikan)"],
+            [],
+            [
+                "No", "Level Penjenjangan", "Jenis Layanan PST", "Rencana Hasil Kerja / Output / Aktivitas", "PIC Utama",
+                "Kepala BPS Kab/Kota", "Ketua Tim Diseminasi & PST", "Pustakawan / Petugas Perpustakaan",
+                "Statistisi / Petugas Konsultasi & Romantik", "Pranata Komputer / PIC SIPPN & PEKPPP"
+            ]
+        ];
+
+        ordered.forEach((n, idx) => {
+            const raci = ensureNodeRaci(n);
+            const lvl = n.level === 2 ? 'Level 2 (Layanan PST)' : (n.level === 3 ? 'Level 3 (Output SKP)' : 'Level 4 (Harian)');
+            const prefix = n.level === 2 ? '' : (n.level === 3 ? '   ↳ ' : '      ↳ ');
+            raciRows.push([
+                idx + 1,
+                lvl,
+                n.layanan || '-',
+                prefix + n.hasilKerja,
+                `${n.namaPegawai} (${n.jabatan})`,
+                raci.kepala || '-',
+                raci.ketuaTim || '-',
+                raci.pustakawan || '-',
+                raci.statistisi || '-',
+                raci.prakom || '-'
+            ]);
+        });
+
+        const wsRaci = XLSX.utils.aoa_to_sheet(raciRows);
+        wsRaci['!cols'] = [
+            { wch: 5 }, { wch: 22 }, { wch: 28 }, { wch: 52 }, { wch: 32 },
+            { wch: 20 }, { wch: 24 }, { wch: 26 }, { wch: 32 }, { wch: 30 }
+        ];
+        XLSX.utils.book_append_sheet(wb, wsRaci, "Matriks RACI PST");
+
+        const tgl = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `MPH_PohonKinerja_Gantt_RACI_PST_${tgl}.xlsx`);
+    }
+
+    // =========================================================================
+    // TEMPLATE LENGKAP 1: 3 LAYANAN PST (PERPUSTAKAAN, KONSULTASI & REKOMENDASI)
+    // =========================================================================
+    function muatTemplateLayananPst(silent = false) {
+        const executeLoad = function() {
+            cascadingNodes = [
+                // =====================================================================
+                // CABANG 1: LAYANAN PERPUSTAKAAN (CETAK & DIGITAL)
+                // =====================================================================
+                {
+                    id: "pst_lib_l2", ikuId: 17, level: 2, parentId: null,
+                    layanan: "Layanan Perpustakaan",
+                    jabatan: "Ketua Tim Diseminasi Statistik & Pelayanan Publik (PST)", namaPegawai: "Rina Marlina, SST, M.Stat",
+                    hasilKerja: "Terwujudnya Layanan Perpustakaan Statistik (cetak & digital) yang mudah diakses, gratis, mutakhir, serta memenuhi Standar Pelayanan (SP) dan kelengkapan sarana prasarana ramah kelompok rentan",
+                    indikator: "Persentase kepuasan pengguna Layanan Perpustakaan dan ketersediaan koleksi publikasi digital mutakhir pada website BPS Kab/Kota (100% sesuai ARC)",
+                    target: "100", satuan: "Persen", startMonth: 1, endMonth: 12, deadline: "Sepanjang Tahun (SLA Real-time)", pdca: "D",
+                    smart: { S: true, M: true, A: true, R: true, T: true }
+                },
+                {
+                    id: "pst_lib_l3a", ikuId: 17, level: 3, parentId: "pst_lib_l2",
+                    layanan: "Layanan Perpustakaan",
+                    jabatan: "Pustakawan / Petugas Perpustakaan PST", namaPegawai: "Nadia Putri, A.Md.Stat",
+                    hasilKerja: "Terkelolanya koleksi publikasi cetak & digital perpustakaan PST (katalogisasi, penataan rak, pemutakhiran tautan unduhan PDF/Excel di website & SIPPN) serta pelayanan pengunjung ruang baca secara prima",
+                    indikator: "Persentase publikasi terbitan tahun berjalan yang terunggah ke perpustakaan digital pada hari rilis (H+0) dan terlayani tanpa keluhan",
+                    target: "100", satuan: "Persen Publikasi", startMonth: 1, endMonth: 12, deadline: "H+0 Rilis & Hari Kerja", pdca: "D",
+                    smart: { S: true, M: true, A: true, R: true, T: true }
+                },
+                {
+                    id: "pst_lib_l4a", ikuId: 17, level: 4, parentId: "pst_lib_l3a",
+                    layanan: "Layanan Perpustakaan",
+                    jabatan: "Pustakawan / Petugas Perpustakaan PST", namaPegawai: "Nadia Putri, A.Md.Stat",
+                    hasilKerja: "Melakukan registrasi buku tamu digital pengunjung perpustakaan PST, memandu pencarian publikasi/tabel statistik pada komputer pengunjung & rak cetak, memeriksa fungsi tautan unduhan publikasi digital, serta memastikan kebersihan & sarana ramah disabilitas di ruang baca",
+                    indikator: "Persentase pengunjung perpustakaan tatap muka & daring yang dilayani pencarian publikasinya secara langsung (real-time / < 15 menit)",
+                    target: "100", satuan: "Persen / Hari", startMonth: 1, endMonth: 12, deadline: "Harian (Senin–Jumat, 08.00–15.30)", pdca: "D",
+                    smart: { S: true, M: true, A: true, R: true, T: true }
+                },
+
+                // =====================================================================
+                // CABANG 2: LAYANAN KONSULTASI STATISTIK (TATAP MUKA & DARING)
+                // =====================================================================
+                {
+                    id: "pst_kon_l2", ikuId: 17, level: 2, parentId: null,
+                    layanan: "Layanan Konsultasi Statistik",
+                    jabatan: "Ketua Tim Diseminasi Statistik & Pelayanan Publik (PST)", namaPegawai: "Rina Marlina, SST, M.Stat",
+                    hasilKerja: "Terwujudnya Layanan Konsultasi Statistik (data, metadata, metodologi & interpretasi indikator) secara tatap muka maupun daring (Silastik / WhatsApp PST) yang akurat, komunikatif, dan tepat waktu sesuai SLA",
+                    indikator: "Persentase permohonan konsultasi statistik yang diselesaikan sesuai Standar Pelayanan (maks. 3 hari kerja) dan memperoleh skor SKM ≥ 4,51",
+                    target: "100", satuan: "Persen Sesuai SLA", startMonth: 1, endMonth: 12, deadline: "Sepanjang Tahun (SLA ≤ 3 Hari)", pdca: "D",
+                    smart: { S: true, M: true, A: true, R: true, T: true }
+                },
+                {
+                    id: "pst_kon_l3a", ikuId: 17, level: 3, parentId: "pst_kon_l2",
+                    layanan: "Layanan Konsultasi Statistik",
+                    jabatan: "Statistisi Ahli Muda (Koordinator Piket & Tenaga Ahli Konsultasi PST)", namaPegawai: "Dimas Prakoso, S.Stat",
+                    hasilKerja: "Tersusunnya jadwal piket petugas & tenaga ahli lintas tim kerja, terlaksananya pendampingan konsultasi metodologi/indikator bagi peneliti/mahasiswa/OPD, serta terdokumentasikannya log penyelesaian tiket konsultasi pada Silastik",
+                    indikator: "Persentase tiket konsultasi tatap muka dan daring (Silastik/WA) yang ditindaklanjuti dengan jawaban & rujukan metadata yang valid",
+                    target: "100", satuan: "Persen Tiket", startMonth: 1, endMonth: 12, deadline: "Maks. 1–3 Hari Kerja", pdca: "D",
+                    smart: { S: true, M: true, A: true, R: true, T: true }
+                },
+                {
+                    id: "pst_kon_l4a", ikuId: 17, level: 4, parentId: "pst_kon_l3a",
+                    layanan: "Layanan Konsultasi Statistik",
+                    jabatan: "Statistisi Ahli Muda / Petugas Piket PST", namaPegawai: "Dimas Prakoso, S.Stat",
+                    hasilKerja: "Melayani sesi konsultasi tatap muka di meja PST maupun konsultasi daring (Silastik, WhatsApp PST, Zoom), menjelaskan konsep definisi & keterbatasan data survei/sensus, mencatat ringkasan konsultasi pada log Silastik, dan mengarahkan pengguna mengisi survei SKM (F-03)",
+                    indikator: "Persentase permintaan konsultasi harian yang direspons pada hari yang sama (H+0) dan tuntas ≤ 3 hari kerja",
+                    target: "100", satuan: "Persen / Hari", startMonth: 1, endMonth: 12, deadline: "Harian (Hari Kerja)", pdca: "D",
+                    smart: { S: true, M: true, A: true, R: true, T: true }
+                },
+
+                // =====================================================================
+                // CABANG 3: LAYANAN REKOMENDASI STATISTIK (ROMANTIK)
+                // =====================================================================
+                {
+                    id: "pst_rom_l2", ikuId: 17, level: 2, parentId: null,
+                    layanan: "Layanan Rekomendasi Statistik",
+                    jabatan: "Ketua Tim Pembinaan Statistik Sektoral & Diseminasi", namaPegawai: "Rina Marlina, SST, M.Stat",
+                    hasilKerja: "Terwujudnya Layanan Rekomendasi Kegiatan Statistik Sektoral melalui aplikasi Romantik Online bagi OPD/Pemda yang transparan, terstandar, dan diterbitkan tepat waktu sesuai SLA untuk mencegah duplikasi survei dan mendukung Satu Data Indonesia",
+                    indikator: "Persentase pengajuan rekomendasi statistik sektoral dari OPD/Pemda yang selesai ditelaah dan diterbitkan surat rekomendasinya sesuai SLA (maks. 14 hari kerja)",
+                    target: "100", satuan: "Persen Tepat Waktu", startMonth: 1, endMonth: 12, deadline: "Sepanjang Tahun (SLA ≤ 14 Hari)", pdca: "D",
+                    smart: { S: true, M: true, A: true, R: true, T: true }
+                },
+                {
+                    id: "pst_rom_l3a", ikuId: 17, level: 3, parentId: "pst_rom_l2",
+                    layanan: "Layanan Rekomendasi Statistik",
+                    jabatan: "Statistisi Ahli Muda (Verifikator & Penelaah Romantik)", namaPegawai: "Budi Santoso, SST",
+                    hasilKerja: "Terlaksananya desk asistensi pengisian formulir FSQ pada Romantik Online bersama OPD penyelenggara survei/kompilasi, verifikasi kelengkapan metadata kegiatan & kuesioner, serta penyusunan draf surat rekomendasi statistik untuk ditandatangani Kepala BPS Kab/Kota",
+                    indikator: "Jumlah pengajuan Romantik OPD yang diverifikasi kelengkapan metadata/kuesionernya dan diterbitkan surat rekomendasinya tanpa melewati batas SLA",
+                    target: "100", satuan: "Persen Pengajuan", startMonth: 1, endMonth: 12, deadline: "Maks. 5–14 Hari Kerja", pdca: "C",
+                    smart: { S: true, M: true, A: true, R: true, T: true }
+                },
+                {
+                    id: "pst_rom_l4a", ikuId: 17, level: 4, parentId: "pst_rom_l3a",
+                    layanan: "Layanan Rekomendasi Statistik",
+                    jabatan: "Statistisi Ahli Muda (Verifikator Romantik)", namaPegawai: "Budi Santoso, SST",
+                    hasilKerja: "Memeriksa notifikasi pengajuan masuk pada dashboard Romantik Online setiap hari kerja, melakukan asistensi teknis perbaikan kuesioner/rancangan sampel dengan PIC OPD, mencatat status progres pada buku kendali Romantik, dan mengunggah surat rekomendasi yang telah disahkan",
+                    indikator: "Persentase pengajuan baru di Romantik yang diverifikasi awal dalam waktu ≤ 2 hari kerja sejak diterima",
+                    target: "100", satuan: "Persen / Hari", startMonth: 1, endMonth: 12, deadline: "Harian (Hari Kerja)", pdca: "D",
+                    smart: { S: true, M: true, A: true, R: true, T: true }
+                },
+
+                // =====================================================================
+                // CABANG 4: MANAJEMEN STANDAR PELAYANAN & EVALUASI 3 LAYANAN (PEKPPP)
+                // =====================================================================
+                {
+                    id: "pst_eval_l2", ikuId: 17, level: 2, parentId: null,
+                    layanan: "Manajemen & Evaluasi PST (PEKPPP)",
+                    jabatan: "Ketua Tim Diseminasi Statistik & Pelayanan Publik (PST)", namaPegawai: "Rina Marlina, SST, M.Stat",
+                    hasilKerja: "Terwujudnya tata kelola mutu ketiga layanan PST (Perpustakaan, Konsultasi, Rekomendasi Statistik) melalui penetapan Standar Pelayanan (14 komponen), Forum Konsultasi Publik (FKP), pemantauan SKM (F-03), dan Rencana Tindak Lanjut (RTL) PEKPPP",
+                    indikator: "Nilai IPP-PM tervalidasi pada 6 aspek PEKPPP (≥ 4,51) dan persentase tindak lanjut rekomendasi perbaikan layanan PST (100%)",
+                    target: "100", satuan: "Persen RTL", startMonth: 1, endMonth: 12, deadline: "Triwulanan (TW I – IV)", pdca: "A",
+                    smart: { S: true, M: true, A: true, R: true, T: true }
+                },
+                {
+                    id: "pst_eval_l3", ikuId: 17, level: 3, parentId: "pst_eval_l2",
+                    layanan: "Manajemen & Evaluasi PST (PEKPPP)",
+                    jabatan: "Pranata Komputer Ahli Pertama (PIC SIPPN, Eviden PEKPPP & SKM)", namaPegawai: "Fajar Nugroho, S.Tr.Stat",
+                    hasilKerja: "Tersusunnya dokumen Standar Pelayanan & Maklumat untuk 3 layanan PST, pemutakhiran data pada portal SIPPN MenPANRB, rekapitulasi hasil SKM triwulanan (F-03), dan repositori eviden F-01/F-02 PEKPPP",
+                    indikator: "Persentase komponen SP 3 layanan PST yang terpublikasi di ruang PST, website & SIPPN serta kelengkapan eviden F-01/F-02",
+                    target: "100", satuan: "Persen", startMonth: 1, endMonth: 12, deadline: "Februari & Triwulanan", pdca: "C",
+                    smart: { S: true, M: true, A: true, R: true, T: true }
+                },
+                {
+                    id: "pst_eval_l4", ikuId: 17, level: 4, parentId: "pst_eval_l3",
+                    layanan: "Manajemen & Evaluasi PST (PEKPPP)",
+                    jabatan: "Pranata Komputer Ahli Pertama", namaPegawai: "Fajar Nugroho, S.Tr.Stat",
+                    hasilKerja: "Melakukan pemantauan harian tingkat pengisian kuesioner SKM/F-03 dari pengguna layanan Perpustakaan, Konsultasi & Romantik, menindaklanjuti saran/pengaduan pengguna pada kanal SP4N-LAPOR!/PST, dan memperbarui tautan eviden PEKPPP",
+                    indikator: "Persentase saran/pengaduan pengguna layanan PST yang direspons dan dicatat tindak lanjutnya dalam ≤ 1 hari kerja",
+                    target: "100", satuan: "Persen / Hari", startMonth: 1, endMonth: 12, deadline: "Harian (Senin–Jumat)", pdca: "A",
+                    smart: { S: true, M: true, A: true, R: true, T: true }
+                }
+            ];
+
+            saveToStorage();
+            renderTree();
+            renderMPH();
+            renderGanttChart();
+            renderRaciMatrix();
+            if (!silent) {
+                lihatPohonKinerja();
+            }
+        };
+
+        if (!silent && cascadingNodes.length > 0) {
+            showConfirmDialog(
+                'Muat Template 3 Layanan PST',
+                'Muat ulang contoh lengkap Pohon Kinerja, MPH & Gantt Chart untuk 3 Layanan PST (Perpustakaan, Konsultasi Statistik & Rekomendasi Statistik) pada IKU 2.7.1.1 IPP-PM? Data saat ini akan diganti dengan template default.',
+                executeLoad
+            );
+        } else {
+            executeLoad();
+        }
+    }
+</script>
+
+</body>
+</html>
