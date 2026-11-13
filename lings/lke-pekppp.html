@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LKE PEKPPP - Lembar Kerja Evaluasi Pelayanan Publik</title>
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- SheetJS (XLSX) untuk ekspor Excel nyata (.xlsx) multi-sheet -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --primary: #0f4c81;
+      --primary-light: #1e6bb8;
+      --primary-soft: #eff6ff;
+      --accent: #0d9488;
+      --accent-soft: #f0fdfa;
+      --warning: #d97706;
+      --warning-soft: #fffbeb;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --success: #059669;
+      --success-soft: #ecfdf5;
+      --bg-body: #f1f5f9;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #64748b;
+      --border: #e2e8f0;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.55;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Top Header & Hero Banner */
+    .topbar {
+      background: linear-gradient(135deg, #0b3963 0%, #0f4c81 55%, #0d7377 100%);
+      color: #ffffff;
+      padding: 1.75rem 1.5rem 2.25rem;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topbar::after {
+      content: "";
+      position: absolute;
+      top: -40%;
+      right: -10%;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(255,255,255,0.09) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    .header-flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1.25rem;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(6px);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      margin-bottom: 0.65rem;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .topbar h1 {
+      font-size: clamp(1.45rem, 2.5vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .topbar p {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.92rem;
+      max-width: 680px;
+    }
+
+    .save-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(15, 23, 42, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 0.5rem 0.95rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #e2e8f0;
+    }
+
+    .dot-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #34d399;
+      box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.25);
+    }
+
+    /* Dashboard Summary Card */
+    .summary-wrapper {
+      margin-top: -1.4rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      background: #fafbfc;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.55rem 0.8rem;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: var(--text-main);
+      background: #fff;
+      transition: all 0.18s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(30, 107, 184, 0.14);
+    }
+
+    /* KPI Strip & Actions */
+    .kpi-action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 1.25rem;
+    }
+
+    .kpi-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .kpi-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .kpi-label {
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .kpi-value {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+
+    .kpi-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .overall-progress-wrap {
+      min-width: 210px;
+      flex: 1;
+      max-width: 280px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--text-main);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-light), var(--accent));
+      border-radius: 999px;
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 0%;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.55rem 0.95rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.16s ease;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-excel {
+      background: #047857;
+      color: #fff;
+    }
+    .btn-excel:hover { background: #065f46; }
+
+    .btn-csv {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-csv:hover { background: #0b3963; }
+
+    .btn-json {
+      background: #334155;
+      color: #fff;
+    }
+    .btn-json:hover { background: #1e293b; }
+
+    .btn-outline {
+      background: #fff;
+      border-color: #cbd5e1;
+      color: var(--text-main);
+    }
+    .btn-outline:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .btn-danger-outline {
+      background: #fff;
+      border-color: #fecaca;
+      color: var(--danger);
+    }
+    .btn-danger-outline:hover {
+      background: var(--danger-soft);
+    }
+
+    /* Aspect Tabs Navigation */
+    .tabs-container {
+      margin-top: 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(241, 245, 249, 0.92);
+      backdrop-filter: blur(10px);
+      padding: 0.65rem 0;
+    }
+
+    .tabs-scroll {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.65rem;
+    }
+
+    @media (max-width: 1024px) {
+      .tabs-scroll {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .tabs-scroll {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 0.35rem;
+        scrollbar-width: thin;
+      }
+      .tab-btn {
+        min-width: 185px;
+      }
+    }
+
+    .tab-btn {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 0.9rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.45rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab-btn:hover {
+      border-color: #93c5fd;
+      transform: translateY(-1px);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 8px 18px -4px rgba(15, 76, 129, 0.35);
+    }
+
+    .tab-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .tab-roman {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .tab-btn.active .tab-roman {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .tab-weight {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .tab-btn.active .tab-weight {
+      color: #5eead4;
+    }
+
+    .tab-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.84rem;
+      font-weight: 700;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .tab-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      color: var(--text-light);
+      margin-top: 0.15rem;
+    }
+
+    .tab-btn.active .tab-footer {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .mini-bar {
+      width: 55px;
+      height: 5px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .tab-btn.active .mini-bar {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .mini-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .tab-btn.active .mini-bar-fill {
+      background: #34d399;
+    }
+
+    /* Filter & Search Bar inside Tab */
+    .filter-toolbar {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.85rem;
+      background: #fff;
+      padding: 0.9rem 1.15rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .aspect-heading {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .aspect-heading h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .badge-bobot {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid #99f6e4;
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+    }
+
+    .filter-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .search-input {
+      padding: 0.45rem 0.8rem;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      min-width: 220px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+    }
+
+    .filter-pill {
+      padding: 0.42rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .filter-pill.active {
+      background: var(--primary-soft);
+      border-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* Indicator Accordion Cards */
+    .indicators-list {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .indicator-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    .indicator-card.completed {
+      border-left: 4px solid var(--success);
+    }
+
+    .indicator-header {
+      padding: 1.1rem 1.25rem;
+      background: #ffffff;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      user-select: none;
+    }
+
+    .indicator-header:hover {
+      background: #f8fafc;
+    }
+
+    .ind-left {
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      flex: 1;
+    }
+
+    .ind-num {
+      flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 0.92rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .indicator-card.completed .ind-num {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .ind-title-wrap h3 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+      line-height: 1.4;
+    }
+
+    .skor5-callout {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 0.45rem;
+      background: var(--warning-soft);
+      border: 1px solid #fde68a;
+      color: #92400e;
+      padding: 0.38rem 0.7rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+
+    .skor5-tag {
+      font-weight: 800;
+      background: #f59e0b;
+      color: #fff;
+      padding: 0.05rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .ind-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .ind-stat-badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: var(--text-muted);
+    }
+
+    .indicator-card.completed .ind-stat-badge {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .chevron {
+      width: 20px;
+      height: 20px;
+      color: var(--text-light);
+      transition: transform 0.25s ease;
+    }
+
+    .indicator-card.collapsed .chevron {
+      transform: rotate(-90deg);
+    }
+
+    .indicator-card.collapsed .indicator-body {
+      display: none;
+    }
+
+    .indicator-body {
+      border-top: 1px solid var(--border);
+      padding: 1.15rem 1.25rem;
+      background: #fcfcfd;
+    }
+
+    /* Indicator Toolbar (Check All / Uncheck All / Link) */
+    .ind-sub-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.9rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .btn-xs {
+      padding: 0.3rem 0.65rem;
+      font-size: 0.76rem;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: var(--text-muted);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-xs:hover {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-color: #93c5fd;
+    }
+
+    .ref-link {
+      font-size: 0.78rem;
+      color: var(--primary-light);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .ref-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Checklist & Input Items */
+    .checklist-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .item-header {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-top: 0.65rem;
+      margin-bottom: 0.2rem;
+      padding: 0.4rem 0.75rem;
+      background: var(--primary-soft);
+      border-radius: 6px;
+    }
+
+    .item-header:first-child {
+      margin-top: 0;
+    }
+
+    .item-badge-note {
+      display: inline-block;
+      background: var(--danger-soft);
+      color: var(--danger);
+      border: 1px solid #fecaca;
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      margin: 0.35rem 0;
+      width: fit-content;
+    }
+
+    .item-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: #f1f5f9;
+      border-left: 3px solid #94a3b8;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0 6px 6px 0;
+      margin: 0.2rem 0;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .check-row:hover {
+      border-color: #93c5fd;
+      background: #f8fafc;
+    }
+
+    .check-row.checked {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+
+    .check-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--success);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .check-content {
+      flex: 1;
+    }
+
+    .check-label {
+      font-size: 0.88rem;
+      color: var(--text-main);
+      font-weight: 500;
+      display: block;
+    }
+
+    .check-row.checked .check-label {
+      color: #065f46;
+    }
+
+    .sub-notes-list {
+      margin-top: 0.35rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .sub-note-line {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      padding-left: 0.6rem;
+      border-left: 2px solid #cbd5e1;
+    }
+
+    .status-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+
+    .status-tag.true {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-tag.false {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    /* Date & Percentage Input Rows */
+    .input-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.65rem 0.9rem;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius-sm);
+      margin-left: 1.5rem;
+    }
+
+    @media (max-width: 640px) {
+      .input-row {
+        margin-left: 0;
+      }
+    }
+
+    .input-row label {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-main);
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .input-field-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .inline-input {
+      padding: 0.42rem 0.7rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.86rem;
+      font-family: inherit;
+      background: #fff;
+      min-width: 170px;
+    }
+
+    .inline-input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(30, 107, 184, 0.12);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #0f172a;
+      color: #fff;
+      padding: 0.75rem 1.15rem;
+      border-radius: var(--radius-md);
+      font-size: 0.86rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      z-index: 100;
+      transform: translateY(120%);
+      opacity: 0;
+      transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Indicator Score Selector */
+    .score-selector-box {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: #f8fafc;
+      padding: 0.25rem 0.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .score-selector-box span {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-right: 0.15rem;
+    }
+
+    .score-pill {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .score-pill:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .score-pill.selected {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .empty-search {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--text-light);
+      background: #fff;
+      border-radius: var(--radius-md);
+      border: 1px dashed #cbd5e1;
+    }
+
+    /* Hidden file input for JSON import */
+    #importJsonInput {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="topbar">
+    <div class="container">
+      <div class="header-flex">
+        <div>
+          <div class="brand-badge">
+            <span>📋 Instrumen Evaluasi Mandiri</span>
+          </div>
+          <h1>Lembar Kerja Evaluasi (LKE) PEKPPP</h1>
+          <p>Pemantauan dan Evaluasi Kinerja Penyelenggaraan Pelayanan Publik — Lengkap 6 Aspek &amp; 30 Indikator dengan Penyimpanan Otomatis Browser.</p>
+        </div>
+        <div class="save-status-pill" id="saveStatusPill">
+          <span class="dot-pulse"></span>
+          <span id="saveStatusText">Tersimpan di Browser</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Summary & Metadata Card -->
+    <section class="summary-wrapper">
+      <div class="card">
+        <div class="meta-grid">
+          <div class="form-group">
+            <label for="metaUnit">Unit Lokus / Satuan Kerja</label>
+            <input type="text" id="metaUnit" class="form-control" placeholder="Contoh: BPS Kabupaten Indramayu" />
+          </div>
+          <div class="form-group">
+            <label for="metaEvaluator">Nama Evaluator</label>
+            <input type="text" id="metaEvaluator" class="form-control" placeholder="Masukkan nama evaluator..." />
+          </div>
+          <div class="form-group">
+            <label for="metaTahun">Tahun Evaluasi</label>
+            <input type="text" id="metaTahun" class="form-control" value="2026" placeholder="2026" />
+          </div>
+          <div class="form-group">
+            <label for="metaTanggal">Tanggal Evaluasi</label>
+            <input type="date" id="metaTanggal" class="form-control" />
+          </div>
+        </div>
+
+        <div class="kpi-action-bar">
+          <div class="kpi-metrics">
+            <div class="kpi-box">
+              <span class="kpi-label">Bukti Dukung Terpenuhi</span>
+              <span class="kpi-value" id="kpiCheckedCount">0 / 225</span>
+              <span class="kpi-sub">Item dokumen &amp; sarpras</span>
+            </div>
+
+            <div class="kpi-box">
+              <span class="kpi-label">Isian Data &amp; Tanggal</span>
+              <span class="kpi-value" id="kpiInputCount">0 / 20</span>
+              <span class="kpi-sub">Tanggal &amp; persentase TL</span>
+            </div>
+
+            <div class="overall-progress-wrap">
+              <div class="progress-header">
+                <span>Progres Kelengkapan Total</span>
+                <span id="kpiOverallPct">0%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="kpiOverallBar"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button type="button" class="btn btn-excel" onclick="exportToExcel()" title="Unduh file Excel (.xlsx) lengkap per sheet">
+              📊 Ekspor Excel
+            </button>
+            <button type="button" class="btn btn-csv" onclick="exportToCSV()" title="Unduh format CSV">
+              📄 Ekspor CSV
+            </button>
+            <button type="button" class="btn btn-json" onclick="exportToJSON()" title="Unduh cadangan data JSON">
+              📦 Ekspor JSON
+            </button>
+            <button type="button" class="btn btn-outline" onclick="document.getElementById('importJsonInput').click()" title="Muat ulang data dari file JSON">
+              📂 Impor JSON
+            </button>
+            <input type="file" id="importJsonInput" accept=".json" onchange="importFromJSON(event)" />
+            <button type="button" class="btn btn-danger-outline" onclick="resetAllData()" title="Hapus seluruh isian dari memori browser">
+              🗑️ Reset
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 Aspects Tabs -->
+    <nav class="tabs-container" aria-label="Navigasi Aspek PEKPPP">
+      <div class="tabs-scroll" id="aspectTabs"></div>
+    </nav>
+
+    <!-- Active Tab Toolbar -->
+    <section class="filter-toolbar">
+      <div class="aspect-heading">
+        <h2 id="activeAspectTitle">I. KEBIJAKAN PELAYANAN</h2>
+        <span class="badge-bobot" id="activeAspectWeight">Bobot: 24%</span>
+      </div>
+      <div class="filter-controls">
+        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Cari indikator atau bukti dukung..." oninput="handleSearch(this.value)" />
+        <button type="button" class="filter-pill active" data-filter="all" onclick="setFilter('all', this)">Semua</button>
+        <button type="button" class="filter-pill" data-filter="incomplete" onclick="setFilter('incomplete', this)">Belum Lengkap</button>
+        <button type="button" class="filter-pill" data-filter="complete" onclick="setFilter('complete', this)">Sudah Lengkap</button>
+        <button type="button" class="btn-xs" onclick="toggleAllAccordions(false)">Buka Semua</button>
+        <button type="button" class="btn-xs" onclick="toggleAllAccordions(true)">Tutup Semua</button>
+      </div>
+    </section>
+
+    <!-- Indicators Container -->
+    <section class="indicators-list" id="indicatorsContainer"></section>
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span id="toastIcon">✅</span>
+    <span id="toastMsg">Data tersimpan otomatis.</span>
+  </div>
+
+  <script>
+    // Embedded LKE PEKPPP Master Schema
+    const LKE_SCHEMA = [{"id": "aspek-1", "number": 1, "roman": "I", "title": "KEBIJAKAN PELAYANAN", "weight": "24%", "indicators": [{"number": 1, "title": "Tersedia Standar Pelayanan (SP) sesuai dengan ketentuan peraturan perundang-undangan yang berlaku", "ref_url": "", "target_skor_5": "Tersedia SP yg memenuhi 14 komponen, melibatkan masyarakat dalam penyusunan SP, dilakukan penetapan, & dilakukan monev", "items": [{"id": "item_3", "row_idx": 3, "indent": 0, "label": "1. Tersedia Standar Pelayanan [SP] Tahun 2027", "notes": [], "type": "header"}, {"id": "item_4", "row_idx": 4, "indent": 0, "label": "Telah dilakukan monev standar pelayanan?", "notes": [], "type": "header"}, {"id": "item_5", "row_idx": 5, "indent": 4, "label": "1) Formulir Evaluasi SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_6", "row_idx": 6, "indent": 4, "label": "2) Formulir Peninjauan Ulang SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_7", "row_idx": 7, "indent": 0, "label": "Penyusunan standar pelayanan telah melibatkan masyarakat?", "notes": [], "type": "header"}, {"id": "item_8", "row_idx": 8, "indent": 4, "label": "3) Undangan FGD SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_9", "row_idx": 9, "indent": 8, "label": "Tanggal Pelaksanaan FGD", "notes": [], "type": "date"}, {"id": "item_10", "row_idx": 10, "indent": 4, "label": "4) Daftar Hadir FGD SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_11", "row_idx": 11, "indent": 4, "label": "5) Notulen dan Foto FGD SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_12", "row_idx": 12, "indent": 4, "label": "6) Berita Acara FGD SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_13", "row_idx": 13, "indent": 8, "label": "Tanggal Penandatanganan Berita Acara FGD", "notes": [], "type": "date"}, {"id": "item_14", "row_idx": 14, "indent": 4, "label": "7) Laporan FGD SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_15", "row_idx": 15, "indent": 0, "label": "Telah dilakukan penetapan standar pelayanan?", "notes": [], "type": "checkbox"}, {"id": "item_16", "row_idx": 16, "indent": 4, "label": "8) SK SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_17", "row_idx": 17, "indent": 9, "label": "Tanggal Penetapan SP", "notes": [], "type": "date"}, {"id": "item_18", "row_idx": 18, "indent": 0, "label": "Standar pelayanan yg ditetapkan/dibahas pd FGD telah memenuhi 14 komponen?", "notes": [], "type": "checkbox"}]}, {"number": 2, "title": "Proses penyusunan dan perubahan SP telah melibatkan unsur masyarakat.", "ref_url": "", "target_skor_5": "Penyusunan SP telah melibatkan lebih dari 4 unsur masyarakat", "items": [{"id": "item_21", "row_idx": 21, "indent": 4, "label": "1) Masyarakat Pengguna Layanan [Mahasiswa, Swasta, dll]", "notes": [], "type": "checkbox"}, {"id": "item_22", "row_idx": 22, "indent": 4, "label": "2) Ahli/Praktisi/Akademisi [Ombudsman, Komisi Informasi, Dosen, dll]", "notes": [], "type": "checkbox"}, {"id": "item_23", "row_idx": 23, "indent": 4, "label": "3) Instansi Terkait [Kementerian/Lembaga, OPD, dll]", "notes": [], "type": "checkbox"}, {"id": "item_24", "row_idx": 24, "indent": 4, "label": "4) Organisasi Masyarakat Sipil [LSM, Organisasi pengusaha/Gapeksindo, Kelompok Adat, Tokoh Masyarakat, Karangtaruna, dll]", "notes": [], "type": "checkbox"}, {"id": "item_25", "row_idx": 25, "indent": 4, "label": "5) Media Massa", "notes": [], "type": "checkbox"}]}, {"number": 3, "title": "Jumlah media publikasi untuk komponen service delivery", "ref_url": "", "target_skor_5": "Tersedia publikasi SP seluruh komponen service delivery pada 4 atau lebih media publikasi & pada SIPP Nasional", "items": [{"id": "item_28", "row_idx": 28, "indent": 4, "label": "1) Media cetak [Leaflet, Poster, dll]", "notes": [], "type": "checkbox"}, {"id": "item_29", "row_idx": 29, "indent": 4, "label": "2) Media elektronik [TV, Tablet, dll]", "notes": [], "type": "checkbox"}, {"id": "item_30", "row_idx": 30, "indent": 4, "label": "3) Media sosial [Facebook, Instagram, dll]", "notes": [], "type": "checkbox"}, {"id": "item_31", "row_idx": 31, "indent": 4, "label": "4) Website BPS atau PPID", "notes": [], "type": "checkbox"}, {"id": "item_32", "row_idx": 32, "indent": 4, "label": "5) Aplikasi yg bisa diunduh [android, IOS, dll] -> bisa menggunakan tampilan website BPS Kab/Kota pada Allstat BPS", "notes": [], "type": "checkbox"}, {"id": "item_33", "row_idx": 33, "indent": 4, "label": "6) SIPP Nasional [sippn.menpan.go.id]", "notes": [], "type": "checkbox"}, {"id": "item_34", "row_idx": 34, "indent": 4, "label": "7) Papan Reklame [Baliho di fasilitas umum, Baliho di kantor BPS, dll]", "notes": ["-> konten minimal memuat komponen biaya/layanan, produk layanan, pengaduan pada 3 jenis layanan pada PST,", "sertakan link untuk informasi selengkapnya."], "type": "checkbox"}]}, {"number": 4, "title": "Telah dilakukan peninjauan ulang secara berkala terhadap Standar Pelayanan.", "ref_url": "", "target_skor_5": "Dilakukan peninjauan ulang 1 tahun atau lebih cepat terhadap seluruh jenis layanan", "items": [{"id": "item_37", "row_idx": 37, "indent": 0, "label": "4.a. Peninjauan ulang [FGD] SP Tahun 2027", "notes": [], "type": "header"}, {"id": "item_38", "row_idx": 38, "indent": 4, "label": "1) Formulir Evaluasi SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_39", "row_idx": 39, "indent": 4, "label": "2) Formulir Peninjauan Ulang SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_40", "row_idx": 40, "indent": 4, "label": "3) Undangan FGD SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_41", "row_idx": 41, "indent": 8, "label": "Tanggal Pelaksanaan FGD", "notes": [], "type": "date"}, {"id": "item_42", "row_idx": 42, "indent": 4, "label": "4) Daftar Hadir FGD SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_43", "row_idx": 43, "indent": 4, "label": "5) Notulen dan Foto FGD SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_44", "row_idx": 44, "indent": 4, "label": "6) Berita Acara FGD SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_45", "row_idx": 45, "indent": 4, "label": "7) Laporan FGD SP tahun [t]", "notes": [], "type": "checkbox"}, {"id": "item_46", "row_idx": 46, "indent": 4, "label": "8) SK SP tahun [t]", "notes": ["-> Jika tidak ada perubahan SP tahun 2025, maka tidak ada SK SP tahun 2026"], "type": "checkbox"}, {"id": "item_47", "row_idx": 47, "indent": 0, "label": "4. b. Peninjauan ulang [FGD] SP Tahun 2026", "notes": [], "type": "header"}, {"id": "item_48", "row_idx": 48, "indent": 4, "label": "1) Formulir Evaluasi SP tahun [t-1]", "notes": [], "type": "checkbox"}, {"id": "item_49", "row_idx": 49, "indent": 4, "label": "2) Formulir Peninjauan Ulang SP tahun [t-1]", "notes": [], "type": "checkbox"}, {"id": "item_50", "row_idx": 50, "indent": 4, "label": "3) Undangan FGD SP tahun [t-1]", "notes": [], "type": "checkbox"}, {"id": "item_51", "row_idx": 51, "indent": 8, "label": "Tanggal Pelaksanaan FGD", "notes": [], "type": "date"}, {"id": "item_52", "row_idx": 52, "indent": 4, "label": "4) Daftar Hadir FGD SP tahun [t-1]", "notes": [], "type": "checkbox"}, {"id": "item_53", "row_idx": 53, "indent": 4, "label": "5) Notulen dan Foto FGD SP tahun [t-1]", "notes": [], "type": "checkbox"}, {"id": "item_54", "row_idx": 54, "indent": 4, "label": "6) Berita Acara FGD SP tahun [t-1]", "notes": [], "type": "checkbox"}, {"id": "item_55", "row_idx": 55, "indent": 4, "label": "7) Laporan FGD SP tahun [t-1]", "notes": [], "type": "checkbox"}, {"id": "item_56", "row_idx": 56, "indent": 4, "label": "8) SK SP tahun [t-1]", "notes": ["-> Jika tidak ada perubahan SP tahun 2024, maka tidak ada SK SP tahun 2025"], "type": "checkbox"}]}, {"number": 5, "title": "Pemenuhan siklus maklumat pelayanan", "ref_url": "", "target_skor_5": "Tersedia maklumat pelayanan yg sudah ditetapkan, isinya telah sesuai dg peraturan perundangan yg berlaku, & dipublikasikan pd media non elektronik & elektronik", "items": [{"id": "item_59", "row_idx": 59, "indent": 4, "label": "1) Isi memuat:", "notes": [], "type": "header"}, {"id": "item_60", "row_idx": 60, "indent": 8, "label": "a) Pernyataan janji dan kesanggupan untuk melaksanakan pelayanan sesuai dengan SP", "notes": [], "type": "checkbox"}, {"id": "item_61", "row_idx": 61, "indent": 8, "label": "b) Pernyataan memberikan pelayanan sesuai dengan kewajiban dan akan melakukan perbaikan secara terus menerus", "notes": [], "type": "checkbox"}, {"id": "item_62", "row_idx": 62, "indent": 8, "label": "c) Pernyataan kesediaan untuk menerima sanksi, dan/atau memberikan kompensasi apabila pelayanan yang diberikan tidak sesuai standar", "notes": [], "type": "checkbox"}, {"id": "item_63", "row_idx": 63, "indent": 4, "label": "2) Maklumat Pelayanan dibuat dalam format sertifikat dan ditandatangani oleh pimpinan Kepala BPS Kab/Kota", "notes": [], "type": "checkbox"}, {"id": "item_64", "row_idx": 64, "indent": 8, "label": "Tanggal Penandatanganan Maklumat Pelayanan", "notes": [], "type": "date"}, {"id": "item_65", "row_idx": 65, "indent": 4, "label": "3) Penandatanganan dan publikasi Maklumat Pelayanan selambat-lambatnya 7 [tujuh] hari kerja sejak SP ditetapkan/Pelaksanaan FGD SP", "notes": [], "type": "checkbox"}, {"id": "item_66", "row_idx": 66, "indent": 4, "label": "4) Media publisitas maklumat pelayanan", "notes": [], "type": "header"}, {"id": "item_67", "row_idx": 67, "indent": 9, "label": "a) Media cetak", "notes": [], "type": "checkbox"}, {"id": "item_68", "row_idx": 68, "indent": 9, "label": "b) Media elektronik", "notes": [], "type": "checkbox"}, {"id": "item_69", "row_idx": 69, "indent": 9, "label": "c) Media sosial", "notes": [], "type": "checkbox"}, {"id": "item_70", "row_idx": 70, "indent": 9, "label": "d) Website", "notes": [], "type": "checkbox"}, {"id": "item_71", "row_idx": 71, "indent": 9, "label": "e) Aplikasi yg bisa diunduh [android, IOS, dll]", "notes": [], "type": "checkbox"}, {"id": "item_72", "row_idx": 72, "indent": 9, "label": "f) SIPPN", "notes": [], "type": "checkbox"}]}, {"number": 6, "title": "SKM dilaksanakan sesuai Permenpanrb No.14/2017", "ref_url": "https://license365bps-my.sharepoint.com/:b:/g/personal/evina_license365bps_onmicrosoft_com/ETAP9IE8dQtBhv5f9lZrx6gBS7t2fKUVsBFFoBwrbqFwRQ?e=ofiEEm", "target_skor_5": "Sudah melaksanakan SKM sesuai dengan PermenPANRB yang berlaku dan dipublikasikan pada media non-elektronik dan elektronik serta dilakukan tindak lanjut hasil SKM.", "items": [{"id": "item_75", "row_idx": 75, "indent": 0, "label": "Telah dilaksanakan SKM sesuai PermenPANRB?", "notes": [], "type": "checkbox"}, {"id": "item_76", "row_idx": 76, "indent": 4, "label": "1) Kuesioner memuat 9 unsur penilaian", "notes": [], "type": "checkbox"}, {"id": "item_77", "row_idx": 77, "indent": 0, "label": "Telah dilakukan tindak lanjut hasil SKM?", "notes": [], "type": "checkbox"}, {"id": "item_78", "row_idx": 78, "indent": 4, "label": "2) Surat rekomendasi perbaikan hasil SKD", "notes": [], "type": "checkbox"}, {"id": "item_79", "row_idx": 79, "indent": 8, "label": "Tanggal Penandatanganan Surat Rekomendasi SKD", "notes": [], "type": "date"}, {"id": "item_80", "row_idx": 80, "indent": 4, "label": "3) Rencana Tindak Lanjut rekomendasi hasil SKD [berdasarkan analisis kuadran pd Prioritas Utama & Prioritas Rendah]", "notes": [], "type": "checkbox"}, {"id": "item_81", "row_idx": 81, "indent": 8, "label": "Tanggal Penandatanganan RTL", "notes": [], "type": "date"}, {"id": "item_82", "row_idx": 82, "indent": 4, "label": "4) Publikasi hasil SKD memuat:", "notes": [], "type": "header"}, {"id": "item_83", "row_idx": 83, "indent": 9, "label": "a) Analisis hasil SKD", "notes": [], "type": "checkbox"}, {"id": "item_84", "row_idx": 84, "indent": 9, "label": "b) Surat Rekomendasi perbaikan", "notes": [], "type": "checkbox"}, {"id": "item_85", "row_idx": 85, "indent": 9, "label": "c) RTL", "notes": [], "type": "checkbox"}, {"id": "item_86", "row_idx": 86, "indent": 9, "label": "d) Kuesioner SKD", "notes": [], "type": "checkbox"}, {"id": "item_87", "row_idx": 87, "indent": 13, "label": "Tanggal Rilis Publikasi SKD", "notes": [], "type": "date"}, {"id": "item_88", "row_idx": 88, "indent": 4, "label": "5a) Laporan Tindak Lanjut dari RTL hasil SKD", "notes": [], "type": "checkbox"}, {"id": "item_89", "row_idx": 89, "indent": 4, "label": "5b) Berapa persentase Tindak Lanjut yg sudah dilakukan", "notes": [], "type": "percentage"}, {"id": "item_90", "row_idx": 90, "indent": 0, "label": "-> tindaklanjut dinilai 100% jika seluruh RTL sudah dilakukan selambat-lambatnya 1 bulan setelah Publikasi SKD dirilis minimal berupa kegiatan rapat pembahasan RTL dengan pihak-pihak terkait, misal: bagian umum, tim IPDS, dll", "notes": [], "type": "note"}, {"id": "item_91", "row_idx": 91, "indent": 4, "label": "5c) Laporan TL ditandatangani Kepala BPS Kab/Kota", "notes": [], "type": "checkbox"}, {"id": "item_92", "row_idx": 92, "indent": 8, "label": "Tanggal Penandatanganan Laporan TL", "notes": [], "type": "date"}, {"id": "item_93", "row_idx": 93, "indent": 8, "label": "Apakah sudah memenuhi syarat di bawah ini?", "notes": ["Laporan TL ditandatangani pimpinan UPP selambat-lambatnya 1 bulan setelah Publikasi SKD dirilis"], "type": "checkbox"}, {"id": "item_94", "row_idx": 94, "indent": 4, "label": "6) Media publisitas hasil SKD", "notes": [], "type": "header"}, {"id": "item_95", "row_idx": 95, "indent": 9, "label": "a) Media cetak [Leaflet, Poster, dll]", "notes": [], "type": "checkbox"}, {"id": "item_96", "row_idx": 96, "indent": 9, "label": "b) Media elektronik [TV, Tablet, dll]", "notes": [], "type": "checkbox"}, {"id": "item_97", "row_idx": 97, "indent": 9, "label": "c) Media sosial [Facebook, Instagram, dll]", "notes": [], "type": "checkbox"}, {"id": "item_98", "row_idx": 98, "indent": 9, "label": "d) Website BPS atau PPID", "notes": [], "type": "checkbox"}, {"id": "item_99", "row_idx": 99, "indent": 9, "label": "e) Aplikasi yg bisa diunduh [android, IOS, dll] -> bisa menggunakan tampilan website BPS Kab/Kota pada Allstat BPS", "notes": [], "type": "checkbox"}, {"id": "item_100", "row_idx": 100, "indent": 9, "label": "f) Papan Reklame [Baliho di fasilitas umum, Baliho di kantor BPS, dll]", "notes": [], "type": "checkbox"}]}, {"number": 7, "title": "Jumlah media publikasi hasil SKD", "ref_url": "", "target_skor_5": "SKM dipublikasikan pada lebih dari 4 (empat) media publikasi lainnya.", "items": [{"id": "item_103", "row_idx": 103, "indent": 9, "label": "a) Media cetak [Leaflet, Poster, dll]", "notes": [], "type": "checkbox"}, {"id": "item_104", "row_idx": 104, "indent": 9, "label": "b) Media elektronik [TV, Tablet, dll]", "notes": [], "type": "checkbox"}, {"id": "item_105", "row_idx": 105, "indent": 9, "label": "c) Media sosial [Facebook, Instagram, dll]", "notes": [], "type": "checkbox"}, {"id": "item_106", "row_idx": 106, "indent": 9, "label": "d) Website BPS atau PPID", "notes": [], "type": "checkbox"}, {"id": "item_107", "row_idx": 107, "indent": 9, "label": "e) Aplikasi yg bisa diunduh [android, IOS, dll] -> bisa menggunakan tampilan website BPS Kab/Kota pada Allstat BPS", "notes": [], "type": "checkbox"}, {"id": "item_108", "row_idx": 108, "indent": 9, "label": "f) Papan Reklame [Baliho di fasilitas umum, Baliho di kantor BPS, dll]", "notes": [], "type": "checkbox"}]}, {"number": 8, "title": "Persentase RTL hasil SKD yg selesai ditindaklanjuti", "ref_url": "", "target_skor_5": "Tindak lanjut hasil SKM dilaksanakan 100%, dibuktikan dengan laporan pelaksanaannya.", "items": [{"id": "item_111", "row_idx": 111, "indent": 4, "label": "1) Surat rekomendasi perbaikan hasil SKD", "notes": [], "type": "checkbox"}, {"id": "item_112", "row_idx": 112, "indent": 8, "label": "Tanggal Penandatanganan Surat Rekomendasi SKD", "notes": [], "type": "date"}, {"id": "item_113", "row_idx": 113, "indent": 4, "label": "2) Rencana Tindak Lanjut rekomendasi hasil SKD [berdasarkan analisis kuadran pd Prioritas Utama & Prioritas Rendah]", "notes": [], "type": "checkbox"}, {"id": "item_114", "row_idx": 114, "indent": 8, "label": "Tanggal Penandatanganan RTL", "notes": [], "type": "date"}, {"id": "item_115", "row_idx": 115, "indent": 4, "label": "3) Publikasi hasil SKD memuat:", "notes": [], "type": "header"}, {"id": "item_116", "row_idx": 116, "indent": 9, "label": "a) Analisis hasil SKD", "notes": [], "type": "checkbox"}, {"id": "item_117", "row_idx": 117, "indent": 9, "label": "b) Surat Rekomendasi perbaikan", "notes": [], "type": "checkbox"}, {"id": "item_118", "row_idx": 118, "indent": 9, "label": "c) RTL", "notes": [], "type": "checkbox"}, {"id": "item_119", "row_idx": 119, "indent": 9, "label": "d) Kuesioner SKD", "notes": [], "type": "checkbox"}, {"id": "item_120", "row_idx": 120, "indent": 13, "label": "Tanggal Rilis Publikasi SKD", "notes": [], "type": "date"}, {"id": "item_121", "row_idx": 121, "indent": 4, "label": "4a) Laporan Tindak Lanjut dari RTL hasil SKD", "notes": [], "type": "checkbox"}, {"id": "item_122", "row_idx": 122, "indent": 4, "label": "4b) Berapa persentase Tindak Lanjut yg sudah dilakukan", "notes": [], "type": "percentage"}, {"id": "item_123", "row_idx": 123, "indent": 0, "label": "-> tindaklanjut dinilai 100% jika seluruh RTL sudah dilakukan selambat-lambatnya 1 bulan setelah Publikasi SKD dirilis minimal berupa kegiatan rapat pembahasan RTL dengan pihak-pihak terkait, misal: bagian umum, tim IPDS, dll", "notes": [], "type": "note"}, {"id": "item_124", "row_idx": 124, "indent": 4, "label": "4c) Laporan TL ditandatangani Kepala BPS Kab/Kota", "notes": [], "type": "checkbox"}, {"id": "item_125", "row_idx": 125, "indent": 8, "label": "Tanggal Penandatanganan Laporan TL", "notes": [], "type": "date"}, {"id": "item_126", "row_idx": 126, "indent": 8, "label": "Apakah sudah memenuhi syarat di bawah ini?", "notes": ["Laporan TL ditandatangani pimpinan UPP selambat-lambatnya 1 bulan setelah Publikasi SKD dirilis"], "type": "checkbox"}]}, {"number": 9, "title": "Kecepatan Tindak Lanjut hasil SKM", "ref_url": "", "target_skor_5": "Rekomendasi hasil SKM ditindaklanjuti seluruhnya 1 bulan setelah laporan SKM diterbitkan.", "items": [{"id": "item_129", "row_idx": 129, "indent": 4, "label": "4a) Laporan Tindak Lanjut dari RTL hasil SKD", "notes": [], "type": "checkbox"}, {"id": "item_130", "row_idx": 130, "indent": 4, "label": "4b) Berapa persentase Tindak Lanjut yg sudah dilakukan", "notes": [], "type": "percentage"}, {"id": "item_131", "row_idx": 131, "indent": 4, "label": "4c) Laporan TL ditandatangani pimpinan UPP", "notes": [], "type": "checkbox"}, {"id": "item_132", "row_idx": 132, "indent": 8, "label": "Tanggal Penandatanganan Laporan TL", "notes": [], "type": "date"}, {"id": "item_133", "row_idx": 133, "indent": 8, "label": "Apakah sudah memenuhi syarat di bawah ini?", "notes": ["Laporan TL ditandatangani Kepala BPS Kab/Kota selambat-lambatnya 1 bulan setelah Publikasi SKD dirilis"], "type": "checkbox"}]}]}, {"id": "aspek-2", "number": 2, "roman": "II", "title": "PROFESIONALISME SDM", "weight": "25%", "indicators": [{"number": 10, "title": "Tersedia waktu pelayanan yang memudahkan pengguna layanan", "ref_url": "", "target_skor_5": "Memiliki kebijakan jam pelayanan/kerja dan 4 atau lebih unsur lainnya.", "items": [{"id": "item_137", "row_idx": 137, "indent": 4, "label": "1) SK Kebijakan jam pelayanan memuat unsur sbb:", "notes": [], "type": "header"}, {"id": "item_138", "row_idx": 138, "indent": 9, "label": "a) Tidak ada jeda pelayanan [pd jam istirahat tetap ada pelayanan]", "notes": [], "type": "checkbox"}, {"id": "item_139", "row_idx": 139, "indent": 9, "label": "b) Penambahan waktu layanan diluar jam pelayanan di hari kerja -> penambahan waktu bisa diberikan dengan membuat janji terlebih dahulu & bisa dilakukan secara online]", "notes": [], "type": "checkbox"}, {"id": "item_140", "row_idx": 140, "indent": 9, "label": "c) Penambahan waktu layanan diluar hari kerja dlm kondisi tertentu -> penambahan waktu bisa diberikan dengan membuat janji terlebih dahulu & bisa dilakukan secara online]", "notes": [], "type": "checkbox"}, {"id": "item_141", "row_idx": 141, "indent": 9, "label": "d) Penambahan waktu layanan diluar hari kerja scr rutin -> penambahan waktu bisa diberikan dengan membuat janji terlebih dahulu & bisa dilakukan secara online]", "notes": [], "type": "checkbox"}, {"id": "item_142", "row_idx": 142, "indent": 9, "label": "e) Layanan 24 Jam: layanan yang merupakan inti pelayanan dan pendaftaran [Tidak termasuk layanan konsultasi dan informasi] -> bisa menggunakan website BPS sebagai layanan 24 Jam", "notes": [], "type": "checkbox"}, {"id": "item_143", "row_idx": 143, "indent": 4, "label": "2) Dokumen bukti setiap unsur sbb:", "notes": [], "type": "header"}, {"id": "item_144", "row_idx": 144, "indent": 9, "label": "a) Tidak ada jeda pelayanan [pd jam istirahat tetap ada pelayanan]", "notes": [], "type": "checkbox"}, {"id": "item_145", "row_idx": 145, "indent": 9, "label": "b) Penambahan waktu layanan diluar jam pelayanan di hari kerja -> penambahan waktu bisa diberikan dengan membuat janji terlebih dahulu & bisa dilakukan secara online]", "notes": [], "type": "checkbox"}, {"id": "item_146", "row_idx": 146, "indent": 9, "label": "c) Penambahan waktu layanan diluar hari kerja dlm kondisi tertentu -> penambahan waktu bisa diberikan dengan membuat janji terlebih dahulu & bisa dilakukan secara online]", "notes": [], "type": "checkbox"}, {"id": "item_147", "row_idx": 147, "indent": 9, "label": "d) Penambahan waktu layanan diluar hari kerja scr rutin -> penambahan waktu bisa diberikan dengan membuat janji terlebih dahulu & bisa dilakukan secara online]", "notes": [], "type": "checkbox"}, {"id": "item_148", "row_idx": 148, "indent": 9, "label": "e) Layanan 24 Jam: layanan yang merupakan inti pelayanan dan pendaftaran [Tidak termasuk layanan konsultasi dan informasi] -> bisa menggunakan website BPS sebagai layanan 24 Jam", "notes": [], "type": "checkbox"}]}, {"number": 11, "title": "Tersedia Kode Etik dan Kode Perilaku Pelaksana dan/atau Budaya Pelayanan", "ref_url": "", "target_skor_5": "Aturan kode etik dan kode perilaku Pelaksana Pelayanan meliputi nilai dasar hak dan kewajiban dan 4 (empat) unsur lainnya.", "items": [{"id": "item_151", "row_idx": 151, "indent": 7, "label": "SK Kebijakan kode etik memuat unsur sbb:", "notes": [], "type": "header"}, {"id": "item_152", "row_idx": 152, "indent": 9, "label": "a) Hak dan kewajiban", "notes": [], "type": "checkbox"}, {"id": "item_153", "row_idx": 153, "indent": 9, "label": "b) larangan KKN", "notes": [], "type": "checkbox"}, {"id": "item_154", "row_idx": 154, "indent": 9, "label": "c) larangan diskriminasi", "notes": [], "type": "checkbox"}, {"id": "item_155", "row_idx": 155, "indent": 9, "label": "d) sanksi", "notes": [], "type": "checkbox"}, {"id": "item_156", "row_idx": 156, "indent": 9, "label": "e) penghargaan", "notes": [], "type": "checkbox"}]}, {"number": 12, "title": "Tersedia mekanisme yang dibangun unit kerja untuk menjaga dan meningkatkan motivasi kerja Pelaksana pelayanan.", "ref_url": "", "target_skor_5": "Tersedia lebih dari 4 jenis mekanisme peningkatan motivasi kerja", "items": [{"id": "item_159", "row_idx": 159, "indent": 6, "label": "Dokumen bukti jenis mekanisme untuk meningkatkan motivasi kerja sbb:", "notes": [], "type": "header"}, {"id": "item_160", "row_idx": 160, "indent": 5, "label": "1) pemberian penghargaan;", "notes": [], "type": "checkbox"}, {"id": "item_161", "row_idx": 161, "indent": 5, "label": "2) pemberian kesempatan untuk mengikuti diklat;", "notes": [], "type": "checkbox"}, {"id": "item_162", "row_idx": 162, "indent": 5, "label": "3) pengembangan kapasitas melalui kesempatan mengikuti program beasiswa;", "notes": [], "type": "checkbox"}, {"id": "item_163", "row_idx": 163, "indent": 5, "label": "4) program konseling", "notes": ["-> bisa menggunakan layanan konseling BPS RI jika digunakan di BPS Kab/Kota", "-> konseling tidak harus oleh psikolog, dapat disubstitusi dg Program Dialog Kinerja antara anggota tim dg ketua tim"], "type": "checkbox"}, {"id": "item_164", "row_idx": 164, "indent": 5, "label": "5) program tim/capacity building;", "notes": [], "type": "checkbox"}, {"id": "item_165", "row_idx": 165, "indent": 5, "label": "6) mekanisme lainnya yang dapat meningkatkan motivasi kerja pegawai.", "notes": [], "type": "checkbox"}]}, {"number": 13, "title": "Tersedia kriteria pemberian penghargaan bagi pegawai yang berprestasi.", "ref_url": "", "target_skor_5": "Ada pemberian penghargaan berdasarkan 5-6 unsur termasuk kinerja.", "items": [{"id": "item_168", "row_idx": 168, "indent": 8, "label": "Dokumen bukti pemberian penghargaan memuat unsur sbb:", "notes": [], "type": "header"}, {"id": "item_169", "row_idx": 169, "indent": 8, "label": "1) Kehadiran;", "notes": [], "type": "checkbox"}, {"id": "item_170", "row_idx": 170, "indent": 8, "label": "2) Kinerja : kualitas hasil kerja yaitu menyelesaikan tugas sesuai dengan ketentuan yang diberikan atasan;", "notes": [], "type": "checkbox"}, {"id": "item_171", "row_idx": 171, "indent": 8, "label": "3) Kerja sama;", "notes": [], "type": "checkbox"}, {"id": "item_172", "row_idx": 172, "indent": 8, "label": "4) Inovatif/kreatif : kemampuan mengeluarkan ide;", "notes": [], "type": "checkbox"}, {"id": "item_173", "row_idx": 173, "indent": 8, "label": "5) Penampilan : penggunaan atribut, pakaian, dll yang sudah ditetapkan;", "notes": [], "type": "checkbox"}, {"id": "item_174", "row_idx": 174, "indent": 8, "label": "6) Tidak pernah menerima komplain dari pengguna layanan yang bersifat personal.", "notes": [], "type": "checkbox"}]}, {"number": 14, "title": "Tersedia pelaksana yang menerapkan budaya pelayanan", "ref_url": "", "target_skor_5": "Pelaksana pelayanan menerapkan 5 (lima) unsur budaya pelayanan.", "items": [{"id": "item_177", "row_idx": 177, "indent": 8, "label": "Dokumen bukti penerapan budaya pelayanan memuat unsur sbb:", "notes": [], "type": "header"}, {"id": "item_178", "row_idx": 178, "indent": 8, "label": "1) Seragam : pakaian/atribut yang membedakan antara petugas layanan dan masyarakat/pengguna layanan.", "notes": [], "type": "checkbox"}, {"id": "item_179", "row_idx": 179, "indent": 8, "label": "2) Identitas nama dapat berupa name tag, ID card, dan sejenisnya.", "notes": [], "type": "checkbox"}, {"id": "item_180", "row_idx": 180, "indent": 8, "label": "3) PIN/atribut/logo unit pelayanan merupakan berbagai atribut khas unit pelayanan yang dikenakan oleh pegawai, misalnya pin, selempang dan sebagainya.", "notes": [], "type": "checkbox"}, {"id": "item_181", "row_idx": 181, "indent": 8, "label": "4) Aturan penerapan 5S yaitu aturan/kebijakan terkait penerapan 5S oleh pegawai/petugas layanan yang berlaku.", "notes": [], "type": "checkbox"}, {"id": "item_182", "row_idx": 182, "indent": 8, "label": "5) Nilai-nilai budaya layanan bisa dalam bentuk slogan, motto, maskot, dan sebagainya.", "notes": [], "type": "checkbox"}]}]}, {"id": "aspek-3", "number": 3, "roman": "III", "title": "SARANA PRASARANA", "weight": "18%", "indicators": [{"number": 15, "title": "Tersedia tempat parkir dengan fasilitas pendukung yang memadai", "ref_url": "", "target_skor_5": "Tersedia tempat parkir dan memiliki 5 atau lebih fasilitas parkir.", "items": [{"id": "item_186", "row_idx": 186, "indent": 8, "label": "Dokumen bukti ketersediaan  tempat parkir memuat fasilitas pendukung sbb:", "notes": [], "type": "header"}, {"id": "item_187", "row_idx": 187, "indent": 8, "label": "1) Ketersediaan parkir roda dua dan roda empat: terdapat pemisahan yang jelas antara kendaraan roda 2 dan 4 yang diberikan marka.", "notes": [], "type": "checkbox"}, {"id": "item_188", "row_idx": 188, "indent": 8, "label": "2) Petugas parkir: terdapat petugas yang berjaga di area parkir.", "notes": [], "type": "checkbox"}, {"id": "item_189", "row_idx": 189, "indent": 8, "label": "3) Pemeriksaan karcis/kartu parkir: setiap pengunjung diberikan kartu/karcis sebagai bukti kepemilikan kendaran yang digunakan.", "notes": [], "type": "checkbox"}, {"id": "item_190", "row_idx": 190, "indent": 8, "label": "4) CCTV: lokasi parkir dilengkapi dengan CCTV yang aktif dan dipantau melalui monitor.", "notes": [], "type": "checkbox"}, {"id": "item_191", "row_idx": 191, "indent": 8, "label": "5) Penitipan jaket/helm.", "notes": [], "type": "checkbox"}, {"id": "item_192", "row_idx": 192, "indent": 8, "label": "6) Pelindung (Kanopi/atap bahan lain).", "notes": [], "type": "checkbox"}, {"id": "item_193", "row_idx": 193, "indent": 8, "label": "7) Drive Thru.", "notes": [], "type": "checkbox"}]}, {"number": 16, "title": "Tersedia ruang tunggu dengan fasilitas wajib dan pelengkap", "ref_url": "", "target_skor_5": "Tersedia fasilitas wajib dan 4 atau lebih fasilitas pelengkap.", "items": [{"id": "item_196", "row_idx": 196, "indent": 10, "label": "Dokumen bukti ketersediaan ruang tunggu memuat fasilitas sbb:", "notes": [], "type": "header"}, {"id": "item_197", "row_idx": 197, "indent": 11, "label": "Fasilitas Wajib sbb:", "notes": [], "type": "header"}, {"id": "item_198", "row_idx": 198, "indent": 11, "label": "16.b.1. Kursi tunggu;", "notes": [], "type": "checkbox"}, {"id": "item_199", "row_idx": 199, "indent": 11, "label": "16.b.2. Pendingin/sirkulasi ruangan: terdapat pendingin ruangan yang berupa AC/kipas angin atau ruang tunggu memiliki sirkulasi udara yang baik.", "notes": [], "type": "checkbox"}, {"id": "item_200", "row_idx": 200, "indent": 11, "label": "Fasilitas Pelengkap sbb:", "notes": [], "type": "header"}, {"id": "item_201", "row_idx": 201, "indent": 11, "label": "16.b.3. Air minum: disediakan air minum bagi pengguna layanan baik berupa kemasan atau galon.", "notes": [], "type": "checkbox"}, {"id": "item_202", "row_idx": 202, "indent": 11, "label": "16.b.4. Bahan bacaan: terdapat bahan bacaan yang dapat digunakan pengguna layanan seperti majalah, koran, buku, dll.", "notes": [], "type": "checkbox"}, {"id": "item_203", "row_idx": 203, "indent": 11, "label": "16.b.5. Pengisi daya baterai alat komunikasi/charger booth: terdapat sumber listrik yang dapat digunakan pengguna layanan untuk melakukan pengisian daya alat komunikasi", "notes": [], "type": "checkbox"}, {"id": "item_204", "row_idx": 204, "indent": 11, "label": "16.b.6. Mesin antrian dilengkapi monitor: terdapat monitor/layar atau keterangan yang menjelaskan nomor antrian yang sedang dilayani.", "notes": [], "type": "checkbox"}, {"id": "item_205", "row_idx": 205, "indent": 11, "label": "16.b.7. Televisi: ruang tunggu dilengkapi televisi yang menyala sebagai bentuk fasilitas bagi pengguna layanan yang sedang menunggu antrian.", "notes": [], "type": "checkbox"}, {"id": "item_206", "row_idx": 206, "indent": 11, "label": "16.b.8. Hotspot/wifi: terdapat hotspot/wifi yang aktif dan dapat digunakan oleh pengguna layanan.", "notes": [], "type": "checkbox"}, {"id": "item_207", "row_idx": 207, "indent": 11, "label": "16.b.9. Hal-hal lainnya yang mendukung kenyamanan ruang tunggu.", "notes": [], "type": "checkbox"}]}, {"number": 17, "title": "Tersedia sarana toilet pengguna layanan yang layak pakai", "ref_url": "", "target_skor_5": "Toilet pengguna layanan dengan lebih dari 4 kondisi.", "items": [{"id": "item_210", "row_idx": 210, "indent": 8, "label": "Dokumen bukti ketersediaan toilet pengguna layanan memuat fasilitas sbb:", "notes": [], "type": "header"}, {"id": "item_211", "row_idx": 211, "indent": 8, "label": "1) Ketersediaan toilet pria dan wanita: terdapat pemisahan antara toilet pria dan wanita", "notes": ["-> toilet pegawai yg bisa diakses oleh pengguna layanan diperbolehkan [lengkapi dengan informasi penunjuk arah toilet yg terlihat dr ruang PST]"], "type": "checkbox"}, {"id": "item_212", "row_idx": 212, "indent": 8, "label": "2) Wastafel: terdapat wastafel dengan kran air yang berfungsi dengan baik.", "notes": [], "type": "checkbox"}, {"id": "item_213", "row_idx": 213, "indent": 8, "label": "3) Toiletries: fasilitas penunjang dalam toilet yang meliputi tissue, sabun, tempat sampah, dll.", "notes": [], "type": "checkbox"}, {"id": "item_214", "row_idx": 214, "indent": 8, "label": "4) Air bersih.", "notes": [], "type": "checkbox"}, {"id": "item_215", "row_idx": 215, "indent": 8, "label": "5) Monev intensitas petugas membersihkan toilet.", "notes": [], "type": "checkbox"}]}, {"number": 18, "title": "Tersedia sarana prasarana bagi pengguna layanan kelompok rentan", "ref_url": "", "target_skor_5": "Tersedia 13 atau lebih sarana prasarana bagi pengguna layanan kelompok rentan.", "items": [{"id": "item_218", "row_idx": 218, "indent": 8, "label": "Dokumen bukti ketersediaan sarana prasarana bagi pengguna layanan kelompok rentan memuat fasilitas sbb:", "notes": [], "type": "header"}, {"id": "item_219", "row_idx": 219, "indent": 8, "label": "1) Kursi roda/tongkat/kruk: tersedia kursi roda/tongkat/kruk yang digunakan sebagai alat bantu jalan.", "notes": [], "type": "checkbox"}, {"id": "item_220", "row_idx": 220, "indent": 8, "label": "2) Pintu masuk yang mudah diakses: pintu masuk yang memiliki jalan landai dan tidak terdapat halangan/rintangan yang menyulitkan pengguna layanan kelompok rentan.", "notes": [], "type": "checkbox"}, {"id": "item_221", "row_idx": 221, "indent": 8, "label": "3) Step lobby/ramp/jalan landai dengan pegangan rambat: kemiringan jalan landai paling besar 6o (6 derajat) dari posisi horizontal dengan lebar kurang 90-130 cm dan dilengkapi dengan pegangan pengaman.", "notes": [], "type": "checkbox"}, {"id": "item_222", "row_idx": 222, "indent": 8, "label": "4) Lift khusus disertai huruf braille -> jika unit PST berada pd lantai 1 maka sarpras lift bisa dianulir/dinilai tersedia", "notes": [], "type": "checkbox"}, {"id": "item_223", "row_idx": 223, "indent": 8, "label": "5) Selasar yang menghubungkan semua ruangan", "notes": [], "type": "checkbox"}, {"id": "item_224", "row_idx": 224, "indent": 8, "label": "6) Toilet khusus yang dilengkapi dengan fasilitas khusus seperti pegangan dll dan diperuntukkan khusus bagi kelompok rentan.", "notes": [], "type": "checkbox"}, {"id": "item_225", "row_idx": 225, "indent": 8, "label": "7) Loket khusus: terdapat loket khusus yang memprioritaskan pengguna layanan kelompok rentan.", "notes": [], "type": "checkbox"}, {"id": "item_226", "row_idx": 226, "indent": 8, "label": "8) Ruang tunggu khusus: terdapat tempat duduk prioritas bagi pengguna layanan kelompok rentan dalam ruang tunggu.", "notes": [], "type": "checkbox"}, {"id": "item_227", "row_idx": 227, "indent": 8, "label": "9) Guiding block: terdapat jalur guiding block yang jelas dan aman jika dilalui oleh pengguna layanan kelompok rentan.", "notes": [], "type": "checkbox"}, {"id": "item_228", "row_idx": 228, "indent": 8, "label": "10) Parkir khusus yang mudah diakses.", "notes": [], "type": "checkbox"}, {"id": "item_229", "row_idx": 229, "indent": 8, "label": "11) Alat bantu tuna netra/tuna rungu (huruf braille): terdapat alat bantu tuna netra/tuna rungu dalam mengakses pelayanan baik.", "notes": [], "type": "checkbox"}, {"id": "item_230", "row_idx": 230, "indent": 8, "label": "12) Arena bermain anak: terdapat ruang atau tempat khusus yang dapat digunakan oleh anak-anak dari pengguna layanan bermain.", "notes": [], "type": "checkbox"}, {"id": "item_231", "row_idx": 231, "indent": 8, "label": "13) Ruang Laktasi: terdapat ruang khusus yang bersih, nyaman, dan aman serta dapat digunakan oleh pengguna layanan -> bisa berupa pojok laktasi yg tertutup", "notes": [], "type": "checkbox"}, {"id": "item_232", "row_idx": 232, "indent": 8, "label": "14) Fasilitas lain sebagai pendukung layanan bagi kelompok rentan (petugas pemandu, petugas yang mampu berbahasa isyarat)", "notes": ["-> bisa menggunakan video berikut: video informasi PST dlm bhs isyarat: http://s.bps.go.id/infoPST_bhs_isyarat"], "type": "checkbox"}]}, {"number": 19, "title": "Tersedia sarana prasarana penunjang.", "ref_url": "", "target_skor_5": "Tersedia 5 atau lebih fasilitas penunjang.", "items": [{"id": "item_235", "row_idx": 235, "indent": 8, "label": "Dokumen bukti ketersediaan sarana prasarana penunjang sbb:", "notes": [], "type": "header"}, {"id": "item_236", "row_idx": 236, "indent": 0, "label": "CEK PASCA SANGGAH", "notes": [], "type": "badge_note"}, {"id": "item_237", "row_idx": 237, "indent": 8, "label": "1. Fotocopy/ATK: terdapat sarana fotokopi yang mudah diakses pengguna layanan -> bisa disubstitusikan dg layanan scanner", "notes": [], "type": "checkbox"}, {"id": "item_238", "row_idx": 238, "indent": 8, "label": "2. P3K : Pertolongan Pertama Pada Kecelakaan yang layak pakai.", "notes": [], "type": "checkbox"}, {"id": "item_239", "row_idx": 239, "indent": 8, "label": "3. APAR : Alat Pemadam Api Ringan yang berfungsi dan layak pakai.", "notes": [], "type": "checkbox"}, {"id": "item_240", "row_idx": 240, "indent": 8, "label": "4. Kantin: terdapat kantin yang menyediakan makanan dan minuman bagi pengguna layanan -> bisa disubsitusikan dg snack corner berbayar", "notes": [], "type": "checkbox"}, {"id": "item_241", "row_idx": 241, "indent": 8, "label": "5. Ruang Ibadah: terdapat tempat ibadah yang dapat digunakan pengguna layanan.", "notes": [], "type": "checkbox"}, {"id": "item_242", "row_idx": 242, "indent": 8, "label": "6. Area merokok: tempat di luar ruang pelayanan yang dipergunakan untuk merokok sesuai kebijakan yang berlaku.", "notes": [], "type": "checkbox"}, {"id": "item_243", "row_idx": 243, "indent": 8, "label": "7. Jalur evakuasi/titik kumpul: jalur yang dipersiapkan jika Unit Layanan dalam keadaan bahaya/darurat, beserta tempat untuk berkumpul dalam rangka evakuasi.", "notes": [], "type": "checkbox"}, {"id": "item_244", "row_idx": 244, "indent": 8, "label": "8. Tempat Sampah: Tersedia wadah yang memisahkan jenis sampah.", "notes": [], "type": "checkbox"}, {"id": "item_245", "row_idx": 245, "indent": 8, "label": "9. CCTV: kamera yang merekam segala aktivitas yang terpantau dalam jangkauan kamera tersebut.", "notes": [], "type": "checkbox"}]}, {"number": 20, "title": "Sarana Front Office (FO) Informasi di unit layanan.", "ref_url": "", "target_skor_5": "Tersedia sarana FO informasi layanan dengan 5 atau lebih fasilitas.", "items": [{"id": "item_248", "row_idx": 248, "indent": 8, "label": "Dokumen bukti ketersediaan Sarana Front Office sbb:", "notes": [], "type": "header"}, {"id": "item_249", "row_idx": 249, "indent": 8, "label": "1. Petugas khusus: terdapat petugas khusus yang memberikan informasi yang dibutuhkan pengguna layanan -> bisa diintegrasikan dg petugas resepsionis/security", "notes": [], "type": "checkbox"}, {"id": "item_250", "row_idx": 250, "indent": 8, "label": "2. Meja/kursi: terdapat meja/kursi yang digunakan pengguna layanan dalam proses bertanya terkait kebutuhan layanan.", "notes": [], "type": "checkbox"}, {"id": "item_251", "row_idx": 251, "indent": 8, "label": "3. Layar/display informasi yang menampilkan informasi terkait layanan yang tersedia.", "notes": [], "type": "checkbox"}, {"id": "item_252", "row_idx": 252, "indent": 8, "label": "4. Bahan cetak informasi layanan.", "notes": [], "type": "checkbox"}, {"id": "item_253", "row_idx": 253, "indent": 8, "label": "5. Register tamu (manual/elektronik).", "notes": [], "type": "checkbox"}]}]}, {"id": "aspek-4", "number": 4, "roman": "IV", "title": "SISTEM INFORMASI PELAYANAN PUBLIK", "weight": "11%", "indicators": [{"number": 21, "title": "Tersedia sistem informasi pelayanan publik untuk informasi publik.", "ref_url": "", "target_skor_5": "Sistem informasi pelayanan publik telah online/website dan terhubung dengan sistem informasi pelayanan publik nasional serta telah menginput layanan yang ditetapkan ke dalam sistem informasi pelayanan publik nasional.", "items": [{"id": "item_257", "row_idx": 257, "indent": 8, "label": "Dokumen bukti ketersediaan SIPP sbb:", "notes": [], "type": "header"}, {"id": "item_258", "row_idx": 258, "indent": 8, "label": "1. Aplikasi pelayanan online -> Aplikasi BPS RI yg digunakan di BPS Kab/Kota bisa digunakan sebagai bukti dukung", "notes": [], "type": "header"}, {"id": "item_259", "row_idx": 259, "indent": 13, "label": "a) Website BPS Kab/Kota", "notes": [], "type": "checkbox"}, {"id": "item_260", "row_idx": 260, "indent": 13, "label": "b) Web PST", "notes": [], "type": "checkbox"}, {"id": "item_261", "row_idx": 261, "indent": 13, "label": "c) Web Perpustakaan", "notes": [], "type": "checkbox"}, {"id": "item_262", "row_idx": 262, "indent": 12, "label": "d) Web Silastik-Frontend -> BPS Kab/Kota menjelaskan ttg cara akses Silastik-Frontend di web PST kepada konsumennya yg akan mengakses layanan produk statistik berbayar", "notes": [], "type": "checkbox"}, {"id": "item_263", "row_idx": 263, "indent": 13, "label": "e) Web Romantik", "notes": [], "type": "checkbox"}, {"id": "item_264", "row_idx": 264, "indent": 13, "label": "f) Web Portal Publikasi", "notes": [], "type": "checkbox"}, {"id": "item_265", "row_idx": 265, "indent": 13, "label": "g) Lainnya (Web Indah)", "notes": [], "type": "checkbox"}, {"id": "item_266", "row_idx": 266, "indent": 8, "label": "2. Informasi jenis layanan PST pada SIPP Nasional", "notes": [], "type": "checkbox"}]}, {"number": 22, "title": "Tersedia sistem informasi pelayanan publik pendukung operasional pelayanan.", "ref_url": "", "target_skor_5": "Tersedia sistem informasi pendukung operasional pelayanan dengan lebih dari 4 kondisi.", "items": [{"id": "item_269", "row_idx": 269, "indent": 0, "label": "Dokumen bukti ketersediaan SIPP pendukung sbb: -> Aplikasi BPS RI yg digunakan di BPS Kab/Kota bisa digunakan sebagai bukti dukung", "notes": [], "type": "header"}, {"id": "item_270", "row_idx": 270, "indent": 8, "label": "1. Aplikasi Layanan Pengelolaan Pengaduan SP4N-LAPOR,", "notes": [], "type": "checkbox"}, {"id": "item_271", "row_idx": 271, "indent": 8, "label": "2. Aplikasi Survey Kepuasan Masyarakat [SKD]", "notes": [], "type": "checkbox"}, {"id": "item_272", "row_idx": 272, "indent": 8, "label": "3. Aplikasi SDM: Aplikasi atau Website pengelola kepegawaian,", "notes": [], "type": "checkbox"}, {"id": "item_273", "row_idx": 273, "indent": 8, "label": "4. FAQ,", "notes": [], "type": "checkbox"}, {"id": "item_274", "row_idx": 274, "indent": 8, "label": "5. Aplikasi Pengelolaan keuangan pelayanan publik bagi layanan berbayar -> jika tdk ada layanan berbayar maka bisa dianulir/dinilai tersedia", "notes": [], "type": "checkbox"}, {"id": "item_275", "row_idx": 275, "indent": 8, "label": "6. Atau unsur pendukung lainnya.", "notes": [], "type": "checkbox"}]}, {"number": 23, "title": "Kualitas penggunaan SIPP Elektronik (Website/Aplikasi).", "ref_url": "", "target_skor_5": "SIPP Elektronik berbasis website/aplikasi yang mudah dioperasikan, mudah diakses, navigasi yang mudah dipahami, merupakan kanal digital resmi pemerintah (domain.go.id) dan kompatibel.", "items": [{"id": "item_278", "row_idx": 278, "indent": 8, "label": "1. Screenshoot tampilan frontend:", "notes": [], "type": "header"}, {"id": "item_279", "row_idx": 279, "indent": 13, "label": "a) Website BPS", "notes": [], "type": "checkbox"}, {"id": "item_280", "row_idx": 280, "indent": 13, "label": "b) Web PST [pst.bps.go.id]", "notes": [], "type": "checkbox"}, {"id": "item_281", "row_idx": 281, "indent": 13, "label": "c) Web Perpustakaan [perpustakaan.bps.go.id]", "notes": [], "type": "checkbox"}, {"id": "item_282", "row_idx": 282, "indent": 13, "label": "d) Web Silastik [silastik.bps.go.id]", "notes": [], "type": "checkbox"}, {"id": "item_283", "row_idx": 283, "indent": 13, "label": "e) Web Romantik [romantik.web.bps.go.id]", "notes": [], "type": "checkbox"}, {"id": "item_284", "row_idx": 284, "indent": 13, "label": "f) Lainnya", "notes": [], "type": "checkbox"}, {"id": "item_285", "row_idx": 285, "indent": 8, "label": "2. Screenshoot tampilan backend:", "notes": [], "type": "header"}, {"id": "item_286", "row_idx": 286, "indent": 13, "label": "a) Website BPS", "notes": [], "type": "checkbox"}, {"id": "item_287", "row_idx": 287, "indent": 13, "label": "b) Web Perpustakaan [perpustakaan.bps.go.id]", "notes": [], "type": "checkbox"}, {"id": "item_288", "row_idx": 288, "indent": 13, "label": "c) Web Romantik [romantik.web.bps.go.id]", "notes": [], "type": "checkbox"}, {"id": "item_289", "row_idx": 289, "indent": 13, "label": "d) Web Portal Publikasi [portalpublikasi.bps.go.id]", "notes": [], "type": "checkbox"}, {"id": "item_290", "row_idx": 290, "indent": 13, "label": "e) Lainnya", "notes": [], "type": "checkbox"}]}, {"number": 24, "title": "Pemutakhiran data dan informasi kanal digital.", "ref_url": "", "target_skor_5": "Pemutakhiran data dan informasi pelayanan publik dilakukan secara harian dan detail/sangat lengkap.", "items": [{"id": "item_293", "row_idx": 293, "indent": 0, "label": "Screenshot paling tidak informasi pelayanan yang dipublikasikan secara berturut-turut (foto menunjukkan waktu publikasi):", "notes": ["-> jika pemutakhiran secara harian maka bukti dukung kondisi 1 bulan terakhir", "-> jika pemutakhiran secara mingguan maka bukti dukung kondisi triwulan terakhir", "-> jika pemutakhiran secara bulanan/semesteran/tahunan maka bukti dukung kondisi 1 tahun terakhir"], "type": "checkbox"}]}]}, {"id": "aspek-5", "number": 5, "roman": "V", "title": "KONSULTASI DAN PENGADUAN", "weight": "10%", "indicators": [{"number": 25, "title": "Tersedia sarana konsultasi dan pengaduan secara tatap muka yang berkualitas", "ref_url": "", "target_skor_5": "Sarana konsultasi pengaduan pengguna layanan dengan 5 atau lebih fasilitas.", "items": [{"id": "item_297", "row_idx": 297, "indent": 6, "label": "1. Foto sarana & prasarana", "notes": [], "type": "header"}, {"id": "item_298", "row_idx": 298, "indent": 10, "label": "1) Kotak saran/pengaduan;", "notes": [], "type": "checkbox"}, {"id": "item_299", "row_idx": 299, "indent": 10, "label": "2) Ruang/meja khusus pengaduan;", "notes": [], "type": "checkbox"}, {"id": "item_300", "row_idx": 300, "indent": 10, "label": "3) Petugas khusus pengaduan;", "notes": [], "type": "checkbox"}, {"id": "item_301", "row_idx": 301, "indent": 10, "label": "4) Air minum/makanan ringan;", "notes": [], "type": "checkbox"}, {"id": "item_302", "row_idx": 302, "indent": 10, "label": "5) Register Konsultasi dan Pengaduan", "notes": [], "type": "checkbox"}, {"id": "item_303", "row_idx": 303, "indent": 10, "label": "6) Publikasi informasi terkait mekanisme konsultasi dan pengaduan", "notes": ["[Poster/spanduk/leaflet/buku/dokumen/bahan cetak lain]"], "type": "checkbox"}, {"id": "item_304", "row_idx": 304, "indent": 6, "label": "2. SK petugas pengaduan", "notes": [], "type": "checkbox"}, {"id": "item_305", "row_idx": 305, "indent": 10, "label": "Tanggal Penandatanganan SK petugas pengaduan", "notes": [], "type": "date"}]}, {"number": 26, "title": "Tersedia sarana dan media konsultasi serta pengaduan yang bisa dimanfaatkan semua lapisan masyarakat.", "ref_url": "", "target_skor_5": "Terdapat media konsultasi dan pengaduan secara offline terpisah dari front office, dan terhubung dengan SP4N-LAPOR!", "items": [{"id": "item_308", "row_idx": 308, "indent": 0, "label": "Media konsultasi & pengaduan secara offline terpisah dari frontoffice?", "notes": [], "type": "header"}, {"id": "item_309", "row_idx": 309, "indent": 10, "label": "1) Ruang/meja front office;", "notes": [], "type": "checkbox"}, {"id": "item_310", "row_idx": 310, "indent": 10, "label": "2) Ruang/meja khusus pengaduan terpisah dari front office", "notes": [], "type": "checkbox"}, {"id": "item_311", "row_idx": 311, "indent": 0, "label": "Media konsultasi & pengaduan secara online tersedia?", "notes": ["-> media pengaduan online BPS RI yg digunakan BPS Kab/Kota bisa dijadikan bukti dukung", "-> rincian ini dinilai tersedia jika minimal tersedia 1 media online [termasuk SP4N LAPOR]"], "type": "checkbox"}, {"id": "item_312", "row_idx": 312, "indent": 10, "label": "1) Media Sosial", "notes": [], "type": "checkbox"}, {"id": "item_313", "row_idx": 313, "indent": 10, "label": "2) Website pengaduan", "notes": [], "type": "checkbox"}, {"id": "item_314", "row_idx": 314, "indent": 10, "label": "3) Email pengaduan", "notes": [], "type": "checkbox"}, {"id": "item_315", "row_idx": 315, "indent": 10, "label": "4) Aplikasi mobil khusus pengaduan", "notes": [], "type": "checkbox"}, {"id": "item_316", "row_idx": 316, "indent": 10, "label": "5) Media chatting", "notes": [], "type": "checkbox"}, {"id": "item_317", "row_idx": 317, "indent": 10, "label": "6) Screenshoot terhubung dg SP4N LAPOR diambil dari tampilan login admin", "notes": [], "type": "checkbox"}]}, {"number": 27, "title": "Tersedia akuntabilitas hasil konsultasi dan/atau pengaduan.", "ref_url": "", "target_skor_5": "Terdapat dokumentasi diarsipkan, dituangkan dalam laporan, dilakukan monev, ditindaklanjuti, dan dipublikasikan.", "items": [{"id": "item_320", "row_idx": 320, "indent": 0, "label": "Tersedia dokumentasi tahun 2025 diarsipkan?", "notes": [], "type": "checkbox"}, {"id": "item_321", "row_idx": 321, "indent": 7, "label": "1.  Screenshot dokumentasi proses konsultasi dan pengaduan sejak diterima hingga selesai pd media yg disediakan", "notes": [], "type": "checkbox"}, {"id": "item_322", "row_idx": 322, "indent": 7, "label": "2.  Screenshot dokumentasi proses konsultasi dan pengaduan sejak diterima hingga selesai pd SP4N LAPOR", "notes": [], "type": "checkbox"}, {"id": "item_323", "row_idx": 323, "indent": 0, "label": "Dituangkan dalam laporan tahun 2025 -> memuat rekapitulasi konsultasi & pengaduan; monev; tindaklanjut hasil monev", "notes": [], "type": "checkbox"}, {"id": "item_324", "row_idx": 324, "indent": 7, "label": "3. Laporan kegiatan konsultasi dan pengaduan secara berkala  [minimal memuat jumlah laporan masuk, jumlah laporan diproses dan jumlah laporan sudah ditindaklanjuti]", "notes": [], "type": "checkbox"}, {"id": "item_325", "row_idx": 325, "indent": 7, "label": "4. Monev kegiatan konsultasi dan pengaduan", "notes": [], "type": "checkbox"}, {"id": "item_326", "row_idx": 326, "indent": 7, "label": "5. Laporan tindak lanjut hasil monev kegiatan konsultasi dan pengaduan", "notes": ["[memuat upaya perbaikan berdasarkan monev yang telah dilakukan, bentuk tindak lanjut dapat berupa: FAQ dan bukti sebelum dan sesudah tindak lanjut]"], "type": "checkbox"}, {"id": "item_327", "row_idx": 327, "indent": 7, "label": "6. Publisitas laporan kegiatan konsultasi dan pengaduan pada media layanan pada website PPID", "notes": [], "type": "checkbox"}]}, {"number": 28, "title": "Berapa persen(%) pengaduan yang masuk ditindaklanjuti hingga selesai dalam satu tahun yang lalu (Januari-Desember 2025)?", "ref_url": "", "target_skor_5": "≥ 90% konsultasi atau pengaduan yang masuk ke SP4N-LAPOR! dan ditindaklanjuti hingga selesai.", "items": [{"id": "item_330", "row_idx": 330, "indent": 6, "label": "1. Laporan Konsultasi & Pengaduan", "notes": [], "type": "checkbox"}, {"id": "item_331", "row_idx": 331, "indent": 6, "label": "2. Berapa persentase Tindak Lanjut yg sudah dilakukan", "notes": [], "type": "percentage"}]}]}, {"id": "aspek-6", "number": 6, "roman": "VI", "title": "INOVASI PELAYANAN PUBLIK", "weight": "12%", "indicators": [{"number": 29, "title": "Ketersediaan Inovasi Pelayanan Publik", "ref_url": "", "target_skor_5": "Inovasi yang dilaksanakan sudah mendapatkan prestasi pada level (apapun).", "items": [{"id": "item_335", "row_idx": 335, "indent": 6, "label": "1. Proposal Inovasi Pelayanan Publik", "notes": [], "type": "checkbox"}, {"id": "item_336", "row_idx": 336, "indent": 6, "label": "2. Dokumen studi tiru/progress rancang bangun (blueprint)", "notes": [], "type": "checkbox"}, {"id": "item_337", "row_idx": 337, "indent": 6, "label": "3. Dokumentasi pelaksanaan Inovasi (foto, daftar hadir, dll)", "notes": [], "type": "checkbox"}, {"id": "item_338", "row_idx": 338, "indent": 6, "label": "4. Bukti keikutsertaan dan/atau piagam penghargaan yang diperoleh dalam suatu kompetisi inovasi pelayanan publik", "notes": ["-> inovasi yg tidak berkaitan langsung dengan pelayanan publik bisa digunakan sbg bukti dukung, krn pd prinsipnya inovasi di instansi pemerintah mendukung pelayanan publik sebagaimana tusi instansi pemerintah adalah melayani masyarakat", "-> screenshot proposal inovasi pada sinovik.menpan.go.id bisa dinilai skor 4", "-> lolos tahapan KIPP [seleksi administrasi/penilaian proposal ] bisa dinilai skor 5 walaupun tdk mendapatkan sertifikat penghargaan dr KemenPANRB dg melampirkan screenshoot pengumuman pd sinovik/surat resmi dr MenPANRB", "-> jika pernah mengikuti kompetisi inovasi selain KemenPANRB baik internal BPS maupun ekstrnal BPS bisa dinilai sesuai bukti dukung yg dimiliki"], "type": "checkbox"}]}, {"number": 30, "title": "Tersedia sumber daya yang mendukung keberlanjutan Inovasi Pelayanan Publik.", "ref_url": "", "target_skor_5": "Sumber daya yang mendukung keberlanjutan inovasi dalam bentuk payung hukum dan 3 kondisi lainnya.", "items": [{"id": "item_341", "row_idx": 341, "indent": 6, "label": "1. Dokumen payung hukum kelembagaan inovasi", "notes": [], "type": "checkbox"}, {"id": "item_342", "row_idx": 342, "indent": 6, "label": "2. Foto atau dokumen penganggaran inovasi", "notes": [], "type": "checkbox"}, {"id": "item_343", "row_idx": 343, "indent": 6, "label": "3. Foto sarana dan prasarana yang mendukung inovasi", "notes": [], "type": "checkbox"}, {"id": "item_344", "row_idx": 344, "indent": 6, "label": "4. Dokumen SK perorangan dan/atau Tim yang menginisiasi penciptaan inovasi", "notes": [], "type": "checkbox"}]}]}];
+
+    const STORAGE_KEY = 'lke_pekppp_state_v1';
+
+    // Default State
+    let appState = {
+      meta: {
+        unit: '',
+        evaluator: '',
+        tahun: '2026',
+        tanggal: new Date().toISOString().split('T')[0]
+      },
+      checks: {},      // item_id -> boolean
+      inputs: {},      // item_id -> string (tanggal / persentase)
+      scores: {},      // indicator_number -> number (0-5)
+      activeTab: 0,
+      filterMode: 'all',
+      searchQuery: '',
+      collapsed: {}    // indicator_number -> boolean
+    };
+
+    // Load from localStorage
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          appState = {
+            ...appState,
+            ...parsed,
+            meta: { ...appState.meta, ...(parsed.meta || {}) },
+            checks: parsed.checks || {},
+            inputs: parsed.inputs || {},
+            scores: parsed.scores || {},
+            collapsed: parsed.collapsed || {}
+          };
+        }
+      } catch (e) {
+        console.error('Gagal memuat data dari localStorage:', e);
+      }
+    }
+
+    // Save to localStorage
+    function saveState(showIndicator = true) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        if (showIndicator) {
+          const now = new Date();
+          const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          document.getElementById('saveStatusText').textContent = `Tersimpan otomatis (${timeStr})`;
+        }
+      } catch (e) {
+        console.error('Gagal menyimpan ke localStorage:', e);
+        showToast('⚠️ Memori browser penuh, segera ekspor data Anda!', '⚠️');
+      }
+    }
+
+    function showToast(msg, icon = '✅') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      document.getElementById('toastIcon').textContent = icon;
+      toast.classList.add('show');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // Bind Metadata Inputs
+    function initMetaBindings() {
+      const fields = [
+        { id: 'metaUnit', key: 'unit' },
+        { id: 'metaEvaluator', key: 'evaluator' },
+        { id: 'metaTahun', key: 'tahun' },
+        { id: 'metaTanggal', key: 'tanggal' }
+      ];
+      fields.forEach(f => {
+        const el = document.getElementById(f.id);
+        el.value = appState.meta[f.key] || '';
+        el.addEventListener('input', (e) => {
+          appState.meta[f.key] = e.target.value;
+          saveState();
+        });
+      });
+    }
+
+    // Calculate Stats
+    function getIndicatorStats(ind) {
+      let totalChecks = 0;
+      let doneChecks = 0;
+      let totalInputs = 0;
+      let doneInputs = 0;
+
+      ind.items.forEach(it => {
+        if (it.type === 'checkbox') {
+          totalChecks++;
+          if (appState.checks[it.id]) doneChecks++;
+        } else if (it.type === 'date' || it.type === 'percentage') {
+          totalInputs++;
+          if ((appState.inputs[it.id] || '').trim() !== '') doneInputs++;
+        }
+      });
+
+      const totalAll = totalChecks + totalInputs;
+      const doneAll = doneChecks + doneInputs;
+      const pct = totalAll > 0 ? Math.round((doneAll / totalAll) * 100) : 0;
+      const isComplete = totalAll > 0 && doneAll === totalAll;
+
+      return { totalChecks, doneChecks, totalInputs, doneInputs, totalAll, doneAll, pct, isComplete };
+    }
+
+    function getAspectStats(aspect) {
+      let totalChecks = 0, doneChecks = 0, totalInputs = 0, doneInputs = 0;
+      aspect.indicators.forEach(ind => {
+        const st = getIndicatorStats(ind);
+        totalChecks += st.totalChecks;
+        doneChecks += st.doneChecks;
+        totalInputs += st.totalInputs;
+        doneInputs += st.doneInputs;
+      });
+      const totalAll = totalChecks + totalInputs;
+      const doneAll = doneChecks + doneInputs;
+      const pct = totalAll > 0 ? Math.round((doneAll / totalAll) * 100) : 0;
+      return { totalChecks, doneChecks, totalInputs, doneInputs, totalAll, doneAll, pct };
+    }
+
+    function updateGlobalKPIs() {
+      let totalChecks = 0, doneChecks = 0, totalInputs = 0, doneInputs = 0;
+      LKE_SCHEMA.forEach(asp => {
+        const st = getAspectStats(asp);
+        totalChecks += st.totalChecks;
+        doneChecks += st.doneChecks;
+        totalInputs += st.totalInputs;
+        doneInputs += st.doneInputs;
+      });
+
+      const totalAll = totalChecks + totalInputs;
+      const doneAll = doneChecks + doneInputs;
+      const pct = totalAll > 0 ? Math.round((doneAll / totalAll) * 100) : 0;
+
+      document.getElementById('kpiCheckedCount').textContent = `${doneChecks} / ${totalChecks}`;
+      document.getElementById('kpiInputCount').textContent = `${doneInputs} / ${totalInputs}`;
+      document.getElementById('kpiOverallPct').textContent = `${pct}%`;
+      document.getElementById('kpiOverallBar').style.width = `${pct}%`;
+    }
+
+    // Render 6 Aspect Tabs
+    function renderTabs() {
+      const container = document.getElementById('aspectTabs');
+      container.innerHTML = '';
+
+      LKE_SCHEMA.forEach((asp, idx) => {
+        const st = getAspectStats(asp);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `tab-btn ${appState.activeTab === idx ? 'active' : ''}`;
+        btn.onclick = () => {
+          appState.activeTab = idx;
+          saveState(false);
+          renderTabs();
+          renderActiveAspect();
+        };
+
+        btn.innerHTML = `
+          <div class="tab-top">
+            <span class="tab-roman">ASPEK ${asp.roman}</span>
+            <span class="tab-weight">Bobot ${asp.weight}</span>
+          </div>
+          <div class="tab-title">${asp.title}</div>
+          <div class="tab-footer">
+            <span>${st.doneAll}/${st.totalAll} (${st.pct}%)</span>
+            <div class="mini-bar">
+              <div class="mini-bar-fill" style="width: ${st.pct}%"></div>
+            </div>
+          </div>
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    // Render Indicators of Active Tab
+    function renderActiveAspect() {
+      const aspect = LKE_SCHEMA[appState.activeTab];
+      document.getElementById('activeAspectTitle').textContent = `${aspect.roman}. ${aspect.title}`;
+      document.getElementById('activeAspectWeight').textContent = `Bobot Penilaian: ${aspect.weight}`;
+
+      const container = document.getElementById('indicatorsContainer');
+      container.innerHTML = '';
+
+      const query = appState.searchQuery.toLowerCase().trim();
+      let renderedCount = 0;
+
+      aspect.indicators.forEach(ind => {
+        const st = getIndicatorStats(ind);
+
+        // Filter mode check
+        if (appState.filterMode === 'complete' && !st.isComplete) return;
+        if (appState.filterMode === 'incomplete' && st.isComplete) return;
+
+        // Search query check
+        if (query) {
+          const matchInd = ind.title.toLowerCase().includes(query) || ind.target_skor_5.toLowerCase().includes(query);
+          const matchItem = ind.items.some(it => it.label.toLowerCase().includes(query) || (it.notes && it.notes.some(n => n.toLowerCase().includes(query))));
+          if (!matchInd && !matchItem) return;
+        }
+
+        renderedCount++;
+        const isCollapsed = !!appState.collapsed[ind.number];
+        const currentScore = appState.scores[ind.number] !== undefined ? appState.scores[ind.number] : '';
+
+        const card = document.createElement('article');
+        card.className = `indicator-card ${st.isComplete ? 'completed' : ''} ${isCollapsed ? 'collapsed' : ''}`;
+        card.id = `ind-card-${ind.number}`;
+
+        // Build score pills (0 - 5)
+        let scorePillsHtml = `<div class="score-selector-box" onclick="event.stopPropagation()" title="Estimasi Skor Mandiri Indikator ${ind.number} (0-5)"><span>Skor:</span>`;
+        for (let s = 0; s <= 5; s++) {
+          const sel = currentScore === s ? 'selected' : '';
+          scorePillsHtml += `<button type="button" class="score-pill ${sel}" onclick="setIndicatorScore(${ind.number}, ${s})">${s}</button>`;
+        }
+        scorePillsHtml += `</div>`;
+
+        // Build items HTML
+        let itemsHtml = '';
+        ind.items.forEach(it => {
+          if (it.type === 'header') {
+            itemsHtml += `<div class="item-header">${escapeHtml(it.label)}</div>`;
+          } else if (it.type === 'badge_note') {
+            itemsHtml += `<div class="item-badge-note">⚠️ ${escapeHtml(it.label)}</div>`;
+          } else if (it.type === 'note') {
+            itemsHtml += `<div class="item-note">${escapeHtml(it.label)}</div>`;
+          } else if (it.type === 'checkbox') {
+            const isChecked = !!appState.checks[it.id];
+            const indentStyle = it.indent >= 10 ? 'margin-left: 1.5rem;' : (it.indent >= 6 ? 'margin-left: 0.75rem;' : '');
+            let subNotesHtml = '';
+            if (it.notes && it.notes.length > 0) {
+              subNotesHtml = `<div class="sub-notes-list">` + it.notes.map(n => `<div class="sub-note-line">${escapeHtml(n)}</div>`).join('') + `</div>`;
+            }
+
+            itemsHtml += `
+              <label class="check-row ${isChecked ? 'checked' : ''}" style="${indentStyle}" for="chk_${it.id}">
+                <input type="checkbox" id="chk_${it.id}" ${isChecked ? 'checked' : ''} onchange="toggleCheck('${it.id}', this.checked)" />
+                <div class="check-content">
+                  <span class="check-label">${escapeHtml(it.label)}</span>
+                  ${subNotesHtml}
+                </div>
+                <span class="status-tag ${isChecked ? 'true' : 'false'}">${isChecked ? 'Tersedia' : 'Belum'}</span>
+              </label>
+            `;
+          } else if (it.type === 'date') {
+            const val = appState.inputs[it.id] || '';
+            itemsHtml += `
+              <div class="input-row">
+                <label for="inp_${it.id}">📅 ${escapeHtml(it.label)}</label>
+                <div class="input-field-wrap">
+                  <input type="date" id="inp_${it.id}" class="inline-input" value="${escapeHtml(val)}" onchange="updateInput('${it.id}', this.value)" />
+                </div>
+              </div>
+            `;
+          } else if (it.type === 'percentage') {
+            const val = appState.inputs[it.id] || '';
+            itemsHtml += `
+              <div class="input-row">
+                <label for="inp_${it.id}">📈 ${escapeHtml(it.label)}</label>
+                <div class="input-field-wrap">
+                  <input type="number" min="0" max="100" step="0.1" id="inp_${it.id}" class="inline-input" placeholder="0 - 100" value="${escapeHtml(val)}" oninput="updateInput('${it.id}', this.value)" />
+                  <span style="font-weight:700; color:var(--text-muted);">%</span>
+                </div>
+              </div>
+            `;
+          }
+        });
+
+        const refLinkHtml = ind.ref_url
+          ? `<a href="${ind.ref_url}" target="_blank" rel="noopener" class="ref-link">🔗 Buka Referensi Regulasi</a>`
+          : `<span></span>`;
+
+        card.innerHTML = `
+          <div class="indicator-header" onclick="toggleAccordion(${ind.number})">
+            <div class="ind-left">
+              <div class="ind-num">${ind.number}</div>
+              <div class="ind-title-wrap">
+                <h3>${escapeHtml(ind.title)}</h3>
+                ${ind.target_skor_5 ? `
+                  <div class="skor5-callout">
+                    <span class="skor5-tag">TARGET SKOR 5</span>
+                    <span>${escapeHtml(ind.target_skor_5)}</span>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+            <div class="ind-right">
+              ${scorePillsHtml}
+              <span class="ind-stat-badge">${st.doneAll}/${st.totalAll} (${st.pct}%)</span>
+              <svg class="chevron" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+          <div class="indicator-body">
+            <div class="ind-sub-toolbar">
+              ${refLinkHtml}
+              <div style="display:flex; gap:0.45rem;">
+                <button type="button" class="btn-xs" onclick="bulkCheckIndicator(${ind.number}, true)">✓ Tandai Semua Tersedia</button>
+                <button type="button" class="btn-xs" onclick="bulkCheckIndicator(${ind.number}, false)">✕ Kosongkan Centang</button>
+              </div>
+            </div>
+            <div class="checklist-grid">
+              ${itemsHtml}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      if (renderedCount === 0) {
+        container.innerHTML = `
+          <div class="empty-search">
+            <p style="font-weight:600; font-size:0.95rem; margin-bottom:0.3rem;">Tidak ada indikator yang sesuai dengan filter/pencarian.</p>
+            <p style="font-size:0.84rem;">Coba ubah kata kunci pencarian atau pilih filter "Semua".</p>
+          </div>
+        `;
+      }
+    }
+
+    // Interactive Handlers
+    function toggleCheck(itemId, checked) {
+      appState.checks[itemId] = checked;
+      saveState();
+      updateGlobalKPIs();
+      renderTabs();
+      renderActiveAspect();
+    }
+
+    function updateInput(itemId, value) {
+      appState.inputs[itemId] = value;
+      saveState();
+      updateGlobalKPIs();
+      renderTabs();
+      // Update badge on current card without full re-render to keep focus smooth
+      const aspect = LKE_SCHEMA[appState.activeTab];
+      aspect.indicators.forEach(ind => {
+        if (ind.items.some(it => it.id === itemId)) {
+          const st = getIndicatorStats(ind);
+          const card = document.getElementById(`ind-card-${ind.number}`);
+          if (card) {
+            const badge = card.querySelector('.ind-stat-badge');
+            if (badge) badge.textContent = `${st.doneAll}/${st.totalAll} (${st.pct}%)`;
+            if (st.isComplete) card.classList.add('completed');
+            else card.classList.remove('completed');
+          }
+        }
+      });
+    }
+
+    function setIndicatorScore(indNum, score) {
+      if (appState.scores[indNum] === score) {
+        delete appState.scores[indNum];
+      } else {
+        appState.scores[indNum] = score;
+      }
+      saveState();
+      renderActiveAspect();
+    }
+
+    function bulkCheckIndicator(indNum, stateBool) {
+      const aspect = LKE_SCHEMA[appState.activeTab];
+      const ind = aspect.indicators.find(i => i.number === indNum);
+      if (!ind) return;
+      ind.items.forEach(it => {
+        if (it.type === 'checkbox') {
+          appState.checks[it.id] = stateBool;
+        }
+      });
+      saveState();
+      updateGlobalKPIs();
+      renderTabs();
+      renderActiveAspect();
+      showToast(stateBool ? `Semua bukti Indikator ${indNum} ditandai tersedia` : `Centang Indikator ${indNum} dikosongkan`);
+    }
+
+    function toggleAccordion(indNum) {
+      appState.collapsed[indNum] = !appState.collapsed[indNum];
+      saveState(false);
+      const card = document.getElementById(`ind-card-${indNum}`);
+      if (card) card.classList.toggle('collapsed');
+    }
+
+    function toggleAllAccordions(collapseBool) {
+      const aspect = LKE_SCHEMA[appState.activeTab];
+      aspect.indicators.forEach(ind => {
+        appState.collapsed[ind.number] = collapseBool;
+      });
+      saveState(false);
+      renderActiveAspect();
+    }
+
+    function setFilter(mode, btnEl) {
+      appState.filterMode = mode;
+      document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+      renderActiveAspect();
+    }
+
+    function handleSearch(val) {
+      appState.searchQuery = val;
+      renderActiveAspect();
+    }
+
+    function resetAllData() {
+      if (!confirm('Apakah Anda yakin ingin menghapus seluruh isian LKE PEKPPP yang tersimpan di memori browser?')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      appState.checks = {};
+      appState.inputs = {};
+      appState.scores = {};
+      appState.meta = {
+        unit: '',
+        evaluator: '',
+        tahun: '2026',
+        tanggal: new Date().toISOString().split('T')[0]
+      };
+      initMetaBindings();
+      updateGlobalKPIs();
+      renderTabs();
+      renderActiveAspect();
+      document.getElementById('saveStatusText').textContent = 'Data direset';
+      showToast('Seluruh data berhasil dihapus dari browser.', '🗑️');
+    }
+
+    // Flatten Data Helper for CSV & Excel
+    function buildFlatExportRows() {
+      const rows = [];
+      LKE_SCHEMA.forEach(asp => {
+        asp.indicators.forEach(ind => {
+          const indScore = appState.scores[ind.number] !== undefined ? appState.scores[ind.number] : '';
+          ind.items.forEach(it => {
+            if (it.type === 'checkbox' || it.type === 'date' || it.type === 'percentage') {
+              let statusVal = '';
+              if (it.type === 'checkbox') {
+                statusVal = appState.checks[it.id] ? 'TRUE' : 'FALSE';
+              } else if (it.type === 'date') {
+                statusVal = appState.inputs[it.id] || '';
+              } else if (it.type === 'percentage') {
+                statusVal = appState.inputs[it.id] ? `${appState.inputs[it.id]}%` : '';
+              }
+
+              rows.push({
+                'Aspek': `${asp.roman}. ${asp.title}`,
+                'Bobot Aspek': asp.weight,
+                'No Indikator': ind.number,
+                'Indikator': ind.title,
+                'Skor Mandiri (0-5)': indScore,
+                'Tipe Item': it.type === 'checkbox' ? 'Bukti Dukung' : (it.type === 'date' ? 'Tanggal' : 'Persentase'),
+                'Rincian Bukti Dukung / Pertanyaan': it.label,
+                'Apakah Dokumen Tersedia / Isian': statusVal,
+                'Unit Lokus': appState.meta.unit || '-',
+                'Nama Evaluator': appState.meta.evaluator || '-',
+                'Tahun Evaluasi': appState.meta.tahun || '-',
+                'Tanggal Evaluasi': appState.meta.tanggal || '-'
+              });
+            }
+          });
+        });
+      });
+      return rows;
+    }
+
+    function getFilePrefix() {
+      const unitSlug = (appState.meta.unit || 'Unit_Layanan').replace(/[^a-zA-Z0-9]+/g, '_');
+      const dateStr = appState.meta.tanggal || new Date().toISOString().split('T')[0];
+      return `LKE_PEKPPP_${unitSlug}_${dateStr}`;
+    }
+
+    // 1. Export to Excel (.xlsx) with Summary Sheet + 6 Aspect Sheets + All Data Sheet
+    function exportToExcel() {
+      if (typeof XLSX === 'undefined') {
+        showToast('Library Excel gagal dimuat. Periksa koneksi internet Anda.', '⚠️');
+        return;
+      }
+
+      const wb = XLSX.utils.book_new();
+
+      // Sheet 1: Ringkasan Eksekutif
+      const summaryData = [
+        ['LEMBAR KERJA EVALUASI (LKE) PEKPPP'],
+        ['Unit Lokus / Satuan Kerja', appState.meta.unit || '-'],
+        ['Nama Evaluator', appState.meta.evaluator || '-'],
+        ['Tahun Evaluasi', appState.meta.tahun || '-'],
+        ['Tanggal Evaluasi', appState.meta.tanggal || '-'],
+        [],
+        ['Aspek', 'Nama Aspek', 'Bobot', 'Total Item', 'Terpenuhi', 'Persentase Kelengkapan']
+      ];
+
+      LKE_SCHEMA.forEach(asp => {
+        const st = getAspectStats(asp);
+        summaryData.push([
+          `Aspek ${asp.roman}`,
+          asp.title,
+          asp.weight,
+          st.totalAll,
+          st.doneAll,
+          `${st.pct}%`
+        ]);
+      });
+
+      const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+      wsSummary['!cols'] = [{ wch: 15 }, { wch: 42 }, { wch: 12 }, { wch: 14 }, { wch: 14 }, { wch: 24 }];
+      XLSX.utils.book_append_sheet(wb, wsSummary, 'Ringkasan');
+
+      // Sheet 2: Gabungan Semua Aspek
+      const allRows = buildFlatExportRows();
+      const wsAll = XLSX.utils.json_to_sheet(allRows);
+      wsAll['!cols'] = [
+        { wch: 30 }, { wch: 12 }, { wch: 12 }, { wch: 45 },
+        { wch: 18 }, { wch: 15 }, { wch: 60 }, { wch: 26 },
+        { wch: 25 }, { wch: 22 }, { wch: 14 }, { wch: 16 }
+      ];
+      XLSX.utils.book_append_sheet(wb, wsAll, 'Semua_Aspek');
+
+      // Sheets 3-8: Per Aspek (Aspek 1 - 6)
+      LKE_SCHEMA.forEach(asp => {
+        const aspRows = allRows.filter(r => r['Aspek'].startsWith(`${asp.roman}.`));
+        const wsAsp = XLSX.utils.json_to_sheet(aspRows);
+        wsAsp['!cols'] = wsAll['!cols'];
+        XLSX.utils.book_append_sheet(wb, wsAsp, `Aspek_${asp.number}_${asp.roman}`);
+      });
+
+      XLSX.writeFile(wb, `${getFilePrefix()}.xlsx`);
+      showToast('File Excel (.xlsx) berhasil diunduh!');
+    }
+
+    // 2. Export to CSV (.csv)
+    function exportToCSV() {
+      const rows = buildFlatExportRows();
+      if (rows.length === 0) return;
+
+      const headers = Object.keys(rows[0]);
+      const csvLines = [
+        headers.map(h => `"${h.replace(/"/g, '""')}"`).join(',')
+      ];
+
+      rows.forEach(r => {
+        const line = headers.map(h => {
+          const val = String(r[h] ?? '');
+          return `"${val.replace(/"/g, '""')}"`;
+        }).join(',');
+        csvLines.push(line);
+      });
+
+      // Add BOM for UTF-8 Excel compatibility
+      const blob = new Blob(['\uFEFF' + csvLines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+      downloadBlob(blob, `${getFilePrefix()}.csv`);
+      showToast('File CSV berhasil diunduh!');
+    }
+
+    // 3. Export to JSON (.json)
+    function exportToJSON() {
+      const payload = {
+        exported_at: new Date().toISOString(),
+        application: 'LKE PEKPPP Interactive Form',
+        meta: appState.meta,
+        summary: LKE_SCHEMA.map(asp => ({
+          aspek: `${asp.roman}. ${asp.title}`,
+          bobot: asp.weight,
+          ...getAspectStats(asp)
+        })),
+        state: {
+          checks: appState.checks,
+          inputs: appState.inputs,
+          scores: appState.scores
+        },
+        detailed_records: buildFlatExportRows()
+      };
+
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      downloadBlob(blob, `${getFilePrefix()}.json`);
+      showToast('File JSON berhasil diunduh!');
+    }
+
+    // Import JSON backup
+    function importFromJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed.state) {
+            appState.checks = parsed.state.checks || {};
+            appState.inputs = parsed.state.inputs || {};
+            appState.scores = parsed.state.scores || {};
+            if (parsed.meta) {
+              appState.meta = { ...appState.meta, ...parsed.meta };
+            }
+            saveState();
+            initMetaBindings();
+            updateGlobalKPIs();
+            renderTabs();
+            renderActiveAspect();
+            showToast('Data JSON berhasil dipulihkan!', '📂');
+          } else {
+            showToast('Format file JSON tidak valid.', '⚠️');
+          }
+        } catch (err) {
+          showToast('Gagal membaca file JSON.', '⚠️');
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Initialize App
+    loadState();
+    initMetaBindings();
+    updateGlobalKPIs();
+    renderTabs();
+    renderActiveAspect();
+  </script>
+</body>
+</html>
