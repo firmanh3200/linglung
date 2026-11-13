@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengelolaan Pojok Statistik BPS Jabar</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS for Excel Export (.xlsx) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Font Awesome Pro / Free Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        'bps-blue': '#0A2540',
+                        'bps-light': '#20639B',
+                        'bps-accent': '#F6D55C',
+                        'bps-teal': '#3CAEA3',
+                        'bps-coral': '#ED553B'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-bps-blue selection:text-white">
+
+    <!-- STICKY HEADER -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo & Title -->
+            <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 rounded-2xl bg-bps-blue text-white flex items-center justify-center font-display font-extrabold text-xl shadow-md shadow-bps-blue/20">
+                    BPS
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-bps-blue border border-blue-200">BPS Provinsi Jawa Barat</span>
+                    </div>
+                    <h1 class="font-display font-bold text-slate-900 text-sm sm:text-base md:text-lg leading-tight mt-0.5">
+                        Tim Pembina Pojok Statistik
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex items-center space-x-1 bg-slate-100/80 p-1 rounded-xl border border-slate-200/70">
+                <a href="#ringkasan-kpi" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-bps-blue hover:bg-white transition-all">
+                    <i class="fa-solid fa-gauge-high mr-1.5 text-bps-blue"></i>Target IPotik
+                </a>
+                <a href="#pohon-kinerja" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-bps-blue hover:bg-white transition-all">
+                    <i class="fa-solid fa-sitemap mr-1.5 text-bps-light"></i>Pohon Kinerja
+                </a>
+                <a href="#matriks-peran-hasil" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-bps-blue hover:bg-white transition-all">
+                    <i class="fa-solid fa-table-list mr-1.5 text-emerald-600"></i>Matriks Peran Hasil
+                </a>
+                <a href="#timeline-pelaksanaan" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-bps-blue hover:bg-white transition-all">
+                    <i class="fa-solid fa-calendar-days mr-1.5 text-amber-500"></i>Timeline
+                </a>
+                <a href="#matriks-raci" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-bps-blue hover:bg-white transition-all">
+                    <i class="fa-solid fa-users-gear mr-1.5 text-purple-600"></i>Matriks RACI
+                </a>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <div class="flex items-center lg:hidden">
+                <button id="mobileMenuBtn" aria-label="Toggle Menu" class="p-2.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile DrPerangkat Daerahown Menu -->
+        <div id="mobileMenu" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-1.5 shadow-lg">
+            <a href="#ringkasan-kpi" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-bps-blue">
+                <i class="fa-solid fa-gauge-high w-6 text-bps-blue"></i>Target IPotik (KPI)
+            </a>
+            <a href="#pohon-kinerja" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-bps-blue">
+                <i class="fa-solid fa-sitemap w-6 text-bps-light"></i>Pohon Kinerja
+            </a>
+            <a href="#matriks-peran-hasil" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-bps-blue">
+                <i class="fa-solid fa-table-list w-6 text-emerald-600"></i>Matriks Peran Hasil (MPH)
+            </a>
+            <a href="#timeline-pelaksanaan" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-bps-blue">
+                <i class="fa-solid fa-calendar-days w-6 text-amber-500"></i>Timeline
+            </a>
+            <a href="#matriks-raci" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-bps-blue">
+                <i class="fa-solid fa-users-gear w-6 text-purple-600"></i>Matriks RACI
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO BANNER -->
+    <section class="bg-gradient-to-br from-bps-blue via-[#0d3156] to-[#123e6b] text-white py-12 lg:py-16 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                <div class="lg:w-7/12">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-sky-200 text-xs font-medium mb-3">
+                        <i class="fa-solid fa-calendar-range text-amber-400"></i>
+                        <span>Masa Kerja Agen Pojok Statistik: 1 Agustus – 31 Juli</span>
+                    </div>
+                    <h2 class="font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight">
+                        Akselerasi Literasi & Kolaborasi Data Kampus Jawa Barat</span>
+                    </h2>
+                    <p class="mt-3 text-slate-200 text-sm sm:text-base leading-relaxed">
+                        Peta jalan terintegrasi pengelolaan Pojok Statistik guna mewujudkan tata kelola prima dan capaian <strong>Predikat Baik</strong>.
+                    </p>
+                </div>
+
+                <!-- Target Utama Card -->
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 lg:w-80 shrink-0 shadow-xl">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-sky-200">Target Utama</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500 text-white shadow-sm">ZONA HIJAU</span>
+                    </div>
+                    <div class="mt-3 flex items-baseline space-x-2">
+                        <span class="font-display text-3xl sm:text-4xl font-extrabold text-white">2,67 – 4,00</span>
+                        <span class="text-xs text-sky-200">/ Skala 4,00</span>
+                    </div>
+                    <p class="mt-1.5 text-xs text-slate-200">
+                        100% Lokus Pojok Statistik di Jawa Barat berpredikat Baik hingga Sangat Baik pada Monev IPotik.
+                    </p>
+                    <div class="mt-3 pt-3 border-t border-white/15 flex items-center justify-between text-xs text-sky-100">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+
+        <!-- SECTION 1: RINGKASAN KPI / 5 DIMENSI IPOTIK -->
+        <section id="ringkasan-kpi" class="scroll-mt-28">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-bps-blue bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">Indikator Kinerja Utama (IKU)</span>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 mt-2">
+                        5 Dimensi Indeks Pojok Statistik (IPotik) & Bobot Penilaian
+                    </h2>
+                    <p class="text-slate-600 text-sm sm:text-base mt-1">
+                        Distribusi bobot penilaian Monev Pojok Statistik resmi BPS yang menjadi acuan target kinerja wilayah Jawa Barat.
+                    </p>
+                </div>
+                <div class="text-xs text-slate-500 bg-white px-3 py-2 rounded-xl border border-slate-200 shadow-xs">
+                    <i class="fa-solid fa-circle-info text-bps-blue mr-1"></i> Skor Maksimal: <strong class="text-slate-800">4,00</strong> | Zona Hijau: <strong class="text-emerald-600">≥ 2,67</strong>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <!-- Dimensi 1 -->
+                <div onclick="filterByDimensi('Kelembagaan')" class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md hover:border-bps-blue transition-all cursor-pointer group">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="w-10 h-10 rounded-xl bg-blue-50 text-bps-blue flex items-center justify-center font-bold text-sm group-hover:bg-bps-blue group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-landmark"></i>
+                        </span>
+                        <span class="text-xs font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">Bobot 10%</span>
+                    </div>
+                    <h3 class="font-display font-bold text-slate-900 text-base">Kelembagaan</h3>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">MoU/PKS aktif, SK Tim Kerja BPS & PT, serta RPK siklus Agustus–Juli.</p>
+                </div>
+
+                <!-- Dimensi 2 -->
+                <div onclick="filterByDimensi('Aksesibilitas')" class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md hover:border-bps-blue transition-all cursor-pointer group">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-sm group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-wifi"></i>
+                        </span>
+                        <span class="text-xs font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">Bobot 15%</span>
+                    </div>
+                    <h3 class="font-display font-bold text-slate-900 text-base">Aksesibilitas</h3>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Lokasi strategis, ruang PSO >20m², kelengkapan sarpras & internet stabil.</p>
+                </div>
+
+                <!-- Dimensi 3 -->
+                <div onclick="filterByDimensi('Kualitas SDM')" class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md hover:border-bps-blue transition-all cursor-pointer group">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-sm group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </span>
+                        <span class="text-xs font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">Bobot 20%</span>
+                    </div>
+                    <h3 class="font-display font-bold text-slate-900 text-base">Kualitas SDM</h3>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Rekrutmen terbuka Agen Statistik ber-SK, pembinaan berkala & asistensi.</p>
+                </div>
+
+                <!-- Dimensi 4 -->
+                <div onclick="filterByDimensi('Efektivitas Kegiatan')" class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md hover:border-bps-blue transition-all cursor-pointer group">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-sm group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </span>
+                        <span class="text-xs font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">Bobot 40%</span>
+                    </div>
+                    <h3 class="font-display font-bold text-slate-900 text-base">Efektivitas Kegiatan</h3>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Layanan konsultasi >30/bln, threshold rutin ≥75% & konten PSV kreatif.</p>
+                </div>
+
+                <!-- Dimensi 5 -->
+                <div onclick="filterByDimensi('Kolaborasi')" class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md hover:border-bps-blue transition-all cursor-pointer group">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="w-10 h-10 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center font-bold text-sm group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-handshake-angle"></i>
+                        </span>
+                        <span class="text-xs font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">Bobot 15%</span>
+                    </div>
+                    <h3 class="font-display font-bold text-slate-900 text-base">Kolaborasi</h3>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Sinergi KKN/ Pembinaan Desa Cantik, Pembinaan Sektoral Perangkat Daerah & pembiayaan bersama.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: POHON KINERJA SMART & SIKLUS PDCA -->
+        <section id="pohon-kinerja" class="scroll-mt-28">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-bps-light bg-sky-50 px-2.5 py-1 rounded-md border border-sky-200">Strategic Alignment & Methodology</span>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 mt-2">
+                        Pohon Kinerja
+                    </h2>
+                    <p class="text-slate-600 text-sm sm:text-base mt-1">
+                        Peta sasaran strategis pengelolaan Pojok Statistik BPS Provinsi Jawa Barat.
+                    </p>
+                </div>
+
+                <!-- PDCA Filter Pills -->
+                <div class="flex flex-wrap gap-2 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm">
+                    <button onclick="filterByPDCA('ALL', this)" class="pdca-filter-btn active px-3.5 py-2 rounded-xl text-xs font-bold bg-bps-blue text-white cursor-pointer transition-all">Semua Fase</button>
+                    <button onclick="filterByPDCA('Plan', this)" class="pdca-filter-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer transition-all">Plan</button>
+                    <button onclick="filterByPDCA('Do', this)" class="pdca-filter-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer transition-all">Do</button>
+                    <button onclick="filterByPDCA('Check', this)" class="pdca-filter-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer transition-all">Check</button>
+                    <button onclick="filterByPDCA('Act', this)" class="pdca-filter-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer transition-all">Act</button>
+                </div>
+            </div>
+
+            <!-- Pohon Kinerja Grid Container -->
+            <div id="performanceTreeGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Rendered via JavaScript -->
+            </div>
+        </section>
+
+        <!-- SECTION 3: MATRIKS PERAN HASIL (MPH) -->
+        <section id="matriks-peran-hasil" class="scroll-mt-28">
+            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
+                <!-- Header Card & Action Bar -->
+                <div class="p-6 sm:p-8 border-b border-slate-200 bg-slate-50/70">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">Tabel Operasional & Pertanggungjawaban</span>
+                            <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 mt-2">
+                                Matriks Peran Hasil (MPH)
+                            </h2>
+                            <p class="text-slate-600 text-sm sm:text-base mt-1">
+                                Pemetaan peran pengelola, Rencana Hasil Kerja (RHK), serta tautan bukti dukung.
+                            </p>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap items-center gap-2.5">
+                            <button onclick="resetMPHFilters()" class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold transition-all cursor-pointer">
+                                <i class="fa-solid fa-rotate-left mr-1.5 text-slate-500"></i>Reset Filter
+                            </button>
+                            <button onclick="exportMPHToExcel(false)" class="px-3.5 py-2.5 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-bold transition-all flex items-center cursor-pointer">
+                                <i class="fa-solid fa-filter mr-1.5"></i>Export Terfilter
+                            </button>
+                            <button onclick="exportMPHToExcel(true)" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-sm hover:shadow transition-all flex items-center cursor-pointer">
+                                <i class="fa-solid fa-file-excel mr-2 text-base"></i>Export Semua (.xlsx)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- DataTable Controls -->
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
+                        <!-- Search Box -->
+                        <div class="lg:col-span-3 relative">
+                            <label for="mphSearch" class="block text-xs font-semibold text-slate-500 mb-1">Pencarian Cepat</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                                <input type="text" id="mphSearch" placeholder="Cari peran, hasil, IKI, bukti..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-bps-blue">
+                            </div>
+                        </div>
+
+                        <!-- Filter Peran / Jabatan -->
+                        <div class="lg:col-span-3">
+                            <label for="mphRoleFilter" class="block text-xs font-semibold text-slate-500 mb-1">Filter Peran / Jabatan</label>
+                            <select id="mphRoleFilter" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-bps-blue">
+                                <option value="ALL">Semua Peran / Jabatan</option>
+                                <option value="Kepala BPS Provinsi / Kab/Kota">Kepala BPS Provinsi / Kab/Kota</option>
+                                <option value="Tim Pembina BPS Prov. Jabar">Tim Pembina BPS Prov. Jabar</option>
+                                <option value="Koordinator Pojok Statistik (BPS & PT)">Koordinator Pojok Statistik (BPS & PT)</option>
+                                <option value="Supervisor (Statistisi/Prakom & Dosen)">Supervisor (Statistisi/Prakom & Dosen)</option>
+                                <option value="Operator & Agen Statistik (Mahasiswa)">Operator & Agen Statistik (Mahasiswa)</option>
+                            </select>
+                        </div>
+
+                        <!-- Filter Dimensi -->
+                        <div class="lg:col-span-2">
+                            <label for="mphDimFilter" class="block text-xs font-semibold text-slate-500 mb-1">Dimensi IPotik</label>
+                            <select id="mphDimFilter" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-bps-blue">
+                                <option value="ALL">Semua Dimensi</option>
+                                <option value="Kelembagaan">Kelembagaan (10%)</option>
+                                <option value="Aksesibilitas">Aksesibilitas (15%)</option>
+                                <option value="Kualitas SDM">Kualitas SDM (20%)</option>
+                                <option value="Efektivitas Kegiatan">Efektivitas Kegiatan (40%)</option>
+                                <option value="Kolaborasi">Kolaborasi (15%)</option>
+                            </select>
+                        </div>
+
+                        <!-- Filter Fase PDCA -->
+                        <div class="lg:col-span-2">
+                            <label for="mphPdcaFilter" class="block text-xs font-semibold text-slate-500 mb-1">Fase PDCA</label>
+                            <select id="mphPdcaFilter" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-bps-blue">
+                                <option value="ALL">Semua Fase</option>
+                                <option value="Plan">Plan (Perencanaan)</option>
+                                <option value="Do">Do (Pelaksanaan)</option>
+                                <option value="Check">Check (Evaluasi)</option>
+                                <option value="Act">Act (Tindak Lanjut)</option>
+                            </select>
+                        </div>
+
+                        <!-- Entries Per Page (Default 5) -->
+                        <div class="lg:col-span-2">
+                            <label for="mphPageSize" class="block text-xs font-semibold text-slate-500 mb-1">Tampilkan Baris</label>
+                            <select id="mphPageSize" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-bps-blue">
+                                <option value="5" selected>5 baris</option>
+                                <option value="10">10 baris</option>
+                                <option value="25">25 baris</option>
+                                <option value="100">Semua data</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Responsive Table Wrapper -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100/90 border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-600 select-none">
+                                <th onclick="sortMPH('no')" class="py-3.5 px-4 w-14 text-center cursor-pointer hover:bg-slate-200/70 transition-colors">
+                                    No <i id="sort-icon-no" class="fa-solid fa-sort ml-1 text-slate-400"></i>
+                                </th>
+                                <th onclick="sortMPH('peran')" class="py-3.5 px-4 min-w-[200px] cursor-pointer hover:bg-slate-200/70 transition-colors">
+                                    Peran / Jabatan <i id="sort-icon-peran" class="fa-solid fa-sort ml-1 text-slate-400"></i>
+                                </th>
+                                <th onclick="sortMPH('dimensi')" class="py-3.5 px-4 min-w-[150px] cursor-pointer hover:bg-slate-200/70 transition-colors">
+                                    Dimensi & PDCA <i id="sort-icon-dimensi" class="fa-solid fa-sort ml-1 text-slate-400"></i>
+                                </th>
+                                <th onclick="sortMPH('hasilKerja')" class="py-3.5 px-4 min-w-[250px] cursor-pointer hover:bg-slate-200/70 transition-colors">
+                                    Rencana Hasil Kerja (RHK) <i id="sort-icon-hasilKerja" class="fa-solid fa-sort ml-1 text-slate-400"></i>
+                                </th>
+                                <th onclick="sortMPH('indikator')" class="py-3.5 px-4 min-w-[250px] cursor-pointer hover:bg-slate-200/70 transition-colors">
+                                    Indikator Kinerja Individu (SMART) <i id="sort-icon-indikator" class="fa-solid fa-sort ml-1 text-slate-400"></i>
+                                </th>
+                                <th onclick="sortMPH('target')" class="py-3.5 px-4 min-w-[200px] cursor-pointer hover:bg-slate-200/70 transition-colors">
+                                    Target (Agu–Jul) & Bukti PSV <i id="sort-icon-target" class="fa-solid fa-sort ml-1 text-slate-400"></i>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="mphTableBody" class="divide-y divide-slate-200">
+                            <!-- Rendered via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- DataTable Footer Pagination -->
+                <div class="p-4 sm:p-5 bg-slate-50/70 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div id="mphPaginationInfo" class="text-xs sm:text-sm text-slate-600 font-medium">
+                        Menampilkan 0 dari 0 data
+                    </div>
+                    <div id="mphPaginationControls" class="flex items-center space-x-1.5">
+                        <!-- Rendered via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: TIMELINE PELAKSANAAN SIKLUS AGUSTUS - JULI -->
+        <section id="timeline-pelaksanaan" class="scroll-mt-28">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200">Periode Kerja: 1 Agustus – 31 Juli</span>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 mt-2">
+                        Timeline Pelaksanaan & Evaluasi IPotik
+                    </h2>
+                </div>
+
+                <!-- Quarter Quick Filter -->
+                <div class="flex flex-wrap gap-1.5 bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm">
+                    <button onclick="filterTimeline('ALL', this)" class="tl-filter-btn active px-3 py-1.5 rounded-lg text-xs font-bold bg-bps-blue text-white cursor-pointer transition-all">Semua (Agu–Jul)</button>
+                    <button onclick="filterTimeline('TW1', this)" class="tl-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer transition-all">TW I (Agu–Okt)</button>
+                    <button onclick="filterTimeline('TW2', this)" class="tl-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer transition-all">TW II (Nov–Jan)</button>
+                    <button onclick="filterTimeline('TW3', this)" class="tl-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer transition-all">TW III (Feb–Apr)</button>
+                    <button onclick="filterTimeline('TW4', this)" class="tl-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer transition-all">TW IV (Mei–Jul)</button>
+                </div>
+            </div>
+
+            <!-- Jadwal Evaluasi IPotik Highlight Banner -->
+            <div class="bg-gradient-to-r from-amber-50 via-orange-50/70 to-sky-50 border border-amber-200/80 rounded-2xl p-4 sm:p-5 mb-6 shadow-sm">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                            <i class="fa-solid fa-clipboard-check text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-display font-bold text-slate-900 text-sm sm:text-base">
+                                Jadwal Threshold Layanan Rutin (1 Agustus – 31 Juli)
+                            </h3>
+                            <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+                                Batas minimal <strong>Threshold 75%</strong> dalam 1 tahun siklus: <strong>Harian ≥ 274/365</strong>, <strong>Mingguan ≥ 39/52</strong>, <strong>Bulanan ≥ 9/12</strong>, <strong>Triwulanan ≥ 3/4</strong>, dan <strong>Semesteran = 2/2</strong>.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 shrink-0 text-xs">
+                        <div class="bg-white px-3 py-2 rounded-xl border border-amber-200 shadow-xs">
+                            <span class="block font-bold text-amber-700">1 – 10 Agustus</span>
+                            <span class="text-slate-600">Self-Assessment & Update PSV</span>
+                        </div>
+                        <div class="bg-white px-3 py-2 rounded-xl border border-sky-200 shadow-xs">
+                            <span class="block font-bold text-sky-700">11 – 22 Agustus</span>
+                            <span class="text-slate-600">Desk Evaluation (DE)</span>
+                        </div>
+                        <div class="bg-white px-3 py-2 rounded-xl border border-purple-200 shadow-xs">
+                            <span class="block font-bold text-purple-700">25 Agu – 4 Sep</span>
+                            <span class="text-slate-600">Field Evaluation (FE Top 10)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Cards Grid (4 Triwulan Siklus Agu–Jul) -->
+            <div id="timelineContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                <!-- Rendered via JavaScript -->
+            </div>
+
+            <!-- MATRIKS GANTT CHART 12 BULAN (AGU - JUL) -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70">
+                    <div>
+                        <h3 class="font-display font-bold text-slate-900 text-base sm:text-lg">
+                            <i class="fa-solid fa-bars-staggered text-bps-blue mr-2"></i>Matriks Jadwal Kerja 12 Bulan (Agustus – Juli)
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Peta distribusi aktivitas operasional & evaluasi sepanjang satu siklus penuh Pojok Statistik.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label for="ganttPdcaFilter" class="text-xs font-semibold text-slate-500">Filter Fase:</label>
+                        <select id="ganttPdcaFilter" onchange="renderGanttMatrix()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-bps-blue">
+                            <option value="ALL">Semua Fase PDCA</option>
+                            <option value="Plan">Plan (Perencanaan)</option>
+                            <option value="Do">Do (Pelaksanaan)</option>
+                            <option value="Check">Check (Monitoring & Evaluasi)</option>
+                            <option value="Act">Act (Tindak Lanjut)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 border-b border-slate-200 text-[11px] font-bold uppercase text-slate-600">
+                                <th class="py-3 px-4 min-w-[240px] sticky left-0 bg-slate-100 z-10">Program / Aktivitas Utama</th>
+                                <th class="py-3 px-2 text-center">Fase</th>
+                                <th class="py-3 px-2 text-center bg-amber-100/70 text-amber-900" title="Bulan 1 - Evaluasi IPotik & Awal Siklus">Agu</th>
+                                <th class="py-3 px-2 text-center bg-amber-50 text-amber-900" title="Bulan 2 - Field Evaluation & Pembekalan">Sep</th>
+                                <th class="py-3 px-2 text-center">Okt</th>
+                                <th class="py-3 px-2 text-center">Nov</th>
+                                <th class="py-3 px-2 text-center">Des</th>
+                                <th class="py-3 px-2 text-center">Jan</th>
+                                <th class="py-3 px-2 text-center">Feb</th>
+                                <th class="py-3 px-2 text-center">Mar</th>
+                                <th class="py-3 px-2 text-center">Apr</th>
+                                <th class="py-3 px-2 text-center">Mei</th>
+                                <th class="py-3 px-2 text-center">Jun</th>
+                                <th class="py-3 px-2 text-center bg-emerald-100/70 text-emerald-900" title="Bulan 12 - Tutup Siklus Tahunan">Jul</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ganttTableBody" class="divide-y divide-slate-200 text-xs">
+                            <!-- Rendered via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: MATRIKS RACI -->
+        <section id="matriks-raci" class="scroll-mt-28">
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-6 sm:p-8 border-b border-slate-200 bg-slate-50/70">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-purple-800 bg-purple-50 px-2.5 py-1 rounded-md border border-purple-200">Governance & Accountability</span>
+                            <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 mt-2">
+                                Matriks RACI Pengelolaan Pojok Statistik
+                            </h2>
+                            <p class="text-slate-600 text-sm sm:text-base mt-1">
+                                Pembagian peran: <strong class="text-slate-800">R</strong>esponsible, <strong class="text-slate-800">A</strong>ccountable, <strong class="text-slate-800">C</strong>onsulted, <strong class="text-slate-800">I</strong>nformed.
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <span class="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">R = Pelaksana</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-rose-100 text-rose-800 font-bold border border-rose-200">A = Penanggung Jawab</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-amber-100 text-amber-800 font-bold border border-amber-200">C = Konsultasi</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-sky-100 text-sky-800 font-bold border border-sky-200">I = Diinformasikan</span>
+                        </div>
+                    </div>
+
+                    <!-- RACI Filters -->
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label for="raciSearch" class="block text-xs font-semibold text-slate-500 mb-1">Cari Aktivitas</label>
+                            <input type="text" id="raciSearch" oninput="renderRACITable()" placeholder="Cari kegiatan..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-bps-blue">
+                        </div>
+                        <div>
+                            <label for="raciDimFilter" class="block text-xs font-semibold text-slate-500 mb-1">Filter Dimensi</label>
+                            <select id="raciDimFilter" onchange="renderRACITable()" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-bps-blue">
+                                <option value="ALL">Semua Dimensi</option>
+                                <option value="Kelembagaan">Kelembagaan</option>
+                                <option value="Aksesibilitas">Aksesibilitas</option>
+                                <option value="Kualitas SDM">Kualitas SDM</option>
+                                <option value="Efektivitas Kegiatan">Efektivitas Kegiatan</option>
+                                <option value="Kolaborasi">Kolaborasi</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="raciCodeFilter" class="block text-xs font-semibold text-slate-500 mb-1">Filter Peran RACI</label>
+                            <select id="raciCodeFilter" onchange="renderRACITable()" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-bps-blue">
+                                <option value="ALL">Semua Kode RACI</option>
+                                <option value="R">R (Responsible)</option>
+                                <option value="A">A (Accountable)</option>
+                                <option value="C">C (Consulted)</option>
+                                <option value="I">I (Informed)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100/90 border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-600">
+                                <th class="py-3.5 px-4 w-14 text-center">No</th>
+                                <th class="py-3.5 px-4 min-w-[280px]">Aktivitas / Tahapan Pengelolaan</th>
+                                <th class="py-3.5 px-4 text-center min-w-[130px]">Dimensi</th>
+                                <th class="py-3.5 px-4 text-center min-w-[110px]" title="Tim Pembina BPS Prov. Jabar">Pembina BPS</th>
+                                <th class="py-3.5 px-4 text-center min-w-[110px]" title="BPS Kabupaten / Kota">BPS Prov/ Kab/Kota</th>
+                                <th class="py-3.5 px-4 text-center min-w-[110px]" title="Koordinator Perguruan Tinggi">Koord. PT</th>
+                                <th class="py-3.5 px-4 text-center min-w-[110px]" title="Supervisor (Fungsional & Dosen)">Supervisor</th>
+                                <th class="py-3.5 px-4 text-center min-w-[110px]" title="Agen Statistik Mahasiswa">Agen Statistik</th>
+                            </tr>
+                        </thead>
+                        <tbody id="raciTableBody" class="divide-y divide-slate-200">
+                            <!-- Rendered via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-bps-blue text-white mt-20 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-white text-bps-blue flex items-center justify-center font-display font-bold text-lg">
+                        BPS
+                    </div>
+                    <div>
+                        <h3 class="font-display font-bold text-base">Tim Pembina Pojok Statistik</h3>
+                        <p class="text-xs text-slate-300">Pojok Statistik - Tempat Asyik Belajar Statistik</p>
+                    </div>
+                </div>
+                <div class="text-xs text-slate-300 text-center md:text-right">
+                    <p>© 2026 Badan Pusat Statistik Provinsi Jawa Barat.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- APPLICATION DATA & INTERACTIVE LOGIC SCRIPT -->
+    <script>
+        // ==========================================
+        // 1. DATASET POHON KINERJA (SMART + PDCA - SIKLUS AGUSTUS - JULI)
+        // ==========================================
+        const performanceTreeData = [
+            {
+                id: 'SS-1',
+                sasaran: 'Penguatan Tata Kelola & Legalitas Kelembagaan',
+                dimensi: 'Kelembagaan',
+                bobot: '10%',
+                pdca: 'Plan',
+                iku: 'Persentase Pojok Statistik di Jawa Barat yang memiliki PKS aktif, SK Tim Kerja (BPS & PT), serta Rencana Program Kerja (RPK) siklus Agustus–Juli yang disepakati bersama.',
+                target: '100% Lokus Lengkap (Skor 4)',
+                smart: {
+                    S: 'Penetapan MoU/PKS aktif, SK Tim Kerja BPS-PT, dan RPK tahunan terstruktur untuk seluruh Pojok Statistik di Jawa Barat.',
+                    M: 'Diukur dari kelengkapan 100% dokumen dasar hukum (4 dokumen) dan persentase realisasi kegiatan terhadap RPK (>50% s.d. 100%).',
+                    A: 'Didukung template standar PKS/RPK dari Tim Pembina BPS Jabar serta pendampingan langsung Tim Diseminasi BPS Kab/Kota.',
+                    R: 'Menjamin kepastian hukum, keberlanjutan anggaran, serta konversi SKS MBKM bagi mahasiswa Agen Statistik.',
+                    T: 'Ditetapkan pada awal siklus (Agustus – September) dan diunggah di PSV sebelum penutupan siklus 31 Juli.'
+                },
+                buktiDukung: 'Dokumen MoU/PKS aktif, SK Tim BPS & SK Koordinator PT, Dokumen RPK siklus Agustus–Juli tertandatangani.'
+            },
+            {
+                id: 'SS-2',
+                sasaran: 'Optimalisasi Aksesibilitas Fisik (PSO) & Digital (PSV)',
+                dimensi: 'Aksesibilitas',
+                bobot: '15%',
+                pdca: 'Plan',
+                iku: 'Persentase Pojok Statistik yang memenuhi 100% standar sarana prasarana area konsultasi, area literasi, konektivitas internet stabil, dan media promosi.',
+                target: '100% Standar Sarpras (Skor ≥ 3,5)',
+                smart: {
+                    S: 'Penyediaan ruang strategis di area publik kampus dilengkapi meja/kursi konsultasi, komputer buku tamu PST, area baca, WiFi/LAN, dan TV/banner.',
+                    M: 'Tersedianya 4 komponen area konsultasi, 4 komponen area literasi, jaringan internet aktif, dan ≥3 media promosi.',
+                    A: 'Pemanfaatan fasilitas bersama antara Perguruan Tinggi (ruangan & internet) dan BPS (publikasi & perangkat pendukung).',
+                    R: 'Meningkatkan kenyamanan mahasiswa/dosen saat mengakses layanan data maupun membaca publikasi statistik.',
+                    T: 'Audit kelayakan sarpras dilakukan pada Triwulan I Siklus (Agustus–Oktober) dan pemeliharaan berkala setiap bulan hingga Juli.'
+                },
+                buktiDukung: 'Foto/video kondisi ruang PSO terkini, bukti akses e-Visitor terintegrasi PST, dan tautan aktif PSV.'
+            },
+            {
+                id: 'SS-3',
+                sasaran: 'Peningkatan Kapasitas & Profesionalisme Agen Statistik',
+                dimensi: 'Kualitas SDM',
+                bobot: '20%',
+                pdca: 'Do',
+                iku: 'Persentase Agen Statistik yang direkrut secara terbuka, ditetapkan melalui SK/ST Perguruan Tinggi, serta mengikuti pembinaan teknis terstruktur dari BPS.',
+                target: '100% Terbina & Ber-SK (Skor 4)',
+                smart: {
+                    S: 'Rekrutmen terbuka Agen Statistik kampus disertai pembinaan 4 modul wajib (Tata Laksana, PSV, Indikator Dasar, Layanan Statistik).',
+                    M: 'Minimal 100% jadwal pembinaan Agen Statistik dan supervisi BPS Pembina terlaksana terjadwal (harian/mingguan/bulanan).',
+                    A: 'Pelatihan dapat dilaksanakan secara hybrid oleh Statistisi/Pranata Komputer BPS Jabar dan BPS Kab/Kota.',
+                    R: 'Agen Statistik yang kompeten menjadi ujung tombak layanan konsultasi dan diseminasi informasi di kampus.',
+                    T: 'Rekrutmen & pembekalan pada Agustus–September (Semester Ganjil) dan penyegaran Februari–Maret (Semester Genap).'
+                },
+                buktiDukung: 'Poster/pengumuman seleksi terbuka, SK/ST Agen Statistik, jadwal piket, daftar hadir, dan notulensi pembinaan.'
+            },
+            {
+                id: 'SS-4',
+                sasaran: 'Akselerasi Layanan Konsultasi & Literasi Statistik Kampus',
+                dimensi: 'Efektivitas Kegiatan',
+                bobot: '40%',
+                pdca: 'Do',
+                iku: 'Rata-rata jumlah transaksi konsultasi statistik tatap muka/virtual per bulan (1 Agu – 31 Jul) serta pemenuhan threshold ≥75% jadwal edukasi & layanan rutin.',
+                target: '> 30 Kunjungan/Bln & Threshold ≥ 75%',
+                smart: {
+                    S: 'Peningkatan layanan konsultasi data mikro/publikasi/skripsi serta penyelenggaraan edukasi statistik (Promosi Data, Pemanfaatan PT, Pembangunan Sektoral).',
+                    M: 'Minimal 31–50 kunjungan/bulan selama 12 bulan (Agu–Jul), jadwal layanan harian (>1 hari/pekan), serta pemenuhan threshold ≥75% RPK.',
+                    A: 'Integrasi jadwal piket Agen Statistik dengan pendampingan petugas PST BPS dan lampiran kalender akademik resmi saat jeda kuliah.',
+                    R: 'Bobot terbesar (40%) dalam evaluasi IPotik yang berdampak langsung pada kualitas riset dan skripsi mahasiswa.',
+                    T: 'Terpantau bulanan melalui statistik buku tamu elektronik PST/PSV mulai 1 Agustus hingga 31 Juli.'
+                },
+                buktiDukung: 'Rekapitulasi e-Visitor PST/PSV (1 Agu–31 Jul), jadwal piket terbuka, kalender akademik PT, & dokumentasi edukasi.'
+            },
+            {
+                id: 'SS-5',
+                sasaran: 'Penguatan Diseminasi Konten Kreatif & Riset Bersama',
+                dimensi: 'Efektivitas Kegiatan',
+                bobot: '40%',
+                pdca: 'Check',
+                iku: 'Persentase infografis dan videografis statistik di PSV yang diproduksi oleh Agen Statistik serta terlaksananya kegiatan tambahan (Joint Research/Magang/Publikasi).',
+                target: '> 75% Konten Agen & ≥ 2 Kegiatan Lain',
+                smart: {
+                    S: 'Produksi konten infografis/videografis indikator strategis Jabar oleh Agen Statistik serta kolaborasi Joint Research, MSIB/Magang, atau penyusunan publikasi.',
+                    M: 'Lebih dari 75% infografis & video di PSV disusun Agen Statistik memenuhi threshold tayang 75%, serta ≥2 jenis kegiatan tambahan.',
+                    A: 'BPS menyediakan rilis BRS/data terbaru sebagai bahan konten, sementara mahasiswa mengolah visualisasi kreatifnya.',
+                    R: 'Mendekatkan angka inflasi, pertumbuhan ekonomi, dan IPM kepada generasi muda dengan bahasa yang mudah dipahami.',
+                    T: 'Unggah konten terjadwal sepanjang Agustus–Juli di PSV & Medsos, diverifikasi saat Self-Assessment (1–10 Agustus).'
+                },
+                buktiDukung: 'Tautan konten infografis & videografis di portal PSV, analitik media sosial, dan dokumen naskah Joint Research/Magang.'
+            },
+            {
+                id: 'SS-6',
+                sasaran: 'Sinergi Lintas Program (Desa Cantik & Pembinaan Sektoral)',
+                dimensi: 'Kolaborasi',
+                bobot: '15%',
+                pdca: 'Act',
+                iku: 'Jumlah kegiatan kolaborasi Pojok Statistik yang melibatkan Agen Statistik dalam program Pembinaan Desa Cantik (KKN Tematik) dan Pembinaan Statistik Sektoral (EPSS).',
+                target: 'Kolaborasi Pembiayaan & Desa/Perangkat Daerah Aktif',
+                smart: {
+                    S: 'Pelibatan Agen Statistik dan dosen pendamping dalam pendampingan profil Desa Cantik (KKN) serta asistensi statistik sektoral Perangkat Daerah.',
+                    M: 'Terlaksananya kolaborasi pembiayaan (inisiasi, peresmian, operasional) serta keterlibatan Agen Statistik pada Desa Cantik dan Sektoral.',
+                    A: 'Menyelaraskan jadwal KKN mahasiswa (periode Januari–Februari / Juli–Agustus) dengan program kerja BPS Kabupaten/Kota.',
+                    R: 'Memperluas dampak Pojok Statistik dari lingkungan internal kampus menuju pembangunan data pemerintah daerah dan desa.',
+                    T: 'Implementasi sepanjang siklus Agustus–Juli dan dievaluasi tindak lanjutnya pada rapat manajemen Juli–Agustus.'
+                },
+                buktiDukung: 'SK/Surat Tugas KKN/ Pembinaan Desa Cantik, dokumentasi Agen Statistik mendampingi Perangkat Daerah, dan bukti sharing pembiayaan.'
+            }
+        ];
+
+        // ==========================================
+        // 2. DATASET MATRIKS PERAN HASIL (MPH - SIKLUS AGUSTUS - JULI)
+        // ==========================================
+        const mphData = [
+            {
+                no: 1,
+                peran: 'Kepala BPS Provinsi / Kab/Kota',
+                unit: 'Pimpinan Satker (BPS Jabar & Kab/Kota)',
+                dimensi: 'Kelembagaan',
+                pdca: 'Plan',
+                hasilKerja: 'Terjalinnya komitmen strategis dan payung hukum kerja sama (MoU/PKS) penyelenggaraan Pojok Statistik dengan Pimpinan Perguruan Tinggi.',
+                indikator: 'Persentase Perguruan Tinggi mitra yang memiliki MoU, PKS aktif, dan SK Tim Pengelola Pojok Statistik yang ditandatangani.',
+                target: '100% Lokus Ber-PKS & SK Aktif (Agustus–September)',
+                buktiDukung: 'Naskah MoU/PKS & SK Tim Kerja'
+            },
+            {
+                no: 2,
+                peran: 'Kepala BPS Provinsi / Kab/Kota',
+                unit: 'Pimpinan Satker (BPS Jabar & Kab/Kota)',
+                dimensi: 'Kolaborasi',
+                pdca: 'Act',
+                hasilKerja: 'Terwujudnya dukungan kebijakan, kolaborasi pembiayaan (inisiasi, peresmian, operasional), serta integrasi dengan Desa Cantik & Pembinaan Sektoral.',
+                indikator: 'Jumlah tahap kolaborasi pembiayaan dan kegiatan sinergi lintas program BPS-Pemda-Kampus yang disetujui.',
+                target: 'Kolaborasi Pembiayaan 3 Tahap & Sinergi Perangkat Daerah/Desa',
+                buktiDukung: 'Dokumen Anggaran/Sharing & Laporan Sinergi'
+            },
+            {
+                no: 3,
+                peran: 'Tim Pembina BPS Prov. Jabar',
+                unit: 'Tim Diseminasi & Humas BPS Provinsi Jawa Barat',
+                dimensi: 'Kualitas SDM',
+                pdca: 'Check',
+                hasilKerja: 'Terselenggaranya koordinasi regional, pendampingan Self-Assessment (1–10 Agu), Desk Evaluation (11–22 Agu), dan pemantauan IPotik se-Jawa Barat.',
+                indikator: 'Persentase Pojok Statistik di Jawa Barat yang mengisi Self-Assessment tepat waktu dan mencapai skor IPotik Zona Hijau (2,67 – 4,00).',
+                target: '100% Lokus Jabar Zona Hijau (Evaluasi Agu–Sep)',
+                buktiDukung: 'Dashboard Monitoring Jabar & Berita Acara Monev'
+            },
+            {
+                no: 4,
+                peran: 'Tim Pembina BPS Prov. Jabar',
+                unit: 'Tim Diseminasi & Humas BPS Provinsi Jawa Barat',
+                dimensi: 'Efektivitas Kegiatan',
+                pdca: 'Do',
+                hasilKerja: 'Terlaksananya program peningkatan kapasitas regional (Bootcamp/Workshop Agen Statistik Jabar) dan diseminasi rilis data strategis serentak.',
+                indikator: 'Frekuensi kegiatan pembinaan/kompetisi literasi statistik tingkat Provinsi Jawa Barat yang diikuti seluruh PT mitra dalam siklus Agu–Jul.',
+                target: 'Min. 2 Kegiatan Regional per Siklus (Okt & Apr)',
+                buktiDukung: 'Laporan Kegiatan, Daftar Hadir & Publikasi Media'
+            },
+            {
+                no: 5,
+                peran: 'Koordinator Pojok Statistik (BPS & PT)',
+                unit: 'Ketua Tim Diseminasi Kab/Kota & Ketua Prodi/Dosen PT',
+                dimensi: 'Kelembagaan',
+                pdca: 'Plan',
+                hasilKerja: 'Tersusunnya Rencana Program Kerja (RPK) tahunan siklus Agustus–Juli dan jadwal operasional piket layanan yang selaras dengan kalender akademik.',
+                indikator: 'Persentase kesesuaian realisasi kegiatan Pojok Statistik terhadap target periode pada RPK (threshold minimal 75%).',
+                target: '100% RPK Tersusun (Agu) & Realisasi > 75% (Jul)',
+                buktiDukung: 'Dokumen RPK Tertandatangan & Kalender Akademik PT'
+            },
+            {
+                no: 6,
+                peran: 'Koordinator Pojok Statistik (BPS & PT)',
+                unit: 'Ketua Tim Diseminasi Kab/Kota & Ketua Prodi/Dosen PT',
+                dimensi: 'Aksesibilitas',
+                pdca: 'Plan',
+                hasilKerja: 'Tersedianya ruang Pojok Statistik Offline (PSO) yang representatif di area publik kampus beserta kelengkapan sarpras konsultasi dan literasi.',
+                indikator: 'Jumlah komponen sarana prasarana area konsultasi (4 item), area literasi (4 item), jaringan internet, dan media promosi (≥3 jenis).',
+                target: '100% Komponen Sarpras Terpenuhi (Skor 4)',
+                buktiDukung: 'Checklist Sarpras & Dokumentasi Foto/Video Ruang'
+            },
+            {
+                no: 7,
+                peran: 'Koordinator Pojok Statistik (BPS & PT)',
+                unit: 'Ketua Tim Diseminasi Kab/Kota & Ketua Prodi/Dosen PT',
+                dimensi: 'Kolaborasi',
+                pdca: 'Do',
+                hasilKerja: 'Terlaksananya edukasi statistik (3 tema lengkap), penelitian bersama (Joint Research), MSIB/Magang, dan pengakuan SKS bagi Agen Statistik.',
+                indikator: 'Jumlah tema edukasi statistik (Promosi Data, Pemanfaatan PT, Pembangunan Sektoral) dan jenis kegiatan tambahan yang terlaksana.',
+                target: '3 Tema Edukasi Lengkap & ≥ 2 Kegiatan Tambahan',
+                buktiDukung: 'Sertifikat/SK Magang, Naskah Riset & Laporan Edukasi'
+            },
+            {
+                no: 8,
+                peran: 'Supervisor (Statistisi/Prakom & Dosen)',
+                unit: 'Pejabat Fungsional BPS & Dosen Pembimbing',
+                dimensi: 'Kualitas SDM',
+                pdca: 'Do',
+                hasilKerja: 'Terlaksananya seleksi terbuka Agen Statistik (Ganjil/Genap) serta pembinaan teknis rutin terkait metodologi statistik, data mikro, dan komunikasi publik.',
+                indikator: 'Persentase keterlaksanaan jadwal pembinaan rutin Agen Statistik dan tingkat penguasaan 4 modul pembinaan.',
+                target: '100% Jadwal Pembinaan Terlaksana (Sep–Jul)',
+                buktiDukung: 'Pengumuman Seleksi, SK Agen, Modul & Daftar Hadir'
+            },
+            {
+                no: 9,
+                peran: 'Supervisor (Statistisi/Prakom & Dosen)',
+                unit: 'Pejabat Fungsional BPS & Dosen Pembimbing',
+                dimensi: 'Efektivitas Kegiatan',
+                pdca: 'Check',
+                hasilKerja: 'Terjaminnya kualitas layanan konsultasi statistik lanjutan (data mikro/pengolahan skripsi) serta validasi akurasi data pada konten publikasi PSV.',
+                indikator: 'Persentase konsultasi lanjutan yang terselesaikan tepat waktu dan persentase konten infografis/video PSV yang lolos kurasi data.',
+                target: '100% Konten Terkurasi & SLA Konsultasi < 2 Hari',
+                buktiDukung: 'Log Konsultasi Lanjutan & Lembar Kurasi Konten'
+            },
+            {
+                no: 10,
+                peran: 'Supervisor (Statistisi/Prakom & Dosen)',
+                unit: 'Pejabat Fungsional BPS & Dosen Pembimbing',
+                dimensi: 'Kelembagaan',
+                pdca: 'Check',
+                hasilKerja: 'Terlaksananya pengawasan/asistensi terjadwal ke Pojok Statistik serta kelengkapan unggah bukti dukung pada 30 pertanyaan Self-Assessment PSV.',
+                indikator: 'Frekuensi kunjungan supervisi/asistensi ke Pojok Statistik dan kelengkapan tautan bukti dukung sebelum 10 Agustus.',
+                target: 'Supervisi Mingguan/Harian & 100% Bukti Dukung PSV',
+                buktiDukung: 'Catatan Kunjungan Supervisi & Tautan Drive Monev'
+            },
+            {
+                no: 11,
+                peran: 'Operator & Agen Statistik (Mahasiswa)',
+                unit: 'Mahasiswa Terpilih Ber-SK/ST Perguruan Tinggi',
+                dimensi: 'Efektivitas Kegiatan',
+                pdca: 'Do',
+                hasilKerja: 'Terselenggaranya layanan front-office konsultasi statistik tatap muka dan virtual (PSV) terjadwal terbuka serta pencatatan buku tamu elektronik PST.',
+                indikator: 'Rata-rata jumlah transaksi/kunjungan konsultasi tatap muka per bulan (1 Agu – 31 Jul) dan frekuensi layanan harian (>1 hari/pekan).',
+                target: '> 30 Kunjungan/Bln (12 Bln) & Layanan Harian Terjadwal',
+                buktiDukung: 'Statistik Buku Tamu Elektronik PST/PSV (Agu–Jul)'
+            },
+            {
+                no: 12,
+                peran: 'Operator & Agen Statistik (Mahasiswa)',
+                unit: 'Mahasiswa Terpilih Ber-SK/ST Perguruan Tinggi',
+                dimensi: 'Efektivitas Kegiatan',
+                pdca: 'Do',
+                hasilKerja: 'Terproduksinya konten infografis dan videografis indikator statistik terkini di PSV serta pelaksanaan promosi pada 4 cakupan media/event.',
+                indikator: 'Persentase infografis & video yang disusun Agen Statistik (>75%) serta pemenuhan threshold tayang 75% sesuai target RPK.',
+                target: '> 75% Konten oleh Agen & Threshold Tayang ≥ 75%',
+                buktiDukung: 'Link Publikasi Infografis/Video di PSV & Medsos'
+            },
+            {
+                no: 13,
+                peran: 'Operator & Agen Statistik (Mahasiswa)',
+                unit: 'Mahasiswa Terpilih Ber-SK/ST Perguruan Tinggi',
+                dimensi: 'Kolaborasi',
+                pdca: 'Do',
+                hasilKerja: 'Terlaksananya pendampingan literasi data masyarakat dalam kegiatan KKN/ Pembinaan Desa Cantik dan asistensi metadata pada Pembinaan Statistik Sektoral Perangkat Daerah.',
+                indikator: 'Keterlibatan aktif Agen Statistik dalam kegiatan KKN Desa Cantik dan percepatan capaian Pembinaan Statistik Sektoral.',
+                target: 'Skor 4 Kolaborasi Desa Cantik (KKN) & Sektoral Perangkat Daerah',
+                buktiDukung: 'Surat Tugas Lapangan, Foto Kegiatan & Profil Desa'
+            },
+            {
+                no: 14,
+                peran: 'Tim Pembina BPS Prov. Jabar',
+                unit: 'Tim Diseminasi & Humas BPS Provinsi Jawa Barat',
+                dimensi: 'Kelembagaan',
+                pdca: 'Act',
+                hasilKerja: 'Tersusunnya rekomendasi perbaikan berkelanjutan (Continuous Improvement) pasca-Monev IPotik dan pemberian apresiasi Pojok Statistik terbaik Jabar.',
+                indikator: 'Tersedianya dokumen evaluasi pasca-Field Evaluation dan rencana tindak lanjut peningkatan skor pada dimensi berkinerja rendah.',
+                target: '1 Dokumen Evaluasi & Awarding (September–Oktober)',
+                buktiDukung: 'Laporan Evaluasi Siklus & Piagam Penghargaan'
+            }
+        ];
+
+        // ==========================================
+        // 3. DATASET TIMELINE SIKLUS AGUSTUS - JULI (4 TRIWULAN SIKLUS)
+        // ==========================================
+        const timelineData = [
+            {
+                quarter: 'TW1',
+                label: 'Triwulan I Siklus',
+                periode: 'Agustus – Oktober (Tahun Berjalan)',
+                fase: 'PLAN & EVALUASI IPOTIK + AWAL DO',
+                headerBg: 'from-sky-600 to-bps-blue',
+                icon: 'fa-compass-drafting',
+                items: [
+                    { bulan: 'Agu', teks: 'Pelaksanaan Self-Assessment & update konten PSV (1–10 Agu), Desk Evaluation (11–22 Agu), & awal Field Evaluation (25 Agu–4 Sep) periode lalu.' },
+                    { bulan: 'Agu', teks: 'Penyusunan/pembaruan MoU, PKS, SK Tim Kerja BPS-PT, dan Rencana Program Kerja (RPK) siklus baru (1 Agu – 31 Jul).' },
+                    { bulan: 'Sep', teks: 'Rekrutmen terbuka Agen Statistik Semester Ganjil, penerbitan SK/ST PT, serta pembekalan 4 Modul Wajib.' },
+                    { bulan: 'Okt', teks: 'Audit & penataan sarpras ruang PSO, pembukaan jadwal layanan konsultasi harian terbuka, & tayang rutin konten PSV.' }
+                ]
+            },
+            {
+                quarter: 'TW2',
+                label: 'Triwulan II Siklus',
+                periode: 'November – Januari',
+                fase: 'DO (AKSELERASI LAYANAN & PROMOSI)',
+                headerBg: 'from-emerald-600 to-teal-600',
+                icon: 'fa-rocket',
+                items: [
+                    { bulan: 'Nov', teks: 'Akselerasi layanan konsultasi statistik tatap muka/virtual & pencatatan buku tamu elektronik terintegrasi PST.' },
+                    { bulan: 'Nov', teks: 'Penyelenggaraan Edukasi Statistik (BPS Goes to Campus / Pemanfaatan Data bagi PT) & promosi lintas fakultas.' },
+                    { bulan: 'Des', teks: 'Monitoring kepatuhan threshold 75% layanan rutin (Harian/Mingguan/Bulanan) serta pengarsipan kalender akademik jeda semester.' },
+                    { bulan: 'Jan', teks: 'Diseminasi rilis indikator strategis akhir tahun (Inflasi, Kemiskinan, Pertumbuhan Ekonomi) oleh Agen Statistik di PSV & IG.' }
+                ]
+            },
+            {
+                quarter: 'TW3',
+                label: 'Triwulan III Siklus',
+                periode: 'Februari – April',
+                fase: 'DO & CHECK (EVALUASI TENGAH SIKLUS)',
+                headerBg: 'from-amber-500 to-orange-600',
+                icon: 'fa-magnifying-glass-chart',
+                items: [
+                    { bulan: 'Feb', teks: 'Rekrutmen/penyegaran Agen Statistik Semester Genap, pembaruan jadwal piket harian, & pembekalan teknis lanjutan.' },
+                    { bulan: 'Mar', teks: 'Monitoring & Evaluasi Tengah Siklus (Semester I) oleh Tim Pembina BPS Provinsi Jawa Barat ke BPS Kab/Kota & PT.' },
+                    { bulan: 'Mar', teks: 'Pelaksanaan kegiatan tambahan: Joint Research Dosen-BPS, pendampingan mahasiswa magang/MSIB, dan penyusunan publikasi.' },
+                    { bulan: 'Apr', teks: 'Audit kelengkapan unggahan tautan bukti dukung pada seluruh indikator di portal Pojok Statistik Virtual (PSV).' }
+                ]
+            },
+            {
+                quarter: 'TW4',
+                label: 'Triwulan IV Siklus',
+                periode: 'Mei – Juli (Tahun Berikutnya)',
+                fase: 'CHECK & ACT (PENUNTASAN SIKLUS)',
+                headerBg: 'from-purple-600 to-indigo-700',
+                icon: 'fa-flag-checkered',
+                items: [
+                    { bulan: 'Mei', teks: 'Sinergi Pojok Statistik dengan program Desa Cantik (persiapan/pelaksanaan KKN Tematik) & Pembinaan Statistik Sektoral Perangkat Daerah.' },
+                    { bulan: 'Jun', teks: 'Percepatan pemenuhan sisa target RPK (infografis, video, edukasi, & rata-rata kunjungan bulanan) menjelang akhir siklus.' },
+                    { bulan: 'Jul', teks: 'Finalisasi seluruh bukti dukung periode 1 Agustus – 31 Juli dan verifikasi pra-Self Assessment oleh Supervisor & Koordinator.' },
+                    { bulan: 'Jul', teks: 'Rapat Tinjauan Manajemen (Act) untuk perbaikan berkelanjutan dan kesiapan submit Self-Assessment pada 1 Agustus.' }
+                ]
+            }
+        ];
+
+        // ==========================================
+        // 3B. DATASET GANTT MATRIX 12 BULAN (AGUSTUS - JULI)
+        // ==========================================
+        const ganttData = [
+            {
+                program: 'Self-Assessment (1–10 Agu), DE (11–22 Agu) & FE IPotik',
+                fase: 'Check',
+                months: [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            },
+            {
+                program: 'Pembaruan MoU/PKS, SK Tim Kerja & RPK (1 Agu – 31 Jul)',
+                fase: 'Plan',
+                months: [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            },
+            {
+                program: 'Audit & Penataan Sarpras Ruang PSO + Aktivasi Portal PSV',
+                fase: 'Plan',
+                months: [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            },
+            {
+                program: 'Rekrutmen Terbuka & Pembekalan 4 Modul Agen Statistik',
+                fase: 'Do',
+                months: [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0]
+            },
+            {
+                program: 'Layanan Konsultasi Statistik Harian & Buku Tamu e-Visitor PST',
+                fase: 'Do',
+                months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            },
+            {
+                program: 'Produksi & Tayang Rutin Infografis/Videografis oleh Agen',
+                fase: 'Do',
+                months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            },
+            {
+                program: 'Penyelenggaraan Edukasi Statistik (3 Tema) & Promosi Kampus',
+                fase: 'Do',
+                months: [0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]
+            },
+            {
+                program: 'Sinergi KKN/ Pembinaan Desa Cantik, Pembinaan Sektoral & Joint Research',
+                fase: 'Do',
+                months: [0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1]
+            },
+            {
+                program: 'Supervisi Berkala & Monev Tengah Siklus BPS Provinsi Jabar',
+                fase: 'Check',
+                months: [0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1]
+            },
+            {
+                program: 'Verifikasi Final Bukti Dukung PSV & Rapat Tindak Lanjut (Act)',
+                fase: 'Act',
+                months: [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]
+            }
+        ];
+
+        // ==========================================
+        // 4. DATATABLE STATE & LOGIC
+        // ==========================================
+        let mphState = {
+            search: '',
+            role: 'ALL',
+            dimensi: 'ALL',
+            pdca: 'ALL',
+            pageSize: 5,
+            currentPage: 1,
+            sortBy: 'no',
+            sortDir: 'asc'
+        };
+
+        let activeTimelineQuarter = 'ALL';
+        let activePdcaFilter = 'ALL';
+        let activeDimensiFilter = 'ALL';
+
+        function getPDCABadge(fase) {
+            const styles = {
+                'Plan': 'bg-sky-50 text-sky-700 border-sky-200',
+                'Do': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                'Check': 'bg-amber-50 text-amber-700 border-amber-200',
+                'Act': 'bg-purple-50 text-purple-700 border-purple-200'
+            };
+            const icons = {
+                'Plan': 'fa-compass-drafting',
+                'Do': 'fa-play',
+                'Check': 'fa-magnifying-glass-chart',
+                'Act': 'fa-arrows-rotate'
+            };
+            const cls = styles[fase] || 'bg-slate-100 text-slate-700 border-slate-200';
+            const ico = icons[fase] || 'fa-circle-dot';
+            return `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold border ${cls}">
+                <i class="fa-solid ${ico} mr-1 text-[10px]"></i>${fase}
+            </span>`;
+        }
+
+        function showToast(message) {
+            let toast = document.getElementById('appToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'appToast';
+                toast.className = 'fixed bottom-5 right-5 z-50 bg-slate-900 text-white text-xs sm:text-sm font-medium px-4 py-3 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2 transition-all duration-300 opacity-0 translate-y-2 pointer-events-none';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i><span>${message}</span>`;
+            toast.classList.remove('opacity-0', 'translate-y-2');
+            clearTimeout(window.__toastTimer);
+            window.__toastTimer = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+            }, 3200);
+        }
+
+        // ==========================================
+        // 5. RENDER FUNCTIONS
+        // ==========================================
+        function renderPerformanceTree() {
+            const container = document.getElementById('performanceTreeGrid');
+            if (!container) return;
+
+            const filtered = performanceTreeData.filter(item => {
+                const matchPdca = activePdcaFilter === 'ALL' || item.pdca === activePdcaFilter;
+                const matchDim = activeDimensiFilter === 'ALL' || item.dimensi === activeDimensiFilter;
+                return matchPdca && matchDim;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-500 text-sm">
+                        Tidak ada sasaran strategis yang sesuai dengan filter PDCA / Dimensi yang dipilih.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(item => `
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col">
+                    <div class="p-5 border-b border-slate-100 bg-slate-50/60">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <span class="px-2.5 py-0.5 rounded-md bg-bps-blue text-white text-xs font-extrabold">${item.id}</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-2.5 py-0.5 rounded-md bg-blue-50 text-bps-blue border border-blue-200 text-xs font-semibold">
+                                    ${item.dimensi} (${item.bobot})
+                                </span>
+                                ${getPDCABadge(item.pdca)}
+                            </div>
+                        </div>
+                        <h3 class="font-display font-bold text-slate-900 text-base sm:text-lg leading-snug">
+                            ${item.sasaran}
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+                            <strong class="text-slate-800">IKU:</strong> ${item.iku}
+                        </p>
+                        <div class="mt-3 inline-flex items-center px-3 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
+                            <i class="fa-solid fa-bullseye mr-1.5 text-emerald-600"></i>Target: ${item.target}
+                        </div>
+                    </div>
+
+                    <div class="p-5 space-y-2.5 flex-1 text-xs sm:text-sm">
+                        <div class="flex items-start gap-2.5">
+                            <span class="w-6 h-6 rounded-md bg-blue-100 text-bps-blue font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">S</span>
+                            <p class="text-slate-700"><strong class="text-slate-900">Specific:</strong> ${item.smart.S}</p>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-700 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">M</span>
+                            <p class="text-slate-700"><strong class="text-slate-900">Measurable:</strong> ${item.smart.M}</p>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="w-6 h-6 rounded-md bg-amber-100 text-amber-700 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">A</span>
+                            <p class="text-slate-700"><strong class="text-slate-900">Achievable:</strong> ${item.smart.A}</p>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="w-6 h-6 rounded-md bg-purple-100 text-purple-700 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">R</span>
+                            <p class="text-slate-700"><strong class="text-slate-900">Relevant:</strong> ${item.smart.R}</p>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="w-6 h-6 rounded-md bg-rose-100 text-rose-700 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">T</span>
+                            <p class="text-slate-700"><strong class="text-slate-900">Time-bound:</strong> ${item.smart.T}</p>
+                        </div>
+                    </div>
+
+                    <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 text-xs text-slate-600">
+                        <i class="fa-solid fa-folder-open text-bps-blue mr-1.5"></i>
+                        <strong class="text-slate-800">Bukti Dukung PSV:</strong> ${item.buktiDukung}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterByPDCA(fase, btnEl) {
+            activePdcaFilter = fase;
+            document.querySelectorAll('.pdca-filter-btn').forEach(b => {
+                b.classList.remove('active', 'bg-bps-blue', 'text-white');
+                b.classList.add('text-slate-600');
+            });
+            if (btnEl) {
+                btnEl.classList.add('active', 'bg-bps-blue', 'text-white');
+                btnEl.classList.remove('text-slate-600');
+            }
+            renderPerformanceTree();
+        }
+
+        function filterByDimensi(dimensi) {
+            activeDimensiFilter = dimensi;
+            renderPerformanceTree();
+            const el = document.getElementById('pohon-kinerja');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getFilteredMPHData() {
+            const q = mphState.search.toLowerCase().trim();
+            const filtered = mphData.filter(row => {
+                const matchRole = mphState.role === 'ALL' || row.peran === mphState.role;
+                const matchDim = mphState.dimensi === 'ALL' || row.dimensi === mphState.dimensi;
+                const matchPdca = mphState.pdca === 'ALL' || row.pdca === mphState.pdca;
+                const matchSearch = !q ||
+                    row.peran.toLowerCase().includes(q) ||
+                    row.unit.toLowerCase().includes(q) ||
+                    row.dimensi.toLowerCase().includes(q) ||
+                    row.pdca.toLowerCase().includes(q) ||
+                    row.hasilKerja.toLowerCase().includes(q) ||
+                    row.indikator.toLowerCase().includes(q) ||
+                    row.target.toLowerCase().includes(q) ||
+                    row.buktiDukung.toLowerCase().includes(q);
+                return matchRole && matchDim && matchPdca && matchSearch;
+            });
+
+            const key = mphState.sortBy;
+            const dir = mphState.sortDir === 'asc' ? 1 : -1;
+            return filtered.sort((a, b) => {
+                if (typeof a[key] === 'number' && typeof b[key] === 'number') {
+                    return (a[key] - b[key]) * dir;
+                }
+                return String(a[key]).localeCompare(String(b[key]), 'id') * dir;
+            });
+        }
+
+        function sortMPH(columnKey) {
+            if (mphState.sortBy === columnKey) {
+                mphState.sortDir = mphState.sortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                mphState.sortBy = columnKey;
+                mphState.sortDir = 'asc';
+            }
+            ['no', 'peran', 'dimensi', 'hasilKerja', 'indikator', 'target'].forEach(col => {
+                const icon = document.getElementById(`sort-icon-${col}`);
+                if (!icon) return;
+                if (col === mphState.sortBy) {
+                    icon.className = mphState.sortDir === 'asc'
+                        ? 'fa-solid fa-sort-up ml-1 text-bps-blue'
+                        : 'fa-solid fa-sort-down ml-1 text-bps-blue';
+                } else {
+                    icon.className = 'fa-solid fa-sort ml-1 text-slate-400';
+                }
+            });
+            renderMPHTable();
+        }
+
+        function renderMPHTable() {
+            const tbody = document.getElementById('mphTableBody');
+            if (!tbody) return;
+
+            const filtered = getFilteredMPHData();
+            const totalItems = filtered.length;
+            const pageSize = mphState.pageSize;
+            const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+            if (mphState.currentPage > totalPages) mphState.currentPage = totalPages;
+
+            const startIdx = (mphState.currentPage - 1) * pageSize;
+            const endIdx = Math.min(startIdx + pageSize, totalItems);
+            const pageData = filtered.slice(startIdx, endIdx);
+
+            if (pageData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-8 px-4 text-center text-slate-500 text-sm">
+                            Tidak ditemukan data Matriks Peran Hasil yang sesuai pencarian/filter.
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = pageData.map(row => `
+                    <tr class="hover:bg-blue-50/40 transition-colors align-top text-xs sm:text-sm">
+                        <td class="py-3.5 px-4 text-center font-bold text-slate-700">${row.no}</td>
+                        <td class="py-3.5 px-4">
+                            <div class="font-bold text-slate-900">${row.peran}</div>
+                            <div class="text-xs text-slate-500 mt-0.5">${row.unit}</div>
+                        </td>
+                        <td class="py-3.5 px-4 space-y-1.5">
+                            <span class="block px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 w-fit">
+                                ${row.dimensi}
+                            </span>
+                            <div>${getPDCABadge(row.pdca)}</div>
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-700 leading-relaxed">${row.hasilKerja}</td>
+                        <td class="py-3.5 px-4 text-slate-700 leading-relaxed">${row.indikator}</td>
+                        <td class="py-3.5 px-4">
+                            <div class="font-semibold text-emerald-700">${row.target}</div>
+                            <div class="text-xs text-slate-500 mt-1">
+                                <i class="fa-solid fa-link mr-1 text-bps-blue"></i>${row.buktiDukung}
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            const infoEl = document.getElementById('mphPaginationInfo');
+            if (infoEl) {
+                infoEl.textContent = totalItems === 0
+                    ? 'Menampilkan 0 dari 0 data'
+                    : `Menampilkan ${startIdx + 1} – ${endIdx} dari ${totalItems} entri`;
+            }
+
+            const controlsEl = document.getElementById('mphPaginationControls');
+            if (controlsEl) {
+                let btns = `
+                    <button onclick="changeMPHPage(${mphState.currentPage - 1})" ${mphState.currentPage <= 1 ? 'disabled' : ''}
+                        class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold ${mphState.currentPage <= 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-700 hover:bg-slate-100 cursor-pointer'}">
+                        Prev
+                    </button>
+                `;
+                for (let p = 1; p <= totalPages; p++) {
+                    const active = p === mphState.currentPage;
+                    btns += `
+                        <button onclick="changeMPHPage(${p})"
+                            class="px-3 py-1.5 rounded-lg border text-xs font-bold cursor-pointer ${active ? 'bg-bps-blue text-white border-bps-blue' : 'border-slate-200 text-slate-700 hover:bg-slate-100'}">
+                            ${p}
+                        </button>
+                    `;
+                }
+                btns += `
+                    <button onclick="changeMPHPage(${mphState.currentPage + 1})" ${mphState.currentPage >= totalPages ? 'disabled' : ''}
+                        class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold ${mphState.currentPage >= totalPages ? 'text-slate-300 cursor-not-allowed' : 'text-slate-700 hover:bg-slate-100 cursor-pointer'}">
+                        Next
+                    </button>
+                `;
+                controlsEl.innerHTML = btns;
+            }
+        }
+
+        function changeMPHPage(page) {
+            mphState.currentPage = page;
+            renderMPHTable();
+        }
+
+        function resetMPHFilters() {
+            mphState = {
+                search: '',
+                role: 'ALL',
+                dimensi: 'ALL',
+                pdca: 'ALL',
+                pageSize: 5,
+                currentPage: 1,
+                sortBy: 'no',
+                sortDir: 'asc'
+            };
+            document.getElementById('mphSearch').value = '';
+            document.getElementById('mphRoleFilter').value = 'ALL';
+            document.getElementById('mphDimFilter').value = 'ALL';
+            document.getElementById('mphPdcaFilter').value = 'ALL';
+            document.getElementById('mphPageSize').value = '5';
+            renderMPHTable();
+            showToast('Filter Matriks Peran Hasil telah direset.');
+        }
+
+        function exportMPHToExcel(exportAll = true) {
+            const dataToExport = exportAll ? mphData : getFilteredMPHData();
+            if (dataToExport.length === 0) {
+                showToast('Tidak ada data untuk diekspor.');
+                return;
+            }
+
+            const formattedRows = dataToExport.map((item, index) => ({
+                'No': index + 1,
+                'Peran / Jabatan': item.peran,
+                'Unit Kerja / Instansi': item.unit,
+                'Dimensi IPotik': item.dimensi,
+                'Fase PDCA': item.pdca,
+                'Rencana Hasil Kerja (RHK)': item.hasilKerja,
+                'Indikator Kinerja Individu (SMART)': item.indikator,
+                'Target Siklus (1 Agu - 31 Jul)': item.target,
+                'Bukti Dukung PSV': item.buktiDukung
+            }));
+
+            try {
+                if (typeof XLSX !== 'undefined') {
+                    const worksheet = XLSX.utils.json_to_sheet(formattedRows);
+                    worksheet['!cols'] = [
+                        { wch: 5 }, { wch: 32 }, { wch: 34 }, { wch: 20 },
+                        { wch: 12 }, { wch: 48 }, { wch: 48 }, { wch: 34 }, { wch: 34 }
+                    ];
+                    const workbook = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(workbook, worksheet, 'MPH Siklus Agu-Jul');
+                    const suffix = exportAll ? 'Lengkap' : 'Terfilter';
+                    XLSX.writeFile(workbook, `MPH_Pojok_Statistik_BPS_Jabar_Agu_Jul_${suffix}.xlsx`);
+                    showToast(`Berhasil mengekspor ${formattedRows.length} baris MPH ke file Excel (.xlsx)!`);
+                } else {
+                    showToast('Library XLSX belum termuat sempurna.');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Terjadi kendala saat menyiapkan file ekspor.');
+            }
+        }
+
+        function renderTimeline() {
+            const container = document.getElementById('timelineContainer');
+            if (!container) return;
+            const filtered = activeTimelineQuarter === 'ALL'
+                ? timelineData
+                : timelineData.filter(t => t.quarter === activeTimelineQuarter);
+
+            container.innerHTML = filtered.map(t => `
+                <div class="animate-fade-in bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col">
+                    <div class="bg-gradient-to-r ${t.headerBg} p-4 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="font-display text-xl font-extrabold block leading-none">${t.label}</span>
+                                <span class="text-xs font-semibold text-white/90 mt-1 block">${t.periode}</span>
+                            </div>
+                            <span class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                                <i class="fa-solid ${t.icon}"></i>
+                            </span>
+                        </div>
+                        <div class="mt-2.5 inline-block px-2.5 py-0.5 rounded-md bg-black/20 text-[11px] font-bold tracking-wide">
+                            ${t.fase}
+                        </div>
+                    </div>
+                    <div class="p-4 space-y-3 flex-1">
+                        ${t.items.map(act => `
+                            <div class="flex items-start space-x-2.5 text-xs sm:text-sm">
+                                <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-bold text-[11px] shrink-0 mt-0.5 border border-slate-200">
+                                    ${act.bulan}
+                                </span>
+                                <p class="text-slate-700 leading-snug">${act.teks}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterTimeline(q, btnEl) {
+            activeTimelineQuarter = q;
+            document.querySelectorAll('.tl-filter-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-bps-blue', 'text-white');
+                btn.classList.add('text-slate-600');
+            });
+            if (btnEl) {
+                btnEl.classList.add('active', 'bg-bps-blue', 'text-white');
+                btnEl.classList.remove('text-slate-600');
+            }
+            renderTimeline();
+        }
+
+        function renderGanttMatrix() {
+            const tbody = document.getElementById('ganttTableBody');
+            if (!tbody) return;
+            const filterFase = document.getElementById('ganttPdcaFilter').value;
+            const rows = filterFase === 'ALL' ? ganttData : ganttData.filter(g => g.fase === filterFase);
+
+            const barColorMap = {
+                'Plan': 'bg-sky-500',
+                'Do': 'bg-emerald-500',
+                'Check': 'bg-amber-500',
+                'Act': 'bg-purple-600'
+            };
+
+            tbody.innerHTML = rows.map(row => `
+                <tr class="hover:bg-slate-50/90 transition-colors">
+                    <td class="py-3 px-4 font-semibold text-slate-800 sticky left-0 bg-white z-10 border-r border-slate-100">
+                        ${row.program}
+                    </td>
+                    <td class="py-3 px-2 text-center border-r border-slate-100">
+                        ${getPDCABadge(row.fase)}
+                    </td>
+                    ${row.months.map((active, idx) => {
+                        const isEvalCol = idx === 0 || idx === 1;
+                        const isCloseCol = idx === 11;
+                        const bgHighlight = isEvalCol ? 'bg-amber-50/40' : isCloseCol ? 'bg-emerald-50/40' : '';
+                        return `
+                            <td class="py-3 px-1.5 text-center border-r border-slate-100 ${bgHighlight}">
+                                ${active
+                                    ? `<div class="h-5 w-full rounded-md ${barColorMap[row.fase]} shadow-xs flex items-center justify-center text-white text-[10px] font-bold" title="Aktif">✓</div>`
+                                    : `<div class="h-5 w-full rounded-md bg-slate-100/70"></div>`
+                                }
+                            </td>
+                        `;
+                    }).join('')}
+                </tr>
+            `).join('');
+        }
+
+        const raciData = [
+            { kegiatan: 'Penyusunan & Penandatanganan MoU/PKS dan SK Tim Kerja', dimensi: 'Kelembagaan', pembinaJabar: 'C', kabKota: 'R', koordinatorPT: 'A', supervisor: 'I', agen: 'I' },
+            { kegiatan: 'Penyusunan Rencana Program Kerja (RPK) Siklus 1 Agu – 31 Jul', dimensi: 'Kelembagaan', pembinaJabar: 'C', kabKota: 'R', koordinatorPT: 'A', supervisor: 'R', agen: 'C' },
+            { kegiatan: 'Penyiapan Ruang PSO, Fasilitas Konsultasi, Literasi & Internet', dimensi: 'Aksesibilitas', pembinaJabar: 'I', kabKota: 'C', koordinatorPT: 'A', supervisor: 'R', agen: 'I' },
+            { kegiatan: 'Seleksi Terbuka & Penerbitan SK/ST Mahasiswa Agen Statistik', dimensi: 'Kualitas SDM', pembinaJabar: 'I', kabKota: 'C', koordinatorPT: 'A', supervisor: 'R', agen: 'I' },
+            { kegiatan: 'Pembekalan 4 Modul Wajib & Supervisi Rutin Agen Statistik', dimensi: 'Kualitas SDM', pembinaJabar: 'C', kabKota: 'A', koordinatorPT: 'C', supervisor: 'R', agen: 'I' },
+            { kegiatan: 'Operasional Layanan Konsultasi Statistik & Buku Tamu e-Visitor PST', dimensi: 'Efektivitas Kegiatan', pembinaJabar: 'I', kabKota: 'A', koordinatorPT: 'C', supervisor: 'C', agen: 'R' },
+            { kegiatan: 'Produksi & Publikasi Konten Infografis/Videografis di Portal PSV', dimensi: 'Efektivitas Kegiatan', pembinaJabar: 'I', kabKota: 'A', koordinatorPT: 'C', supervisor: 'C', agen: 'R' },
+            { kegiatan: 'Penyelenggaraan Edukasi Statistik (3 Tema) & Promosi Lintas Fakultas', dimensi: 'Efektivitas Kegiatan', pembinaJabar: 'C', kabKota: 'A', koordinatorPT: 'R', supervisor: 'R', agen: 'R' },
+            { kegiatan: 'Kolaborasi KKN/ Pembinaan Desa Cantik, Pembinaan Sektoral Perangkat Daerah & Joint Research', dimensi: 'Kolaborasi', pembinaJabar: 'C', kabKota: 'A', koordinatorPT: 'A', supervisor: 'R', agen: 'R' },
+            { kegiatan: 'Self-Assessment (1–10 Agu), Desk Evaluation & Tindak Lanjut IPotik', dimensi: 'Kelembagaan', pembinaJabar: 'A', kabKota: 'R', koordinatorPT: 'C', supervisor: 'R', agen: 'I' }
+        ];
+
+        function getRACIBadge(code) {
+            const map = {
+                'R': 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                'A': 'bg-rose-100 text-rose-800 border-rose-300',
+                'C': 'bg-amber-100 text-amber-800 border-amber-300',
+                'I': 'bg-sky-100 text-sky-800 border-sky-300'
+            };
+            const titles = {
+                'R': 'Responsible (Pelaksana)',
+                'A': 'Accountable (Penanggung Jawab Utama)',
+                'C': 'Consulted (Dimintai Masukan)',
+                'I': 'Informed (Diinformasikan)'
+            };
+            return `<span title="${titles[code] || ''}" class="inline-flex items-center justify-center w-7 h-7 rounded-lg border font-extrabold text-xs ${map[code] || 'bg-slate-100 text-slate-600'}">${code}</span>`;
+        }
+
+        function renderRACITable() {
+            const tbody = document.getElementById('raciTableBody');
+            if (!tbody) return;
+            const searchVal = (document.getElementById('raciSearch')?.value || '').toLowerCase().trim();
+            const dimVal = document.getElementById('raciDimFilter')?.value || 'ALL';
+            const codeVal = document.getElementById('raciCodeFilter')?.value || 'ALL';
+
+            const filtered = raciData.filter(row => {
+                const matchSearch = !searchVal || row.kegiatan.toLowerCase().includes(searchVal);
+                const matchDim = dimVal === 'ALL' || row.dimensi === dimVal;
+                const matchCode = codeVal === 'ALL' ||
+                    [row.pembinaJabar, row.kabKota, row.koordinatorPT, row.supervisor, row.agen].includes(codeVal);
+                return matchSearch && matchDim && matchCode;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="py-6 px-4 text-center text-slate-500 text-sm">Tidak ada aktivitas RACI yang sesuai filter.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((row, idx) => `
+                <tr class="hover:bg-slate-50 transition-colors text-xs sm:text-sm">
+                    <td class="py-3 px-4 text-center font-bold text-slate-600">${idx + 1}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-800">${row.kegiatan}</td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">${row.dimensi}</span>
+                    </td>
+                    <td class="py-3 px-4 text-center">${getRACIBadge(row.pembinaJabar)}</td>
+                    <td class="py-3 px-4 text-center">${getRACIBadge(row.kabKota)}</td>
+                    <td class="py-3 px-4 text-center">${getRACIBadge(row.koordinatorPT)}</td>
+                    <td class="py-3 px-4 text-center">${getRACIBadge(row.supervisor)}</td>
+                    <td class="py-3 px-4 text-center">${getRACIBadge(row.agen)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ==========================================
+        // 6. INITIALIZATION
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPerformanceTree();
+            renderMPHTable();
+            renderTimeline();
+            renderGanttMatrix();
+            renderRACITable();
+
+            const mobileBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileBtn && mobileMenu) {
+                mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            }
+
+            const searchEl = document.getElementById('mphSearch');
+            if (searchEl) {
+                searchEl.addEventListener('input', (e) => {
+                    mphState.search = e.target.value;
+                    mphState.currentPage = 1;
+                    renderMPHTable();
+                });
+            }
+
+            const roleEl = document.getElementById('mphRoleFilter');
+            if (roleEl) {
+                roleEl.addEventListener('change', (e) => {
+                    mphState.role = e.target.value;
+                    mphState.currentPage = 1;
+                    renderMPHTable();
+                });
+            }
+
+            const dimEl = document.getElementById('mphDimFilter');
+            if (dimEl) {
+                dimEl.addEventListener('change', (e) => {
+                    mphState.dimensi = e.target.value;
+                    mphState.currentPage = 1;
+                    renderMPHTable();
+                });
+            }
+
+            const pdcaEl = document.getElementById('mphPdcaFilter');
+            if (pdcaEl) {
+                pdcaEl.addEventListener('change', (e) => {
+                    mphState.pdca = e.target.value;
+                    mphState.currentPage = 1;
+                    renderMPHTable();
+                });
+            }
+
+            const sizeEl = document.getElementById('mphPageSize');
+            if (sizeEl) {
+                sizeEl.addEventListener('change', (e) => {
+                    mphState.pageSize = parseInt(e.target.value, 10);
+                    mphState.currentPage = 1;
+                    renderMPHTable();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
